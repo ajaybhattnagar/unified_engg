@@ -1,0 +1,11 @@
+proj
+.vscode
+meetings
+*.zip
+*.csv
+*.pyc
+dist
+build
+
+node_modules
+dist
