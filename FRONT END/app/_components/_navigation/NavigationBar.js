@@ -8,14 +8,9 @@ class NavigationBar extends Component {
 
     render() {
         return (
-            <Navbar bg="light" variant="light">
+            <Navbar >
                 <Navbar.Brand href="/">
-                    <img
-                        alt='coronavirus'
-                        src={Brand}
-                        height='49'
-                        className='d-inline-block align-top'
-                    />
+                
                 </Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link href="/home"><strong></strong></Nav.Link>
@@ -27,7 +22,14 @@ class NavigationBar extends Component {
     }
 }
 
+function mapState(state) {
+    return {
 
-export default NavigationBar;
+    };
+}
 
-// export default connect(mapState, actionCreators)(NavigationBar);
+const actionCreators = {
+
+}
+
+export default connect(mapState, actionCreators)(NavigationBar);
