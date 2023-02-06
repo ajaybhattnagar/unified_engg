@@ -1,30 +1,17 @@
-from flask import Flask, request, jsonify, json
+from flask import Flask, request, jsonify, json, Blueprint
 from flask_cors import CORS
 import mysql.connector
 from functools import wraps
 import pandas as pd
 import numpy as np
-import bcrypt
-import jwt
 from utils import check_user, get_user_details
-
-from routes.login import login_blueprint
-from routes.uploadParcels import upload_parcels_blueprint
 
 from queries.db_query import db_query
 
-
-app = Flask(__name__)
-app.register_blueprint(login_blueprint)
-app.register_blueprint(upload_parcels_blueprint)
-CORS(app)
+upload_parcels_blueprint = Blueprint('upload_parcels_blueprint', __name__)
 
 with open ('config.json') as f:
     configData = json.load(f)
-
-#Salt for bcrypt
-salt = bcrypt.gensalt()
-
 
 try:
     mydb = mysql.connector.connect(
@@ -35,6 +22,7 @@ try:
     )
 except mysql.connector.Error as err:
    print("Something went wrong: {}".format(err))
+
 
 
 # Authentication decorator
@@ -58,13 +46,12 @@ def token_required(f):
     return decorator
 
 
-@app.route("/")
-def welcome():
-    return ("Welcome to API.")
+# Register API
+@upload_parcels_blueprint.route("/api/v1/upload_parcels_blueprint", methods=['POST'])
+def upload_parcels_blueprint():
+    content = request.get_json(silent=True)
+    email = content['EMAIL'],
+    password = content['PASSWORD'],
 
+    return jsonify({"message": "Something went wrong. Please try again later."}), 500
 
-
-if __name__ == '__main__':
-    # app.run(host="0.0.0.0", port=5000)
-    app.run(debug=True)
-    app.run(host='0.0.0.0', port=2277)

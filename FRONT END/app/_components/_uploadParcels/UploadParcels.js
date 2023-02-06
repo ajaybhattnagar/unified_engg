@@ -1,34 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { connect } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { utils } from '../../_helpers/utils';
-import { appConstants } from '../../_helpers/consts.js';
-import FormInput from '../_ui/form';
-import ReactTableFilter from "../_ui/reactTableFilter";
-import MTable from "../_ui/materialTable";
 import NavigationBar from '../_navigation/NavigationBar';
-import './Home.css';
+import InputList from "../../_components/_ui/inputList";
+import './UploadParcels.css';
 import _ from 'lodash';
 
-const isBrowser = typeof window !== `undefined`
-
-const Home = () => {
-    const navigate = useNavigate();
+const UploadParcels = () => {
     const [data, setData] = useState([]);
+    const navigate = useNavigate();
 
-    useEffect(() => {
-
-    }, [navigate]);
 
     const handleSignOut = () => {
         localStorage.removeItem("token");
         navigate("/");
     };
 
+    const inputListData = [{
+        MANAGING_COMPANY: "",
+    }]
+
+    const uploadData = (e) => {
+        console.log(e);
+    }
+
 
     return (
         <div>
             <NavigationBar />
+
+            <div className='container mt-3'>
+                <InputList
+                    data={inputListData}
+                    type='uploadparcels'
+                    buttonText1="Upload"
+                    onClick1={(e) => uploadData(e)}
+                    lockRows={false}
+                />
+            </div>
 
             <div className='container mt-3'>
                 <div className="d-flex justify-content-between">
@@ -38,7 +46,8 @@ const Home = () => {
 
 
         </div>
+
     );
 };
 
-export default Home;
+export default UploadParcels;
