@@ -4,14 +4,18 @@ import mysql.connector
 from functools import wraps
 import pandas as pd
 import numpy as np
+import jwt
+from sqlalchemy import create_engine
 from utils import check_user, get_user_details
 
-from queries.db_query import db_query
 
 upload_parcels_blueprint = Blueprint('upload_parcels_blueprint', __name__)
 
 with open ('config.json') as f:
     configData = json.load(f)
+
+engine = create_engine(configData['engine_url'])
+
 
 try:
     mydb = mysql.connector.connect(
@@ -47,11 +51,16 @@ def token_required(f):
 
 
 # Register API
-@upload_parcels_blueprint.route("/api/v1/upload_parcels_blueprint", methods=['POST'])
-def upload_parcels_blueprint():
-    content = request.get_json(silent=True)
-    email = content['EMAIL'],
-    password = content['PASSWORD'],
+@upload_parcels_blueprint.route("/api/v1/upload_parcels", methods=['POST'])
+@token_required
+def upload_parcels(token):
+    # content = request.get_json(silent=True)
+    # email = content['EMAIL'],
+    # password = content['PASSWORD'],
+
+    df = pd.read_csv('E:\Bob - SDA\data.csv')
+    # df['UNIQUE_ID'] = np.random(1000000000, 9999999999, size=len(df)
+    df.to_sql('PARCELS', engine, if_exists='append', index=False)
 
     return jsonify({"message": "Something went wrong. Please try again later."}), 500
 

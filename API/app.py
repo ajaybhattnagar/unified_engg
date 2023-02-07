@@ -38,24 +38,24 @@ except mysql.connector.Error as err:
 
 
 # Authentication decorator
-def token_required(f):
-    @wraps(f)
-    def decorator(*args, **kwargs):
-        token = None
-        # ensure the jwt-token is passed with the headers
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
-        if not token: # throw error if no token provided
-            return jsonify({"message": "A valid token is missing!"}), 401
-        try:
-           # decode the token to obtain user public_id
-            data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
-            current_user = get_user_details(data['EMAIL'])
-        except:
-            return jsonify({"message": "Invalid token!"}), 401
-         # Return the user information attached to the token
-        return f(current_user, *args, **kwargs)
-    return decorator
+# def token_required(f):
+#     @wraps(f)
+#     def decorator(*args, **kwargs):
+#         token = None
+#         # ensure the jwt-token is passed with the headers
+#         if 'x-access-token' in request.headers:
+#             token = request.headers['x-access-token']
+#         if not token: # throw error if no token provided
+#             return jsonify({"message": "A valid token is missing!"}), 401
+#         try:
+#            # decode the token to obtain user public_id
+#             data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
+#             current_user = get_user_details(data['EMAIL'])
+#         except:
+#             return jsonify({"message": "Invalid token!"}), 401
+#          # Return the user information attached to the token
+#         return f(current_user, *args, **kwargs)
+#     return decorator
 
 
 @app.route("/")
