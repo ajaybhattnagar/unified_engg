@@ -3,9 +3,20 @@ import { connect } from 'react-redux';
 import { Navbar, Nav } from 'react-bootstrap';
 import Brand from '../../_images/brand.png'
 import './NavigationBar.css'
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 class NavigationBar extends Component {
+
+    constructor(props) {
+        super(props);
+        this.handleSignOut = this.handleSignOut.bind(this);
+    }
+
+    handleSignOut() {
+        console.log("sign out");
+        localStorage.removeItem("token");
+        // this.props.history.push("/");
+    };
 
     render() {
         return (
@@ -20,13 +31,22 @@ class NavigationBar extends Component {
                     />
                 </Navbar.Brand>
                 <Nav className="mr-auto">
-                <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
+                    <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
+                    <Nav.Link className='hover-underline-animation' as={Link} to="/uploadparcels"><strong>Upload</strong></Nav.Link>
                     <Nav.Link href="/signup"><strong></strong></Nav.Link>
                     <Nav.Link href="/"><strong></strong></Nav.Link>
-                    <Nav.Link className='hover-underline-animation' as={Link} to="/uploadparcels"><strong>Upload</strong></Nav.Link>
-
                 </Nav>
+                {
+                    localStorage.getItem('token') ?
+                        <form className="form-inline my-2 my-lg-0">
+                            <button className="btn btn-outline-primary my-2 my-sm-0" type="submit" onClick={() => this.handleSignOut()}>Sign out</button>
+                        </form>
+                        : null
+
+                }
+
             </Navbar>
+
         );
     }
 }

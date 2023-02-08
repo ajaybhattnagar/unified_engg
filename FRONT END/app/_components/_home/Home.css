@@ -15,6 +15,11 @@
   margin: 50px;
 }
 
+.MuiTableCell-sizeSmall{
+  padding: 3px 3px 3px 15px !important
+}
+
+
 
 
     /**************** Animation ****************/

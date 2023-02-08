@@ -1,5 +1,5 @@
-import { min } from "lodash";
 import { ExportToCsv } from 'export-to-csv';
+import { appConstants } from '../_helpers/consts';
 
 export const utils = {
   convertTimeStampToString,
@@ -8,6 +8,9 @@ export const utils = {
   duration,
   total,
   exportCSV,
+  statusArray,
+  getDistinctFilters,
+  getStatusbyValue
 
 }
 
@@ -70,6 +73,31 @@ function total(array) {
 
 }
 
+function statusArray() {
+  return [
+    { value: 1, label: 'Active' },
+    { value: 2, label: 'Pending' },
+    { value: 3, label: 'Pending Redemption' },
+    { value: 4, label: 'Partial Redemption' },
+    { value: 5, label: 'Redeemed' },
+    { value: 6, label: 'Refunded' },
+    { value: 7, label: 'Foreclosure' },
+    { value: 8, label: 'Bankruptcy' },
+    { value: 9, label: 'Write-off' },
+    { value: 10, label: 'REO' },
+
+  ]
+}
+
+function getStatusbyValue(value) {
+  var status = statusArray();
+  for (var i = 0; i < status.length; i++) {
+    if (status[i].value === value) {
+      return status[i].label;
+    }
+  }
+}
+
 function exportCSV(array) {
   const options = {
     fieldSeparator: ',',
@@ -77,7 +105,7 @@ function exportCSV(array) {
     decimalSeparator: '.',
     showLabels: true,
     showTitle: true,
-    title: 'Sales RFQ',
+    title: 'Data Export',
     useTextFile: false,
     useBom: true,
     useKeysAsHeaders: true,
@@ -86,5 +114,36 @@ function exportCSV(array) {
   const csvExporter = new ExportToCsv(options);
 
   return csvExporter.generateCsv(array);
+}
+
+function getDistinctFilters() {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.GET_DISTINCT_FILTERS);
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      'x-access-token': localStorage.getItem('token')
+    },
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        return data
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err));
 }
 

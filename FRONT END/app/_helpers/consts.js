@@ -5,4 +5,9 @@ export const appConstants = {
 
     REGISTER: 'api/v1/register',
     LOGIN: 'api/v1/login',
+
+    UPLOAD_PARCELS: 'api/v1/upload_parcels',
+    SEARCH_PARCEL: 'api/v1/search_parcels?searchString=',
+    GET_DISTINCT_FILTERS: 'api/v1/get_distinct_filters',
+    GET_PARCELS_BASED_ON_FILTERS: 'api/v1/get_parcels_based_on_filters?',
 };

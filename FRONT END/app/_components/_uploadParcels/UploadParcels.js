@@ -2,25 +2,54 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationBar from '../_navigation/NavigationBar';
 import InputList from "../../_components/_ui/inputList";
+import { appConstants } from '../../_helpers/consts.js';
 import './UploadParcels.css';
-import _ from 'lodash';
 
 const UploadParcels = () => {
     const [data, setData] = useState([]);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (!localStorage.getItem("token")) {
+            navigate("/");
+        }
+    }, []);
 
-    const handleSignOut = () => {
-        localStorage.removeItem("token");
-        navigate("/");
-    };
+
 
     const inputListData = [{
         MANAGING_COMPANY: "",
     }]
 
     const uploadData = (e) => {
-        console.log(e);
+        var response_status = 0;
+        fetch(appConstants.BASE_URL.concat(appConstants.UPLOAD_PARCELS), {
+            method: "POST",
+            body: JSON.stringify(e),
+            headers: {
+                "Content-Type": "application/json",
+                "x-access-token": localStorage.getItem("token"),
+            },
+        })
+            .then((res) => {
+                if (res.status === 200) {
+                    response_status = 200;
+                    return res.json();
+                }
+                else {
+                    response_status = 400;
+                    return res.json();
+                }
+            })
+            .then((data) => {
+                if (response_status === 200) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((err) => console.error(err));
     }
 
 
@@ -36,12 +65,6 @@ const UploadParcels = () => {
                     onClick1={(e) => uploadData(e)}
                     lockRows={false}
                 />
-            </div>
-
-            <div className='container mt-3'>
-                <div className="d-flex justify-content-between">
-                    <button type="button" className="btn btn-primary logout-button" onClick={handleSignOut}>Sign out</button>
-                </div>
             </div>
 
 

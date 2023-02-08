@@ -51,48 +51,12 @@ const MTable = (props) => {
         tableLayout: props.tableLayout ?? "auto",
     };
 
-    if (props.isOnClick) {
-        downloadAction.push({
-            icon: () => <FontAwesomeIcon icon={faTrash} color='black' />,
-            tooltip: 'Delete Record',
-            onClick: (evt, data) => delete_record(data)
-        });
-    }
-
-    const delete_record = (data) => {
-        var response_status = 0;
-        fetch(appConstants.BASE_URL.concat(appConstants.DELETE_ACTIVITY), {
-            method: "POST",
-            body: JSON.stringify({
-                ID: data['ID'],
-            }),
-            headers: {
-                "Content-Type": "application/json",
-                "x-access-token": localStorage.getItem("token"),
-            },
-        })
-            .then((res) => {
-                if (res.status === 200) {
-                    response_status = 200;
-                    return res.json();
-                }
-                else {
-                    response_status = 400;
-                    return res.json();
-                }
-            })
-            .then((data) => {
-                if (response_status === 200) {
-                    alert(data.message);
-                    window.location.reload();
-                    clear_form();
-
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch((err) => console.error(err));
-    };
+    downloadAction.push({
+        icon: () => <FontAwesomeIcon className='fa-1x' icon={faDownload} />,
+        tooltip: 'Download',
+        isFreeAction: true,
+        onClick: () => props.onDownloadButtonPressed(data)
+    });
 
     const editableOptions = {
         onRowUpdate: (newData, oldData) =>
@@ -108,51 +72,6 @@ const MTable = (props) => {
                     resolve();
                 }, 1000)
             }),
-    };
-
-    const update_record = (newData) => {
-        var response_status = 0;
-        fetch(appConstants.BASE_URL.concat(appConstants.UPDATE_ACTIVITY), {
-            method: "POST",
-            body: JSON.stringify({
-                ID: newData['ID'],
-                FIELD_1: newData['FIELD_1'],
-                FIELD_2: newData['FIELD_2'],
-                FIELD_3: newData['FIELD_3'],
-                FIELD_4: '',
-                FIELD_5: '',
-                FIELD_6: '',
-                FIELD_7: '',
-                FIELD_8: '',
-                FIELD_9: '',
-                FIELD_10: '',
-            }),
-            headers: {
-                "Content-Type": "application/json",
-                "x-access-token": localStorage.getItem("token"),
-            },
-        })
-            .then((res) => {
-                if (res.status === 200) {
-                    response_status = 200;
-                    return res.json();
-                }
-                else {
-                    response_status = 400;
-                    return res.json();
-                }
-            })
-            .then((data) => {
-                if (response_status === 200) {
-                    alert(data.message);
-                    window.location.reload();
-                    clear_form();
-
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch((err) => console.error(err));
     };
 
     return (
