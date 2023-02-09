@@ -14,7 +14,7 @@ from queries.parcel_query import parcel_query
 import random, string
 
 
-upload_parcels_blueprint = Blueprint('upload_parcels_blueprint', __name__)
+parcels_blueprint = Blueprint('parcels_blueprint', __name__)
 
 with open ('config.json') as f:
     configData = json.load(f)
@@ -55,7 +55,7 @@ def token_required(f):
 
 
 # Upload parcels
-@upload_parcels_blueprint.route("/api/v1/upload_parcels", methods=['POST'])
+@parcels_blueprint.route("/api/v1/upload_parcels", methods=['POST'])
 @token_required
 def upload_parcels(token):
     content = request.get_json(silent=True)
@@ -71,7 +71,7 @@ def upload_parcels(token):
 
 
 # search parcels
-@upload_parcels_blueprint.route("/api/v1/search_parcels", methods=['GET'])
+@parcels_blueprint.route("/api/v1/search_parcels", methods=['GET'])
 @token_required
 def search_parcels(token):
     searchString = request.args.get('searchString')
@@ -93,7 +93,7 @@ def search_parcels(token):
         return jsonify({"message": "Something went wrong!"}), 500
 
 
-@upload_parcels_blueprint.route("/api/v1/get_distinct_filters", methods=['GET'])
+@parcels_blueprint.route("/api/v1/get_distinct_filters", methods=['GET'])
 @token_required
 def get_distinct_filters(token):
     mycursor = mydb.cursor()
@@ -115,7 +115,7 @@ def get_distinct_filters(token):
         return jsonify({"message": "Something went wrong!"}), 500
 
 
-@upload_parcels_blueprint.route("/api/v1/get_parcels_based_on_filters", methods=['GET'])
+@parcels_blueprint.route("/api/v1/get_parcels_based_on_filters", methods=['GET'])
 @token_required
 def get_parcels_based_on_filters(token):
     if request.args.get('state') is not None:
@@ -142,17 +142,17 @@ def get_parcels_based_on_filters(token):
     else:
         status = ""
         
-    # try:
-    mycursor = mydb.cursor()
-    mycursor.execute(parcel_query['GET_PARCELS_BASED_ON_FILTERS'].format(STATE=state, COUNTY=county, MUNICIPALITY=municipality, STATUS=status))
-    myresult = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
-    mydb.commit()
-    mycursor.close()
-    response = Response(
-            response=simplejson.dumps(myresult, ignore_nan=True,default=datetime.datetime.isoformat),
-            mimetype='application/json'
-        )
-    response.headers['content-type'] = 'application/json'
-    return response, 200
-    # except:
-    #     return jsonify({"message": "Something went wrong!"}), 500
+    try:
+        mycursor = mydb.cursor()
+        mycursor.execute(parcel_query['GET_PARCELS_BASED_ON_FILTERS'].format(STATE=state, COUNTY=county, MUNICIPALITY=municipality, STATUS=status))
+        myresult = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        mydb.commit()
+        mycursor.close()
+        response = Response(
+                response=simplejson.dumps(myresult, ignore_nan=True,default=datetime.datetime.isoformat),
+                mimetype='application/json'
+            )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+    except:
+        return jsonify({"message": "Something went wrong!"}), 500

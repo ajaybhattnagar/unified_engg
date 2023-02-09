@@ -21,12 +21,16 @@ const Home = () => {
     const county = useRef(null);
     const municipality = useRef(null);
     const status = useRef(null);
-    // const [distinctFilters, setDistinctFilters] = useState([]);
+    const [distinctFilters, setDistinctFilters] = useState(null);
 
     useEffect(() => {
         if (!localStorage.getItem("token")) {
             navigate("/");
         }
+        utils.getDistinctFilters()
+            .then((data) => {
+                setDistinctFilters(data);
+            })
     }, []);
 
     const handleSearch = (e) => {
@@ -106,23 +110,6 @@ const Home = () => {
     }
 
 
-    const distinctFilters = {
-        "counties": [
-            "SEA",
-            "Ocean"
-        ],
-        "municipalities": [
-            "TEST3",
-            "TEST",
-            "Berkeley   Township",
-            "Berkeley Township"
-        ],
-        "states": [
-            "FLORIDA",
-            "New Jersey"
-        ]
-    }
-
     const render = () => {
         return (
             <div>
@@ -132,16 +119,20 @@ const Home = () => {
                     <div className="col col-lg-5"><Input text="Search" type="text" value={searchString} onChange={(e) => setSearchString(e)} /></div>
                     <Button className="ml-2" variant="primary" onClick={(e) => handleSearch()}> Search </Button>
                 </div>
-
-                <div className='container mt-3'>
-                    <div className="d-flex justify-content-left">
-                        <div className="col col-lg-2"><DropDown placeholder={'State'} list={distinctFilters.states} isMulti={false} prepareArray={true} onSelect={(e) => { state.current = e.value; handleFilterSearch() }} /></div>
-                        <div className="col col-lg-2"><DropDown placeholder={'County'} list={distinctFilters.counties} isMulti={false} prepareArray={true} onSelect={(e) => { county.current = e.value; handleFilterSearch() }} /></div>
-                        <div className="col col-lg-2"><DropDown placeholder={'Municipality'} list={distinctFilters.municipalities} isMulti={false} prepareArray={true} onSelect={(e) => { municipality.current = e.value; handleFilterSearch() }} /></div>
-                        <div className="col col-lg-2"><DropDown placeholder={'Status'} list={utils.statusArray()} isMulti={false} prepareArray={false} onSelect={(e) => { status.current = e.value; handleFilterSearch() }} /></div>
-                    </div>
-                </div>
-                <hr className='container mt-3 d-flex'/>
+                {
+                    distinctFilters ?
+                        <div className='container mt-3'>
+                            <div className="d-flex justify-content-left">
+                                <div className="col col-lg-2"><DropDown placeholder={'State'} list={distinctFilters.states} isMulti={false} prepareArray={true} onSelect={(e) => { state.current = e.value; handleFilterSearch() }} /></div>
+                                <div className="col col-lg-2"><DropDown placeholder={'County'} list={distinctFilters.counties} isMulti={false} prepareArray={true} onSelect={(e) => { county.current = e.value; handleFilterSearch() }} /></div>
+                                <div className="col col-lg-2"><DropDown placeholder={'Municipality'} list={distinctFilters.municipalities} isMulti={false} prepareArray={true} onSelect={(e) => { municipality.current = e.value; handleFilterSearch() }} /></div>
+                                <div className="col col-lg-2"><DropDown placeholder={'Status'} list={utils.statusArray()} isMulti={false} prepareArray={false} onSelect={(e) => { status.current = e.value; handleFilterSearch() }} /></div>
+                            </div>
+                        </div>
+                        :
+                        null
+                }
+                <hr className='container mt-3 d-flex' />
 
 
                 {/* Material Table */}
@@ -160,7 +151,7 @@ const Home = () => {
                                 rowEdit={false}
                                 tableLayout='Fixed'
                                 columnsButton={true}
-                                onDownloadButtonPressed = {(data) => {utils.exportCSV(data)}}
+                                onDownloadButtonPressed={(data) => { utils.exportCSV(data) }}
                             />
                             :
                             null

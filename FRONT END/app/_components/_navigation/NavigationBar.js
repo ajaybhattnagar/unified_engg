@@ -35,6 +35,7 @@ class NavigationBar extends Component {
                     <Nav.Link className='hover-underline-animation' as={Link} to="/uploadparcels"><strong>Upload</strong></Nav.Link>
                     <Nav.Link href="/signup"><strong></strong></Nav.Link>
                     <Nav.Link href="/"><strong></strong></Nav.Link>
+                    <Nav.Link href="/parcel"><strong></strong></Nav.Link>
                 </Nav>
                 {
                     localStorage.getItem('token') ?

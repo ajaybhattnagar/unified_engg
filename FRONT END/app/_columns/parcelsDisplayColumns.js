@@ -13,7 +13,7 @@ export const columns = [
         hidden: false,
         width: "3%",
         render: rowData =>
-            <a className='mx-auto' href={'http://' + window.location.host + '/allocation/' + rowData.BASE_ID} target="_blank">
+            <a className='mx-auto' href={'http://' + window.location.host + '/parcel/' + rowData.UNIQUE_ID} target="_blank">
                 <FontAwesomeIcon className="" icon={faArrowRight} />
             </a >
 

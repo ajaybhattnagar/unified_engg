@@ -15,11 +15,11 @@ export const upload_parcel_columns = [
         title: 'Investment Date',
     },
     {
-        ...keyColumn('ORIGINAL_LIEN_AMOUNT', textColumn),
+        ...keyColumn('ORIGINAL_LIEN_AMOUNT', floatColumn),
         title: 'Original Lien Amount',
     },
     {
-        ...keyColumn('ORIGINAL_LIEN_INTEREST', textColumn),
+        ...keyColumn('ORIGINAL_LIEN_INTEREST', floatColumn),
         title: 'Original Lien Interest',
     },
 
@@ -32,11 +32,11 @@ export const upload_parcel_columns = [
         title: 'Original Lien Interval',
     },
     {
-        ...keyColumn('PREMIUM_AMOUNT', textColumn),
+        ...keyColumn('PREMIUM_AMOUNT', floatColumn),
         title: 'Premium Amount',
     },
     {
-        ...keyColumn('PREMIUM_INTEREST', textColumn),
+        ...keyColumn('PREMIUM_INTEREST', floatColumn),
         title: 'Premium Interest',
     },
     {
