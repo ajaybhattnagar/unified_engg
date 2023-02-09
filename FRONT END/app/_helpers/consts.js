@@ -10,4 +10,7 @@ export const appConstants = {
     SEARCH_PARCEL: 'api/v1/search_parcels?searchString=',
     GET_DISTINCT_FILTERS: 'api/v1/get_distinct_filters',
     GET_PARCELS_BASED_ON_FILTERS: 'api/v1/get_parcels_based_on_filters?',
+
+    GET_PARCEL_DETAILS: 'api/v1/parcel/',
+    UPDATE_STATUS_PARCEL_ID: 'api/v1/parcel/',
 };

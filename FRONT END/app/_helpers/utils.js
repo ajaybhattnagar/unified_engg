@@ -10,7 +10,9 @@ export const utils = {
   exportCSV,
   statusArray,
   getDistinctFilters,
-  getStatusbyValue
+  getStatusbyValue,
+  updateStatusParcelID, 
+  getCategorybyValue
 
 }
 
@@ -147,3 +149,61 @@ function getDistinctFilters() {
     .catch((err) => console.error(err));
 }
 
+function updateStatusParcelID(parcel_id, status){
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.UPDATE_STATUS_PARCEL_ID).concat(parcel_id).concat('/').concat(status);
+  return fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      'x-access-token': localStorage.getItem('token')
+    },
+    body: JSON.stringify({
+      PARCEL_ID: parcel_id,
+      STATUS: status
+    })
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        alert(data.message);
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err));
+}
+
+function categoryArray() {
+  return [
+    { value: 1, label: 'Beginning Balance' },
+    { value: 2, label: 'Premium' },
+    { value: 3, label: 'Subsequent Tax' },
+    { value: 4, label: 'Attorney Fees' },
+    { value: 5, label: 'Certificate Fees' },
+    { value: 6, label: 'Filling Fees' },
+    { value: 7, label: 'Processing Fees' },
+    { value: 8, label: 'Recording Fees' },
+    { value: 9, label: 'Refunds' },
+    { value: 10, label: 'TDA Fees' },
+  ]
+}
+
+function getCategorybyValue(value) {
+  var category = categoryArray();
+  for (var i = 0; i < category.length; i++) {
+    if (category[i].value === value) {
+      return category[i].label;
+    }
+  }
+}

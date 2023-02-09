@@ -11,7 +11,7 @@ export const upload_parcel_columns = [
         title: 'Certificate',
     },
     {
-        ...keyColumn('INVESTMENT_DATE', textColumn),
+        ...keyColumn('INVESTMENT_DATE', dateColumn),
         title: 'Investment Date',
     },
     {
@@ -24,7 +24,7 @@ export const upload_parcel_columns = [
     },
 
     {
-        ...keyColumn('ORIGINAL_LIEN_EFFECTIVE_DATE', textColumn),
+        ...keyColumn('ORIGINAL_LIEN_EFFECTIVE_DATE', dateColumn),
         title: 'Original Lien Effective Date',
     },
     {
@@ -40,7 +40,7 @@ export const upload_parcel_columns = [
         title: 'Premium Interest',
     },
     {
-        ...keyColumn('PREMIUM_EFFECTIVE_DATE', textColumn),
+        ...keyColumn('PREMIUM_EFFECTIVE_DATE', dateColumn),
         title: 'Premium Effective Date',
     },
     {
@@ -178,7 +178,7 @@ export const upload_parcel_columns = [
         title: 'Assessment Year',
     },
     {
-        ...keyColumn('LATEST_SALE_DATE', textColumn),
+        ...keyColumn('LATEST_SALE_DATE', dateColumn),
         title: 'Latest Sale Date',
     },
     {
@@ -186,7 +186,7 @@ export const upload_parcel_columns = [
         title: 'Latest Sale Price',
     },
     {
-        ...keyColumn('LATEST_ARMS_LENGTH_SALE_DATE', textColumn),
+        ...keyColumn('LATEST_ARMS_LENGTH_SALE_DATE', dateColumn),
         title: 'Latest Arms Length Sale Date',
     },
     {
@@ -207,7 +207,7 @@ export const upload_parcel_columns = [
         title: 'Loan1 Amount',
     },
     {
-        ...keyColumn('LOAN1_DUE_DATE', textColumn),
+        ...keyColumn('LOAN1_DUE_DATE', dateColumn),
         title: 'Loan1 Due Date',
     },
     {
