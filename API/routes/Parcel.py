@@ -75,9 +75,11 @@ def get_parcel(current_user, parcel_id):
         parcel_details = parcel_details.rename(columns=column_dict)
         parcel_details = parcel_details.to_dict(orient='records')
 
-        mycursor = mydb.cursor()
         mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID'].format(ID = parcel_id))
         parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+
+        mydb.commit()
+        mycursor.close()
 
         response_dict = {
             "parcel_details": parcel_details,
@@ -107,3 +109,71 @@ def update_parcel_status(current_user, parcel_id, status):
         return jsonify({"message": "Parcel status updated successfully!"}), 200
     except:
         return jsonify({"message": "Something went wrong!"}), 500
+
+
+# Update Parcel fees
+@parcel_blueprint.route("/api/v1/parcel/update_fee", methods=['POST'])
+@token_required
+def update_parcel_fees(token):
+    # Update the parcel fees
+    try:
+        content = request.get_json(silent=True)
+        if content['EFFECTIVE_END_DATE'] == '':
+            content['EFFECTIVE_END_DATE'] = 'NULL'
+
+        mycursor = mydb.cursor()
+        mycursor.execute(parcel_query['UPDATE_FEES_BY_ID'].format(ID = content['ID'], CATEGORY = content['CATEGORY'], DESCRIPTION = content['DESCRIPTION'], 
+            AMOUNT = content['AMOUNT'], INTEREST = content['INTEREST'], EFFECTIVE_DATE = content['EFFECTIVE_DATE'], EFFECTIVE_END_DATE= content['EFFECTIVE_END_DATE'] ))
+        mydb.commit()
+        mycursor.close()
+
+        return jsonify({"message": "Parcel fees updated successfully!"}), 200
+    except:
+        return jsonify({"message": "Something went wrong!"}), 500
+
+
+# Delete Parcel fees
+@parcel_blueprint.route("/api/v1/parcel/delete_fee/<fee_id>", methods=['DELETE'])
+@token_required
+def delete_parcel_fees(current_user, fee_id):
+    # Delete the parcel fees
+    try:
+        mycursor = mydb.cursor()
+        mycursor.execute(parcel_query['DELETE_FEES_BY_ID'].format(ID = fee_id))
+        mydb.commit()
+        mycursor.close()
+
+        return jsonify({"message": "Parcel fees deleted successfully!"}), 200
+    except:
+        return jsonify({"message": "Something went wrong!"}), 500
+
+
+# Add Parcel fees
+@parcel_blueprint.route("/api/v1/parcel/add_fee", methods=['POST'])
+@token_required
+def add_parcel_fees(current_user):
+
+    # try:
+    content = request.get_json(silent=True)
+    if content['CATEGORY'] == '':
+        return jsonify({"message": "Category is required!"}), 500
+    if content['DESCRIPTION'] == '':
+        content['DESCRIPTION'] = 'NULL'
+    if content['AMOUNT'] == '':
+        return jsonify({"message": "Amount is required!"}), 500
+    if content['INTEREST'] == '':
+        return jsonify({"message": "Interest is required!"}), 500
+    if content['EFFECTIVE_DATE'] == '':
+        return jsonify({"message": "Effective date is required!"}), 500
+    if content['EFFECTIVE_END_DATE'] == '':
+        content['EFFECTIVE_END_DATE'] = 'NULL'
+    
+    mycursor = mydb.cursor()
+    mycursor.execute(parcel_query['INSERT_FEES_BY_UNIQUE_ID'].format(UNIQUE_ID = content['UNIQUE_ID'], CATEGORY = content['CATEGORY'], DESCRIPTION = content['DESCRIPTION'], 
+        AMOUNT = content['AMOUNT'], INTEREST = content['INTEREST'], EFFECTIVE_DATE = content['EFFECTIVE_DATE'], EFFECTIVE_END_DATE= content['EFFECTIVE_END_DATE'] ))
+    mydb.commit()
+    mycursor.close()
+
+    return jsonify({"message": "Parcel fees added successfully!"}), 200
+    # except:
+    #     return jsonify({"message": "Something went wrong!"}), 500

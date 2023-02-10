@@ -11,8 +11,11 @@ export const utils = {
   statusArray,
   getDistinctFilters,
   getStatusbyValue,
-  updateStatusParcelID, 
-  getCategorybyValue
+  updateStatusParcelID,
+  getCategorybyValue,
+  categoryArray,
+  convertTimeStampToDateForInputBox,
+  delteFeeByID
 
 }
 
@@ -149,7 +152,7 @@ function getDistinctFilters() {
     .catch((err) => console.error(err));
 }
 
-function updateStatusParcelID(parcel_id, status){
+function updateStatusParcelID(parcel_id, status) {
   var response_status = 0;
   var url = appConstants.BASE_URL.concat(appConstants.UPDATE_STATUS_PARCEL_ID).concat(parcel_id).concat('/').concat(status);
   return fetch(url, {
@@ -206,4 +209,56 @@ function getCategorybyValue(value) {
       return category[i].label;
     }
   }
+}
+
+function convertTimeStampToDateForInputBox(timeStamp) {
+  if (timeStamp) {
+    var date = new Date(timeStamp);
+    var year = date.getFullYear();
+    var month = ("0" + date.getMonth() + 1).slice(-2)
+    var dt = ("0" + date.getDate()).slice(-2)
+    return year + '-' + month + '-' + dt;
+  } else {
+    return ''
+  }
+
+}
+
+
+function delteFeeByID(id) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.DELETE_FEE_BY_ID).concat(id);
+  if (confirm('Are you sure you want to delete the fee?')) {
+    return fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        'x-access-token': localStorage.getItem('token')
+      },
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          response_status = 200;
+          return res.json();
+        }
+        else {
+          response_status = 400;
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (response_status === 200) {
+          alert(data.message);
+        } else {
+          alert(data.message);
+          return null;
+        }
+      })
+      .catch((err) => console.error(err));
+  } else {
+    // Do nothing!
+    console.log('Cancelled by user!');
+  }
+
+
 }

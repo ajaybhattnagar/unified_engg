@@ -13,4 +13,9 @@ export const appConstants = {
 
     GET_PARCEL_DETAILS: 'api/v1/parcel/',
     UPDATE_STATUS_PARCEL_ID: 'api/v1/parcel/',
+
+    UPDATE_FEE_BY_ID: 'api/v1/parcel/update_fee',
+    DELETE_FEE_BY_ID: 'api/v1/parcel/delete_fee/',
+
+    ADD_FEE_BY_UNIQUE_ID: 'api/v1/parcel/add_fee',
 };

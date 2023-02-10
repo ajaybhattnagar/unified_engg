@@ -4,14 +4,13 @@ import { utils } from '../../_helpers/utils';
 import { useParams } from 'react-router-dom';
 import { appConstants } from '../../_helpers/consts.js';
 import { Button } from "react-bootstrap";
-import ReactTableFilter from "../_ui/reactTableFilter";
-import MTable from "../_ui/materialTable";
-import Input from "../_ui/input";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import NavigationBar from '../_navigation/NavigationBar';
 import './Parcel.css';
 import { columns } from '../../_columns/parcelFeesColumns';
 import DropDown from "../_ui/dropDown";
-import EditFeesModal from "../_ui/modal";
+import EditFeesModal from "../_ui/editFeesModal";
 
 
 const Parcel = () => {
@@ -23,6 +22,7 @@ const Parcel = () => {
     const [parcelFees, setParcelFees] = useState(null);
     const [showEditFeeModal, setEditFeeModal] = useState(false);
     const [selectedFee, setSelectedFee] = useState(null);
+    const [newFeeModal, setNewFeeModal] = useState(false);
 
     useEffect(() => {
         if (!localStorage.getItem("token")) {
@@ -126,21 +126,30 @@ const Parcel = () => {
     }
 
     const openModalFeeEdit = (data) => {
+        setNewFeeModal(false)
         setSelectedFee(data);
         setEditFeeModal(true)
     }
-    
-    // console.log("selectedFee", selectedFee)
+
+    const openModalFeeNew = (data) => {
+        setNewFeeModal(true)
+        setSelectedFee(data);
+        setEditFeeModal(true)
+    }
 
     const render_parcel_fees = () => {
         if (parcelFees) {
             return (
                 <div className="mr-4 ">
+                    <div className="d-flex justify-content-end">
+                        <a href="#" onClick={() => openModalFeeNew()} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
+                    </div>
                     {
                         parcelFees.length > 0 ?
                             <table className='table table-sm small'>
                                 <thead className="thead-dark">
                                     <tr>
+                                        <th></th>
                                         <th></th>
                                         <th>Category</th>
                                         <th>Effective Date</th>
@@ -153,10 +162,11 @@ const Parcel = () => {
                                     {
                                         parcelFees.map((data, index) =>
                                             <tr key={index}>
-                                                <td><Button className="btn-sm" onClick={() => openModalFeeEdit(data)}>Open Modal</Button></td>
+                                                <td> <a href="#"><FontAwesomeIcon className="" icon={faTrash} onClick={() => utils.delteFeeByID(data['ID'])} /></a></td>
+                                                <td> <a href="#"><FontAwesomeIcon className="" icon={faEdit} onClick={() => openModalFeeEdit(data)} /></a></td>
                                                 <td>{utils.getCategorybyValue(data['CATEGORY'])}</td>
-                                                <td>{data['EFFECTIVE_DATE']}</td>
-                                                <td>{data['EFFECTIVE_END_DATE']}</td>
+                                                <td>{utils.convertTimeStampToString(data['EFFECTIVE_DATE'])}</td>
+                                                <td>{utils.convertTimeStampToString(data['EFFECTIVE_END_DATE'])}</td>
                                                 <td>{data['INTEREST']}</td>
                                                 <td>{data['AMOUNT']}</td>
                                             </tr>)
@@ -180,7 +190,7 @@ const Parcel = () => {
 
                 <hr className='mt-3 d-flex' />
 
-                <div className="mt-3 d-flex justify-content-between">
+                <div className="mt-3 d-flex justify-content-around">
                     {/* Parcels details */}
                     <div className="row ml-3">
                         {
@@ -201,7 +211,7 @@ const Parcel = () => {
 
                 </div>
 
-                <EditFeesModal show={showEditFeeModal} data={selectedFee} close={() => setEditFeeModal(false)} />
+                <EditFeesModal show={showEditFeeModal} data={selectedFee} newFee={newFeeModal} close={() => setEditFeeModal(false)} />
 
             </div>
         );
