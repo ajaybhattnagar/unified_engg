@@ -11,7 +11,7 @@ import NavigationBar from '../_navigation/NavigationBar';
 import './Parcel.css';
 import { columns } from '../../_columns/parcelFeesColumns';
 import DropDown from "../_ui/dropDown";
-import LoginModal from "../_ui/modal";
+import EditFeesModal from "../_ui/modal";
 
 
 const Parcel = () => {
@@ -21,7 +21,8 @@ const Parcel = () => {
     const [data, setData] = useState(null);
     const [parcelDetails, setParcelDetails] = useState(null);
     const [parcelFees, setParcelFees] = useState(null);
-    const [showLogin, setShowLogin] = useState(false);
+    const [showEditFeeModal, setEditFeeModal] = useState(false);
+    const [selectedFee, setSelectedFee] = useState(null);
 
     useEffect(() => {
         if (!localStorage.getItem("token")) {
@@ -124,6 +125,13 @@ const Parcel = () => {
         }
     }
 
+    const openModalFeeEdit = (data) => {
+        setSelectedFee(data);
+        setEditFeeModal(true)
+    }
+    
+    // console.log("selectedFee", selectedFee)
+
     const render_parcel_fees = () => {
         if (parcelFees) {
             return (
@@ -145,7 +153,7 @@ const Parcel = () => {
                                     {
                                         parcelFees.map((data, index) =>
                                             <tr key={index}>
-                                                <td><Button variant="outline-primary" size="sm">Edit</Button></td>
+                                                <td><Button className="btn-sm" onClick={() => openModalFeeEdit(data)}>Open Modal</Button></td>
                                                 <td>{utils.getCategorybyValue(data['CATEGORY'])}</td>
                                                 <td>{data['EFFECTIVE_DATE']}</td>
                                                 <td>{data['EFFECTIVE_END_DATE']}</td>
@@ -174,27 +182,26 @@ const Parcel = () => {
 
                 <div className="mt-3 d-flex justify-content-between">
                     {/* Parcels details */}
-                    {/* <div className="row ml-3">
+                    <div className="row ml-3">
                         {
                             parcelDetails ?
                                 render_parcel_details()
                                 : null
                         }
-                    </div> */}
+                    </div>
 
                     {/* Parcels fee */}
-                    {/* <div className="row ml-3">
+                    <div className="row ml-3">
                         {
                             parcelFees ?
                                 render_parcel_fees()
                                 : null
                         }
-                    </div> */}
+                    </div>
 
                 </div>
 
-                <button onClick={() => setShowLogin(true)}>Open Modal</button>
-                <LoginModal show={showLogin} close={() => setShowLogin(false)} />
+                <EditFeesModal show={showEditFeeModal} data={selectedFee} close={() => setEditFeeModal(false)} />
 
             </div>
         );

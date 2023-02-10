@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import 'bootswatch/dist/flatly/bootstrap.min.css';
+// import 'bootswatch/dist/flatly/bootstrap.min.css';
 import NavigationBar from './_components/_navigation/NavigationBar';
 import Login from './_components/_login/Login.js';
 import Signup from './_components/_signup/Signup.js';
