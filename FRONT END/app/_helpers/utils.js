@@ -187,8 +187,9 @@ function updateStatusParcelID(parcel_id, status) {
     .catch((err) => console.error(err));
 }
 
-function categoryArray() {
-  return [
+function categoryArray(filter_value) {
+  filter_value = parseInt(filter_value) || 999;
+  var arr = [
     { value: 1, label: 'Beginning Balance' },
     { value: 2, label: 'Premium' },
     { value: 3, label: 'Subsequent Tax' },
@@ -199,7 +200,15 @@ function categoryArray() {
     { value: 8, label: 'Recording Fees' },
     { value: 9, label: 'Refunds' },
     { value: 10, label: 'TDA Fees' },
+    { value: 101, label: 'Redeemable' },
+    { value: 102, label: 'Non-Redeemable' },
+    { value: 103, label: 'Refunds' },
+    { value: 104, label: 'Payments' },
+    { value: 105, label: 'Deducted' },
+    { value: 106, label: 'Total' },
   ]
+  arr = arr.filter((item) => item.value < filter_value);
+  return arr;
 }
 
 function getCategorybyValue(value) {

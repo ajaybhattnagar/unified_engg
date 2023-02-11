@@ -12,6 +12,7 @@ from sqlalchemy import create_engine
 from utils import check_user, get_user_details
 from queries.parcel_query import parcel_query
 import random, string
+from helpers.function import get_total_penalty, get_total_interest 
 
 
 parcel_blueprint = Blueprint('parcel_blueprint', __name__)
@@ -177,3 +178,31 @@ def add_parcel_fees(current_user):
     return jsonify({"message": "Parcel fees added successfully!"}), 200
     # except:
     #     return jsonify({"message": "Something went wrong!"}), 500
+
+
+@parcel_blueprint.route("/api/v1/parcel/<parcel_id>/payoff_report", methods=['GET'])
+@token_required
+def get_payoff_report(current_user, parcel_id):
+    end_date = request.args.get('endDate')
+    # print (end_date, parcel_id)
+
+    # Get the parcel details
+    mycursor = mydb.cursor()
+    mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id))
+    parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+    parcel_fees = pd.DataFrame.from_dict(parcel_fees)
+    
+    total_penalty = []
+    total_interest = []
+    for i in np.arange(0, len(parcel_fees)):
+        tp = get_total_penalty(parcel_fees.iloc[i]['BEGINNING_BALANCE'], parcel_fees.iloc[i]['AMOUNT'], 'false')
+        ti = get_total_interest(parcel_fees.iloc[i]['AMOUNT'], parcel_fees.iloc[i]['INTEREST'], parcel_fees.iloc[i]['EFFECTIVE_DATE'], end_date)
+        total_penalty.append(tp)
+        total_interest.append(ti)
+
+    parcel_fees['TOTAL_PENALTY'] = total_penalty
+    parcel_fees['TOTAL_INTEREST'] = total_interest
+
+    print (parcel_fees)
+
+    return jsonify({"message": "Payoff report generated successfully!"}), 200

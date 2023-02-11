@@ -71,7 +71,7 @@ const EditFeesModal = (props) => {
       "INTEREST": interest,
       "INTEREST_ACC_INTERVAL": intersAccInterval,
       "EFFECTIVE_DATE": utils.convertTimeStampToDateForInputBox(effStartDate),
-      "EFFECTIVE_END_DATE": utils.convertTimeStampToDateForInputBox(effEndDate)
+      "EFFECTIVE_END_DATE": 'NULL'
     }
     fetch(url, {
       method: "POST",
@@ -109,7 +109,7 @@ const EditFeesModal = (props) => {
       "INTEREST": interest,
       "INTEREST_ACC_INTERVAL": intersAccInterval,
       "EFFECTIVE_DATE": utils.convertTimeStampToDateForInputBox(effStartDate),
-      "EFFECTIVE_END_DATE": utils.convertTimeStampToDateForInputBox(effEndDate)
+      "EFFECTIVE_END_DATE": 'NULL'
     }
     fetch(url, {
       method: "POST",
@@ -153,7 +153,7 @@ const EditFeesModal = (props) => {
           {
             data ?
               <div>
-                <div className="col m-1"><DropDown placeholder={utils.getCategorybyValue(category)} list={utils.categoryArray()} isMulti={false} prepareArray={false} onSelect={(e) => { setCategory(e.value) }} /></div>
+                <div className="col m-1"><DropDown placeholder={utils.getCategorybyValue(category)} list={utils.categoryArray(99)} isMulti={false} prepareArray={false} onSelect={(e) => { setCategory(e.value) }} /></div>
                 <div className="col m-1"><Input text="Description" type="text" value={description} onChange={(e) => { setDescription(e) }} /></div>
 
                 <div className="d-flex">
@@ -165,7 +165,7 @@ const EditFeesModal = (props) => {
 
                 <div className="d-flex">
                   <div className="col col-lg-5 m-1"><Input text="Start Date" type="date" value={utils.convertTimeStampToDateForInputBox(effStartDate)} onChange={(e) => { setEffStartDate(e) }} /></div>
-                  <div className="col col-lg-5 m-1"><Input text="End Date" type="date" value={utils.convertTimeStampToDateForInputBox(effEndDate)} onChange={(e) => { setEffEndDate(e) }} /></div>
+                  {/* <div className="col col-lg-5 m-1"><Input text="End Date" type="date" value={utils.convertTimeStampToDateForInputBox(effEndDate)} onChange={(e) => { setEffEndDate(e) }} /></div> */}
                 </div>
               </div>
               :

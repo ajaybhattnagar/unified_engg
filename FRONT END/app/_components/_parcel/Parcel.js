@@ -146,7 +146,7 @@ const Parcel = () => {
                     </div>
                     {
                         parcelFees.length > 0 ?
-                            <table className='table table-sm small'>
+                            <table className='table table-sm small table-hover"'>
                                 <thead className="thead-dark">
                                     <tr>
                                         <th></th>
@@ -161,14 +161,24 @@ const Parcel = () => {
                                 <tbody>
                                     {
                                         parcelFees.map((data, index) =>
-                                            <tr key={index}>
-                                                <td> <a href="#"><FontAwesomeIcon className="" icon={faTrash} onClick={() => utils.delteFeeByID(data['ID'])} /></a></td>
-                                                <td> <a href="#"><FontAwesomeIcon className="" icon={faEdit} onClick={() => openModalFeeEdit(data)} /></a></td>
+                                            <tr key={index} className={(data['ID'] < 99) ? 'font-weight-bold table-secondary' : null}>
+                                                <td>
+                                                    {(data['ID'] > 99) ?
+                                                        <a href="#"><FontAwesomeIcon className="" icon={faTrash} onClick={() => utils.delteFeeByID(data['ID'])} /></a>
+                                                        : null
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {(data['ID'] > 99) ?
+                                                        <a href="#"><FontAwesomeIcon className="" icon={faEdit} onClick={() => openModalFeeEdit(data)} /></a>
+                                                        : null
+                                                    }
+                                                </td>
                                                 <td>{utils.getCategorybyValue(data['CATEGORY'])}</td>
                                                 <td>{utils.convertTimeStampToString(data['EFFECTIVE_DATE'])}</td>
                                                 <td>{utils.convertTimeStampToString(data['EFFECTIVE_END_DATE'])}</td>
                                                 <td>{data['INTEREST']}</td>
-                                                <td>{data['AMOUNT']}</td>
+                                                <td>${data['AMOUNT']}</td>
                                             </tr>)
 
                                     }
