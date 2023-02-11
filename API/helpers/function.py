@@ -43,6 +43,18 @@ def get_datepart(type, date):
   if (type.lower() == 'year'):
     return dt.year
 
+def get_total_days_of_interest(start_date, end_date):
+  per_diem_year = 360
+  per_diem_month = 30
+  start_date = str(start_date)
+  end_date = str(end_date)
+
+  days_interest_year = per_diem_year * (get_datepart('year', start_date) - get_datepart('year', end_date))
+  days_interest_month = per_diem_month * (get_datepart('month', start_date) - get_datepart('month', end_date))
+  days_interest_day = (get_datepart('day', start_date) - get_datepart('day', end_date))
+  total_days = days_interest_day + days_interest_month + days_interest_year
+
+  return abs(total_days)
 
 # Main total penalty function
 def get_total_penalty(bg, subs, yep):
@@ -59,7 +71,6 @@ def get_total_interest(subs, interest, start_date, end_date):
     interest = float(interest)
     start_date = str(start_date)
     end_date = str(end_date)
-    print (start_date)
     per_diem_year = 360
     per_diem_month = 30
 
@@ -70,4 +81,6 @@ def get_total_interest(subs, interest, start_date, end_date):
 
     sub_per_diem = total_days / per_diem_year
     total_interest = abs(sub_per_diem * subs * interest)
-    return (total_interest)
+    return (round(total_interest, 2))
+
+

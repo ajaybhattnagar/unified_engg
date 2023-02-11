@@ -91,6 +91,11 @@ const Parcel = () => {
         }
     }
 
+    const open_payoff_report = () => {
+        var url = window.location.origin.concat(`/parcel/payoff_report/`).concat(parcelId.current)
+        window.open(url, "PRINT", "height=1200,width=1000");
+    }
+
     const render_parcel_header = () => {
         if (parcelDetails) {
             return (
@@ -117,6 +122,9 @@ const Parcel = () => {
                                 prepareArray={false}
                                 onSelect={(e) => utils.updateStatusParcelID(parcelId.current, e.value)}
                             />
+                        </div>
+                        <div className="">
+                            <Button variant="primary" onClick={() => open_payoff_report()}>Payoff Report</Button>
                         </div>
                     </div>
 

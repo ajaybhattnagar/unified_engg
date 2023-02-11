@@ -18,4 +18,6 @@ export const appConstants = {
     DELETE_FEE_BY_ID: 'api/v1/parcel/delete_fee/',
 
     ADD_FEE_BY_UNIQUE_ID: 'api/v1/parcel/add_fee',
+
+    GET_PAYOFF_REPORT: 'api/v1/parcel/',
 };

@@ -12,7 +12,7 @@ from sqlalchemy import create_engine
 from utils import check_user, get_user_details
 from queries.parcel_query import parcel_query
 import random, string
-from helpers.function import get_total_penalty, get_total_interest 
+from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest
 
 
 parcel_blueprint = Blueprint('parcel_blueprint', __name__)
@@ -57,25 +57,34 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorator
 
+def get_parcel_details(parcel_id):
+    mycursor = mydb.cursor()
+    mycursor.execute(parcel_query['GET_PARCEL_BY_ID'].format(ID = parcel_id))
+    parcel_details = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+    parcel_details = pd.DataFrame(parcel_details)
+
+    # Change data format for selected columns
+    cols_date = ['INVESTMENT_DATE', 'ORIGINAL_LIEN_EFFECTIVE_DATE', 'PREMIUM_EFFECTIVE_DATE', 'LATEST_SALE_DATE', 'LATEST_ARMS_LENGTH_SALE_DATE', 'PRIOR_ARMS_LENGTH_SALE_DATE', 'LOAN1_DUE_DATE', 'CREATE_DATE', 'LAST_MODIFY_DATE']
+    for i in cols_date:
+        parcel_details[i] = pd.to_datetime(parcel_details[i]).dt.strftime("%d %b, %Y").astype(str)
+
+    parcel_details = parcel_details.rename(columns=column_dict)
+    mydb.commit()
+    mycursor.close()
+    return (parcel_details)
+
+
 @parcel_blueprint.route("/api/v1/parcel/<parcel_id>", methods=['GET'])
 @token_required
 def get_parcel(current_user, parcel_id):
-    # Get the parcel details
-           
+    # Get the parcel details    
     try:
-        mycursor = mydb.cursor()
-        mycursor.execute(parcel_query['GET_PARCEL_BY_ID'].format(ID = parcel_id))
-        parcel_details = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
-        parcel_details = pd.DataFrame(parcel_details)
-
-        # Change data format for selected columns
-        cols_date = ['INVESTMENT_DATE', 'ORIGINAL_LIEN_EFFECTIVE_DATE', 'PREMIUM_EFFECTIVE_DATE', 'LATEST_SALE_DATE', 'LATEST_ARMS_LENGTH_SALE_DATE', 'PRIOR_ARMS_LENGTH_SALE_DATE', 'LOAN1_DUE_DATE', 'CREATE_DATE', 'LAST_MODIFY_DATE']
-        for i in cols_date:
-            parcel_details[i] = pd.to_datetime(parcel_details[i]).dt.strftime("%d %b, %Y").astype(str)
-
-        parcel_details = parcel_details.rename(columns=column_dict)
+      
+        # Get the parcel details
+        parcel_details = get_parcel_details(parcel_id)
         parcel_details = parcel_details.to_dict(orient='records')
 
+        mycursor = mydb.cursor()
         mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID'].format(ID = parcel_id))
         parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
 
@@ -185,24 +194,87 @@ def add_parcel_fees(current_user):
 def get_payoff_report(current_user, parcel_id):
     end_date = request.args.get('endDate')
     # print (end_date, parcel_id)
-
-    # Get the parcel details
     mycursor = mydb.cursor()
-    mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id))
-    parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
-    parcel_fees = pd.DataFrame.from_dict(parcel_fees)
-    
-    total_penalty = []
-    total_interest = []
-    for i in np.arange(0, len(parcel_fees)):
-        tp = get_total_penalty(parcel_fees.iloc[i]['BEGINNING_BALANCE'], parcel_fees.iloc[i]['AMOUNT'], 'false')
-        ti = get_total_interest(parcel_fees.iloc[i]['AMOUNT'], parcel_fees.iloc[i]['INTEREST'], parcel_fees.iloc[i]['EFFECTIVE_DATE'], end_date)
-        total_penalty.append(tp)
-        total_interest.append(ti)
+    try:
+    # Get the parcel details
+        mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id))
+        parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        parcel_fees = pd.DataFrame.from_dict(parcel_fees)
+        
+        #  Get the total penalty
+        total_penalty = get_total_penalty(parcel_fees.iloc[0]['BEGINNING_BALANCE'], parcel_fees.iloc[0]['AMOUNT'], 'false')
 
-    parcel_fees['TOTAL_PENALTY'] = total_penalty
-    parcel_fees['TOTAL_INTEREST'] = total_interest
+    except:
+        return jsonify({"message": "Failed while querying data or calculating total penalty."}), 500
 
-    print (parcel_fees)
+    # Get the total interest
+    try:
+        total_interest = []
+        total_days_of_interest = []
+        for i in np.arange(0, len(parcel_fees)):
+            # tp = get_total_penalty(parcel_fees.iloc[i]['BEGINNING_BALANCE'], parcel_fees.iloc[i]['AMOUNT'], 'false')
+            if parcel_fees.iloc[i]['CATEGORY'] > 2:
+                ti = get_total_interest(parcel_fees.iloc[i]['AMOUNT'], parcel_fees.iloc[i]['INTEREST'], parcel_fees.iloc[i]['EFFECTIVE_DATE'], end_date)
+                td = get_total_days_of_interest(parcel_fees.iloc[i]['EFFECTIVE_DATE'], end_date)
+            else :
+                ti = 0
+                td = 0
+            total_interest.append(ti)
+            total_days_of_interest.append(td)
 
-    return jsonify({"message": "Payoff report generated successfully!"}), 200
+        parcel_fees['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
+        parcel_fees['TOTAL_INTEREST'] = total_interest
+        parcel_fees['TOTAL_AMOUNT'] = 0
+        parcel_fees['PAYMENTS_RECIEVED'] = 0
+        parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 'TOTAL_INTEREST', 'PAYMENTS_RECIEVED', 'TOTAL_AMOUNT']]
+        # Change the data type of the columns
+        parcel_fees[["AMOUNT", "INTEREST" ]] = parcel_fees[["AMOUNT", "INTEREST"]].apply(pd.to_numeric)
+        parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'],2)
+        
+        summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), round(parcel_fees['PAYMENTS_RECIEVED'].sum(),2), round(parcel_fees['TOTAL_AMOUNT'].sum(),2)]
+        summary_row = pd.DataFrame([summary_row], columns = parcel_fees.columns)
+        parcel_fees = pd.concat([parcel_fees, summary_row])
+
+
+        principal = parcel_fees[parcel_fees['CATEGORY'] == 1]['AMOUNT'].sum()
+        overbid = parcel_fees[parcel_fees['CATEGORY'] == 2]['AMOUNT'].sum()
+        penalty = total_penalty
+        sub_taxes = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['AMOUNT'].sum()
+        sub_taxes_interest = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['TOTAL_INTEREST'].sum()
+        total = round(principal + overbid + penalty + sub_taxes + sub_taxes_interest,2)
+        payment_recieved = round(parcel_fees[parcel_fees['CATEGORY'] == 'Total']['PAYMENTS_RECIEVED'].sum(),2)
+        balance = round(total - payment_recieved,2)
+
+        summary_dict = {
+                'PRINCIPAL': str(principal),
+                'OVERBID': str(overbid),
+                'PENALTY': str(penalty),
+                'SUB_TAXES': str(sub_taxes),
+                'SUB_TAXES_INTEREST': str(sub_taxes_interest),
+                'TOTAL': str(total),
+                'PAYMENT_RECIEVED': str(payment_recieved),
+                'BALANCE': str(balance)
+            }
+
+        mydb.commit()
+        mycursor.close()
+    except:
+        return jsonify({"message": "Failed while calculating total interest."}), 500
+
+    try:
+        # Get the parcel details
+        parcel_details = get_parcel_details(parcel_id)
+        response_dict = {
+                "parcel_details": parcel_details.to_dict(orient='records'),
+                "parcel_fees": parcel_fees.to_dict(orient='records'),
+                "parcel_summary": [summary_dict]
+            }
+        response = Response(
+                    response=simplejson.dumps(response_dict, ignore_nan=True, default=datetime.date.isoformat),
+                    mimetype='application/json'
+        )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+    except:
+        return jsonify({"message": "Failed while generating report data."}), 500
+   

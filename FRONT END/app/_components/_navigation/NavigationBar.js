@@ -36,11 +36,12 @@ class NavigationBar extends Component {
                     <Nav.Link href="/signup"><strong></strong></Nav.Link>
                     <Nav.Link href="/"><strong></strong></Nav.Link>
                     <Nav.Link href="/parcel"><strong></strong></Nav.Link>
+                    <Nav.Link href="/parcel/payoff_report"><strong></strong></Nav.Link>
                 </Nav>
                 {
                     localStorage.getItem('token') ?
                         <form className="form-inline my-2 my-lg-0">
-                            <button className="btn btn-outline-primary my-2 my-sm-0" type="submit" onClick={() => this.handleSignOut()}>Sign out</button>
+                            <button className="btn btn-outline-primary" type="submit" onClick={() => this.handleSignOut()}>Sign out</button>
                         </form>
                         : null
 

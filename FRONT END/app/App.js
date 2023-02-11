@@ -7,7 +7,7 @@ import Signup from './_components/_signup/Signup.js';
 import Home from './_components/_home/Home';
 import Parcel from './_components/_parcel/Parcel';
 import UploadParcels from './_components/_uploadParcels/UploadParcels';
-// import 
+import PayoffReport from './_components/_payoffReport/PayoffReport';
 import { BrowserRouter as Router, Routes , Route } from 'react-router-dom';
 
 
@@ -21,6 +21,7 @@ function App() {
 				<Route path='/home' element={<Home />} />
 				<Route path='/uploadparcels' element={<UploadParcels />} />
 				<Route path='/parcel/:parcel_id?' element={<Parcel />} />
+				<Route path='/parcel/payoff_report/:parcel_id?' element={<PayoffReport />} />
 			</Routes>
 		</Router>
 	);

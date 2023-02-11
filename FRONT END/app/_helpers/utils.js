@@ -51,8 +51,10 @@ function formatAMPM(date) {
 }
 
 function toCurrency(amount) {
-  if (amount != null && amount > 0)
-    return '$' + (amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  if (amount != null && amount > 0) {
+    amount = parseFloat(amount).toFixed(2)
+    return '$' + (amount).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  }
   else
     null
 }
