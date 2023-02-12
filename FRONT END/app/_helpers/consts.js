@@ -20,4 +20,9 @@ export const appConstants = {
     ADD_FEE_BY_UNIQUE_ID: 'api/v1/parcel/add_fee',
 
     GET_PAYOFF_REPORT: 'api/v1/parcel/',
+
+    ADD_NEW_NOTE: 'api/v1/notes/add/',
+    DELETE_NOTE_BY_ID: 'api/v1/notes/delete/',
+
+    REDEEM_OR_PARTIAL_REDEEM: '/api/v1/parcel/redeem/',
 };

@@ -8,9 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import NavigationBar from '../_navigation/NavigationBar';
 import './Parcel.css';
-import { columns } from '../../_columns/parcelFeesColumns';
 import DropDown from "../_ui/dropDown";
+
 import EditFeesModal from "../_ui/editFeesModal";
+import EditNotesModal from "../_ui/editNotesModal";
+import RedeemModal from "../_ui/redeemModal";
 
 
 const Parcel = () => {
@@ -20,9 +22,16 @@ const Parcel = () => {
     const [data, setData] = useState(null);
     const [parcelDetails, setParcelDetails] = useState(null);
     const [parcelFees, setParcelFees] = useState(null);
-    const [showEditFeeModal, setEditFeeModal] = useState(false);
+    const [parceNotes, setParcelNotes] = useState(null);
     const [selectedFee, setSelectedFee] = useState(null);
+    const [redeemLevel, setRedeemLevel] = useState(null);
+
+    // Modal States 
+    const [showEditFeeModal, setEditFeeModal] = useState(false);
     const [newFeeModal, setNewFeeModal] = useState(false);
+    const [showNewNotesModal, setNewNotesModal] = useState(false);
+    const [showRedeemModal, setRedeemModal] = useState(0);
+
 
     useEffect(() => {
         if (!localStorage.getItem("token")) {
@@ -56,6 +65,7 @@ const Parcel = () => {
                     setData(data);
                     setParcelDetails(data.parcel_details[0]);
                     setParcelFees(data.parcel_fees);
+                    setParcelNotes(data.parcel_notes);
                 } else {
                     alert(data.message);
                 }
@@ -99,36 +109,43 @@ const Parcel = () => {
     const render_parcel_header = () => {
         if (parcelDetails) {
             return (
-                <div className="mt-3 d-flex justify-content-between">
+                <div className="">
 
-                    <div className='ml-3 d-flex'>
-                        <div className='mr-3'>
-                            <img alt="Parcel" className='parcel-image' width={400} height={400} />
+                    <div className="mt-3 d-flex justify-content-between" >
+                        <div className='ml-3 d-flex'>
+                            <div className='mr-3'>
+                                <img alt="Parcel" className='parcel-image' width={400} height={400} />
+                            </div>
+                            <div className="col">
+                                <span className='ml-3 row'>{parcelDetails['Location Full Street Address']},</span>
+                                <span className='ml-3 row'>{parcelDetails['County']},</span>
+                                <span className='ml-3 row'>{parcelDetails['Municipality']},</span>
+                                <span className='ml-3 row'>{parcelDetails['State']}</span>
+                            </div>
                         </div>
-                        <div className="col">
-                            <span className='ml-3 row'>{parcelDetails['Location Full Street Address']},</span>
-                            <span className='ml-3 row'>{parcelDetails['County']},</span>
-                            <span className='ml-3 row'>{parcelDetails['Municipality']},</span>
-                            <span className='ml-3 row'>{parcelDetails['State']}</span>
+
+                        {/* Status goes here */}
+                        <div className='col-lg-2 offset-md-3'>
+                            <div className="">
+                                <DropDown value={1} placeholder={utils.getStatusbyValue(parcelDetails['Status'])}
+                                    list={utils.statusArray()}
+                                    isMulti={false}
+                                    prepareArray={false}
+                                    onSelect={(e) => utils.updateStatusParcelID(parcelId.current, e.value)}
+                                />
+                            </div>
+
                         </div>
                     </div>
 
-                    {/* Status goes here */}
-                    <div className='col-lg-2 offset-md-3'>
-                        <div className=" ">
-                            <DropDown value={1} placeholder={utils.getStatusbyValue(parcelDetails['Status'])}
-                                list={utils.statusArray()}
-                                isMulti={false}
-                                prepareArray={false}
-                                onSelect={(e) => utils.updateStatusParcelID(parcelId.current, e.value)}
-                            />
-                        </div>
-                        <div className="">
-                            <Button variant="primary" onClick={() => open_payoff_report()}>Payoff Report</Button>
-                        </div>
+                    <div className="d-flex justify-content-end mr-3">
+                        <button className="btn btn-outline-success btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true}  onClick={() => openRedeemModal(10)}>Redeem</button>
+                        <button className="btn btn-outline-secondary btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true}  onClick={() => openRedeemModal(9)}>Partial Redemption</button>
+                        <button className="btn btn-outline-primary btn-sm" onClick={() => open_payoff_report()}>Payoff Report</button>
                     </div>
-
                 </div >
+
+
             )
         }
     }
@@ -139,17 +156,27 @@ const Parcel = () => {
         setEditFeeModal(true)
     }
 
+    const openModalNotesNew = (data) => {
+        setNewNotesModal(true)
+    }
+
     const openModalFeeNew = (data) => {
         setNewFeeModal(true)
         setSelectedFee(data);
         setEditFeeModal(true)
     }
 
+    const openRedeemModal = (redeem_level) => {
+        setRedeemLevel(redeem_level)
+        setRedeemModal(true)
+    }
+
     const render_parcel_fees = () => {
         if (parcelFees) {
             return (
-                <div className="mr-4 ">
-                    <div className="d-flex justify-content-end">
+                <div className="mr-4 container">
+                    <div className="d-flex justify-content-between">
+                        <span>Fees</span>
                         <a href="#" onClick={() => openModalFeeNew()} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
                     </div>
                     {
@@ -186,13 +213,55 @@ const Parcel = () => {
                                                 <td>{utils.convertTimeStampToString(data['EFFECTIVE_DATE'])}</td>
                                                 <td>{utils.convertTimeStampToString(data['EFFECTIVE_END_DATE'])}</td>
                                                 <td>{data['INTEREST']}</td>
-                                                <td>${data['AMOUNT']}</td>
+                                                <td>{utils.toCurrency(data['AMOUNT'])}</td>
                                             </tr>)
 
                                     }
                                 </tbody>
                             </table>
                             : null
+                    }
+                </div>
+            )
+        }
+    }
+
+    const render_parcel_notes = () => {
+        if (parceNotes) {
+            return (
+                <div className="mr-4 container">
+                    <div className="d-flex justify-content-between">
+                        <span>Notes</span>
+                        <a href="#" onClick={() => openModalNotesNew()} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
+                    </div>
+                    {
+                        parceNotes.length > 0 ?
+                            <table className='table table-sm small table-hover'>
+                                <thead className="thead-dark">
+                                    <tr>
+                                        <th></th>
+                                        <th>Date</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        parceNotes.map((data, index) =>
+                                            <tr key={index} >
+                                                <td>
+                                                    {
+                                                        <a href="#"><FontAwesomeIcon className="" icon={faTrash} onClick={() => utils.delteNoteByID(data['ID'])} /></a>
+                                                    }
+                                                </td>
+                                                <td>{data['DATE']}</td>
+                                                <td>{data['NOTES']}</td>
+                                            </tr>)
+
+                                    }
+                                </tbody>
+                            </table>
+                            : null
+
                     }
                 </div>
             )
@@ -212,25 +281,22 @@ const Parcel = () => {
                     {/* Parcels details */}
                     <div className="row ml-3">
                         {
-                            parcelDetails ?
-                                render_parcel_details()
-                                : null
+                            render_parcel_details()
                         }
                     </div>
 
-                    {/* Parcels fee */}
-                    <div className="row ml-3">
-                        {
-                            parcelFees ?
-                                render_parcel_fees()
-                                : null
-                        }
+                    {/* Parcels fees and notes */}
+                    <div className="ml-3">
+                        {render_parcel_fees()}
+                        <hr />
+                        {render_parcel_notes()}
                     </div>
 
                 </div>
 
                 <EditFeesModal show={showEditFeeModal} data={selectedFee} newFee={newFeeModal} close={() => setEditFeeModal(false)} />
-
+                <EditNotesModal show={showNewNotesModal}  close={() => setNewNotesModal(false)} />
+                <RedeemModal show={showRedeemModal} level={redeemLevel} close={() => setRedeemModal(false)} />
             </div>
         );
     }

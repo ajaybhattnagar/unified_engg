@@ -35,6 +35,7 @@ const DropDown = (props) => {
             isMulti={isMulti}
             onChange={(e) => props.onSelect(e)}
             placeholder={placeholder}
+            isOptionDisabled={(option) => option.disabled}
           />
         </div>
       </div>

@@ -15,7 +15,8 @@ export const utils = {
   getCategorybyValue,
   categoryArray,
   convertTimeStampToDateForInputBox,
-  delteFeeByID
+  delteFeeByID,
+  delteNoteByID
 
 }
 
@@ -85,13 +86,13 @@ function statusArray() {
     { value: 1, label: 'Active' },
     { value: 2, label: 'Pending' },
     { value: 3, label: 'Pending Redemption' },
-    { value: 4, label: 'Partial Redemption' },
-    { value: 5, label: 'Redeemed' },
-    { value: 6, label: 'Refunded' },
-    { value: 7, label: 'Foreclosure' },
-    { value: 8, label: 'Bankruptcy' },
-    { value: 9, label: 'Write-off' },
-    { value: 10, label: 'REO' },
+    { value: 4, label: 'Refunded' },
+    { value: 5, label: 'Foreclosure' },
+    { value: 6, label: 'Bankruptcy' },
+    { value: 7, label: 'Write-off' },
+    { value: 8, label: 'REO' },
+    { value: 9, label: 'Partial Redemption', disabled: true },
+    { value: 10, label: 'Redeemed', disabled: true },
 
   ]
 }
@@ -157,36 +158,41 @@ function getDistinctFilters() {
 function updateStatusParcelID(parcel_id, status) {
   var response_status = 0;
   var url = appConstants.BASE_URL.concat(appConstants.UPDATE_STATUS_PARCEL_ID).concat(parcel_id).concat('/').concat(status);
-  return fetch(url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      'x-access-token': localStorage.getItem('token')
-    },
-    body: JSON.stringify({
-      PARCEL_ID: parcel_id,
-      STATUS: status
+  if (confirm('Are you sure you want to update the status?')) {
+    return fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        'x-access-token': localStorage.getItem('token')
+      },
+      body: JSON.stringify({
+        PARCEL_ID: parcel_id,
+        STATUS: status
+      })
     })
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        response_status = 200;
-        return res.json();
-      }
-      else {
-        response_status = 400;
-        return res.json();
-      }
-    })
-    .then((data) => {
-      if (response_status === 200) {
-        alert(data.message);
-      } else {
-        alert(data.message);
-        return null;
-      }
-    })
-    .catch((err) => console.error(err));
+      .then((res) => {
+        if (res.status === 200) {
+          response_status = 200;
+          return res.json();
+        }
+        else {
+          response_status = 400;
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (response_status === 200) {
+          alert(data.message);
+        } else {
+          alert(data.message);
+          return null;
+        }
+      })
+      .catch((err) => console.error(err));
+  } else {
+    // Do nothing!
+    console.log('Cancelled by user!');
+  }
 }
 
 function categoryArray(filter_value) {
@@ -235,7 +241,6 @@ function convertTimeStampToDateForInputBox(timeStamp) {
 
 }
 
-
 function delteFeeByID(id) {
   var response_status = 0;
   var url = appConstants.BASE_URL.concat(appConstants.DELETE_FEE_BY_ID).concat(id);
@@ -259,6 +264,46 @@ function delteFeeByID(id) {
       })
       .then((data) => {
         if (response_status === 200) {
+          window.location.reload();
+          alert(data.message);
+        } else {
+          alert(data.message);
+          return null;
+        }
+      })
+      .catch((err) => console.error(err));
+  } else {
+    // Do nothing!
+    console.log('Cancelled by user!');
+  }
+
+
+}
+
+function delteNoteByID(id) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.DELETE_NOTE_BY_ID).concat(id);
+  if (confirm('Are you sure you want to delete the fee?')) {
+    return fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        'x-access-token': localStorage.getItem('token')
+      },
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          response_status = 200;
+          return res.json();
+        }
+        else {
+          response_status = 400;
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (response_status === 200) {
+          window.location.reload();
           alert(data.message);
         } else {
           alert(data.message);

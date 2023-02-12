@@ -164,7 +164,7 @@ const EditFeesModal = (props) => {
                 <div className="col col-lg-5 m-1"><Input text="Interest Interval" type="text" value={intersAccInterval} onChange={(e) => { setIntersAccInterval(e) }} /></div>
 
                 <div className="d-flex">
-                  <div className="col col-lg-5 m-1"><Input text="Start Date" type="date" value={utils.convertTimeStampToDateForInputBox(effStartDate)} onChange={(e) => { setEffStartDate(e) }} /></div>
+                  <div className="col col-lg-5 m-1"><Input text="Start Date" type="date"  onChange={(e) => { setEffStartDate(e) }} /></div>
                   {/* <div className="col col-lg-5 m-1"><Input text="End Date" type="date" value={utils.convertTimeStampToDateForInputBox(effEndDate)} onChange={(e) => { setEffEndDate(e) }} /></div> */}
                 </div>
               </div>
@@ -177,11 +177,11 @@ const EditFeesModal = (props) => {
         <Modal.Footer>
           {
             newFee ?
-              <Button onClick={() => add_fee()}>Add</Button>
+              <button className="btn btn-outline-success mr-2" variant="success" onClick={() => add_fee()}>Add</button>
               :
-              <Button onClick={() => update_fee()}>Update</Button>
+              <button className="btn btn-outline-success mr-2" onClick={() => update_fee()}>Update</button>
           }
-          <Button onClick={props.close}>Cancel</Button>
+          <button className="btn btn-outline-primary mr-2" onClick={props.close}>Cancel</button>
         </Modal.Footer>
       </Modal>
     </>

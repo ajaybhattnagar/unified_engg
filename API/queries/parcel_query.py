@@ -55,9 +55,33 @@ parcel_query = {
 "GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT": """
                     SELECT ID, UNIQUE_ID, CATEGORY, DESCRIPTION, AMOUNT, INTEREST, INTEREST_ACC_INTERVAL, CONVERT(EFFECTIVE_DATE, DATE) 'EFFECTIVE_DATE', CONVERT(EFFECTIVE_END_DATE, DATE) 'EFFECTIVE_END_DATE', 
                     (SELECT AMOUNT FROM FEES WHERE CATEGORY = 1 AND IS_ACTIVE = '1' AND UNIQUE_ID = '{ID}' ) 'BEGINNING_BALANCE',
-                    (SELECT AMOUNT FROM FEES WHERE CATEGORY = 2 AND IS_ACTIVE = '1' AND UNIQUE_ID = '{ID}') 'PREMIUM'
+                    (SELECT AMOUNT FROM FEES WHERE CATEGORY = 2 AND IS_ACTIVE = '1' AND UNIQUE_ID = '{ID}') 'PREMIUM',
+                    (SELECT CHECK_AMOUNT FROM REDEEM WHERE UNIQUE_ID = '{ID}') 'PAYMENTS_RECIEVED'
                     FROM FEES 
                     WHERE FEES.UNIQUE_ID = '{ID}' AND FEES.IS_ACTIVE = '1'""",
 
+
+"REDEEM_PARTIAL_REDEEM_PARCEL": """INSERT INTO REDEEM
+                                    (
+                                    `UNIQUE_ID`,
+                                    `DATE_REDEEMED`,
+                                    `CHECK_AMOUNT`,
+                                    `CHECK_NUMBER`,
+                                    `CHECK_RECEIVED`,
+                                    `SOURCE`,
+                                    `METHOD`,
+                                    `DESCRIPTION`)
+                                    VALUES
+                                    (
+                                    '{UNIQUE_ID}',
+                                    '{DATE_REDEEMED}',
+                                    '{CHECK_AMOUNT}',
+                                    '{CHECK_NUMBER}',
+                                    '{CHECK_RECEIVED}',
+                                    '{SOURCE}',
+                                    '{METHOD}',
+                                    '{DESCRIPTION}');""",
+
+"UPDATE_FEES_DATE_BY_ID_AFTER_REDEEM": """UPDATE FEES SET EFFECTIVE_END_DATE = '{DATE_REDEEMED}' WHERE UNIQUE_ID = '{ID}' """,
 
 }
