@@ -91,7 +91,12 @@ def get_parcel(current_user, parcel_id):
 
         # Get parcel notes
         mycursor.execute(notes_query['GET_ALL_NOTES_BY_ID'].format(UNIQUE_ID = parcel_id))
-        parcel_notes = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]        
+        parcel_notes = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]     
+
+        # Get parcel payments
+        mycursor.execute(parcel_query['GET_PAYMENT_DETAILS_BY_ID'].format(ID = parcel_id))
+        parcel_payments = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+   
 
         mydb.commit()
         mycursor.close()
@@ -99,7 +104,8 @@ def get_parcel(current_user, parcel_id):
         response_dict = {
             "parcel_details": parcel_details,
             "parcel_fees": parcel_fees,
-            "parcel_notes": parcel_notes
+            "parcel_notes": parcel_notes,
+            "parcel_payments": parcel_payments
         }
         response = Response(
                     response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
@@ -120,6 +126,10 @@ def update_parcel_status(current_user, parcel_id, status):
     try:
         mycursor = mydb.cursor()
         mycursor.execute(parcel_query['UPDATE_STATUS_BY_ID'].format(ID = parcel_id, STATUS = status))
+
+        # Update effective end date for the parcel fees. Do this to make sure status changes after redeemed
+        mycursor.execute(parcel_query['UPDATE_FEES_DATE_BY_ID'].format(ID = parcel_id, EFFECTIVE_END_DATE = 'null'))
+
         mydb.commit()
         mycursor.close()
         return jsonify({"message": "Parcel status updated successfully!"}), 200
@@ -201,12 +211,18 @@ def get_payoff_report(current_user, parcel_id):
     end_date = request.args.get('endDate')
     # print (end_date, parcel_id)
     mycursor = mydb.cursor()
+
+  
     try:
     # Get the parcel details
         mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id))
         parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         parcel_fees = pd.DataFrame.from_dict(parcel_fees)
-        
+
+        # Get all payments
+        mycursor.execute(parcel_query['GET_PAYMENTS_SUM_BY_ID'].format(ID = parcel_id))
+        payments = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        payments = payments[0]['PAYMENTS']
         #  Get the total penalty
         total_penalty = get_total_penalty(parcel_fees.iloc[0]['BEGINNING_BALANCE'], parcel_fees.iloc[0]['AMOUNT'], 'false')
 
@@ -230,15 +246,16 @@ def get_payoff_report(current_user, parcel_id):
     parcel_fees['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
     parcel_fees['TOTAL_INTEREST'] = total_interest
     parcel_fees['TOTAL_AMOUNT'] = 0
+    parcel_fees['PAYMENTS_RECIEVED'] = 0
     parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 'TOTAL_INTEREST', 'PAYMENTS_RECIEVED', 'TOTAL_AMOUNT']]
     # Change the data type of the columns
     parcel_fees[["AMOUNT", "INTEREST" ]] = parcel_fees[["AMOUNT", "INTEREST"]].apply(pd.to_numeric)
     parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'],2)
     
-    summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), '', round(parcel_fees['TOTAL_AMOUNT'].sum(),2)]
+    summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
+                    payments, round(parcel_fees['TOTAL_AMOUNT'].sum(),2)]
     summary_row = pd.DataFrame([summary_row], columns = parcel_fees.columns)
     parcel_fees = pd.concat([parcel_fees, summary_row])
-
     principal = parcel_fees[parcel_fees['CATEGORY'] == 1]['AMOUNT'].sum()
     overbid = parcel_fees[parcel_fees['CATEGORY'] == 2]['AMOUNT'].sum()
     penalty = total_penalty
@@ -246,7 +263,7 @@ def get_payoff_report(current_user, parcel_id):
     sub_taxes_interest = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['TOTAL_INTEREST'].sum()
     total = round(principal + overbid + penalty + sub_taxes + sub_taxes_interest,2)
     # Calculate the payment recieved work around
-    payment_recieved = parcel_fees[parcel_fees['CATEGORY'] == 1]['PAYMENTS_RECIEVED'].sum()
+    payment_recieved = payments
     balance = round(float(total) - float(payment_recieved),2)
 
     summary_dict = {
@@ -283,7 +300,7 @@ def get_payoff_report(current_user, parcel_id):
         return jsonify({"message": "Failed while generating report data."}), 500
    
 
-# Redeem or Partial Redeem the parcel
+# Redeem or Partial Redeem the parcel or add payment
 @parcel_blueprint.route("/api/v1/parcel/redeem/<parcel_id>", methods=['POST'])
 @token_required
 def redeem_parcel(current_user, parcel_id):
@@ -292,7 +309,7 @@ def redeem_parcel(current_user, parcel_id):
         if content['LEVEL'] == '':
             return jsonify({"message": "Level is required"}), 500
         if content['DATE_REDEEMED'] == '':
-            return jsonify({"message": "Date is required"}), 500
+            content['DATE_REDEEMED'] = 'NULL'
         if content['CHECK_RECEIVED'] == '':
             return jsonify({"message": "Date is required"}), 500
         if content['CHECK_AMOUNT'] == '':
@@ -325,11 +342,31 @@ def redeem_parcel(current_user, parcel_id):
         mycursor.execute(parcel_query['UPDATE_STATUS_BY_ID'].format(ID = parcel_id, STATUS = content['LEVEL']))
 
         # Update end date for fees
-        mycursor.execute(parcel_query['UPDATE_FEES_DATE_BY_ID_AFTER_REDEEM'].format(ID = parcel_id, DATE_REDEEMED = content['DATE_REDEEMED']))
+        mycursor.execute(parcel_query['UPDATE_FEES_DATE_BY_ID'].format(ID = parcel_id, EFFECTIVE_END_DATE = content['DATE_REDEEMED']))
 
         mydb.commit()
         mycursor.close()
-        return jsonify({"message": "Parcel redeemed successfully!"}), 200
+        if content['LEVEL'] > 8:
+            return jsonify({"message": "Parcel redeemed successfully!"}), 200
+        else:
+            return jsonify({"message": "Payment added successfully!"}), 200
 
     except:
         return jsonify({"message": "Failed while redeeming the parcel."}), 500
+
+# Delete payment for parcel
+@parcel_blueprint.route("/api/v1/parcel/delete_payment/<payment_id>", methods=['DELETE'])
+@token_required
+def delete_payment(current_user, payment_id):
+    try:
+        mycursor = mydb.cursor()
+        # Delete payment
+        mycursor.execute(parcel_query['DELETE_PAYMENT_BY_ID'].format(ID = payment_id))
+        mydb.commit()
+        mycursor.close()
+        return jsonify({"message": "Payment deleted successfully!"}), 200
+    except:
+        return jsonify({"message": "Failed while deleting the payment."}), 500
+
+
+

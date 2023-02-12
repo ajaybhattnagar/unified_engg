@@ -25,6 +25,7 @@ const Parcel = () => {
     const [parceNotes, setParcelNotes] = useState(null);
     const [selectedFee, setSelectedFee] = useState(null);
     const [redeemLevel, setRedeemLevel] = useState(null);
+    const [parcelPayments, setParcelPayments] = useState(null);
 
     // Modal States 
     const [showEditFeeModal, setEditFeeModal] = useState(false);
@@ -66,6 +67,7 @@ const Parcel = () => {
                     setParcelDetails(data.parcel_details[0]);
                     setParcelFees(data.parcel_fees);
                     setParcelNotes(data.parcel_notes);
+                    setParcelPayments(data.parcel_payments);
                 } else {
                     alert(data.message);
                 }
@@ -139,8 +141,8 @@ const Parcel = () => {
                     </div>
 
                     <div className="d-flex justify-content-end mr-3">
-                        <button className="btn btn-outline-success btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true}  onClick={() => openRedeemModal(10)}>Redeem</button>
-                        <button className="btn btn-outline-secondary btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true}  onClick={() => openRedeemModal(9)}>Partial Redemption</button>
+                        <button className="btn btn-outline-success btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true} onClick={() => openRedeemModal(10)}>Redeem</button>
+                        <button className="btn btn-outline-secondary btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true} onClick={() => openRedeemModal(9)}>Partial Redemption</button>
                         <button className="btn btn-outline-primary btn-sm" onClick={() => open_payoff_report()}>Payoff Report</button>
                     </div>
                 </div >
@@ -268,6 +270,50 @@ const Parcel = () => {
         }
     }
 
+    const render_parcel_payments = () => {
+        if (parcelPayments) {
+            return (
+                <div className="mr-4 container">
+                    <div className="d-flex justify-content-between">
+                        <span>Payments</span>
+                        <a href="#" onClick={() => openRedeemModal(parcelDetails['Status'])} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
+                    </div>
+                    {
+                        parcelPayments.length > 0 ?
+                            <table className='table table-sm small table-hover"'>
+                                <thead className="thead-dark">
+                                    <tr>
+                                        <th></th>
+                                        <th>Effective Date</th>
+                                        <th>Check Received</th>
+                                        <th>Check Number</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        parcelPayments.map((data, index) =>
+                                            <tr key={index} className=''>
+                                                <td>
+                                                    <a href="#"><FontAwesomeIcon className="" icon={faTrash} onClick={() => utils.deltePaymentByID(data['ID'])} /></a>
+                                                </td>
+                                                <td>{utils.convertTimeStampToString(data['DATE_REDEEMED'])}</td>
+                                                <td>{utils.convertTimeStampToString(data['CHECK_RECEIVED'])}</td>
+                                                <td>{data['CHECK_NUMBER']}</td>
+                                                <td>{utils.toCurrency(data['CHECK_AMOUNT'])}</td>
+                                            </tr>)
+
+                                    }
+                                </tbody>
+                            </table>
+                            : null
+                    }
+                </div>
+            )
+        }
+    }
+
+
     const render = () => {
         return (
             <div>
@@ -287,6 +333,8 @@ const Parcel = () => {
 
                     {/* Parcels fees and notes */}
                     <div className="ml-3">
+                        {render_parcel_payments()}
+                        <hr />
                         {render_parcel_fees()}
                         <hr />
                         {render_parcel_notes()}
@@ -295,7 +343,7 @@ const Parcel = () => {
                 </div>
 
                 <EditFeesModal show={showEditFeeModal} data={selectedFee} newFee={newFeeModal} close={() => setEditFeeModal(false)} />
-                <EditNotesModal show={showNewNotesModal}  close={() => setNewNotesModal(false)} />
+                <EditNotesModal show={showNewNotesModal} close={() => setNewNotesModal(false)} />
                 <RedeemModal show={showRedeemModal} level={redeemLevel} close={() => setRedeemModal(false)} />
             </div>
         );

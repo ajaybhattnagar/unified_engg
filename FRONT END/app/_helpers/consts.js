@@ -24,5 +24,6 @@ export const appConstants = {
     ADD_NEW_NOTE: 'api/v1/notes/add/',
     DELETE_NOTE_BY_ID: 'api/v1/notes/delete/',
 
-    REDEEM_OR_PARTIAL_REDEEM: '/api/v1/parcel/redeem/',
+    REDEEM_OR_PARTIAL_REDEEM_OR_ADD_PAYMENT: '/api/v1/parcel/redeem/',
+    DELETE_PAYMENT_BY_ID: 'api/v1/parcel/delete_payment/',
 };

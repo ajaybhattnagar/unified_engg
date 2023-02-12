@@ -24,13 +24,12 @@ const RedeemModal = (props) => {
     setLevel(props.level);
   }, [props.level]);
 
-
-
   const add_notes = () => {
-    var url = appConstants.BASE_URL.concat(appConstants.REDEEM_OR_PARTIAL_REDEEM).concat(parcelId.current);
+    var url = appConstants.BASE_URL.concat(appConstants.REDEEM_OR_PARTIAL_REDEEM_OR_ADD_PAYMENT).concat(parcelId.current);
+    var date_redeemed = parseInt(level) > parseInt(8) ? dateRedeemed : null;
     var body = {
       "LEVEL": level,
-      "DATE_REDEEMED": dateRedeemed,
+      "DATE_REDEEMED": date_redeemed,
       "CHECK_AMOUNT": checkAmount,
       "CHECK_NUMBER": checkNumber,
       "CHECK_RECEIVED": checkReceived,
@@ -79,7 +78,10 @@ const RedeemModal = (props) => {
         <Modal.Body>
           {
             <div className="container">
-              <div className="col m-1"><Input text="Date Redeemed" type="date" value={dateRedeemed} onChange={(e) => { setDateRedeemed(e) }} /></div>
+              {
+                parseInt(level) > parseInt(8) ? <div className="col m-1"><Input text="Date Redeemed" type="date" value={dateRedeemed} onChange={(e) => { setDateRedeemed(e) }} /></div> : null
+              }
+              {/* <div className="col m-1"><Input text="Date Redeemed" type="date" value={dateRedeemed} onChange={(e) => { setDateRedeemed(e) }} /></div> */}
               <div className="d-flex justify-content-between">
                 <div className="col m-1"><Input text="Check Amount" type="number" value={checkAmount} onChange={(e) => { setCheckAmount(e) }} /></div>
                 <div className="col m-1"><Input text="Check Number" type="text" value={checkNumber} onChange={(e) => { setCheckNumber(e) }} /></div>
@@ -95,12 +97,11 @@ const RedeemModal = (props) => {
 
         </Modal.Body>
         <Modal.Footer>
-          {
-            parseInt(level) === parseInt(9) ?
-              <button className="btn btn-outline-success mr-2" onClick={() => add_notes()}>Partial Redeem</button>
-              :
-              <button className="btn btn-outline-success mr-2" onClick={() => add_notes()}>Redeem</button>
-          }
+          <button className="btn btn-outline-success mr-2" onClick={() => add_notes()}>
+            {
+              parseInt(level) === parseInt(9) ? "Partial Redeem" : parseInt(level) === parseInt(10) ? "Redeem" : "Add payment"
+            }
+          </button>
           <button className="btn btn-outline-primary mr-2" onClick={props.close}>Cancel</button>
         </Modal.Footer>
       </Modal>
