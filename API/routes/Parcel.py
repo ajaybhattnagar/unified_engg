@@ -215,7 +215,7 @@ def get_payoff_report(current_user, parcel_id):
   
     try:
     # Get the parcel details
-        mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id))
+        mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id, END_DATE = end_date))
         parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         parcel_fees = pd.DataFrame.from_dict(parcel_fees)
 
@@ -230,57 +230,57 @@ def get_payoff_report(current_user, parcel_id):
         return jsonify({"message": "Failed while querying data or calculating total penalty."}), 500
 
     # Get the total interest
-    # try:
-    total_interest = []
-    total_days_of_interest = []
-    for i in np.arange(0, len(parcel_fees)):
-        if parcel_fees.iloc[i]['CATEGORY'] > 2:
-            ti = get_total_interest(parcel_fees.iloc[i]['AMOUNT'], parcel_fees.iloc[i]['INTEREST'], parcel_fees.iloc[i]['EFFECTIVE_DATE'], end_date)
-            td = get_total_days_of_interest(parcel_fees.iloc[i]['EFFECTIVE_DATE'], end_date)
-        else :
-            ti = 0
-            td = 0
-        total_interest.append(ti)
-        total_days_of_interest.append(td)
+    try:
+        total_interest = []
+        total_days_of_interest = []
+        for i in np.arange(0, len(parcel_fees)):
+            if parcel_fees.iloc[i]['CATEGORY'] > 2:
+                ti = get_total_interest(parcel_fees.iloc[i]['AMOUNT'], parcel_fees.iloc[i]['INTEREST'], parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
+                td = get_total_days_of_interest(parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
+            else :
+                ti = 0
+                td = 0
+            total_interest.append(ti)
+            total_days_of_interest.append(td)
 
-    parcel_fees['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
-    parcel_fees['TOTAL_INTEREST'] = total_interest
-    parcel_fees['TOTAL_AMOUNT'] = 0
-    parcel_fees['PAYMENTS_RECIEVED'] = 0
-    parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 'TOTAL_INTEREST', 'PAYMENTS_RECIEVED', 'TOTAL_AMOUNT']]
-    # Change the data type of the columns
-    parcel_fees[["AMOUNT", "INTEREST" ]] = parcel_fees[["AMOUNT", "INTEREST"]].apply(pd.to_numeric)
-    parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'],2)
-    
-    summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
-                    payments, round(parcel_fees['TOTAL_AMOUNT'].sum(),2)]
-    summary_row = pd.DataFrame([summary_row], columns = parcel_fees.columns)
-    parcel_fees = pd.concat([parcel_fees, summary_row])
-    principal = parcel_fees[parcel_fees['CATEGORY'] == 1]['AMOUNT'].sum()
-    overbid = parcel_fees[parcel_fees['CATEGORY'] == 2]['AMOUNT'].sum()
-    penalty = total_penalty
-    sub_taxes = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['AMOUNT'].sum()
-    sub_taxes_interest = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['TOTAL_INTEREST'].sum()
-    total = round(principal + overbid + penalty + sub_taxes + sub_taxes_interest,2)
-    # Calculate the payment recieved work around
-    payment_recieved = payments
-    balance = round(float(total) - float(payment_recieved),2)
+        parcel_fees['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
+        parcel_fees['TOTAL_INTEREST'] = total_interest
+        parcel_fees['TOTAL_AMOUNT'] = 0
+        parcel_fees['PAYMENTS_RECIEVED'] = 0
+        parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 'TOTAL_INTEREST', 'PAYMENTS_RECIEVED', 'TOTAL_AMOUNT', 'EFFECTIVE_END_DATE']]
+        # Change the data type of the columns
+        parcel_fees[["AMOUNT", "INTEREST" ]] = parcel_fees[["AMOUNT", "INTEREST"]].apply(pd.to_numeric)
+        parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'],2)
+        
+        summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
+                        payments, round(parcel_fees['TOTAL_AMOUNT'].sum(),2), '']
+        summary_row = pd.DataFrame([summary_row], columns = parcel_fees.columns)
+        parcel_fees = pd.concat([parcel_fees, summary_row])
+        principal = parcel_fees[parcel_fees['CATEGORY'] == 1]['AMOUNT'].sum()
+        overbid = parcel_fees[parcel_fees['CATEGORY'] == 2]['AMOUNT'].sum()
+        penalty = total_penalty
+        sub_taxes = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['AMOUNT'].sum()
+        sub_taxes_interest = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['TOTAL_INTEREST'].sum()
+        total = round(principal + overbid + penalty + sub_taxes + sub_taxes_interest,2)
+        # Calculate the payment recieved work around
+        payment_recieved = payments
+        balance = round(float(total) - float(payment_recieved),2)
 
-    summary_dict = {
-            'PRINCIPAL': str(principal),
-            'OVERBID': str(overbid),
-            'PENALTY': str(penalty),
-            'SUB_TAXES': str(sub_taxes),
-            'SUB_TAXES_INTEREST': str(sub_taxes_interest),
-            'TOTAL': str(total),
-            'PAYMENT_RECIEVED': str(payment_recieved),
-            'BALANCE': str(balance)
-        }
+        summary_dict = {
+                'PRINCIPAL': str(principal),
+                'OVERBID': str(overbid),
+                'PENALTY': str(penalty),
+                'SUB_TAXES': str(sub_taxes),
+                'SUB_TAXES_INTEREST': str(sub_taxes_interest),
+                'TOTAL': str(total),
+                'PAYMENT_RECIEVED': str(payment_recieved),
+                'BALANCE': str(balance)
+            }
 
-    mydb.commit()
-    mycursor.close()
-    # except:
-    #     return jsonify({"message": "Failed while calculating total interest."}), 500
+        mydb.commit()
+        mycursor.close()
+    except:
+        return jsonify({"message": "Failed while calculating total interest."}), 500
 
     try:
         # Get the parcel details

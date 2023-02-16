@@ -135,6 +135,9 @@ const EditFeesModal = (props) => {
           alert(data.message);
         }
       })
+      .then(() => {
+        props.close();
+      })
   }
 
   return (
@@ -164,7 +167,7 @@ const EditFeesModal = (props) => {
                 <div className="col col-lg-5 m-1"><Input text="Interest Interval" type="text" value={intersAccInterval} onChange={(e) => { setIntersAccInterval(e) }} /></div>
 
                 <div className="d-flex">
-                  <div className="col col-lg-5 m-1"><Input text="Start Date" type="date"  onChange={(e) => { setEffStartDate(e) }} /></div>
+                  <div className="col col-lg-5 m-1"><Input text="Start Date" type="date" onChange={(e) => { setEffStartDate(e) }} /></div>
                   {/* <div className="col col-lg-5 m-1"><Input text="End Date" type="date" value={utils.convertTimeStampToDateForInputBox(effEndDate)} onChange={(e) => { setEffEndDate(e) }} /></div> */}
                 </div>
               </div>

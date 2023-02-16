@@ -49,6 +49,9 @@ const EditNotesModal = (props) => {
           alert(data.message);
         }
       })
+      .then(() => {
+        props.close();
+      })
   }
 
   return (

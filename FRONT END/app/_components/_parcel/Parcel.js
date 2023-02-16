@@ -32,6 +32,7 @@ const Parcel = () => {
     const [newFeeModal, setNewFeeModal] = useState(false);
     const [showNewNotesModal, setNewNotesModal] = useState(false);
     const [showRedeemModal, setRedeemModal] = useState(0);
+    const [refresh, setRefresh] = useState(false);
 
 
     useEffect(() => {
@@ -39,7 +40,7 @@ const Parcel = () => {
             navigate("/");
         }
         get_parcel_details();
-    }, []);
+    }, [refresh]);
 
     const get_parcel_details = (e) => {
         var response_status = 0;
@@ -143,7 +144,9 @@ const Parcel = () => {
                     <div className="d-flex justify-content-end mr-3">
                         <button className="btn btn-outline-success btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true} onClick={() => openRedeemModal(10)}>Redeem</button>
                         <button className="btn btn-outline-secondary btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true} onClick={() => openRedeemModal(9)}>Partial Redemption</button>
-                        <button className="btn btn-outline-primary btn-sm" onClick={() => open_payoff_report()}>Payoff Report</button>
+                        <button className="btn btn-outline-primary btn-sm mr-2" onClick={() => open_payoff_report()}>Payoff Report</button>
+                        <button className="btn btn-outline-success btn-sm" onClick={() => get_parcel_details()}>Refresh</button>
+
                     </div>
                 </div >
 
@@ -342,9 +345,9 @@ const Parcel = () => {
 
                 </div>
 
-                <EditFeesModal show={showEditFeeModal} data={selectedFee} newFee={newFeeModal} close={() => setEditFeeModal(false)} />
-                <EditNotesModal show={showNewNotesModal} close={() => setNewNotesModal(false)} />
-                <RedeemModal show={showRedeemModal} level={redeemLevel} close={() => setRedeemModal(false)} />
+                <EditFeesModal show={showEditFeeModal} data={selectedFee} newFee={newFeeModal} close={() => { setEditFeeModal(false), get_parcel_details() }} />
+                <EditNotesModal show={showNewNotesModal} close={() => { setNewNotesModal(false), get_parcel_details() }} />
+                <RedeemModal show={showRedeemModal} level={redeemLevel} close={() => { setRedeemModal(false), get_parcel_details() }} />
             </div>
         );
     }

@@ -61,6 +61,9 @@ const RedeemModal = (props) => {
           alert(data.message);
         }
       })
+      .then(() => {
+        props.close();
+      })
   }
 
   return (

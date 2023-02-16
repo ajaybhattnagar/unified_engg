@@ -90,7 +90,7 @@ const PayoffReport = () => {
                                 <span className='ml-3 row'>Certificate: {parcelDetails['Certificate']}</span>
                                 <span className='ml-3 row'>Parcel ID: {parcelDetails['Parcel ID']}</span>
                                 <span className='ml-3 row'>Unique ID: {parcelDetails['Unique ID']}</span>
-                                <span className='ml-3 row font-weight-bold'>Balance Date: {endDate}</span>
+                                <span className='ml-3 row font-weight-bold'>Balance Date: {parcelFees ? parcelFees[0]['EFFECTIVE_END_DATE'] : null}</span>
                             </div>
                         </div>
                     </div>
