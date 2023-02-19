@@ -8,6 +8,7 @@ const Input = (props) => {
     var value = null
     const min = props.min || ""
     const max = props.max || ""
+    const clearbutton = props.clearbutton || false
 
     switch (type) {
         case "text":
@@ -33,6 +34,14 @@ const Input = (props) => {
                     value={value}
                     className="form-control" aria-label="Username" aria-describedby="basic-addon1"
                     onChange={(e) => props.onChange(e.target.value)} />
+                {
+                    clearbutton ?
+                        <button className="ml-1 btn btn-outline-secondary border" type="button" onClick={() => props.onClear()}>
+                            <i className="fa fa-times">X</i>
+                        </button>
+                        : null
+                }
+
             </div>
         );
     }

@@ -134,7 +134,7 @@ const Parcel = () => {
                                     list={utils.statusArray()}
                                     isMulti={false}
                                     prepareArray={false}
-                                    onSelect={(e) => utils.updateStatusParcelID(parcelId.current, e.value)}
+                                    onSelect={(e) => utils.updateStatusParcelID(parcelId.current, e.value, parcelDetails['Status'])}
                                 />
                             </div>
 
@@ -241,7 +241,7 @@ const Parcel = () => {
                     </div>
                     {
                         parceNotes.length > 0 ?
-                            <table className='table table-sm small table-hover'>
+                            <table className='table table-sm small table-hover w-100'>
                                 <thead className="thead-dark">
                                     <tr>
                                         <th></th>
@@ -258,8 +258,8 @@ const Parcel = () => {
                                                         <a href="#"><FontAwesomeIcon className="" icon={faTrash} onClick={() => utils.delteNoteByID(data['ID'])} /></a>
                                                     }
                                                 </td>
-                                                <td>{data['DATE']}</td>
-                                                <td>{data['NOTES']}</td>
+                                                <td >{data['DATE']}</td>
+                                                <td className="w-75">{data['NOTES']}</td>
                                             </tr>)
 
                                     }
@@ -326,16 +326,16 @@ const Parcel = () => {
 
                 <hr className='mt-3 d-flex' />
 
-                <div className="mt-3 d-flex justify-content-around">
+                <div className="mt-3 d-flex justify-content-between">
                     {/* Parcels details */}
-                    <div className="row ml-3">
+                    <div className="row ml-3 w-50">
                         {
                             render_parcel_details()
                         }
                     </div>
 
                     {/* Parcels fees and notes */}
-                    <div className="ml-3">
+                    <div className="ml-3 w-50">
                         {render_parcel_payments()}
                         <hr />
                         {render_parcel_fees()}

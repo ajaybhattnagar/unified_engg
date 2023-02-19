@@ -109,6 +109,14 @@ const Home = () => {
         }
     }
 
+    const handleClear = (e) => {
+        setSearchString("");
+        state.current = null;
+        county.current = null;
+        municipality.current = null;
+        status.current = null;
+        setData([]);
+    }
 
     const render = () => {
         return (
@@ -116,7 +124,10 @@ const Home = () => {
                 <NavigationBar />
 
                 <div className='container mt-3 d-flex'>
-                    <div className="col col-lg-5"><Input text="Search" type="text" value={searchString} onChange={(e) => setSearchString(e)} /></div>
+                    <div className="col col-lg-5"><Input text="Search" type="text"
+                        value={searchString} onChange={(e) => setSearchString(e)}
+                        clearbutton={true} onClear = {() => handleClear()}/>
+                    </div>
                     <Button className="ml-2" variant="primary" onClick={(e) => handleSearch()}> Search </Button>
                 </div>
                 {

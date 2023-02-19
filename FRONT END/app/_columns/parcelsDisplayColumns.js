@@ -26,6 +26,30 @@ export const columns = [
         hidden: false,
     },
     {
+        title: "Block",
+        field: "LEGAL_BLOCK",
+        filtering: false,
+        editable: "never",
+        hidden: false,
+        width: "3%",
+    },
+    {
+        title: "Lot",
+        field: "LEGAL_LOT_NUMBER",
+        filtering: false,
+        editable: "never",
+        hidden: false,
+        width: "3%",
+    },
+    {
+        title: "Qual.",
+        field: "QUALIFIER",
+        filtering: false,
+        editable: "never",
+        hidden: false,
+        width: "3%",
+    },
+    {
         title: "Location",
         field: "LOCATION_FULL_STREET_ADDRESS",
         filtering: false,
@@ -58,7 +82,7 @@ export const columns = [
         field: "COUNTY",
         filtering: false,
         editable: "never",
-        hidden: false,
+        hidden: true,
     },
     {
         title: "State",
@@ -68,13 +92,35 @@ export const columns = [
         hidden: false,
     },
     {
+        title: "Beg. Bal.",
+        field: "BEGINNING_BALANCE",
+        filtering: false,
+        editable: "never",
+        hidden: false,
+        render: rowData =>
+            <span >
+                {utils.toCurrency(rowData.BEGINNING_BALANCE)}
+            </span >
+    },
+    {
+        title: "First Check Date",
+        field: "FIRST_CHECK_DATE",
+        filtering: false,
+        editable: "never",
+        hidden: false,
+        render: rowData =>
+            <span >
+                {utils.convertTimeStampToString(rowData.FIRST_CHECK_DATE)}
+            </span >
+    },
+    {
         title: "Status",
         field: "STATUS",
         filtering: false,
         editable: "never",
         hidden: false,
         render: rowData =>
-            <span className={rowData.STATUS == 1 ? "badge badge-success mx-auto": "badge badge-primary mx-auto"} >
+            <span className={rowData.STATUS == 1 ? "badge badge-success mx-auto" : "badge badge-primary mx-auto"} >
                 {utils.getStatusbyValue(rowData.STATUS)}
             </span >
     },
@@ -83,6 +129,6 @@ export const columns = [
         field: "UNIQUE_ID",
         filtering: false,
         editable: "never",
-        hidden: false,
+        hidden: true,
     },
 ]

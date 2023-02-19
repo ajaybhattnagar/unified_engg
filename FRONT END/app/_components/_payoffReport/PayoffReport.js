@@ -11,7 +11,7 @@ const PayoffReport = () => {
     const params = useParams();
     const parcelId = useRef(params.parcel_id);
     const [data, setData] = useState(null);
-    const [endDate, setEndDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
+    const [endDate, setEndDate] = useState(null);
     const [parcelDetails, setParcelDetails] = useState(null);
     const [parcelFees, setParcelFees] = useState(null);
     const [parcelSummary, setParcelSummary] = useState(null);
@@ -64,7 +64,6 @@ const PayoffReport = () => {
 
     const handelEndDateChange = (e) => {
         setEndDate(e);
-        get_parcel_payoff_report(e);
     }
 
     const render_parcel_header = () => {
@@ -181,8 +180,9 @@ const PayoffReport = () => {
     return (
         <div>
             <div className='row container no-print'>
-                <div className="col col-lg-5 m-1 d-flex">
-                    <Input text="Balance Date" type="date" value={utils.convertTimeStampToDateForInputBox(endDate)} onChange={(e) => { handelEndDateChange(e) }} />
+                <div className="col w-75 m-1 d-flex">
+                    <Input text="Balance Date" type="date" onChange={(e) => { handelEndDateChange(e) }} />
+                    <button className="btn btn-outline-primary ml-2" type="submit" onClick={() => {  get_parcel_payoff_report(endDate) }}> Refresh </button>
                     <button className="btn btn-outline-primary ml-2" type="submit" onClick={() => {  window.print(); }}> Print </button>
                 </div>
             </div>

@@ -156,10 +156,20 @@ function getDistinctFilters() {
     .catch((err) => console.error(err));
 }
 
-function updateStatusParcelID(parcel_id, status) {
+function updateStatusParcelID(parcel_id, status, old_status) {
+  var confirm_string = '';
+  if (old_status < 9){
+    confirm_string = 'Are you sure you want to update the status?';
+  }
+  if (old_status > 8){
+    confirm_string = 'Parcel is already redeemed. Are you sure you want to update the status?';
+  } else {
+    confirm_string = 'Are you sure you want to update the status?';
+  }
+  
   var response_status = 0;
   var url = appConstants.BASE_URL.concat(appConstants.UPDATE_STATUS_PARCEL_ID).concat(parcel_id).concat('/').concat(status);
-  if (confirm('Are you sure you want to update the status?')) {
+  if (confirm(confirm_string)) {
     return fetch(url, {
       method: "PUT",
       headers: {
@@ -184,6 +194,7 @@ function updateStatusParcelID(parcel_id, status) {
       .then((data) => {
         if (response_status === 200) {
           alert(data.message);
+          window.location.reload();
         } else {
           alert(data.message);
           return null;
@@ -233,8 +244,16 @@ function convertTimeStampToDateForInputBox(timeStamp) {
   if (timeStamp) {
     var date = new Date(timeStamp);
     var year = date.getFullYear();
-    var month = ("0" + date.getMonth() + 1).slice(-2)
-    var dt = ("0" + date.getDate()).slice(-2)
+
+    var month = date.getMonth() + 1;
+    if (month < 10) {
+      month = '0' + month;
+    }
+
+    var dt = date.getDate();
+    if (dt < 10) {
+      dt = '0' + dt;
+    }
     return year + '-' + month + '-' + dt;
   } else {
     return ''

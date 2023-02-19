@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Form, FormGroup, FormControl } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Input from "./input";
 import DropDown from "./dropDown";
@@ -21,6 +21,11 @@ const EditNotesModal = (props) => {
 
 
   const add_notes = () => {
+    if (notes === null || notes === "") {
+      alert("Please enter notes!");
+      return null;
+    }
+
     var url = appConstants.BASE_URL.concat(appConstants.ADD_NEW_NOTE).concat(parcelId.current);
     var body = {
       "NOTES": notes,
@@ -69,7 +74,15 @@ const EditNotesModal = (props) => {
         <Modal.Body>
           {
             <div>
-              <div className="col m-1"><Input text="Notes" type="text" value={notes} onChange={(e) => { setNotes(e) }} /></div>
+              <div className="col m-1">
+                <Form.Control as="textarea"
+                  required
+                  type="text"
+                  placeholder=""
+                  value={notes}
+                  onChange={(e) => { setNotes(e.target.value) }}
+                />
+              </div>
 
             </div>
           }
