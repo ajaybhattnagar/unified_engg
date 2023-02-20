@@ -12,6 +12,7 @@ from routes.login import login_blueprint
 from routes.Parcels import parcels_blueprint
 from routes.Parcel import parcel_blueprint
 from routes.Notes import notes_blueprint
+from routes.Documents import documents_blueprint
 
 
 app = Flask(__name__)
@@ -19,6 +20,7 @@ app.register_blueprint(login_blueprint)
 app.register_blueprint(parcels_blueprint)
 app.register_blueprint(parcel_blueprint)
 app.register_blueprint(notes_blueprint)
+app.register_blueprint(documents_blueprint)
 
 CORS(app)
 

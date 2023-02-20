@@ -164,11 +164,12 @@ const EditFeesModal = (props) => {
                   <div className="col col-lg-5 m-1"><Input text="Interest" type="number" value={interest} onChange={(e) => { setInterest(e) }} /></div>
                 </div>
 
-                <div className="col col-lg-5 m-1"><Input text="Interest Interval" type="text" value={intersAccInterval} onChange={(e) => { setIntersAccInterval(e) }} /></div>
+                <div className="col col-lg-5 m-1">
+                  <DropDown placeholder={utils.getInterestIntervalbyValue(intersAccInterval)} list={utils.interestIntervalArray()} isMulti={false} prepareArray={false} onSelect={(e) => { setIntersAccInterval(e.value) }} />
+                </div>
 
                 <div className="d-flex">
                   <div className="col col-lg-5 m-1"><Input text="Start Date" type="date" onChange={(e) => { setEffStartDate(e) }} /></div>
-                  {/* <div className="col col-lg-5 m-1"><Input text="End Date" type="date" value={utils.convertTimeStampToDateForInputBox(effEndDate)} onChange={(e) => { setEffEndDate(e) }} /></div> */}
                 </div>
               </div>
               :

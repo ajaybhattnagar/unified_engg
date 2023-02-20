@@ -10,8 +10,11 @@ from datetime import date
 import simplejson
 from sqlalchemy import create_engine
 from utils import check_user, get_user_details
+
 from queries.parcel_query import parcel_query
 from queries.notes_query import notes_query
+from queries.documents_query import documents_query
+
 import random, string
 from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest
 
@@ -96,6 +99,11 @@ def get_parcel(current_user, parcel_id):
         # Get parcel payments
         mycursor.execute(parcel_query['GET_PAYMENT_DETAILS_BY_ID'].format(ID = parcel_id))
         parcel_payments = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        
+        # Get documents
+        
+        mycursor.execute(documents_query['GET_ALL_DOCUMENTS_BY_ID'].format(ID = parcel_id))
+        parcel_documents = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
    
 
         mydb.commit()
@@ -105,7 +113,8 @@ def get_parcel(current_user, parcel_id):
             "parcel_details": parcel_details,
             "parcel_fees": parcel_fees,
             "parcel_notes": parcel_notes,
-            "parcel_payments": parcel_payments
+            "parcel_payments": parcel_payments,
+            "parcel_documents": parcel_documents
         }
         response = Response(
                     response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),

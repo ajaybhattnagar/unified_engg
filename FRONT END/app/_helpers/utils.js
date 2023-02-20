@@ -17,7 +17,9 @@ export const utils = {
   convertTimeStampToDateForInputBox,
   delteFeeByID,
   delteNoteByID,
-  deltePaymentByID
+  deltePaymentByID,
+  interestIntervalArray,
+  getInterestIntervalbyValue
 
 }
 
@@ -98,6 +100,22 @@ function statusArray() {
   ]
 }
 
+function interestIntervalArray() {
+  return [
+    { value: 'per_diem', label: 'Per Diem' },
+    { value: 'monthly', label: 'Monthly' },
+  ]
+}
+
+function getInterestIntervalbyValue(value) {
+  var arr = interestIntervalArray();
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].value === value) {
+      return arr[i].label;
+    }
+  }
+}
+
 function getStatusbyValue(value) {
   var status = statusArray();
   for (var i = 0; i < status.length; i++) {
@@ -158,15 +176,15 @@ function getDistinctFilters() {
 
 function updateStatusParcelID(parcel_id, status, old_status) {
   var confirm_string = '';
-  if (old_status < 9){
+  if (old_status < 9) {
     confirm_string = 'Are you sure you want to update the status?';
   }
-  if (old_status > 8){
+  if (old_status > 8) {
     confirm_string = 'Parcel is already redeemed. Are you sure you want to update the status?';
   } else {
     confirm_string = 'Are you sure you want to update the status?';
   }
-  
+
   var response_status = 0;
   var url = appConstants.BASE_URL.concat(appConstants.UPDATE_STATUS_PARCEL_ID).concat(parcel_id).concat('/').concat(status);
   if (confirm(confirm_string)) {
