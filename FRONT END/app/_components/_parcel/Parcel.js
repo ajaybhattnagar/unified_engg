@@ -13,6 +13,7 @@ import DropDown from "../_ui/dropDown";
 import EditFeesModal from "../_ui/editFeesModal";
 import EditNotesModal from "../_ui/editNotesModal";
 import RedeemModal from "../_ui/redeemModal";
+import EditDocumentsModal from "../_ui/editDocumentsModal";
 
 
 const Parcel = () => {
@@ -26,12 +27,14 @@ const Parcel = () => {
     const [selectedFee, setSelectedFee] = useState(null);
     const [redeemLevel, setRedeemLevel] = useState(null);
     const [parcelPayments, setParcelPayments] = useState(null);
+    const [parcelDocuments, setParcelDocuments] = useState(null);
 
     // Modal States 
     const [showEditFeeModal, setEditFeeModal] = useState(false);
     const [newFeeModal, setNewFeeModal] = useState(false);
     const [showNewNotesModal, setNewNotesModal] = useState(false);
     const [showRedeemModal, setRedeemModal] = useState(0);
+    const [showNewDocumentsModal, setNewDocumentsModal] = useState(false);
     const [refresh, setRefresh] = useState(false);
 
 
@@ -69,6 +72,7 @@ const Parcel = () => {
                     setParcelFees(data.parcel_fees);
                     setParcelNotes(data.parcel_notes);
                     setParcelPayments(data.parcel_payments);
+                    setParcelDocuments(data.parcel_documents);
                 } else {
                     alert(data.message);
                 }
@@ -163,6 +167,10 @@ const Parcel = () => {
 
     const openModalNotesNew = (data) => {
         setNewNotesModal(true)
+    }
+
+    const openModalDocumentsNew = (data) => {
+        setNewDocumentsModal(true)
     }
 
     const openModalFeeNew = (data) => {
@@ -273,6 +281,50 @@ const Parcel = () => {
         }
     }
 
+    const render_parcel_documents = () => {
+        if (parcelDocuments) {
+            return (
+                <div className="mr-4 container">
+                    <div className="d-flex justify-content-between">
+                        <span>Documents</span>
+                        <a href="#" onClick={() => openModalDocumentsNew()} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
+                    </div>
+                    {
+                        parcelDocuments.length > 0 ?
+                            <table className='table table-sm small table-hover w-100'>
+                                <thead className="thead-dark">
+                                    <tr>
+                                        <th></th>
+                                        <th>Date</th>
+                                        <th>Title</th>
+                                        <th>Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        parcelDocuments.map((data, index) =>
+                                            <tr key={index} >
+                                                <td>
+                                                    {
+                                                        <a href="#"><FontAwesomeIcon className="" icon={faTrash} onClick={() => utils.delteDocumentByID(data['ID'])} /></a>
+                                                    }
+                                                </td>
+                                                <td>{data['DATE']}</td>
+                                                <td>{data['TITLE']}</td>
+                                                <td className="w-75"><a href={data['LINK']} target="_blank">LINK</a></td>
+                                            </tr>)
+
+                                    }
+                                </tbody>
+                            </table>
+                            : null
+
+                    }
+                </div>
+            )
+        }
+    }
+
     const render_parcel_payments = () => {
         if (parcelPayments) {
             return (
@@ -341,6 +393,8 @@ const Parcel = () => {
                         {render_parcel_fees()}
                         <hr />
                         {render_parcel_notes()}
+                        <hr />
+                        {render_parcel_documents()}
                     </div>
 
                 </div>
@@ -348,6 +402,7 @@ const Parcel = () => {
                 <EditFeesModal show={showEditFeeModal} data={selectedFee} newFee={newFeeModal} close={() => { setEditFeeModal(false), get_parcel_details() }} />
                 <EditNotesModal show={showNewNotesModal} close={() => { setNewNotesModal(false), get_parcel_details() }} />
                 <RedeemModal show={showRedeemModal} level={redeemLevel} close={() => { setRedeemModal(false), get_parcel_details() }} />
+                <EditDocumentsModal show={showNewDocumentsModal} close={() => { setNewDocumentsModal(false), get_parcel_details() }} />
             </div>
         );
     }

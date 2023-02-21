@@ -19,7 +19,8 @@ export const utils = {
   delteNoteByID,
   deltePaymentByID,
   interestIntervalArray,
-  getInterestIntervalbyValue
+  getInterestIntervalbyValue,
+  delteDocumentByID
 
 }
 
@@ -392,4 +393,43 @@ function deltePaymentByID(id) {
     // Do nothing!
     console.log('Cancelled by user!');
   }
+}
+
+function delteDocumentByID(id) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.DELETE_DOCUMENT_BY_ID).concat(id);
+  if (confirm('Are you sure you want to delete this document?')) {
+    return fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        'x-access-token': localStorage.getItem('token')
+      },
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          response_status = 200;
+          return res.json();
+        }
+        else {
+          response_status = 400;
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (response_status === 200) {
+          window.location.reload();
+          alert(data.message);
+        } else {
+          alert(data.message);
+          return null;
+        }
+      })
+      .catch((err) => console.error(err));
+  } else {
+    // Do nothing!
+    console.log('Cancelled by user!');
+  }
+
+
 }
