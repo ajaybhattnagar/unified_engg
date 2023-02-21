@@ -62,6 +62,15 @@ const EditFeesModal = (props) => {
   }
 
   const update_fee = () => {
+    if (category === null || category === "" || category === undefined
+      || amount === null || amount === "" || amount === undefined
+      || interest === null || interest === "" || interest === undefined
+      || intersAccInterval === null || intersAccInterval === "" || intersAccInterval === undefined
+      || effStartDate === null || effStartDate === "" || effStartDate === undefined) {
+      alert("Please enter all the fields!");
+      return null;
+    }
+
     var url = appConstants.BASE_URL.concat(appConstants.UPDATE_FEE_BY_ID);
     var body = {
       "ID": feeId,
@@ -100,6 +109,14 @@ const EditFeesModal = (props) => {
   }
 
   const add_fee = () => {
+    if (category === null || category === "" || category === undefined
+      || amount === null || amount === "" || amount === undefined
+      || interest === null || interest === "" || interest === undefined
+      || intersAccInterval === null || intersAccInterval === "" || intersAccInterval === undefined
+      || effStartDate === null || effStartDate === "" || effStartDate === undefined) {
+      alert("Please enter all the fields!");
+      return null;
+    }
     var url = appConstants.BASE_URL.concat(appConstants.ADD_FEE_BY_UNIQUE_ID);
     var body = {
       "UNIQUE_ID": parcelId.current,
@@ -138,6 +155,18 @@ const EditFeesModal = (props) => {
       .then(() => {
         props.close();
       })
+  }
+
+  const closeModal = () => {
+    setCategory(null);
+    setDescription(null);
+    setAmount(null);
+    setInterest(null);
+    setIntersAccInterval(null);
+    setEffStartDate(null);
+    setEffEndDate(null);
+    setFeeId(null);
+
   }
 
   return (
@@ -185,7 +214,7 @@ const EditFeesModal = (props) => {
               :
               <button className="btn btn-outline-success mr-2" onClick={() => update_fee()}>Update</button>
           }
-          <button className="btn btn-outline-primary mr-2" onClick={props.close}>Cancel</button>
+          <button className="btn btn-outline-primary mr-2" onClick={() => { closeModal(); props.close() }}>Cancel</button>
         </Modal.Footer>
       </Modal>
     </>

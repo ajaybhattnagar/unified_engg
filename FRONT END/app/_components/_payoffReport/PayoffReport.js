@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import { appConstants } from '../../_helpers/consts.js';
@@ -10,6 +12,7 @@ const PayoffReport = () => {
     const navigate = useNavigate();
     const params = useParams();
     const parcelId = useRef(params.parcel_id);
+    const inputRef = useRef(null);
     const [data, setData] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [parcelDetails, setParcelDetails] = useState(null);
@@ -103,7 +106,7 @@ const PayoffReport = () => {
         if (parcelFees) {
             return (
                 <div className='mt-3'>
-                    <table className="table table-striped table-bordered table-hover">
+                    <table className="table table-striped table-bordered table-hover table-sm">
                         <thead className="thead-dark">
                             <tr>
                                 <th>Effective Date</th>
@@ -140,7 +143,7 @@ const PayoffReport = () => {
         if (parcelSummary) {
             return (
                 <div className='mt-3'>
-                    <table className="table table-striped table-bordered table-hover">
+                    <table className="table table-striped table-bordered table-hover table-sm">
                         <thead className="thead-dark">
                             <tr>
                                 <th>Pricipal</th>
@@ -177,28 +180,50 @@ const PayoffReport = () => {
         }
     }
 
+    const download_payoff_report = () => {
+        if (parcelDetails) {
+            try {
+                var document_name = 'Payoff Report - ' + parcelDetails['Parcel ID'] + '.pdf';
+            }
+            catch (err) {
+                var document_name = 'Payoff Report.pdf';
+            }
+        } else {
+            var document_name = 'Payoff Report.pdf';
+        }
+        html2canvas(inputRef.current).then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF();
+            pdf.addImage(imgData, "JPEG", 0, 0);
+            pdf.save(document_name);
+        });
+    };
+
     return (
-        <div>
+        <div >
             <div className='row container no-print'>
                 <div className="col w-75 m-1 d-flex">
                     <Input text="Balance Date" type="date" onChange={(e) => { handelEndDateChange(e) }} />
-                    <button className="btn btn-outline-primary ml-2" type="submit" onClick={() => {  get_parcel_payoff_report(endDate) }}> Refresh </button>
-                    <button className="btn btn-outline-primary ml-2" type="submit" onClick={() => {  window.print(); }}> Print </button>
+                    <button className="btn btn-outline-primary ml-2" type="submit" onClick={() => { get_parcel_payoff_report(endDate) }}> Refresh </button>
+                    <button className="btn btn-outline-primary ml-2" type="submit" onClick={() => { window.print(); }}> Print </button>
+                    <button className="btn btn-outline-primary ml-2" type="submit" onClick={download_payoff_report}> Download </button>
                 </div>
             </div>
 
-            <div className='container mx-auto mt-3 w-25'>
-                <h2>Payoff Report </h2>
+            <div className="pdfA4" id="divToPrint" ref={inputRef}>
+                <div className='mx-auto mt-3 w-25' >
+                    <h2>Payoff Report </h2>
+                </div>
+
+                <hr />
+
+                {<div className="m-2"> {render_parcel_header()} </div>}
+                <hr />
+                {<div className="m-2"> {render_parcel_fees()} </div>}
+                <hr />
+                {<div className="m-2"> {render_parcel_summary()} </div>}
+                <hr />
             </div>
-
-            <hr />
-
-            {<div className="container"> {render_parcel_header()} </div>}
-            <hr />
-            {<div className="container"> {render_parcel_fees()} </div>}
-            <hr />
-            {<div className="container"> {render_parcel_summary()} </div>}
-            <hr />
 
 
 

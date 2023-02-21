@@ -24,7 +24,7 @@ const RedeemModal = (props) => {
     setLevel(props.level);
   }, [props.level]);
 
-  const add_notes = () => {
+  const add_payment = () => {
     var url = appConstants.BASE_URL.concat(appConstants.REDEEM_OR_PARTIAL_REDEEM_OR_ADD_PAYMENT).concat(parcelId.current);
     var date_redeemed = parseInt(level) > parseInt(8) ? dateRedeemed : null;
     var body = {
@@ -66,6 +66,18 @@ const RedeemModal = (props) => {
       })
   }
 
+  const closeModal = () => {
+    setDateRedeemed(null)
+    setCheckAmount(null)
+    setCheckNumber(null)
+    setCheckReceived(null)
+    setSource(null)
+    setMethod(null)
+    setDescription(null)
+
+
+  }
+
   return (
     <>
       <Modal
@@ -100,12 +112,12 @@ const RedeemModal = (props) => {
 
         </Modal.Body>
         <Modal.Footer>
-          <button className="btn btn-outline-success mr-2" onClick={() => add_notes()}>
+          <button className="btn btn-outline-success mr-2" onClick={() => add_payment()}>
             {
               parseInt(level) === parseInt(9) ? "Partial Redeem" : parseInt(level) === parseInt(10) ? "Redeem" : "Add payment"
             }
           </button>
-          <button className="btn btn-outline-primary mr-2" onClick={props.close}>Cancel</button>
+          <button className="btn btn-outline-primary mr-2" onClick={() => { closeModal(); props.close() }}>Cancel</button>
         </Modal.Footer>
       </Modal>
     </>

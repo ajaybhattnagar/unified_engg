@@ -17,8 +17,10 @@ const EditNotesModal = (props) => {
   useEffect(() => {
 
   }, []);
-
-
+ 
+  const closeModal = () => {
+    setNotes(null)
+  }
 
   const add_notes = () => {
     if (notes === null || notes === "") {
@@ -95,7 +97,7 @@ const EditNotesModal = (props) => {
               :
               <button className="btn btn-outline-success mr-2" onClick={() => add_notes()}>Update</button>
           }
-          <button className="btn btn-outline-primary mr-2" onClick={props.close}>Cancel</button>
+          <button className="btn btn-outline-primary mr-2" onClick={() => { closeModal(); props.close() }}>Cancel</button>
         </Modal.Footer>
       </Modal>
     </>

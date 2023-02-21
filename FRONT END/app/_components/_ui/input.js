@@ -15,7 +15,7 @@ const Input = (props) => {
             value = props.value || ""
             break;
         case "number":
-            value = props.value || 0
+            value = props.value || null
             break;
         case "date":
             value = props.value || null

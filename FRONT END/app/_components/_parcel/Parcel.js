@@ -110,7 +110,7 @@ const Parcel = () => {
 
     const open_payoff_report = () => {
         var url = window.location.origin.concat(`/parcel/payoff_report/`).concat(parcelId.current)
-        window.open(url, "PRINT", "height=1200,width=1000");
+        window.open(url, "PRINT", "height=1200,width=800");
     }
 
     const render_parcel_header = () => {
@@ -189,7 +189,7 @@ const Parcel = () => {
             return (
                 <div className="mr-4 container">
                     <div className="d-flex justify-content-between">
-                        <span>Fees</span>
+                        <span className="badge rounded-pill bg-dark col-md-2 text-white align-middle m-1">Fees</span>
                         <a href="#" onClick={() => openModalFeeNew()} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
                     </div>
                     {
@@ -244,7 +244,7 @@ const Parcel = () => {
             return (
                 <div className="mr-4 container">
                     <div className="d-flex justify-content-between">
-                        <span>Notes</span>
+                        <span className="badge rounded-pill bg-dark col-md-2 text-white align-middle m-1">Notes</span>
                         <a href="#" onClick={() => openModalNotesNew()} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
                     </div>
                     {
@@ -286,7 +286,7 @@ const Parcel = () => {
             return (
                 <div className="mr-4 container">
                     <div className="d-flex justify-content-between">
-                        <span>Documents</span>
+                        <span className="badge rounded-pill bg-dark col-md-2 text-white align-middle m-1">Documents</span>
                         <a href="#" onClick={() => openModalDocumentsNew()} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
                     </div>
                     {
@@ -330,7 +330,7 @@ const Parcel = () => {
             return (
                 <div className="mr-4 container">
                     <div className="d-flex justify-content-between">
-                        <span>Payments</span>
+                        <span className="badge rounded-pill bg-dark col-md-2 text-white align-middle m-1">Payments</span>
                         <a href="#" onClick={() => openRedeemModal(parcelDetails['Status'])} ><FontAwesomeIcon className="" icon={faPlusCircle} /> Add </a>
                     </div>
                     {
