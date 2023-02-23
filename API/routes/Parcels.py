@@ -22,15 +22,17 @@ with open ('config.json') as f:
 engine = create_engine(configData['engine_url'])
 
 
-try:
-    mydb = mysql.connector.connect(
-        host = configData['host'],
-        user = configData['user'],
-        password = configData['password'],
-        database = configData['database']
-    )
-except mysql.connector.Error as err:
-   print("Something went wrong: {}".format(err))
+def connect_database(user):
+    try:
+        mydb = mysql.connector.connect(
+            host = configData['host'],
+            user = user,
+            password = configData['db_user_password'],
+            database = configData['database']
+        )
+    except mysql.connector.Error as err:
+        print("Something went wrong: {}".format(err))
+    return mydb
 
 
 # Authentication decorator
@@ -47,17 +49,18 @@ def token_required(f):
            # decode the token to obtain user public_id
             data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
             current_user = get_user_details(data['EMAIL'])
+            user_email = data['EMAIL']
         except:
             return jsonify({"message": "Invalid token!"}), 401
          # Return the user information attached to the token
-        return f(current_user, *args, **kwargs)
+        return f(user_email, *args, **kwargs)
     return decorator
 
 
 # Upload parcels
 @parcels_blueprint.route("/api/v1/upload_parcels", methods=['POST'])
 @token_required
-def upload_parcels(token):
+def upload_parcels(current_user):
     content = request.get_json(silent=True)
     df = pd.DataFrame.from_dict(content)
     df = df[df['TSRID'].isnull() == False]
@@ -67,21 +70,23 @@ def upload_parcels(token):
         df.to_sql('PARCELS', engine, if_exists='append', index=False)
         return jsonify({"message": "Parcels uploaded successfully."}), 200
     except:
-        return jsonify({"message": err}), 500
+        return jsonify({"message": 'Failed'}), 500
 
 
 # search parcels
 @parcels_blueprint.route("/api/v1/search_parcels", methods=['GET'])
 @token_required
-def search_parcels(token):
+def search_parcels(current_user):
+    connection = connect_database(current_user)
+
     searchString = request.args.get('searchString')
     searchString = "%" + searchString + "%"
 
     try:
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         mycursor.execute(parcel_query['SEARCH_PARCEL'].format(TEXT=searchString))
         myresult = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
-        mydb.commit()
+        connection.commit()
         mycursor.close()
         response = Response(
                 response=simplejson.dumps(myresult, ignore_nan=True,default=datetime.datetime.isoformat),
@@ -95,8 +100,9 @@ def search_parcels(token):
 
 @parcels_blueprint.route("/api/v1/get_distinct_filters", methods=['GET'])
 @token_required
-def get_distinct_filters(token):
-    mycursor = mydb.cursor()
+def get_distinct_filters(current_user):
+    connection = connect_database(current_user)
+    mycursor = connection.cursor()
     try:
         mycursor.execute(parcel_query['GET_DISTINCT_STATES'])
         states = [item[0] for item in mycursor.fetchall()]
@@ -107,7 +113,7 @@ def get_distinct_filters(token):
         mycursor.execute(parcel_query['GET_DISTINCT_MUNICIPALITY'])
         municipalities = [item[0] for item in mycursor.fetchall()]
 
-        mydb.commit()
+        connection.commit()
         mycursor.close()
 
         return jsonify({"states": states, "counties": counties, "municipalities": municipalities}), 200
@@ -117,7 +123,9 @@ def get_distinct_filters(token):
 
 @parcels_blueprint.route("/api/v1/get_parcels_based_on_filters", methods=['GET'])
 @token_required
-def get_parcels_based_on_filters(token):
+def get_parcels_based_on_filters(current_user):
+    connection = connect_database(current_user)
+
     if request.args.get('state') is not None:
         state = request.args.get('state')
         state = "%" + state + "%"
@@ -143,10 +151,10 @@ def get_parcels_based_on_filters(token):
         status = ""
         
     try:
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         mycursor.execute(parcel_query['GET_PARCELS_BASED_ON_FILTERS'].format(STATE=state, COUNTY=county, MUNICIPALITY=municipality, STATUS=status))
         myresult = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
-        mydb.commit()
+        connection.commit()
         mycursor.close()
         response = Response(
                 response=simplejson.dumps(myresult, ignore_nan=True,default=datetime.datetime.isoformat),

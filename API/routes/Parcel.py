@@ -29,16 +29,27 @@ with open('helpers\\columns.json', 'r') as JSON:
 
 engine = create_engine(configData['engine_url'])
 
+def connect_database(user):
+    try:
+        mydb = mysql.connector.connect(
+            host = configData['host'],
+            user = user,
+            password = configData['db_user_password'],
+            database = configData['database']
+        )
+    except mysql.connector.Error as err:
+        print("Something went wrong: {}".format(err))
+    return mydb
 
-try:
-    mydb = mysql.connector.connect(
-        host = configData['host'],
-        user = configData['user'],
-        password = configData['password'],
-        database = configData['database']
-    )
-except mysql.connector.Error as err:
-   print("Something went wrong: {}".format(err))
+# try:
+#     mydb = mysql.connector.connect(
+#         host = configData['host'],
+#         user = configData['user'],
+#         password = configData['password'],
+#         database = configData['database']
+#     )
+# except mysql.connector.Error as err:
+#    print("Something went wrong: {}".format(err))
 
 
 # Authentication decorator
@@ -55,14 +66,16 @@ def token_required(f):
            # decode the token to obtain user public_id
             data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
             current_user = get_user_details(data['EMAIL'])
+            user_email = data['EMAIL']
         except:
             return jsonify({"message": "Invalid token!"}), 401
          # Return the user information attached to the token
-        return f(current_user, *args, **kwargs)
+        return f(user_email, *args, **kwargs)
     return decorator
 
-def get_parcel_details(parcel_id):
-    mycursor = mydb.cursor()
+def get_parcel_details(current_user, parcel_id):
+    connection = connect_database(current_user)
+    mycursor = connection.cursor()
     mycursor.execute(parcel_query['GET_PARCEL_BY_ID'].format(ID = parcel_id))
     parcel_details = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
     parcel_details = pd.DataFrame(parcel_details)
@@ -73,7 +86,7 @@ def get_parcel_details(parcel_id):
         parcel_details[i] = pd.to_datetime(parcel_details[i]).dt.strftime("%d %b, %Y").astype(str)
 
     parcel_details = parcel_details.rename(columns=column_dict)
-    mydb.commit()
+    connection.commit()
     mycursor.close()
     return (parcel_details)
 
@@ -83,12 +96,12 @@ def get_parcel_details(parcel_id):
 def get_parcel(current_user, parcel_id):
     # Get the parcel details    
     try:
-      
+        connection = connect_database(current_user)
         # Get the parcel details
-        parcel_details = get_parcel_details(parcel_id)
+        parcel_details = get_parcel_details(current_user, parcel_id)
         parcel_details = parcel_details.to_dict(orient='records')
 
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         mycursor.execute(parcel_query['GET_PARCEL_FEES_BY_ID'].format(ID = parcel_id))
         parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
 
@@ -104,9 +117,9 @@ def get_parcel(current_user, parcel_id):
         
         mycursor.execute(documents_query['GET_ALL_DOCUMENTS_BY_ID'].format(ID = parcel_id))
         parcel_documents = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
-   
 
-        mydb.commit()
+
+        connection.commit()
         mycursor.close()
 
         response_dict = {
@@ -132,14 +145,15 @@ def get_parcel(current_user, parcel_id):
 @token_required
 def update_parcel_status(current_user, parcel_id, status):
     # Update the parcel status
+    connection = connect_database(current_user)
     try:
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         mycursor.execute(parcel_query['UPDATE_STATUS_BY_ID'].format(ID = parcel_id, STATUS = status))
 
         # Update effective end date for the parcel fees. Do this to make sure status changes after redeemed
         mycursor.execute(parcel_query['UPDATE_FEES_DATE_BY_ID'].format(ID = parcel_id, EFFECTIVE_END_DATE = 'null'))
 
-        mydb.commit()
+        connection.commit()
         mycursor.close()
         return jsonify({"message": "Parcel status updated successfully!"}), 200
     except:
@@ -149,17 +163,18 @@ def update_parcel_status(current_user, parcel_id, status):
 # Update Parcel fees
 @parcel_blueprint.route("/api/v1/parcel/update_fee", methods=['POST'])
 @token_required
-def update_parcel_fees(token):
+def update_parcel_fees(current_user):
+    connection = connect_database(current_user)
     # Update the parcel fees
     try:
         content = request.get_json(silent=True)
         if content['EFFECTIVE_END_DATE'] == '':
             content['EFFECTIVE_END_DATE'] = 'NULL'
 
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         mycursor.execute(parcel_query['UPDATE_FEES_BY_ID'].format(ID = content['ID'], CATEGORY = content['CATEGORY'], DESCRIPTION = content['DESCRIPTION'], 
             AMOUNT = content['AMOUNT'], INTEREST = content['INTEREST'], EFFECTIVE_DATE = content['EFFECTIVE_DATE'], EFFECTIVE_END_DATE= 'NULL' ))
-        mydb.commit()
+        connection.commit()
         mycursor.close()
 
         return jsonify({"message": "Parcel fees updated successfully!"}), 200
@@ -171,11 +186,12 @@ def update_parcel_fees(token):
 @parcel_blueprint.route("/api/v1/parcel/delete_fee/<fee_id>", methods=['DELETE'])
 @token_required
 def delete_parcel_fees(current_user, fee_id):
+    connection = connect_database(current_user)
     # Delete the parcel fees
     try:
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         mycursor.execute(parcel_query['DELETE_FEES_BY_ID'].format(ID = fee_id))
-        mydb.commit()
+        connection.commit()
         mycursor.close()
 
         return jsonify({"message": "Parcel fees deleted successfully!"}), 200
@@ -187,7 +203,7 @@ def delete_parcel_fees(current_user, fee_id):
 @parcel_blueprint.route("/api/v1/parcel/add_fee", methods=['POST'])
 @token_required
 def add_parcel_fees(current_user):
-
+    connection = connect_database(current_user)
     # try:
     content = request.get_json(silent=True)
     if content['CATEGORY'] == '':
@@ -203,10 +219,10 @@ def add_parcel_fees(current_user):
     if content['EFFECTIVE_END_DATE'] == '':
         content['EFFECTIVE_END_DATE'] = 'NULL'
     
-    mycursor = mydb.cursor()
+    mycursor = connection.cursor()
     mycursor.execute(parcel_query['INSERT_FEES_BY_UNIQUE_ID'].format(UNIQUE_ID = content['UNIQUE_ID'], CATEGORY = content['CATEGORY'], DESCRIPTION = content['DESCRIPTION'], 
         AMOUNT = content['AMOUNT'], INTEREST = content['INTEREST'], EFFECTIVE_DATE = content['EFFECTIVE_DATE'], EFFECTIVE_END_DATE= 'NULL' ))
-    mydb.commit()
+    connection.commit()
     mycursor.close()
 
     return jsonify({"message": "Parcel fees added successfully!"}), 200
@@ -217,9 +233,11 @@ def add_parcel_fees(current_user):
 @parcel_blueprint.route("/api/v1/parcel/<parcel_id>/payoff_report", methods=['GET'])
 @token_required
 def get_payoff_report(current_user, parcel_id):
+    connection = connect_database(current_user)
+
     end_date = request.args.get('endDate')
     # print (end_date, parcel_id)
-    mycursor = mydb.cursor()
+    mycursor = connection.cursor()
 
   
     try:
@@ -288,14 +306,14 @@ def get_payoff_report(current_user, parcel_id):
             'BALANCE': str(balance)
         }
 
-    mydb.commit()
+    connection.commit()
     mycursor.close()
     # except:
     #     return jsonify({"message": "Failed while calculating total interest."}), 500
 
     try:
         # Get the parcel details
-        parcel_details = get_parcel_details(parcel_id)
+        parcel_details = get_parcel_details(current_user, parcel_id)
         response_dict = {
                 "parcel_details": parcel_details.to_dict(orient='records'),
                 "parcel_fees": parcel_fees.to_dict(orient='records'),
@@ -315,6 +333,7 @@ def get_payoff_report(current_user, parcel_id):
 @parcel_blueprint.route("/api/v1/parcel/redeem/<parcel_id>", methods=['POST'])
 @token_required
 def redeem_parcel(current_user, parcel_id):
+    connection = connect_database(current_user)
     content = request.get_json()
     try:
         if content['LEVEL'] == '':
@@ -337,7 +356,7 @@ def redeem_parcel(current_user, parcel_id):
         return jsonify({"message": "Failed while validating the data."}), 500
 
     try:
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         # Add to Redeem table
         mycursor.execute(parcel_query['REDEEM_PARTIAL_REDEEM_PARCEL'].format(
             UNIQUE_ID = parcel_id,
@@ -355,7 +374,7 @@ def redeem_parcel(current_user, parcel_id):
         # Update end date for fees
         mycursor.execute(parcel_query['UPDATE_FEES_DATE_BY_ID'].format(ID = parcel_id, EFFECTIVE_END_DATE = content['DATE_REDEEMED']))
 
-        mydb.commit()
+        connection.commit()
         mycursor.close()
         if content['LEVEL'] > 8:
             return jsonify({"message": "Parcel redeemed successfully!"}), 200
@@ -370,10 +389,11 @@ def redeem_parcel(current_user, parcel_id):
 @token_required
 def delete_payment(current_user, payment_id):
     try:
-        mycursor = mydb.cursor()
+        connection = connect_database(current_user)
+        mycursor = connection.cursor()
         # Delete payment
         mycursor.execute(parcel_query['DELETE_PAYMENT_BY_ID'].format(ID = payment_id))
-        mydb.commit()
+        connection.commit()
         mycursor.close()
         return jsonify({"message": "Payment deleted successfully!"}), 200
     except:

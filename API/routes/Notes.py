@@ -21,16 +21,17 @@ with open ('config.json') as f:
 #Salt for bcrypt
 salt = bcrypt.gensalt()
 
-try:
-    mydb = mysql.connector.connect(
-        host = configData['host'],
-        user = configData['user'],
-        password = configData['password'],
-        database = configData['database']
-    )
-except mysql.connector.Error as err:
-   print("Something went wrong: {}".format(err))
-
+def connect_database(user):
+    try:
+        mydb = mysql.connector.connect(
+            host = configData['host'],
+            user = user,
+            password = configData['db_user_password'],
+            database = configData['database']
+        )
+    except mysql.connector.Error as err:
+        print("Something went wrong: {}".format(err))
+    return mydb
 
 
 # Authentication decorator
@@ -47,22 +48,25 @@ def token_required(f):
            # decode the token to obtain user public_id
             data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
             current_user = get_user_details(data['EMAIL'])
+            user_email = data['EMAIL']
         except:
             return jsonify({"message": "Invalid token!"}), 401
          # Return the user information attached to the token
-        return f(current_user, *args, **kwargs)
+        return f(user_email, *args, **kwargs)
     return decorator
 
 # Add notes
 @notes_blueprint.route("/api/v1/notes/add/<parcel_id>", methods=['POST'])
 @token_required
 def add_parcel(current_user, parcel_id):
+    connection = connect_database(current_user)
+
     content = request.get_json(silent=True)
     # Add notes to a parcel   
     try:
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         mycursor.execute(notes_query['INSERT_NOTES'].format(UNIQUE_ID = parcel_id, STRING = content['NOTES']))
-        mydb.commit()
+        connection.commit()
         mycursor.close()
         return jsonify({"message": "Notes added successfully!"}), 200
     except:
@@ -73,10 +77,12 @@ def add_parcel(current_user, parcel_id):
 @notes_blueprint.route("/api/v1/notes/delete/<note_id>", methods=['DELETE'])
 @token_required
 def delete_parcel(current_user, note_id):
+    connection = connect_database(current_user)
+    
     try:
-        mycursor = mydb.cursor()
+        mycursor = connection.cursor()
         mycursor.execute(notes_query['DELETE_NOTES_BY_ID'].format(ID = note_id))
-        mydb.commit()
+        connection.commit()
         mycursor.close()
         return jsonify({"message": "Note deleted successfully!"}), 200
     except:

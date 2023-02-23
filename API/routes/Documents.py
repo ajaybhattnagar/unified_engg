@@ -21,15 +21,17 @@ with open ('config.json') as f:
 #Salt for bcrypt
 salt = bcrypt.gensalt()
 
-try:
-    mydb = mysql.connector.connect(
-        host = configData['host'],
-        user = configData['user'],
-        password = configData['password'],
-        database = configData['database']
-    )
-except mysql.connector.Error as err:
-   print("Something went wrong: {}".format(err))
+def connect_database(user):
+    try:
+        mydb = mysql.connector.connect(
+            host = configData['host'],
+            user = user,
+            password = configData['db_user_password'],
+            database = configData['database']
+        )
+    except mysql.connector.Error as err:
+        print("Something went wrong: {}".format(err))
+    return mydb
 
 
 
@@ -47,11 +49,13 @@ def token_required(f):
            # decode the token to obtain user public_id
             data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
             current_user = get_user_details(data['EMAIL'])
+            user_email = data['EMAIL']
         except:
             return jsonify({"message": "Invalid token!"}), 401
          # Return the user information attached to the token
-        return f(current_user, *args, **kwargs)
+        return f(user_email, *args, **kwargs)
     return decorator
+
 
 # Add notes
 @documents_blueprint.route("/api/v1/document/add/<parcel_id>", methods=['POST'])
@@ -60,9 +64,10 @@ def add_document(current_user, parcel_id):
     content = request.get_json(silent=True)
     # Add notes to a parcel   
     try:
-        mycursor = mydb.cursor()
+        connection = connect_database(current_user)
+        mycursor = connection.cursor()
         mycursor.execute(documents_query['INSERT_DOCUMENTS'].format(UNIQUE_ID = parcel_id, TITLE = content['TITLE'], LINK = content['LINK']))
-        mydb.commit()
+        connection.commit()
         mycursor.close()
         return jsonify({"message": "Document added successfully!"}), 200
     except:
@@ -74,9 +79,27 @@ def add_document(current_user, parcel_id):
 @token_required
 def delete_parcel(current_user, note_id):
     try:
-        mycursor = mydb.cursor()
+        connection = connect_database(current_user)
+        mycursor = connection.cursor()
         mycursor.execute(documents_query['DELETE_NOTES_BY_ID'].format(ID = note_id))
-        mydb.commit()
+        connection.commit()
+        mycursor.close()
+        return jsonify({"message": "Document deleted successfully!"}), 200
+    except:
+        return jsonify({"message": "Something went wrong!"}), 500
+    
+
+
+@documents_blueprint.route("/api/v1/test", methods=['GET'])
+@token_required
+def test(current_user):
+    try:
+        connection = connect_database(current_user)
+        mycursor = connection.cursor()
+        mycursor.execute('SELECT CURRENT_USER')
+        parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        print(parcel_fees)
+        connection.commit()
         mycursor.close()
         return jsonify({"message": "Document deleted successfully!"}), 200
     except:
