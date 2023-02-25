@@ -20,7 +20,8 @@ export const utils = {
   deltePaymentByID,
   interestIntervalArray,
   getInterestIntervalbyValue,
-  delteDocumentByID
+  delteDocumentByID,
+  getParcelAuditData
 
 }
 
@@ -432,4 +433,36 @@ function delteDocumentByID(id) {
   }
 
 
+}
+
+
+function getParcelAuditData(parcel_id) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.GET_AUDIT_HISTORY).concat(parcel_id);
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      'x-access-token': localStorage.getItem('token')
+    },
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        return data
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err));
 }

@@ -37,6 +37,7 @@ class NavigationBar extends Component {
                     <Nav.Link href="/"><strong></strong></Nav.Link>
                     <Nav.Link href="/parcel"><strong></strong></Nav.Link>
                     <Nav.Link href="/parcel/payoff_report"><strong></strong></Nav.Link>
+                    <Nav.Link href="/parcel/audit"><strong></strong></Nav.Link>
                 </Nav>
                 {
                     localStorage.getItem('token') ?

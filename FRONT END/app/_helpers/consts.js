@@ -29,4 +29,6 @@ export const appConstants = {
 
     ADD_NEW_DOCUMENT: '/api/v1/document/add/',
     DELETE_DOCUMENT_BY_ID: '/api/v1/document/delete/',
+
+    GET_AUDIT_HISTORY: '/api/v1/audit/',
 };

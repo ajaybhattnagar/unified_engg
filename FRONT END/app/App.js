@@ -8,6 +8,7 @@ import Home from './_components/_home/Home';
 import Parcel from './_components/_parcel/Parcel';
 import UploadParcels from './_components/_uploadParcels/UploadParcels';
 import PayoffReport from './_components/_payoffReport/PayoffReport';
+import Audit from './_components/_audit/Audit';
 import { BrowserRouter as Router, Routes , Route } from 'react-router-dom';
 
 
@@ -22,6 +23,7 @@ function App() {
 				<Route path='/uploadparcels' element={<UploadParcels />} />
 				<Route path='/parcel/:parcel_id?' element={<Parcel />} />
 				<Route path='/parcel/payoff_report/:parcel_id?' element={<PayoffReport />} />
+				<Route path='/parcel/audit/:parcel_id?' element={<Audit />} />
 			</Routes>
 		</Router>
 	);

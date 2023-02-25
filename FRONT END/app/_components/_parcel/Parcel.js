@@ -9,6 +9,7 @@ import { faEdit, faTrash, faPlusCircle } from "@fortawesome/free-solid-svg-icons
 import NavigationBar from '../_navigation/NavigationBar';
 import './Parcel.css';
 import DropDown from "../_ui/dropDown";
+import Loading from "../_ui/loading";
 
 import EditFeesModal from "../_ui/editFeesModal";
 import EditNotesModal from "../_ui/editNotesModal";
@@ -37,6 +38,7 @@ const Parcel = () => {
     const [showNewDocumentsModal, setNewDocumentsModal] = useState(false);
     const [refresh, setRefresh] = useState(false);
 
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (!localStorage.getItem("token")) {
@@ -46,6 +48,7 @@ const Parcel = () => {
     }, [refresh]);
 
     const get_parcel_details = (e) => {
+        setIsLoading(true);
         var response_status = 0;
         var url = appConstants.BASE_URL.concat(appConstants.GET_PARCEL_DETAILS).concat(parcelId.current);
         fetch(url, {
@@ -73,11 +76,17 @@ const Parcel = () => {
                     setParcelNotes(data.parcel_notes);
                     setParcelPayments(data.parcel_payments);
                     setParcelDocuments(data.parcel_documents);
+                    setIsLoading(false);
                 } else {
+                    setIsLoading(false);
                     alert(data.message);
                 }
             })
             .catch((err) => console.error(err));
+    }
+
+    const navigate_history_page = () => {
+        navigate(`/parcel/audit/${parcelId.current}`);
     }
 
     const render_parcel_details = () => {
@@ -149,6 +158,7 @@ const Parcel = () => {
                         <button className="btn btn-outline-success btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true} onClick={() => openRedeemModal(10)}>Redeem</button>
                         <button className="btn btn-outline-secondary btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true} onClick={() => openRedeemModal(9)}>Partial Redemption</button>
                         <button className="btn btn-outline-primary btn-sm mr-2" onClick={() => open_payoff_report()}>Payoff Report</button>
+                        <button className="btn btn-outline-secondary btn-sm mr-2" onClick={() => navigate_history_page()}>History</button>
                         <button className="btn btn-outline-success btn-sm" onClick={() => get_parcel_details()}>Refresh</button>
 
                     </div>
@@ -373,31 +383,33 @@ const Parcel = () => {
         return (
             <div>
                 <NavigationBar />
+                {
+                    isLoading ? <div className="d-flex justify-content-center mt-5"><Loading /></div>
+                        :
+                        <div>
+                            {render_parcel_header()}
+                            <hr className='mt-3 d-flex' />
+                            <div className="mt-3 d-flex justify-content-between">
+                                {/* Parcels details */}
+                                <div className="row ml-3 w-50">
+                                    {
+                                        render_parcel_details()
+                                    }
+                                </div>
+                                {/* Parcels fees and notes */}
+                                <div className="ml-3 w-50">
+                                    {render_parcel_payments()}
+                                    <hr />
+                                    {render_parcel_fees()}
+                                    <hr />
+                                    {render_parcel_notes()}
+                                    <hr />
+                                    {render_parcel_documents()}
+                                </div>
+                            </div>
+                        </div>
+                }
 
-                {render_parcel_header()}
-
-                <hr className='mt-3 d-flex' />
-
-                <div className="mt-3 d-flex justify-content-between">
-                    {/* Parcels details */}
-                    <div className="row ml-3 w-50">
-                        {
-                            render_parcel_details()
-                        }
-                    </div>
-
-                    {/* Parcels fees and notes */}
-                    <div className="ml-3 w-50">
-                        {render_parcel_payments()}
-                        <hr />
-                        {render_parcel_fees()}
-                        <hr />
-                        {render_parcel_notes()}
-                        <hr />
-                        {render_parcel_documents()}
-                    </div>
-
-                </div>
 
                 <EditFeesModal show={showEditFeeModal} data={selectedFee} newFee={newFeeModal} close={() => { setEditFeeModal(false), get_parcel_details() }} />
                 <EditNotesModal show={showNewNotesModal} close={() => { setNewNotesModal(false), get_parcel_details() }} />
