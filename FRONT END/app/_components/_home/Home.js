@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useReducer, useRef, useState } from 
 import { useNavigate } from "react-router-dom";
 import { utils } from '../../_helpers/utils';
 import { appConstants } from '../../_helpers/consts.js';
-import ReactTableFilter from "../_ui/reactTableFilter";
 import MTable from "../_ui/materialTable";
 import Input from "../_ui/input";
 import NavigationBar from '../_navigation/NavigationBar';
@@ -10,6 +9,7 @@ import './Home.css';
 import { columns } from '../../_columns/parcelsDisplayColumns';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
+import Loading from "../_ui/loading";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -22,15 +22,23 @@ const Home = () => {
     const municipality = useRef(null);
     const status = useRef(null);
     const [distinctFilters, setDistinctFilters] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
 
     useEffect(() => {
+        setIsLoading(true);
         if (!localStorage.getItem("token")) {
             navigate("/");
         }
         utils.getDistinctFilters()
             .then((data) => {
                 setDistinctFilters(data);
+                setIsLoading(false);
             })
+            .catch((err) => {
+                console.error(err);
+                setIsLoading(false);
+            });
     }, []);
 
     const handleSearch = (e) => {
@@ -131,7 +139,7 @@ const Home = () => {
                     <Button className="ml-2" variant="primary" onClick={(e) => handleSearch()}> Search </Button>
                 </div>
                 {
-                    distinctFilters ?
+                    distinctFilters && !isLoading ?
                         <div className='container mt-3'>
                             <div className="d-flex justify-content-left">
                                 <div className="col col-lg-2"><DropDown placeholder={'State'} list={distinctFilters.states} isMulti={false} prepareArray={true} onSelect={(e) => { state.current = e.value; handleFilterSearch() }} /></div>
@@ -141,7 +149,7 @@ const Home = () => {
                             </div>
                         </div>
                         :
-                        null
+                        <div className="mt-3"><Loading/></div>
                 }
                 <hr className='container mt-3 d-flex' />
 

@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { appConstants } from '../../_helpers/consts.js';
 import { utils } from "../../_helpers/utils.js";
 import Input from "../_ui/input";
+import Brand from '../../_images/brand.png'
 import './PayoffReport.css'
 
 const PayoffReport = () => {
@@ -57,7 +58,7 @@ const PayoffReport = () => {
                     setData(data);
                     setParcelDetails(data.parcel_details[0]);
                     setParcelFees(data.parcel_fees);
-                    setParcelSummary(data.parcel_summary);
+                    setParcelSummary(data.parcel_summary[0]);
                 } else {
                     alert(data.message);
                 }
@@ -79,6 +80,7 @@ const PayoffReport = () => {
                             <img alt="Parcel" className='parcel-image' width={400} height={400} />
                         </div>
                         <div className="col">
+                            <span className='ml-3 row font-weight-bold'>Property Address: </span>
                             <span className='ml-3 row'>{parcelDetails['Location Full Street Address']},</span>
                             <span className='ml-3 row'>{parcelDetails['County']},</span>
                             <span className='ml-3 row'>{parcelDetails['Municipality']},</span>
@@ -144,38 +146,43 @@ const PayoffReport = () => {
             return (
                 <div className='mt-3'>
                     <table className="table table-striped table-bordered table-hover table-sm">
-                        <thead className="thead-dark">
+                        <thead>
                             <tr>
-                                <th>Pricipal</th>
-                                <th>Premium</th>
-                                <th>Penalty</th>
-                                <th>Subsequent Taxes</th>
-                                <th>Subsequent Taxes Interest</th>
-                                <th>Total</th>
-                                <th>Payments</th>
-                                <th>Balance</th>
+                                <th>Pricipal: </th>
+                                <th className="columnColor">{utils.toCurrency(parcelSummary['PRINCIPAL'])}</th>
+                            </tr>
+                            <tr>
+                                <th>Premium: </th>
+                                <th className="columnColor">{utils.toCurrency(parcelSummary['OVERBID'])}</th>
+                            </tr>
+                            <tr>
+                                <th>Penalty: </th>
+                                <th className="columnColor">{utils.toCurrency(parcelSummary['PENALTY'])}</th>
+                            </tr>
+                            <tr>
+                                <th>Subsequent Taxes: </th>
+                                <th className="columnColor">{utils.toCurrency(parcelSummary['SUB_TAXES'])}</th>
+                            </tr>
+                            <tr>
+                                <th>Subsequent Taxes Interest: </th>
+                                <th className="columnColor">{utils.toCurrency(parcelSummary['SUB_TAXES_INTEREST'])}</th>
+                            </tr>
+                            <tr>
+                                <th>Total: </th>
+                                <th className="columnColor">{utils.toCurrency(parcelSummary['TOTAL'])}</th>
+                            </tr>
+                            <tr>
+                                <th>Payments: </th>
+                                <th className="columnColor">{utils.toCurrency(parcelSummary['PAYMENT_RECIEVED'])}</th>
+                            </tr>
+                            <tr>
+                                <th>Balance: </th>
+                                <th className="columnColor">{utils.toCurrency(parcelSummary['BALANCE'])}</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {
-                                parcelSummary.map((item, index) => {
-                                    return (
-                                        <tr key={index} className='font-weight-bold table-secondary'>
-                                            <td>{utils.toCurrency(item['PRINCIPAL'])}</td>
-                                            <td>{utils.toCurrency(item['OVERBID'])}</td>
-                                            <td>{utils.toCurrency(item['PENALTY'])}</td>
-                                            <td>{utils.toCurrency(item['SUB_TAXES'])}</td>
-                                            <td>{utils.toCurrency(item['SUB_TAXES_INTEREST'])}</td>
-                                            <td>{utils.toCurrency(item['TOTAL'])}</td>
-                                            <td>{utils.toCurrency(item['PAYMENT_RECIEVED'])}</td>
-                                            <td>{utils.toCurrency(item['BALANCE'])}</td>
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody>
                     </table>
                 </div>
+
             )
         }
     }
@@ -211,8 +218,13 @@ const PayoffReport = () => {
             </div>
 
             <div className="pdfA4" id="divToPrint" ref={inputRef}>
-                <div className='mx-auto mt-3 w-25' >
-                    <h2>Payoff Report </h2>
+                <div className='mt-3 d-flex justify-content-between' >
+                    <div className='mr-3'>
+                        <img alt='logo' className='m-3' src={Brand} height={40} />
+                        <span className='ml-3 row'>PO box 815, Fort Washington</span>
+                        <span className='ml-3 row'>19034 - 0815 PA</span>
+                    </div>
+                    <h2 className="m-3">Payoff Report </h2>
                 </div>
 
                 <hr />

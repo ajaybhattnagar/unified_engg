@@ -11,3 +11,9 @@
   margin-left: 'auto';
   margin-right: 'auto';
 }
+
+
+.columnColor {
+  /* color: #fff; */
+  background-color: #e7eaee;
+}
