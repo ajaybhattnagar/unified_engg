@@ -164,3 +164,43 @@ def get_parcels_based_on_filters(current_user):
         return response, 200
     except:
         return jsonify({"message": "Something went wrong!"}), 500
+
+
+# Upload parcels
+@parcels_blueprint.route("/api/v1/edit_bulk_parcels", methods=['POST'])
+@token_required
+def edit_bulk_parcels(current_user):
+    content = request.get_json(silent=True)
+    df = pd.DataFrame.from_dict(content)
+    df = df[df['TSRID'].isnull() == False]
+    
+    df = df.head(1)
+    UPDATE_QUERY = "UPDATE PARCELS SET {COL} = '{VALUE}' WHERE TSRID = '{TSRID}';"
+    UPDATE_QUERY_COMPLETE_STRING = ['SET SQL_SAFE_UPDATES = 0;']
+    df = df.replace(np.nan, '', regex=True)
+    df = df.replace('nan', '', regex=True)
+    df = df.replace('  ', ' ', regex=True)
+    df = df.replace('None', '', regex=True)
+    df = df.replace('none', '', regex=True)
+
+
+    for index, row in df.iterrows():
+        for col in df.columns:
+            if col != 'TSRID':
+                if row[col] is None or row[col] == '' or row[col] == ' ' or row[col] == np.nan or row[col] == 'nan':
+                    pass
+                else:
+                    update_query = UPDATE_QUERY.format(COL=col, VALUE=row[col], TSRID=row['TSRID'])
+                    UPDATE_QUERY_COMPLETE_STRING.append(update_query)
+
+    UPDATE_QUERY_COMPLETE_STRING = "\n".join(UPDATE_QUERY_COMPLETE_STRING)
+    print(UPDATE_QUERY_COMPLETE_STRING)
+    try:
+        connection = connect_database(current_user)
+        mycursor = connection.cursor()
+        mycursor.execute(UPDATE_QUERY_COMPLETE_STRING)
+        connection.commit()
+        mycursor.close()
+        return jsonify({"message": "Parcels updated successfully."}), 200
+    except:
+        return jsonify({"message": "Something went wrong!"}), 500

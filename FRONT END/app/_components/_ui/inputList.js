@@ -67,13 +67,13 @@ const InputList = (props) => {
                 />
                 <div className="d-flex justify-content-end">
                     {
-                        props.buttonText1 ?
-                            <div className='m-2'> <Button onClick={() => props.onClick1(data)}>{buttonText1}</Button>  </div>
+                        props.buttonText2 ?
+                            <div className='m-2'> <button className="btn btn-outline-secondary" onClick={() => props.onClick2(data)}>{buttonText2}</button>  </div>
                             : null
                     }
                     {
-                        props.buttonText2 ?
-                            <div className='m-2'> <Button onClick={() => props.onClick2(data)}>{buttonText2}</Button>  </div>
+                        props.buttonText1 ?
+                            <div className='m-2'> <Button onClick={() => props.onClick1(data)}>{buttonText1}</Button>  </div>
                             : null
                     }
                 </div>
