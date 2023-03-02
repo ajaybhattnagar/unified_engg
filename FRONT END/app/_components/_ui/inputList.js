@@ -2,8 +2,10 @@ import React, { useRef } from 'react';
 import { useState, useEffect } from "react";
 import { DataSheetGrid, dateColumn, textColumn, keyColumn, floatColumn, checkboxColumn, CellProps } from 'react-datasheet-grid'
 import { Button, Card, Form } from "react-bootstrap";
+import Loading from './loading';
 import 'react-datasheet-grid/dist/style.css'
 import { upload_parcel_columns } from '../../_columns/uploadParcelColumns';
+
 
 const InputList = (props) => {
     const [data, setData] = useState(props.data);
@@ -15,6 +17,10 @@ const InputList = (props) => {
     const lockRows = props.lockRows || "false"
     const selectedRow = props.selectedRow || false
     const searchBox = props.searchBox || false
+
+    const isLoadingButton1 = props.isLoadingButton1 || false
+    const isLoadingButton2 = props.isLoadingButton2 || false
+
 
     var columns
 
@@ -68,12 +74,26 @@ const InputList = (props) => {
                 <div className="d-flex justify-content-end">
                     {
                         props.buttonText2 ?
-                            <div className='m-2'> <button className="btn btn-outline-secondary" onClick={() => props.onClick2(data)}>{buttonText2}</button>  </div>
+                            <div className='m-2'>
+                                <button className="btn btn-outline-secondary d-flex" onClick={() => props.onClick2(data)}>
+                                    {buttonText2}
+                                    {
+                                        isLoadingButton2 ? <span class="spinner-border spinner-border-sm float-right m-1" role="status" aria-hidden="true"></span> : null
+                                    }
+                                </button>
+                            </div>
                             : null
                     }
                     {
                         props.buttonText1 ?
-                            <div className='m-2'> <Button onClick={() => props.onClick1(data)}>{buttonText1}</Button>  </div>
+                            <div className='m-2'>
+                                <button className="btn btn-outline-secondary d-flex" onClick={() => props.onClick1(data)}>
+                                    {buttonText1}
+                                    {
+                                        isLoadingButton1 ? <span class="spinner-border spinner-border-sm float-right m-1" role="status" aria-hidden="true"></span> : null
+                                    }
+                                </button>
+                            </div>
                             : null
                     }
                 </div>

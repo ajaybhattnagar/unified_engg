@@ -9,6 +9,9 @@ const UploadParcels = () => {
     const [data, setData] = useState([]);
     const navigate = useNavigate();
 
+    const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+    const [isLoadingUpload, setIsLoadingUpload] = useState(false);
+
     useEffect(() => {
         if (!localStorage.getItem("token")) {
             navigate("/");
@@ -22,6 +25,7 @@ const UploadParcels = () => {
     }]
 
     const uploadData = (e) => {
+        setIsLoadingUpload(true);
         var response_status = 0;
         fetch(appConstants.BASE_URL.concat(appConstants.UPLOAD_PARCELS), {
             method: "POST",
@@ -43,9 +47,11 @@ const UploadParcels = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
+                    setIsLoadingUpload(false);
                     alert(data.message);
                     window.location.reload();
                 } else {
+                    setIsLoadingUpload(false);
                     alert(data.message);
                 }
             })
@@ -53,6 +59,7 @@ const UploadParcels = () => {
     }
 
     const updateData = (e) => {
+        setIsLoadingEdit(true);
         var response_status = 0;
         fetch(appConstants.BASE_URL.concat(appConstants.EDIT_BULK_PARCELS), {
             method: "POST",
@@ -74,9 +81,11 @@ const UploadParcels = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
+                    setIsLoadingEdit(false);
                     alert(data.message);
                     // window.location.reload();
                 } else {
+                    setIsLoadingEdit(false);
                     alert(data.message);
                 }
             })
@@ -94,8 +103,11 @@ const UploadParcels = () => {
                     type='uploadparcels'
                     buttonText1="Upload"
                     onClick1={(e) => uploadData(e)}
+                    isLoadingButton1={isLoadingUpload}
+
                     buttonText2="Edit/Update"
                     onClick2={(e) => updateData(e)}
+                    isLoadingButton2={isLoadingEdit}
                     lockRows={false}
                 />
             </div>

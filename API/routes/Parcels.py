@@ -63,6 +63,13 @@ def token_required(f):
 def upload_parcels(current_user):
     content = request.get_json(silent=True)
     df = pd.DataFrame.from_dict(content)
+
+    if len(df) == 0:
+        return jsonify({"message": 'No data found'}), 500
+
+    if 'TSRID' not in df.columns:
+        return jsonify({"message": 'TSRID column is missing'}), 500
+
     df = df[df['TSRID'].isnull() == False]
     df['UNIQUE_ID'] = np.random.randint(0,999999999, size=len(df))
 
@@ -70,7 +77,7 @@ def upload_parcels(current_user):
         df.to_sql('PARCELS', engine, if_exists='append', index=False)
         return jsonify({"message": "Parcels uploaded successfully."}), 200
     except:
-        return jsonify({"message": 'Failed'}), 500
+        return jsonify({"message": 'Something went wrong!'}), 500
 
 
 # search parcels
@@ -172,9 +179,15 @@ def get_parcels_based_on_filters(current_user):
 def edit_bulk_parcels(current_user):
     content = request.get_json(silent=True)
     df = pd.DataFrame.from_dict(content)
+
+    if 'TSRID' not in df.columns:
+        return jsonify({"message": "Make sure to have TSRID column populated!"}), 200
+
     df = df[df['TSRID'].isnull() == False]
     
-    df = df.head(1)
+    if len(df) == 0:
+        return jsonify({"message": "Make sure to have TSRID column populated!"}), 200
+
     UPDATE_QUERY = "UPDATE PARCELS SET {COL} = '{VALUE}' WHERE TSRID = '{TSRID}';"
     UPDATE_QUERY_COMPLETE_STRING = ['SET SQL_SAFE_UPDATES = 0;']
     df = df.replace(np.nan, '', regex=True)
@@ -193,14 +206,18 @@ def edit_bulk_parcels(current_user):
                     update_query = UPDATE_QUERY.format(COL=col, VALUE=row[col], TSRID=row['TSRID'])
                     UPDATE_QUERY_COMPLETE_STRING.append(update_query)
 
-    UPDATE_QUERY_COMPLETE_STRING = "\n".join(UPDATE_QUERY_COMPLETE_STRING)
-    print(UPDATE_QUERY_COMPLETE_STRING)
-    try:
+    # UPDATE_QUERY_COMPLETE_STRING = "\n".join(UPDATE_QUERY_COMPLETE_STRING)
+    for i in UPDATE_QUERY_COMPLETE_STRING:
         connection = connect_database(current_user)
         mycursor = connection.cursor()
-        mycursor.execute(UPDATE_QUERY_COMPLETE_STRING)
-        connection.commit()
-        mycursor.close()
-        return jsonify({"message": "Parcels updated successfully."}), 200
-    except:
-        return jsonify({"message": "Something went wrong!"}), 500
+        
+        try:
+            mycursor.execute(i)
+            connection.commit()
+        except:
+            mycursor.close()
+            return jsonify({"message": "Something went wrong!"}), 500
+    
+    mycursor.close()     
+    return jsonify({"message": "Parcels updated successfully."}), 200
+    
