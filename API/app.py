@@ -14,6 +14,7 @@ from routes.Parcel import parcel_blueprint
 from routes.Notes import notes_blueprint
 from routes.Documents import documents_blueprint
 from routes.AuditHistory import audit_blueprint
+from routes.Reports import reports_blueprint
 
 app = Flask(__name__)
 app.register_blueprint(login_blueprint)
@@ -22,6 +23,7 @@ app.register_blueprint(parcel_blueprint)
 app.register_blueprint(notes_blueprint)
 app.register_blueprint(documents_blueprint)
 app.register_blueprint(audit_blueprint)
+app.register_blueprint(reports_blueprint)
 
 CORS(app)
 
