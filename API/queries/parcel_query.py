@@ -58,6 +58,14 @@ parcel_query = {
 
 "GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT": """
                     SELECT ID, UNIQUE_ID, CATEGORY, DESCRIPTION, AMOUNT, INTEREST, INTEREST_ACC_INTERVAL, CONVERT(EFFECTIVE_DATE, DATE) 'EFFECTIVE_DATE',  
+                    CASE 
+                        WHEN CATEGORY > 2 THEN AMOUNT
+                        WHEN CATEGORY < 3 THEN 0
+                    ELSE 0 END AS 'AMOUNT',
+                    CASE 
+                        WHEN CATEGORY > 2 THEN 0
+                        WHEN CATEGORY < 3 THEN AMOUNT
+                    ELSE 0 END AS 'FEES',
                     CASE
                         WHEN CONVERT(EFFECTIVE_END_DATE, DATE) > '1994-10-21' THEN CONVERT(EFFECTIVE_END_DATE, DATE)
                         WHEN CONVERT(EFFECTIVE_END_DATE, DATE) = '0000-00-00' THEN STR_TO_DATE('{END_DATE}', '%Y-%m-%d') 

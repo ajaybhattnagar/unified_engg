@@ -57,7 +57,7 @@ function formatAMPM(date) {
 }
 
 function toCurrency(amount) {
-  if (amount != null && amount > 0) {
+  if (amount != null) {
     amount = parseFloat(amount).toFixed(2)
     return '$' + (amount).replace(/\d(?=(\d{3})+\.)/g, '$&,');
   }
@@ -270,7 +270,7 @@ function convertTimeStampToDateForInputBox(timeStamp) {
       month = '0' + month;
     }
 
-    var dt = date.getDate();
+    var dt = date.getDate() + 1;
     if (dt < 10) {
       dt = '0' + dt;
     }

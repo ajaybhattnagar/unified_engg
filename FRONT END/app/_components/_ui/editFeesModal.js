@@ -79,7 +79,7 @@ const EditFeesModal = (props) => {
       "AMOUNT": amount,
       "INTEREST": interest,
       "INTEREST_ACC_INTERVAL": intersAccInterval,
-      "EFFECTIVE_DATE": utils.convertTimeStampToDateForInputBox(effStartDate),
+      "EFFECTIVE_DATE": effStartDate,
       "EFFECTIVE_END_DATE": 'NULL'
     }
     fetch(url, {
@@ -199,6 +199,7 @@ const EditFeesModal = (props) => {
 
                 <div className="d-flex">
                   <div className="col col-lg-5 m-1"><Input text="Start Date" type="date" onChange={(e) => { setEffStartDate(e) }} /></div>
+                  {/* <div className="col col-lg-5 m-1"><Input text="Start Date" type="date" onChange={(e) => { console.log(e) }} /></div> */}
                 </div>
               </div>
               :

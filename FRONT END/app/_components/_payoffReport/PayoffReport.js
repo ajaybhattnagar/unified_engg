@@ -31,7 +31,7 @@ const PayoffReport = () => {
     const get_parcel_payoff_report = (date) => {
         var response_status = 0;
         if (date) {
-            var endDate = utils.convertTimeStampToDateForInputBox(date);
+            var endDate = date;
         } else {
             var endDate = utils.convertTimeStampToDateForInputBox(new Date());
         }
@@ -55,6 +55,7 @@ const PayoffReport = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
+                    // console.log(data);
                     setData(data);
                     setParcelDetails(data.parcel_details[0]);
                     setParcelFees(data.parcel_fees);
@@ -114,7 +115,10 @@ const PayoffReport = () => {
                                 <th>Effective Date</th>
                                 <th>Category</th>
                                 <th>Total Interest Days</th>
+                                <th>Tax</th>
                                 <th>Interest</th>
+                                <th>Fees</th>
+                                <th>Penalty</th>
                                 <th>Payment Recieved</th>
                                 <th>Total</th>
                             </tr>
@@ -124,12 +128,15 @@ const PayoffReport = () => {
                                 parcelFees.map((item, index) => {
                                     return (
                                         <tr key={index} className={item['CATEGORY'] === 'Total' ? 'font-weight-bold table-secondary' : null}>
-                                            <td>{item['EFFECTIVE_DATE']}</td>
-                                            <td>{item['CATEGORY'] === 'Total' ? "Total" : utils.getCategorybyValue(item['CATEGORY'])}</td>
-                                            <td>{item['TOTAL_DAYS_OF_INTEREST']}</td>
-                                            <td>{utils.toCurrency(item['TOTAL_INTEREST'])}</td>
-                                            <td>{utils.toCurrency(item['PAYMENTS_RECIEVED'])}</td>
-                                            <td>{utils.toCurrency(item['TOTAL_AMOUNT'])}</td>
+                                            <td className = 'small'>{item['EFFECTIVE_DATE']}</td>
+                                            <td className = 'small'>{item['CATEGORY'] === 'Total' ? "Total" : utils.getCategorybyValue(item['CATEGORY'])}</td>
+                                            <td className = 'small'>{item['TOTAL_DAYS_OF_INTEREST']}</td>
+                                            <td className = 'small'>{utils.toCurrency(item['AMOUNT'])}</td>
+                                            <td className = 'small'>{utils.toCurrency(item['TOTAL_INTEREST'])}</td>
+                                            <td className = 'small'>{utils.toCurrency(item['FEES'])}</td>
+                                            <td className = 'small'>{utils.toCurrency(item['PENALTY'])}</td>
+                                            <td className = 'small'>{utils.toCurrency(item['PAYMENTS_RECIEVED'])}</td>
+                                            <td className = 'small font-weight-bold'>{utils.toCurrency(item['TOTAL_AMOUNT'])}</td>
                                         </tr>
                                     )
                                 })
@@ -221,7 +228,7 @@ const PayoffReport = () => {
                 <div className='mt-3 d-flex justify-content-between' >
                     <div className='mr-3'>
                         <img alt='logo' className='m-3' src={Brand} height={40} />
-                        <span className='ml-3 row'>PO box 815, Fort Washington</span>
+                        <span className='ml-3 row'>PO Box 815, Fort Washington</span>
                         <span className='ml-3 row'>19034 - 0815 PA</span>
                     </div>
                     <h2 className="m-3">Payoff Report </h2>
@@ -233,8 +240,8 @@ const PayoffReport = () => {
                 <hr />
                 {<div className="m-2"> {render_parcel_fees()} </div>}
                 <hr />
-                {<div className="m-2"> {render_parcel_summary()} </div>}
-                <hr />
+                {/* {<div className="m-2"> {render_parcel_summary()} </div>}
+                <hr /> */}
             </div>
 
 

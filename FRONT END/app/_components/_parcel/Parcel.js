@@ -235,7 +235,7 @@ const Parcel = () => {
                                                 <td>{utils.getCategorybyValue(data['CATEGORY'])}</td>
                                                 <td>{utils.convertTimeStampToString(data['EFFECTIVE_DATE'])}</td>
                                                 <td>{utils.convertTimeStampToString(data['EFFECTIVE_END_DATE'])}</td>
-                                                <td>{data['INTEREST']}</td>
+                                                <td>{ Math.round((data['INTEREST']) * 100) + '%'}</td>
                                                 <td>{utils.toCurrency(data['AMOUNT'])}</td>
                                             </tr>)
 

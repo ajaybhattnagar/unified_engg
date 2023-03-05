@@ -250,7 +250,7 @@ def get_payoff_report(current_user, parcel_id):
         # Get all payments
         mycursor.execute(parcel_query['GET_PAYMENTS_SUM_BY_ID'].format(ID = parcel_id))
         payments = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
-        payments = payments[0]['PAYMENTS']
+        payments = payments[0]['PAYMENTS'] * (-1)
         #  Get the total penalty
         total_penalty = get_total_penalty(parcel_fees.iloc[0]['BEGINNING_BALANCE'], parcel_fees.iloc[0]['AMOUNT'], 'false')
 
@@ -259,7 +259,6 @@ def get_payoff_report(current_user, parcel_id):
 
     # Get the total interest
     # try:
-    # print (parcel_fees)
     total_interest = []
     total_days_of_interest = []
     for i in np.arange(0, len(parcel_fees)):
@@ -276,17 +275,30 @@ def get_payoff_report(current_user, parcel_id):
     parcel_fees['TOTAL_INTEREST'] = total_interest
     parcel_fees['TOTAL_AMOUNT'] = 0
     parcel_fees['PAYMENTS_RECIEVED'] = 0
-    parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 'TOTAL_INTEREST', 'PAYMENTS_RECIEVED', 'TOTAL_AMOUNT', 'EFFECTIVE_END_DATE']]
+    parcel_fees['PENALTY'] = 0
+
+    # Add penalty to the parcel fees df
+    # 16 is the index of the penalty column
+    parcel_fees.iloc[0, 16] = total_penalty
+    # parcel_fees.to_excel('parcel_fees.xlsx')
+
+    parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 
+                            'TOTAL_INTEREST', 'PAYMENTS_RECIEVED', 'TOTAL_AMOUNT', 'EFFECTIVE_END_DATE', 'FEES', 'PENALTY']]
     # Change the data type of the columns
-    parcel_fees[["AMOUNT", "INTEREST" ]] = parcel_fees[["AMOUNT", "INTEREST"]].apply(pd.to_numeric)
-    parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'],2)
+    parcel_fees[["AMOUNT", "INTEREST", "FEES"]] = parcel_fees[["AMOUNT", "INTEREST", "FEES"]].apply(pd.to_numeric)
+    parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'] + parcel_fees['FEES'],2)
+
+    # Summary total row
+    total = round(float(parcel_fees['TOTAL_AMOUNT'].sum()) + float(payments), 2)
 
     summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
-                    payments, round(parcel_fees['TOTAL_AMOUNT'].sum(),2), '']
+                    payments, total, '', round(parcel_fees['FEES'].sum(),2), round(parcel_fees['PENALTY'].sum(),2)]
+    
     summary_row = pd.DataFrame([summary_row], columns = parcel_fees.columns)
     parcel_fees = pd.concat([parcel_fees, summary_row])
     principal = parcel_fees[parcel_fees['CATEGORY'] == 1]['AMOUNT'].sum()
     overbid = parcel_fees[parcel_fees['CATEGORY'] == 2]['AMOUNT'].sum()
+
     penalty = total_penalty
     sub_taxes = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['AMOUNT'].sum()
     sub_taxes_interest = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['TOTAL_INTEREST'].sum()
