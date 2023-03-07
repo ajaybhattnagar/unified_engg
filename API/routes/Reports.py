@@ -101,6 +101,8 @@ def all_fields(current_user):
         results_df['EFFECTIVE_DATE'] = pd.to_datetime(results_df['EFFECTIVE_DATE'])
         results_df['EFFECTIVE_END_DATE'] = pd.to_datetime(results_df['EFFECTIVE_END_DATE'])
 
+        results_df.to_excel('all_fields.xlsx', index=False)
+
         # Close the connection
         mycursor.close()
         connection.close()
@@ -112,5 +114,5 @@ def all_fields(current_user):
         response.headers['content-type'] = 'application/json'
         return response, 200
 
-    except:
-        return jsonify("Something went wrong."), 500
+    except Exception as e:
+        return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
