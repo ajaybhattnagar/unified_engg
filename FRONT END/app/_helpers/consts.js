@@ -1,7 +1,7 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
-    // BASE_URL: 'http://3.138.106.64:5000/',
-    BASE_URL: 'http://localhost:5000/',
+    BASE_URL: 'http://3.138.106.64:5000/',
+    // BASE_URL: 'http://localhost:5000/',
 
     REGISTER: 'api/v1/register',
     LOGIN: 'api/v1/login',
@@ -28,10 +28,10 @@ export const appConstants = {
     REDEEM_OR_PARTIAL_REDEEM_OR_ADD_PAYMENT: '/api/v1/parcel/redeem/',
     DELETE_PAYMENT_BY_ID: 'api/v1/parcel/delete_payment/',
 
-    ADD_NEW_DOCUMENT: '/api/v1/document/add/',
-    DELETE_DOCUMENT_BY_ID: '/api/v1/document/delete/',
+    ADD_NEW_DOCUMENT: 'api/v1/document/add/',
+    DELETE_DOCUMENT_BY_ID: 'api/v1/document/delete/',
 
-    GET_AUDIT_HISTORY: '/api/v1/audit/',
+    GET_AUDIT_HISTORY: 'api/v1/audit/',
 
-    GET_ALL_FIELDS_REPORT: '/api/v1/reports/all_fields',
+    GET_ALL_FIELDS_REPORT: 'api/v1/reports/all_fields',
 };

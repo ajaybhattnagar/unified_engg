@@ -101,7 +101,7 @@ def all_fields(current_user):
         results_df['EFFECTIVE_DATE'] = pd.to_datetime(results_df['EFFECTIVE_DATE'])
         results_df['EFFECTIVE_END_DATE'] = pd.to_datetime(results_df['EFFECTIVE_END_DATE'])
 
-        results_df.to_excel('all_fields.xlsx', index=False)
+        # results_df.to_excel('all_fields.xlsx', index=False)
 
         # Close the connection
         mycursor.close()
