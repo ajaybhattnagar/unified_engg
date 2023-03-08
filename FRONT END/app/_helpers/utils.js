@@ -21,7 +21,8 @@ export const utils = {
   interestIntervalArray,
   getInterestIntervalbyValue,
   delteDocumentByID,
-  getParcelAuditData
+  getParcelAuditData,
+  reportsArray
 
 }
 
@@ -102,6 +103,14 @@ function statusArray() {
   ]
 }
 
+function reportsArray() {
+  return [
+    { value: 'ALL_FIELDS', label: 'All Fields' },
+    { value: 'REPORT_2', label: 'Report 2' },
+    { value: 'REPORT_3', label: 'Report 3' },
+  ]
+}
+
 function interestIntervalArray() {
   return [
     { value: 'per_diem', label: 'Per Diem' },
@@ -127,17 +136,21 @@ function getStatusbyValue(value) {
   }
 }
 
-function exportCSV(array) {
+function exportCSV(array, fileName) {
+  let d = new Date();
+  let dformat = `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}-${d.getHours()}-${d.getMinutes()}`;
+  let file_name = fileName + ' - '  + dformat ;
+
   const options = {
     fieldSeparator: ',',
     quoteStrings: '"',
     decimalSeparator: '.',
     showLabels: true,
     showTitle: true,
-    title: 'Data Export',
     useTextFile: false,
     useBom: true,
     useKeysAsHeaders: true,
+    filename: file_name,
   };
 
   const csvExporter = new ExportToCsv(options);

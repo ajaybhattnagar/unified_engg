@@ -33,6 +33,8 @@ class NavigationBar extends Component {
                 <Nav className="mr-auto">
                     <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
                     <Nav.Link className='hover-underline-animation' as={Link} to="/uploadparcels"><strong>Upload</strong></Nav.Link>
+                    <Nav.Link className='hover-underline-animation' as={Link} to="/reports"><strong>Reports</strong></Nav.Link>
+
                     <Nav.Link href="/signup"><strong></strong></Nav.Link>
                     <Nav.Link href="/"><strong></strong></Nav.Link>
                     <Nav.Link href="/parcel"><strong></strong></Nav.Link>

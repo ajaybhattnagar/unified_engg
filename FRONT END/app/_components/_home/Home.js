@@ -134,9 +134,10 @@ const Home = () => {
                 <div className='container mt-3 d-flex'>
                     <div className="col col-lg-5"><Input text="Search" type="text"
                         value={searchString} onChange={(e) => setSearchString(e)}
-                        clearbutton={true} onClear = {() => handleClear()}/>
+                        clearbutton={true} onClear={() => handleClear()} />
                     </div>
                     <Button className="ml-2" variant="primary" onClick={(e) => handleSearch()}> Search </Button>
+
                 </div>
                 {
                     distinctFilters && !isLoading ?
@@ -149,7 +150,7 @@ const Home = () => {
                             </div>
                         </div>
                         :
-                        <div className="mt-3"><Loading/></div>
+                        <div className="mt-3"><Loading /></div>
                 }
                 <hr className='container mt-3 d-flex' />
 

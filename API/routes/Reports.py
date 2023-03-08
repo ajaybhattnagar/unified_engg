@@ -54,7 +54,7 @@ def token_required(f):
     return decorator
 
 
-@reports_blueprint.route('/api/reports/all_fields', methods=['GET'])
+@reports_blueprint.route('/api/v1/reports/all_fields', methods=['GET'])
 @token_required
 def all_fields(current_user):
     connection = connect_database(current_user)

@@ -27,7 +27,7 @@ const DropDown = (props) => {
 
   const render = () => {
     return (
-      <div className="d-flex justify-content-between mb-3">
+      <div className="d-flex justify-content-between">
         <div className='w-100'>
           <Select
             name='Select'
