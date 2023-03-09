@@ -33,7 +33,9 @@ const PayoffReport = () => {
         if (date) {
             var endDate = date;
         } else {
-            var endDate = utils.convertTimeStampToDateForInputBox(new Date());
+            let dt = new Date();
+            let dateMDY = `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
+            var endDate = dateMDY;
         }
         var url = appConstants.BASE_URL.concat(appConstants.GET_PAYOFF_REPORT).concat(parcelId.current).concat('/payoff_report').concat(`?endDate=${endDate}`);
         fetch(url, {
@@ -55,7 +57,7 @@ const PayoffReport = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
-                    // console.log(data);
+                    console.log(data);
                     setData(data);
                     setParcelDetails(data.parcel_details[0]);
                     setParcelFees(data.parcel_fees);

@@ -139,7 +139,7 @@ function getStatusbyValue(value) {
 function exportCSV(array, fileName) {
   let d = new Date();
   let dformat = `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}-${d.getHours()}-${d.getMinutes()}`;
-  let file_name = fileName + ' - '  + dformat ;
+  let file_name = fileName + ' - ' + dformat;
 
   const options = {
     fieldSeparator: ',',
