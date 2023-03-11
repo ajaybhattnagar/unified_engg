@@ -21,9 +21,13 @@ parcel_query = {
 "GET_PARCEL_BY_ID": """SELECT * FROM PARCELS WHERE UNIQUE_ID = '{ID}'""",
 
 "GET_PARCEL_FEES_BY_ID": """
+                            WITH ALL_FEES AS (
                             SELECT ID, UNIQUE_ID, CATEGORY, DESCRIPTION, AMOUNT, INTEREST, INTEREST_ACC_INTERVAL, EFFECTIVE_DATE, EFFECTIVE_END_DATE 
                             FROM FEES 
                             WHERE UNIQUE_ID = '{ID}' AND IS_ACTIVE = '1'
+                            ORDER BY EFFECTIVE_DATE ASC)
+
+                            SELECT * FROM ALL_FEES
                             UNION
                             SELECT NULL AS ID, NULL AS UNIQUE_ID, 101 AS CATEGORY, NULL AS DESCRIPTION, SUM(AMOUNT), NULL AS INTEREST, NULL AS INTEREST_ACC_INTERVAL, NULL AS EFFECTIVE_DATE, 
                             NULL AS EFFECTIVE_END_DATE 
@@ -38,7 +42,8 @@ parcel_query = {
                             SELECT NULL AS ID, NULL AS UNIQUE_ID, 106 AS CATEGORY, NULL AS DESCRIPTION, SUM(AMOUNT), NULL AS INTEREST, NULL AS INTEREST_ACC_INTERVAL, NULL AS EFFECTIVE_DATE, 
                             NULL AS EFFECTIVE_END_DATE 
                             FROM FEES 
-                            WHERE UNIQUE_ID = '{ID}' AND IS_ACTIVE = '1'""",
+                            WHERE UNIQUE_ID = '{ID}' AND IS_ACTIVE = '1'
+                            """,
 
 "UPDATE_STATUS_BY_ID": """UPDATE PARCELS SET STATUS = '{STATUS}' WHERE UNIQUE_ID = '{ID}'""",
 

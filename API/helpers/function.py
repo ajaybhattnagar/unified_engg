@@ -80,7 +80,11 @@ def get_total_interest(subs, interest, start_date, end_date):
     total_days = days_interest_day + days_interest_month + days_interest_year
 
     sub_per_diem = total_days / per_diem_year
-    total_interest = abs(sub_per_diem * subs * interest)
+
+    if (subs > 0):
+      total_interest = abs(sub_per_diem * subs * interest)
+    else:
+      total_interest = sub_per_diem * subs * interest * -1
     return (round(total_interest, 2))
 
 
