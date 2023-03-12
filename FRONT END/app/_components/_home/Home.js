@@ -23,6 +23,7 @@ const Home = () => {
     const status = useRef(null);
     const [distinctFilters, setDistinctFilters] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingParcels, setIsLoadingParcels] = useState(false);
 
 
     useEffect(() => {
@@ -42,6 +43,7 @@ const Home = () => {
     }, []);
 
     const handleSearch = (e) => {
+        setIsLoadingParcels(true);
         var response_status = 0;
         var url = appConstants.BASE_URL.concat(appConstants.SEARCH_PARCEL).concat(searchString);
         fetch(url, {
@@ -63,8 +65,13 @@ const Home = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
+                    setIsLoadingParcels(false);
+                    if (data.length === 0) {
+                        alert("No results found");
+                    }
                     setData(data);
                 } else {
+                    setIsLoadingParcels(false);
                     alert(data.message);
                 }
             })
@@ -72,6 +79,7 @@ const Home = () => {
     }
 
     const handleFilterSearch = (e) => {
+        setIsLoadingParcels(true);
         if (state.current || county.current || municipality.current || status.current) {
             var response_status = 0;
             var url = appConstants.BASE_URL.concat(appConstants.GET_PARCELS_BASED_ON_FILTERS);
@@ -108,8 +116,13 @@ const Home = () => {
                 })
                 .then((data) => {
                     if (response_status === 200) {
+                        if (data.length === 0) {
+                            alert("No results found");
+                        }
+                        setIsLoadingParcels(false);
                         setData(data);
                     } else {
+                        setIsLoadingParcels(false);
                         alert(data.message);
                     }
                 })
@@ -119,10 +132,10 @@ const Home = () => {
 
     const handleClear = (e) => {
         setSearchString("");
-        state.current = null;
-        county.current = null;
-        municipality.current = null;
-        status.current = null;
+        state.current = '';
+        county.current = '';
+        municipality.current = '';
+        status.current = '';
         setData([]);
     }
 
@@ -158,23 +171,24 @@ const Home = () => {
                 {/* Material Table */}
                 <div className='p-3'>
                     {
-                        data.length > 0 ?
-                            <MTable
-                                title="Parcels"
-                                data={data}
-                                columns={columns}
-                                pageSize={10}
-                                filtering={true}
-                                selection={false}
-                                showTitle={true}
-                                cellEdit={false}
-                                rowEdit={false}
-                                tableLayout='Fixed'
-                                columnsButton={true}
-                                onDownloadButtonPressed={(data) => { utils.exportCSV(data) }}
-                            />
-                            :
-                            null
+                        isLoadingParcels ? <Loading /> :
+                            data.length > 0 ?
+                                <MTable
+                                    title="Parcels"
+                                    data={data}
+                                    columns={columns}
+                                    pageSize={10}
+                                    filtering={true}
+                                    selection={false}
+                                    showTitle={true}
+                                    cellEdit={false}
+                                    rowEdit={false}
+                                    tableLayout='Fixed'
+                                    columnsButton={true}
+                                    onDownloadButtonPressed={(data) => { utils.exportCSV(data) }}
+                                />
+                                :
+                                null
                     }
                 </div>
 

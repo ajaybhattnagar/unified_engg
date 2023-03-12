@@ -11,6 +11,7 @@ const DropDown = (props) => {
   const isMulti = props.isMulti || false
   const prepareArray = props.prepareArray || false
   const placeholder = props.placeholder || "Select"
+  const clearable = props.clearable || false
 
   // useEffect(() => {
   //   console.log(list)
@@ -36,6 +37,7 @@ const DropDown = (props) => {
             onChange={(e) => props.onSelect(e)}
             placeholder={placeholder}
             isOptionDisabled={(option) => option.disabled}
+            isClearable={clearable}
           />
         </div>
       </div>
