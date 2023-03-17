@@ -116,3 +116,55 @@ def all_fields(current_user):
 
     except Exception as e:
         return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
+    
+
+# Report Fee Details
+@reports_blueprint.route('/api/v1/reports/fee_details', methods=['GET'])
+@token_required
+def all_fields(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+        mycursor.execute(reports_query['FEE_DETAIL_REPORT'])
+        fee_details = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        fee_details = pd.DataFrame.from_dict(fee_details)
+        
+        total_interest = []
+        total_days_of_interest = []
+        
+        # Get the total interest
+        for i in np.arange(0, len(fee_details)):
+            if fee_details.iloc[i]['CATEGORY'] > 2:
+                ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
+                td = get_total_days_of_interest(df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
+            else :
+                ti = 0
+                td = 0
+            total_interest.append(ti)
+            total_days_of_interest.append(td)
+        
+        fee_details['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
+        fee_details['TOTAL_INTEREST'] = total_interest
+
+        # Append to the results dataframe
+
+        # Convert the date columns to datetime
+        fee_details['EFFECTIVE_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_DATE'])
+        fee_details['EFFECTIVE_END_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_END_DATE'])
+
+        # results_df.to_excel('all_fields.xlsx', index=False)
+
+        # Close the connection
+        mycursor.close()
+        connection.close()
+        # Setting the response to json
+        response = Response(
+                        response=fee_details.to_json(orient='records', date_format='iso'),
+                        mimetype='application/json'
+                    )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
+
