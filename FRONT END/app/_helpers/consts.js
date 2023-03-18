@@ -1,7 +1,7 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
-    BASE_URL: 'http://3.138.106.64:5000/',
-    // BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'http://3.138.106.64:5000/',
+    BASE_URL: 'http://localhost:5000/',
 
     REGISTER: 'api/v1/register',
     LOGIN: 'api/v1/login',
@@ -36,4 +36,9 @@ export const appConstants = {
     GET_ALL_FIELDS_REPORT: 'api/v1/reports/all_fields',
     GET_FEE_DETAILS_REPORT: 'api/v1/reports/fee_details',
     GET_SUB_REQUEST_FORM_REPORT: 'api/v1/reports/sub_request_form',
+    GET_WEEKLY_REPORT: 'api/v1/reports/weekly_report',
+    GET_NEW_PENDING_REDEMPTION_NOTICE: 'api/v1/reports/new_pending_redemeption_notice',
+    GET_WSFS_REDEMPTION_NOTIFICATION: 'api/v1/reports/wsfs_redemption_notification',
+    GET_MUNI_SPECIFIC_QUERY_FOR_SUBS: 'api/v1/reports/municipality_specific_query_for_subs',
+    GET_WSFS_NEW_LIEN_EXPORT_TEMPLATE: 'api/v1/reports/wsfs_new_lien_export_template',
 };

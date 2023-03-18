@@ -108,6 +108,11 @@ function reportsArray() {
     { value: 'ALL_FIELDS', label: 'All Fields' },
     { value: 'FEE_DETAILS', label: 'Fee Detail Report' },
     { value: 'SUB_REQUEST_FORM', label: 'Sub Request Form' },
+    { value: 'WEEKLY_REPORT', label: 'Weekly Report' },
+    { value: 'PENDING_REDEMPTION_NOTICE', label: 'New Pending Redemeption Notice' },
+    { value: 'WSFS_REDEMPTION_NOTIFICATION', label: 'WSFS Redemption Notification' },
+    { value: 'MUNI_QUERY_FOR_SUBS', label: 'Municipality Specific Query For Subs' },
+    { value: 'WSFS_NEW_LIEN_EXPORT_TEMPLATE', label: 'WSFS New Lien Export Template' },
   ]
 }
 

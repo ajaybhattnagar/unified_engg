@@ -24,7 +24,7 @@ const Reports = () => {
             navigate("/");
         }
     }, []);
-
+    
     const get_report = (e) => {
         setIsLoading(true);
         var url = '';
@@ -38,6 +38,22 @@ const Reports = () => {
         else if (selected_report.current === 'SUB_REQUEST_FORM') {
             url = appConstants.BASE_URL.concat(appConstants.GET_SUB_REQUEST_FORM_REPORT);
         }
+        else if (selected_report.current === 'WEEKLY_REPORT') {
+            url = appConstants.BASE_URL.concat(appConstants.GET_WEEKLY_REPORT);
+        }
+        else if (selected_report.current === 'PENDING_REDEMPTION_NOTICE') {
+            url = appConstants.BASE_URL.concat(appConstants.GET_NEW_PENDING_REDEMPTION_NOTICE);
+        }
+        else if (selected_report.current === 'WSFS_REDEMPTION_NOTIFICATION') {
+            url = appConstants.BASE_URL.concat(appConstants.GET_WSFS_REDEMPTION_NOTIFICATION);
+        }
+        else if (selected_report.current === 'MUNI_QUERY_FOR_SUBS') {
+            url = appConstants.BASE_URL.concat(appConstants.GET_MUNI_SPECIFIC_QUERY_FOR_SUBS);
+        }
+        else if (selected_report.current === 'WSFS_NEW_LIEN_EXPORT_TEMPLATE') {
+            url = appConstants.BASE_URL.concat(appConstants.GET_WSFS_NEW_LIEN_EXPORT_TEMPLATE);
+        }
+        
         else {
             alert('Please select a report or report definition not found!');
             setIsLoading(false);

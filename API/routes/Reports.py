@@ -194,3 +194,181 @@ def sub_request_form(current_user):
     except Exception as e:
         return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
 
+
+# Lien Details Weekly Report
+@reports_blueprint.route('/api/v1/reports/weekly_report', methods=['GET'])
+@token_required
+def weekly_report(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+
+        mycursor.execute(reports_query['LIEN_DETAILS_WEEKLY_REPORT_HEADER'])
+        header_details = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        header_details = pd.DataFrame.from_dict(header_details)
+
+        mycursor.execute(reports_query['LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS'])
+        all_parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        all_parcel_fees = pd.DataFrame.from_dict(all_parcel_fees)
+
+        # Create a new dataframe to store the results
+        results_df = pd.DataFrame()
+
+        # Get the unique parcel ids
+        unique_parcel_ids = all_parcel_fees['UNIQUE_ID'].unique()
+
+        # Loop through the unique parcel ids
+        for i in unique_parcel_ids:
+            total_interest = []
+            df = all_parcel_fees[all_parcel_fees['UNIQUE_ID'] == i]
+            
+            # Get the total penalty
+            total_penalty = get_total_penalty(df.iloc[0]['BEGINNING_BALANCE'], df.iloc[0]['AMOUNT'], 'false')
+            df['TOTAL_PENALTY'] = total_penalty
+
+            # Get the total interest
+            for i in np.arange(0, len(df)):
+                if df.iloc[i]['CATEGORY'] > 2:
+                    ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
+                else :
+                    ti = 0
+                    td = 0
+                total_interest.append(ti)
+            
+            df['TOTAL_INTEREST'] = total_interest
+
+            # Append to the results dataframe
+            results_df = pd.concat([results_df, df], ignore_index=True)
+
+        results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
+        results_df['TOTAL_AMOUNT'] = round(results_df['AMOUNT'] + results_df['TOTAL_INTEREST'] + results_df['FEES'] , 2)
+        results_df = results_df[['UNIQUE_ID', 'TOTAL_INTEREST', 'TOTAL_PENALTY', 'TOTAL_AMOUNT']]
+
+        results_df = results_df.groupby("UNIQUE_ID", as_index=False).agg(
+            {"UNIQUE_ID": "min", "TOTAL_INTEREST": "sum", 'TOTAL_PENALTY': 'min', 'TOTAL_AMOUNT': 'sum'}
+        )
+
+        header_details = pd.merge(header_details, results_df, how='left')
+        header_details['ORIGINAL_LIEN_EFFECTIVE_DATE'] = pd.to_datetime(header_details['ORIGINAL_LIEN_EFFECTIVE_DATE'])
+        header_details['DATE_REDEEMED'] = pd.to_datetime(header_details['DATE_REDEEMED'])
+        header_details['CHECK_RECEIVED'] = pd.to_datetime(header_details['CHECK_RECEIVED'])
+
+        # header_details.to_excel('all_fields.xlsx', index=False)
+        # Close the connection
+        mycursor.close()
+        connection.close()
+        # Setting the response to json
+        response = Response(
+                        response=header_details.to_json(orient='records', date_format='iso'),
+                        mimetype='application/json'
+                    )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
+
+
+# New Pending Redemption Notice
+@reports_blueprint.route('/api/v1/reports/new_pending_redemeption_notice', methods=['GET'])
+@token_required
+def new_pending_redemption(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+        mycursor.execute(reports_query['NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS'])
+        redem_report = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        redem_report = pd.DataFrame.from_dict(redem_report)
+        
+        # Close the connection
+        mycursor.close()
+        connection.close()
+        # Setting the response to json
+        response = Response(
+                        response=redem_report.to_json(orient='records', date_format='iso'),
+                        mimetype='application/json'
+                    )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
+    
+
+# WSFS Redemption Notification
+@reports_blueprint.route('/api/v1/reports/wsfs_redemption_notification', methods=['GET'])
+@token_required
+def wsfs_redemption_notification(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+        mycursor.execute(reports_query['WSFS_REDEMPTION_NOTIFICATION'])
+        redem_report = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        redem_report = pd.DataFrame.from_dict(redem_report)
+        
+        # Close the connection
+        mycursor.close()
+        connection.close()
+        # Setting the response to json
+        response = Response(
+                        response=redem_report.to_json(orient='records', date_format='iso'),
+                        mimetype='application/json'
+                    )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
+
+# WSFS Redemption Notification
+@reports_blueprint.route('/api/v1/reports/municipality_specific_query_for_subs', methods=['GET'])
+@token_required
+def municipality_specific_query_for_subs(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+        mycursor.execute(reports_query['MUNICIPALITY_SPECIFIC_QUERY_FOR_SUBS'])
+        redem_report = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        redem_report = pd.DataFrame.from_dict(redem_report)
+        
+        # Close the connection
+        mycursor.close()
+        connection.close()
+        # Setting the response to json
+        response = Response(
+                        response=redem_report.to_json(orient='records', date_format='iso'),
+                        mimetype='application/json'
+                    )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
+    
+# WSFS New Lien Export Template
+@reports_blueprint.route('/api/v1/reports/wsfs_new_lien_export_template', methods=['GET'])
+@token_required
+def wsfs_new_lien_export_template(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+        mycursor.execute(reports_query['WSFS_NEW_LIEN_EXPORT_TEMPLATE'])
+        redem_report = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        redem_report = pd.DataFrame.from_dict(redem_report)
+        
+        # Close the connection
+        mycursor.close()
+        connection.close()
+        # Setting the response to json
+        response = Response(
+                        response=redem_report.to_json(orient='records', date_format='iso'),
+                        mimetype='application/json'
+                    )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
+
+
+
