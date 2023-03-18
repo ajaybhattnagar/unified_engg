@@ -121,7 +121,7 @@ def all_fields(current_user):
 # Report Fee Details
 @reports_blueprint.route('/api/v1/reports/fee_details', methods=['GET'])
 @token_required
-def all_fields(current_user):
+def fee_details(current_user):
     connection = connect_database(current_user)
     try:
         mycursor = connection.cursor()
@@ -135,8 +135,8 @@ def all_fields(current_user):
         # Get the total interest
         for i in np.arange(0, len(fee_details)):
             if fee_details.iloc[i]['CATEGORY'] > 2:
-                ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
-                td = get_total_days_of_interest(df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
+                ti = get_total_interest(fee_details.iloc[i]['AMOUNT'], fee_details.iloc[i]['INTEREST'], fee_details.iloc[i]['EFFECTIVE_DATE'], fee_details.iloc[i]['EFFECTIVE_END_DATE'])
+                td = get_total_days_of_interest(fee_details.iloc[i]['EFFECTIVE_DATE'], fee_details.iloc[i]['EFFECTIVE_END_DATE'])
             else :
                 ti = 0
                 td = 0
@@ -144,15 +144,17 @@ def all_fields(current_user):
             total_days_of_interest.append(td)
         
         fee_details['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
-        fee_details['TOTAL_INTEREST'] = total_interest
+        fee_details['TOTAL_INTEREST_FEE'] = total_interest
+        
+        df_accrued_interest = fee_details.groupby('UNIQUE_ID')['TOTAL_INTEREST_FEE'].sum().reset_index()
+        df_accrued_interest = df_accrued_interest.rename({'TOTAL_INTEREST_FEE': 'TOTAL_INTEREST'}, axis=1)
 
-        # Append to the results dataframe
+        fee_details = pd.merge(fee_details, df_accrued_interest, how='left')
 
         # Convert the date columns to datetime
         fee_details['EFFECTIVE_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_DATE'])
         fee_details['EFFECTIVE_END_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_END_DATE'])
-
-        # results_df.to_excel('all_fields.xlsx', index=False)
+        # fee_details.to_excel('all_fields.xlsx', index=False)
 
         # Close the connection
         mycursor.close()
@@ -160,6 +162,30 @@ def all_fields(current_user):
         # Setting the response to json
         response = Response(
                         response=fee_details.to_json(orient='records', date_format='iso'),
+                        mimetype='application/json'
+                    )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
+
+@reports_blueprint.route('/api/v1/reports/sub_request_form', methods=['GET'])
+@token_required
+def sub_request_form(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+        mycursor.execute(reports_query['SUB_REQUEST_FORM'])
+        sub_request_form = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        sub_request_form = pd.DataFrame.from_dict(sub_request_form)
+        
+        # Close the connection
+        mycursor.close()
+        connection.close()
+        # Setting the response to json
+        response = Response(
+                        response=sub_request_form.to_json(orient='records', date_format='iso'),
                         mimetype='application/json'
                     )
         response.headers['content-type'] = 'application/json'

@@ -106,8 +106,8 @@ function statusArray() {
 function reportsArray() {
   return [
     { value: 'ALL_FIELDS', label: 'All Fields' },
-    { value: 'REPORT_2', label: 'Report 2' },
-    { value: 'REPORT_3', label: 'Report 3' },
+    { value: 'FEE_DETAILS', label: 'Fee Detail Report' },
+    { value: 'SUB_REQUEST_FORM', label: 'Sub Request Form' },
   ]
 }
 

@@ -1,7 +1,7 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
-    BASE_URL: 'http://3.138.106.64:5000/',
-    // BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'http://3.138.106.64:5000/',
+    BASE_URL: 'http://localhost:5000/',
 
     REGISTER: 'api/v1/register',
     LOGIN: 'api/v1/login',
@@ -34,4 +34,6 @@ export const appConstants = {
     GET_AUDIT_HISTORY: 'api/v1/audit/',
 
     GET_ALL_FIELDS_REPORT: 'api/v1/reports/all_fields',
+    GET_FEE_DETAILS_REPORT: 'api/v1/reports/fee_details',
+    GET_SUB_REQUEST_FORM_REPORT: 'api/v1/reports/sub_request_form',
 };

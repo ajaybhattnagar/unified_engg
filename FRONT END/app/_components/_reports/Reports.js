@@ -28,9 +28,17 @@ const Reports = () => {
     const get_report = (e) => {
         setIsLoading(true);
         var url = '';
+
         if (selected_report.current === 'ALL_FIELDS') {
             url = appConstants.BASE_URL.concat(appConstants.GET_ALL_FIELDS_REPORT);
-        } else {
+        }
+        else if (selected_report.current === 'FEE_DETAILS') {
+            url = appConstants.BASE_URL.concat(appConstants.GET_FEE_DETAILS_REPORT);
+        }
+        else if (selected_report.current === 'SUB_REQUEST_FORM') {
+            url = appConstants.BASE_URL.concat(appConstants.GET_SUB_REQUEST_FORM_REPORT);
+        }
+        else {
             alert('Please select a report or report definition not found!');
             setIsLoading(false);
             return false;
@@ -56,7 +64,7 @@ const Reports = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
-                    utils.exportCSV(data, 'all_field_report');
+                    utils.exportCSV(data, selected_report.current);
                     setIsLoading(false);
                     alert('Report exported to CSV!');
                 } else {
