@@ -176,12 +176,27 @@ reports_query = {
                                         GROUP BY UNIQUE_ID) RED ON RED.UNIQUE_ID = PARCELS.UNIQUE_ID
                                         WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
 
-    "MUNICIPALITY_SPECIFIC_QUERY_FOR_SUBS": """SELECT PARCELS.UNIQUE_ID, PARCELS.MUNICIPALITY, PARCELS.COUNTY, PARCELS.LOCATION_FULL_STREET_ADDRESS, PARCELS.LEGAL_BLOCK, PARCELS.LEGAL_LOT_NUMBER, PARCELS.CERTIFICATE
+    "MUNICIPALITY_SPECIFIC_QUERY_FOR_SUBS": """SELECT PARCELS.UNIQUE_ID 'REFERENCE ID', PARCELS.MUNICIPALITY, PARCELS.COUNTY, 
+                                                CASE 
+                                                                                            WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
+                                                                                            WHEN PARCELS.STATUS = 2 THEN 'PENDING'
+                                                                                            WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
+                                                                                            WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
+                                                                                            WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
+                                                                                            WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
+                                                                                            WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
+                                                                                            WHEN PARCELS.STATUS = 8 THEN 'REO'
+                                                                                            WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
+                                                                                            WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                                                                                            ELSE 'ERROR' END AS 'STATUS',
+                                                PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', PARCELS.LEGAL_BLOCK, PARCELS.LEGAL_LOT_NUMBER, PARCELS.CERTIFICATE
                                                 FROM PARCELS
                                                 WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
 
-    "WSFS_NEW_LIEN_EXPORT_TEMPLATE": """SELECT PARCELS.UNIQUE_ID, PARCELS.CERTIFICATE, PARCELS.PARCEL_ID, PARCELS.STATE, PARCELS.COUNTY, PARCELS.MUNICIPALITY, PARCELS.LOCATION_FULL_STREET_ADDRESS,
-                                        PARCELS.LOCATION_CITY, PARCELS.LOCATION_ZIP, PARCELS.OWNER_NAME_CURRENT_OWNER, PARCELS.TOTAL_MARKET_VALUE, PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE
+    "WSFS_NEW_LIEN_EXPORT_TEMPLATE": """SELECT PARCELS.UNIQUE_ID 'REFERENCE ID', PARCELS.CERTIFICATE, PARCELS.PARCEL_ID 'PARCEL', PARCELS.STATE, PARCELS.COUNTY, PARCELS.MUNICIPALITY, 
+                                        PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS',
+                                        PARCELS.LOCATION_CITY 'LOCATION CITY', PARCELS.LOCATION_ZIP 'ZIP CODE', PARCELS.OWNER_NAME_CURRENT_OWNER 'PROPERTY OWNER', 
+                                        PARCELS.TOTAL_MARKET_VALUE 'WSFS TOTAL MARKET VALUE', PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE 'BEGINNING BALANCE EFFECTIVE DATE'
                                         FROM PARCELS
                                         WHERE PARCELS.UNIQUE_ID IS NOT NULL"""
 
