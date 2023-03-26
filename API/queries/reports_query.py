@@ -138,23 +138,44 @@ reports_query = {
                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
                                 WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = 'b1fd772b'""",
 
-    "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT PARCELS.COUNTY, PARCELS.STATE, PARCELS.UNIQUE_ID, PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE, PARCELS.LOCATION_FULL_STREET_ADDRESS, PARCELS.LOCATION_CITY, PARCELS.LOCATION_ZIP,
-                                                PARCELS.LEGAL_BLOCK, PARCELS.LEGAL_LOT_NUMBER, PARCELS.QUALIFIER, PARCELS.ORIGINAL_LIEN_AMOUNT,
+    "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT 
+                                                concat(PARCELS.COUNTY ,', ', PARCELS.STATE) 'COUNTY, STATE' ,PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', 
+                                                PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE 'BEGINNING BALANCE EFFECTIVE DATE', 
+                                                PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', PARCELS.LOCATION_CITY 'LOCATION CITY', PARCELS.LOCATION_ZIP 'ZIP CODE',
+                                                PARCELS.LEGAL_BLOCK 'LEGAL BLOCK', PARCELS.LEGAL_LOT_NUMBER 'LEGAL LOT NUMBER', PARCELS.QUALIFIER, PARCELS.ORIGINAL_LIEN_AMOUNT 'BEGINNING BALANCE', 0.00 'TOTAL REDEEMABLE',
                                                 CASE 
-                                                    WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
-                                                    WHEN PARCELS.STATUS = 2 THEN 'PENDING'
-                                                    WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
-                                                    WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
-                                                    WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
-                                                    WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
-                                                    WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
-                                                    WHEN PARCELS.STATUS = 8 THEN 'REO'
-                                                    WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                                    WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
-                                                    ELSE 'ERROR' END AS 'STATUS',
-                                                PARCELS.CERTIFICATE
-                                                FROM PARCELS
-                                                WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
+                                                WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
+                                                WHEN PARCELS.STATUS = 2 THEN 'PENDING'
+                                                WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
+                                                WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
+                                                WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
+                                                WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
+                                                WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
+                                                WHEN PARCELS.STATUS = 8 THEN 'REO'
+                                                WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
+                                                WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                                                ELSE 'ERROR' END AS 'STATUS',
+                                                PARCELS.CERTIFICATE,
+                                                FEES.ID, FEES.CATEGORY,
+                                                CASE 
+                                                    WHEN FEES.CATEGORY > 2 THEN FEES.AMOUNT
+                                                    WHEN FEES.CATEGORY < 3 THEN 0
+                                                ELSE 0 END AS 'AMOUNT',
+                                                CASE 
+                                                    WHEN FEES.CATEGORY > 2 THEN 0
+                                                    WHEN FEES.CATEGORY < 3 THEN FEES.AMOUNT
+                                                ELSE 0 END AS 'FEES',
+                                                FEES.INTEREST, FEES.INTEREST_ACC_INTERVAL, CONVERT(FEES.EFFECTIVE_DATE, DATE) 'EFFECTIVE_DATE',
+                                                CASE
+                                                    WHEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE) > '1994-10-21' THEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE)
+                                                    WHEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE) = '0000-00-00' THEN STR_TO_DATE(CURDATE(), '%Y-%m-%d')
+
+                                                    ELSE STR_TO_DATE(CURDATE(), '%Y-%m-%d')
+                                                END AS 'EFFECTIVE_END_DATE'
+
+                                                FROM FEES
+                                                LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
+                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL and PARCELS.UNIQUE_ID = 'ed1b6c10'""",
 
     "WSFS_REDEMPTION_NOTIFICATION": """SELECT PARCELS.STATE, PARCELS.COUNTY, PARCELS.PARCEL_ID, PARCELS.CERTIFICATE, PARCELS.UNIQUE_ID, 
                                         CASE 
@@ -169,7 +190,7 @@ reports_query = {
                                             WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
                                             WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
                                             ELSE 'ERROR' END AS 'STATUS',
-                                        RED.DATE_REDEEMED
+                                        DATE_FORMAT(RED.DATE_REDEEMED, '%m/%d/%Y') 'REDEMPTION DATE'
                                         FROM PARCELS
                                         LEFT JOIN (SELECT UNIQUE_ID, MIN(DATE_REDEEMED) 'DATE_REDEEMED', SUM(CHECK_AMOUNT) 'CHECK_AMOUNT', MIN(CHECK_RECEIVED) 'CHECK_RECEIVED'
                                         FROM REDEEM 
@@ -177,21 +198,22 @@ reports_query = {
                                         WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
 
     "MUNICIPALITY_SPECIFIC_QUERY_FOR_SUBS": """SELECT PARCELS.UNIQUE_ID 'REFERENCE ID', PARCELS.MUNICIPALITY, PARCELS.COUNTY, 
-                                                CASE 
-                                                                                            WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
-                                                                                            WHEN PARCELS.STATUS = 2 THEN 'PENDING'
-                                                                                            WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
-                                                                                            WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
-                                                                                            WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
-                                                                                            WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
-                                                                                            WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
-                                                                                            WHEN PARCELS.STATUS = 8 THEN 'REO'
-                                                                                            WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                                                                            WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
-                                                                                            ELSE 'ERROR' END AS 'STATUS',
-                                                PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', PARCELS.LEGAL_BLOCK, PARCELS.LEGAL_LOT_NUMBER, PARCELS.CERTIFICATE
-                                                FROM PARCELS
-                                                WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
+                                                    CASE 
+                                                        WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
+                                                        WHEN PARCELS.STATUS = 2 THEN 'PENDING'
+                                                        WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
+                                                        WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
+                                                        WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
+                                                        WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
+                                                        WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
+                                                        WHEN PARCELS.STATUS = 8 THEN 'REO'
+                                                        WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
+                                                        WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                                                        ELSE 'ERROR' END AS 'STATUS',
+                                                    PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', NULL 'ANNUAL TAXES', PARCELS.LEGAL_BLOCK 'LEGAL BLOCK', PARCELS.LEGAL_LOT_NUMBER 'LEGAL LOT NUMBER', NULL 'TAX COLLECTOR - EMAIL',
+                                                    PARCELS.CERTIFICATE
+                                                    FROM PARCELS
+                                                    WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
 
     "WSFS_NEW_LIEN_EXPORT_TEMPLATE": """SELECT PARCELS.UNIQUE_ID 'REFERENCE ID', PARCELS.CERTIFICATE, PARCELS.PARCEL_ID 'PARCEL', PARCELS.STATE, PARCELS.COUNTY, PARCELS.MUNICIPALITY, 
                                         PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS',

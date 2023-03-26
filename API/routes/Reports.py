@@ -280,12 +280,53 @@ def new_pending_redemption(current_user):
         redem_report = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         redem_report = pd.DataFrame.from_dict(redem_report)
         
+        final_results = pd.DataFrame()
+        total_interest = []
+    
+        unique_parcel_ids = redem_report['REFERENCE ID'].unique()
+        ti = []
+        # Loop through the unique parcel ids
+        for i in unique_parcel_ids:
+            total_interest = []
+            total_days_of_interest = []
+            df = redem_report[redem_report['REFERENCE ID'] == i]
+            
+            # Get the total penalty
+            total_penalty = get_total_penalty(df.iloc[0]['BEGINNING BALANCE'], df.iloc[0]['AMOUNT'], 'false')
+            df['TOTAL_PENALTY'] = total_penalty
+
+            # Get the total interest
+            for i in np.arange(0, len(df)):
+                if df.iloc[i]['CATEGORY'] > 2:
+                    ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
+                else :
+                    ti = 0
+                    td = 0
+                total_interest.append(ti)
+                total_days_of_interest.append(td)
+            
+            df['TOTAL_INTEREST'] = total_interest
+
+            df = df.groupby("REFERENCE ID", as_index=False).agg(
+                {"COUNTY, STATE": 'min', "MUNICIPALITY": 'min', "REFERENCE ID": "min", "BEGINNING BALANCE EFFECTIVE DATE": 'min', "ADDRESS": 'min',
+                "LOCATION CITY": "min", 'ZIP CODE': 'min', 'LEGAL BLOCK': 'min', 'LEGAL LOT NUMBER': 'min', 'QUALIFIER': 'min', 'BEGINNING BALANCE': 'min',
+                "TOTAL REDEEMABLE": 'min', 'STATUS': 'min', 'CERTIFICATE': 'min',
+                "TOTAL_INTEREST": "sum", 'TOTAL_PENALTY': 'min', 'AMOUNT': 'sum', 'FEES': 'sum'}
+            )
+
+            final_results = pd.concat([final_results, df], ignore_index=True)
+
+        final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES']] = final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES']].apply(pd.to_numeric)
+        # final_results['TOTAL REDEEMABLE'] = df['TOTAL_INTEREST'] + df['TOTAL_PENALTY'] + df['AMOUNT'] + df['FEES']
+        final_results = final_results.drop(['TOTAL_INTEREST', 'TOTAL_PENALTY', 'AMOUNT', 'FEES'], axis=1)
+
+        
         # Close the connection
         mycursor.close()
         connection.close()
         # Setting the response to json
         response = Response(
-                        response=redem_report.to_json(orient='records', date_format='iso'),
+                        response=final_results.to_json(orient='records', date_format='iso'),
                         mimetype='application/json'
                     )
         response.headers['content-type'] = 'application/json'
