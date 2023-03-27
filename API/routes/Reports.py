@@ -317,10 +317,11 @@ def new_pending_redemption(current_user):
             final_results = pd.concat([final_results, df], ignore_index=True)
 
         final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES']] = final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES']].apply(pd.to_numeric)
-        print (final_results.info())
         final_results['TOTAL REDEEMABLE'] = df['TOTAL_INTEREST'] + df['TOTAL_PENALTY'] + list(map(float, df['AMOUNT'])) + list(map(float, df['FEES']))
         final_results = final_results.drop(['TOTAL_INTEREST', 'TOTAL_PENALTY', 'AMOUNT', 'FEES'], axis=1)
 
+        # Change date format
+        final_results['BEGINNING BALANCE EFFECTIVE DATE'] = final_results['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%d/%m/%Y')
         
         # Close the connection
         mycursor.close()
