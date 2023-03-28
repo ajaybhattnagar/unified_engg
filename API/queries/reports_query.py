@@ -85,49 +85,51 @@ reports_query = {
         LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
         WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL""",
 
-    "SUB_REQUEST_FORM": """SELECT PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID, PARCELS.CERTIFICATE,
-                            PARCELS.LEGAL_BLOCK, PARCELS.LEGAL_LOT_NUMBER, PARCELS.QUALIFIER, PARCELS.APN, 
+    "SUB_REQUEST_FORM": """SELECT PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', PARCELS.CERTIFICATE,
+                            PARCELS.LEGAL_BLOCK 'LEGAL BLOCK', PARCELS.LEGAL_LOT_NUMBER 'LEGAL LOT NUMBER', PARCELS.QUALIFIER, PARCELS.APN, 
                             CASE 
-                                WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
-                                WHEN PARCELS.STATUS = 2 THEN 'PENDING'
-                                WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
-                                WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
-                                WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
-                                WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
-                                WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
-                                WHEN PARCELS.STATUS = 8 THEN 'REO'
-                                WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
-                                ELSE 'ERROR' END AS 'STATUS'
+                            WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
+                            WHEN PARCELS.STATUS = 2 THEN 'PENDING'
+                            WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
+                            WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
+                            WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
+                            WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
+                            WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
+                            WHEN PARCELS.STATUS = 8 THEN 'REO'
+                            WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
+                            WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                            ELSE 'ERROR' END AS 'STATUS'
                             FROM PARCELS
                             WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
     
     "LIEN_DETAILS_WEEKLY_REPORT_HEADER": """SELECT PARCELS.UNIQUE_ID, 
-        CASE 
-            WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
-            WHEN PARCELS.STATUS = 2 THEN 'PENDING'
-            WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
-            WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
-            WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
-            WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
-            WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
-            WHEN PARCELS.STATUS = 8 THEN 'REO'
-            WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-            WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
-            ELSE 'ERROR' END AS 'STATUS',
-                                PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.COUNTY, PARCELS.COUNTY_LAND_USE_DESC,
-                                PARCELS.PARCEL_ID, PARCELS.CERTIFICATE, PARCELS.TOTAL_MARKET_VALUE, PARCELS.TOTAL_ASSESSED_VALUE, PARCELS.ORIGINAL_LIEN_AMOUNT, PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE,
-                                PARCELS.PREMIUM_AMOUNT, 
-                                (SELECT SUM(AMOUNT) FROM FEES WHERE CATEGORY = 9 AND UNIQUE_ID = PARCELS.UNIQUE_ID) 'REFUNDS', 
-                                RED.DATE_REDEEMED, RED.CHECK_AMOUNT, RED.CHECK_RECEIVED
+                                            CASE 
+                                                WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
+                                                WHEN PARCELS.STATUS = 2 THEN 'PENDING'
+                                                WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
+                                                WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
+                                                WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
+                                                WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
+                                                WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
+                                                WHEN PARCELS.STATUS = 8 THEN 'REO'
+                                                WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
+                                                WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                                            ELSE 'ERROR' END AS 'STATUS',
+                                            PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.COUNTY, PARCELS.COUNTY_LAND_USE_DESC,
+                                            PARCELS.PARCEL_ID, PARCELS.CERTIFICATE, PARCELS.TOTAL_MARKET_VALUE, PARCELS.TOTAL_ASSESSED_VALUE, PARCELS.ORIGINAL_LIEN_AMOUNT, PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE,
+                                            PARCELS.PREMIUM_AMOUNT,  NULL 'LIEN/MARKET VALUE', NULL 'REFUNDED',
+                                            (SELECT SUM(AMOUNT) FROM FEES WHERE CATEGORY = 9 AND UNIQUE_ID = PARCELS.UNIQUE_ID) 'REFUNDS',
+                                            (SELECT AMOUNT FROM FEES WHERE CATEGORY = 3 AND UNIQUE_ID = PARCELS.UNIQUE_ID LIMIT 1) 'SUB 1 AMOUNT',
+                                            (SELECT AMOUNT FROM FEES WHERE CATEGORY = 3 AND UNIQUE_ID = PARCELS.UNIQUE_ID LIMIT 1, 1 ) 'SUB 2 AMOUNT',
+                                            (SELECT SUM(AMOUNT) FROM FEES WHERE CATEGORY NOT IN (1, 2, 3) AND UNIQUE_ID = PARCELS.UNIQUE_ID LIMIT 1, 1 ) 'OTHER FEES',
+                                            RED.DATE_REDEEMED 'REDEMPTION DATE', RED.CHECK_AMOUNT 'REDEMPTION CHECK AMOUNT', RED.CHECK_RECEIVED 'REDEMPTION CHECK RECEIVED'
 
-                                FROM PARCELS
-                                LEFT JOIN (SELECT UNIQUE_ID, MIN(DATE_REDEEMED) 'DATE_REDEEMED', SUM(CHECK_AMOUNT) 'CHECK_AMOUNT', MIN(CHECK_RECEIVED) 'CHECK_RECEIVED'
-                                            FROM REDEEM 
-                                            GROUP BY UNIQUE_ID) RED ON RED.UNIQUE_ID = PARCELS.UNIQUE_ID
-                                WHERE PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = 'a566729d';""",
+                                            FROM PARCELS
+                                            LEFT JOIN (SELECT UNIQUE_ID, MIN(DATE_REDEEMED) 'DATE_REDEEMED', SUM(CHECK_AMOUNT) 'CHECK_AMOUNT', MIN(CHECK_RECEIVED) 'CHECK_RECEIVED'
+                                                        FROM REDEEM 
+                                                        GROUP BY UNIQUE_ID) RED ON RED.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL and PARCELS.UNIQUE_ID = 'b1fd772b';""",
 
-    # LEFT TO FIX WITH DATE AND COLUMNS FROM SDA
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
                                 CASE 
                                     WHEN FEES.CATEGORY > 2 THEN FEES.AMOUNT
@@ -150,7 +152,7 @@ reports_query = {
 
                                 FROM FEES
                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
-                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = 'b1fd772b'""",
+                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL and PARCELS.UNIQUE_ID = 'b1fd772b'""",
 
     "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT 
                                                 concat(PARCELS.COUNTY ,', ', PARCELS.STATE) 'COUNTY, STATE' ,PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', 

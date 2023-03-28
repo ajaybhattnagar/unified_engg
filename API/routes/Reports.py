@@ -241,7 +241,7 @@ def weekly_report(current_user):
             results_df = pd.concat([results_df, df], ignore_index=True)
 
         results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
-        results_df['TOTAL_AMOUNT'] = round(results_df['AMOUNT'] + results_df['TOTAL_INTEREST'] + results_df['FEES'] , 2)
+        results_df['TOTAL_AMOUNT'] = round(results_df['AMOUNT'] + results_df['TOTAL_INTEREST'] + results_df['FEES'] + results_df['TOTAL_PENALTY'], 2)
         results_df = results_df[['UNIQUE_ID', 'TOTAL_INTEREST', 'TOTAL_PENALTY', 'TOTAL_AMOUNT']]
 
         results_df = results_df.groupby("UNIQUE_ID", as_index=False).agg(
@@ -249,9 +249,29 @@ def weekly_report(current_user):
         )
 
         header_details = pd.merge(header_details, results_df, how='left')
-        header_details['ORIGINAL_LIEN_EFFECTIVE_DATE'] = pd.to_datetime(header_details['ORIGINAL_LIEN_EFFECTIVE_DATE'])
-        header_details['DATE_REDEEMED'] = pd.to_datetime(header_details['DATE_REDEEMED'])
-        header_details['CHECK_RECEIVED'] = pd.to_datetime(header_details['CHECK_RECEIVED'])
+
+        header_details = header_details.rename(columns = {
+           "UNIQUE_ID": "REFERENCE ID",
+           "COUNTY_LAND_USE_DESC": "PROPERTY TYPE",
+           "PARCEL_ID": "PARCEL",
+           "TOTAL_MARKET_VALUE": "TOTAL MARKET VALUE",
+           "TOTAL_ASSESSED_VALUE": "TOTAL ASSESSED VALUE",
+           "ORIGINAL_LIEN_AMOUNT": "BEGINNING BALANCE",
+           "ORIGINAL_LIEN_EFFECTIVE_DATE": "BEGINNING BALANCE EFFECTIVE DATE",
+           "PREMIUM_AMOUNT": "PREMIUMS",
+           "TOTAL_INTEREST": "INTEREST ACCRUED VALUE",
+           "TOTAL_PENALTY": "PENALTY",
+           "TOTAL_AMOUNT": "TOTAL PAYOFF"
+        })
+        header_details = header_details[['REFERENCE ID', 'STATUS', 'BEGINNING BALANCE EFFECTIVE DATE', 'STATE', 'MUNICIPALITY', 'COUNTY', 'PROPERTY TYPE',
+        'PARCEL', 'CERTIFICATE', 'TOTAL MARKET VALUE', 'TOTAL ASSESSED VALUE', 'BEGINNING BALANCE', 'REFUNDS', 'SUB 1 AMOUNT', 'SUB 2 AMOUNT', 'LIEN/MARKET VALUE',
+        'OTHER FEES', 'INTEREST ACCRUED VALUE', 'PENALTY', 'PREMIUMS', 'TOTAL PAYOFF', 'REDEMPTION DATE', 'REFUNDED', 'REDEMPTION CHECK RECEIVED', 'REDEMPTION CHECK AMOUNT'
+        ]]
+        # header_details['ORIGINAL_LIEN_EFFECTIVE_DATE'] = pd.to_datetime(header_details['ORIGINAL_LIEN_EFFECTIVE_DATE'])
+        # header_details['DATE_REDEEMED'] = pd.to_datetime(header_details['DATE_REDEEMED'])
+        # header_details['CHECK_RECEIVED'] = pd.to_datetime(header_details['CHECK_RECEIVED'])
+
+        
 
         # header_details.to_excel('all_fields.xlsx', index=False)
         # Close the connection
