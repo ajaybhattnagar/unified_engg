@@ -192,7 +192,7 @@ reports_query = {
 
                                                 FROM FEES
                                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
-                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL limit 100""",
+                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL""",
 
     "WSFS_REDEMPTION_NOTIFICATION": """SELECT PARCELS.STATE, PARCELS.COUNTY, PARCELS.PARCEL_ID 'PARCEL', PARCELS.CERTIFICATE, PARCELS.UNIQUE_ID 'REFERENCE ID', 
                                         CASE 
