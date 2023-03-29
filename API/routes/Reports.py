@@ -239,7 +239,7 @@ def weekly_report(current_user):
             
             # Get the total penalty
             total_penalty = get_total_penalty(df.iloc[0]['BEGINNING_BALANCE'], df.iloc[0]['AMOUNT'], 'false')
-            df['TOTAL_PENALTY'] = total_penalty
+            df['TOTAL_PENALTY'] = round(total_penalty,2)
 
             # Get the total interest
             for i in np.arange(0, len(df)):
@@ -287,6 +287,9 @@ def weekly_report(current_user):
         # header_details['CHECK_RECEIVED'] = pd.to_datetime(header_details['CHECK_RECEIVED'])
 
         header_details['BEGINNING BALANCE EFFECTIVE DATE'] = header_details['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%d/%m/%Y')
+        header_details['REDEMPTION DATE'] = header_details['REDEMPTION DATE'].dt.strftime('%d/%m/%Y')
+        header_details['REDEMPTION CHECK RECEIVED'] = header_details['REDEMPTION CHECK RECEIVED'].dt.strftime('%d/%m/%Y')
+
 
 
         # header_details.to_excel('all_fields.xlsx', index=False)

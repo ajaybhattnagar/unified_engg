@@ -98,7 +98,7 @@ reports_query = {
                             WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
                             WHEN PARCELS.STATUS = 8 THEN 'REO'
                             WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                            WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                            WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
                             ELSE 'ERROR' END AS 'STATUS'
                             FROM PARCELS
                             WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
@@ -129,7 +129,7 @@ reports_query = {
                                             LEFT JOIN (SELECT UNIQUE_ID, MIN(DATE_REDEEMED) 'DATE_REDEEMED', SUM(CHECK_AMOUNT) 'CHECK_AMOUNT', MIN(CHECK_RECEIVED) 'CHECK_RECEIVED'
                                                         FROM REDEEM 
                                                         GROUP BY UNIQUE_ID) RED ON RED.UNIQUE_ID = PARCELS.UNIQUE_ID
-                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL and PARCELS.UNIQUE_ID = 'b1fd772b';""",
+                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = 'b1fd772b';""",
 
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
                                 CASE 
@@ -153,7 +153,7 @@ reports_query = {
 
                                 FROM FEES
                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
-                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL and PARCELS.UNIQUE_ID = 'b1fd772b'""",
+                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = 'b1fd772b'""",
 
     "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT 
                                                 concat(PARCELS.COUNTY ,', ', PARCELS.STATE) 'COUNTY, STATE' ,PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', 
