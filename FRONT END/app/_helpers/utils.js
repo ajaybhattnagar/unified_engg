@@ -1,5 +1,7 @@
 import { ExportToCsv } from 'export-to-csv';
 import { appConstants } from '../_helpers/consts';
+import * as XLSX from 'xlsx';
+
 
 export const utils = {
   convertTimeStampToString,
@@ -8,6 +10,7 @@ export const utils = {
   duration,
   total,
   exportCSV,
+  exportExcel,
   statusArray,
   getDistinctFilters,
   getStatusbyValue,
@@ -177,6 +180,17 @@ function exportCSV(array, fileName) {
   const csvExporter = new ExportToCsv(options);
 
   return csvExporter.generateCsv(replaceNullsWithEmptyStrings(array));
+}
+
+function exportExcel(array, fileName) {
+  let d = new Date();
+  let dformat = `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}-${d.getHours()}-${d.getMinutes()}`;
+  let file_name = fileName + ' - ' + dformat;
+
+  const worksheet = XLSX.utils.json_to_sheet(array);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  XLSX.writeFile(workbook, file_name + '.xlsx');
 }
 
 function getDistinctFilters() {

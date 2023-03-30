@@ -80,9 +80,10 @@ const Reports = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
-                    utils.exportCSV(data, selected_report.current);
+                    // utils.exportCSV(data, selected_report.current);
+                    utils.exportExcel(data, selected_report.current);
                     setIsLoading(false);
-                    alert('Report exported to CSV!');
+                    alert('Report exported!');
                 } else {
                     setIsLoading(false);
                     alert(data.message);

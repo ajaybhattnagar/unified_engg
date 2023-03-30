@@ -43,7 +43,8 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "valid-url": "^1.0.9",
-    "webpack": "^5.76.0"
+    "webpack": "^5.76.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
