@@ -152,8 +152,10 @@ def fee_details(current_user):
         fee_details = pd.merge(fee_details, df_accrued_interest, how='left')
 
         # Convert the date columns to datetime
-        fee_details['EFFECTIVE_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_DATE']).dt.strftime('%d/%m/%Y')
-        fee_details['EFFECTIVE_END_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_END_DATE']).dt.strftime('%d/%m/%Y')
+        fee_details['EFFECTIVE_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_DATE']).dt.strftime('%m/%d/%Y')
+        fee_details['EFFECTIVE_END_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_END_DATE']).dt.strftime('%m/%d/%Y')
+        fee_details['LAST MODIFY DATE'] = pd.to_datetime(fee_details['LAST MODIFY DATE']).dt.strftime('%m/%d/%Y')
+
         # fee_details.to_excel('all_fields.xlsx', index=False)
 
         fee_details = fee_details.rename(columns = {
@@ -169,7 +171,7 @@ def fee_details(current_user):
            "TOTAL_INTEREST": "INTEREST ACCRUED VALUE"
         })
         fee_details = fee_details[['STATUS', 'STATE', 'COUNTY', 'MUNICIPALITY', 'REFERENCE ID', 'PARCEL', 'CERTIFICATE', 'CUSTODIAN REFERENCE NUMBER', 'FEES: CATEGORY',
-                    'FEES: AMOUNT', 'FEES: EFFECTIVE DATE', 'FEES: END DATE', 'FEES: INTEREST', 'FEES: INTERVAL', 'FEES: NON-REDEEMABLE', 'FEES: DESCRIPTION', 'INTEREST ACCRUED VALUE']]
+                    'FEES: AMOUNT', 'FEES: EFFECTIVE DATE', 'FEES: END DATE', 'FEES: INTEREST', 'FEES: INTERVAL', 'FEES: NON-REDEEMABLE', 'FEES: DESCRIPTION', 'INTEREST ACCRUED VALUE', 'LAST MODIFY DATE']]
 
         # Close the connection
         mycursor.close()
@@ -286,9 +288,9 @@ def weekly_report(current_user):
         # header_details['DATE_REDEEMED'] = pd.to_datetime(header_details['DATE_REDEEMED'])
         # header_details['CHECK_RECEIVED'] = pd.to_datetime(header_details['CHECK_RECEIVED'])
 
-        header_details['BEGINNING BALANCE EFFECTIVE DATE'] = header_details['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%d/%m/%Y')
-        header_details['REDEMPTION DATE'] = header_details['REDEMPTION DATE'].dt.strftime('%d/%m/%Y')
-        header_details['REDEMPTION CHECK RECEIVED'] = header_details['REDEMPTION CHECK RECEIVED'].dt.strftime('%d/%m/%Y')
+        header_details['BEGINNING BALANCE EFFECTIVE DATE'] = header_details['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
+        header_details['REDEMPTION DATE'] = header_details['REDEMPTION DATE'].dt.strftime('%m/%d/%Y')
+        header_details['REDEMPTION CHECK RECEIVED'] = header_details['REDEMPTION CHECK RECEIVED'].dt.strftime('%m/%d/%Y')
 
 
 
@@ -360,7 +362,7 @@ def new_pending_redemption(current_user):
         final_results = final_results.drop(['TOTAL_INTEREST', 'TOTAL_PENALTY', 'AMOUNT', 'FEES'], axis=1)
 
         # Change date format
-        final_results['BEGINNING BALANCE EFFECTIVE DATE'] = final_results['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%d/%m/%Y')
+        final_results['BEGINNING BALANCE EFFECTIVE DATE'] = final_results['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
         
         # Close the connection
         mycursor.close()

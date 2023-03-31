@@ -189,7 +189,7 @@ function exportExcel(array, fileName) {
 
   const worksheet = XLSX.utils.json_to_sheet(array);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  XLSX.utils.book_append_sheet(workbook, worksheet, "PARCELS");
   XLSX.writeFile(workbook, file_name + '.xlsx');
 }
 
