@@ -411,5 +411,19 @@ def delete_payment(current_user, payment_id):
     except:
         return jsonify({"message": "Failed while deleting the payment."}), 500
 
+# Update year end penalty for parcel
+@parcel_blueprint.route("/api/v1/parcel/update_penalty/<parcel_id>", methods=['POST'])
+@token_required
+def update_penalty(current_user, parcel_id):
+# Update the parcel status
+    content = request.get_json()
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+        mycursor.execute(parcel_query['UPDATE_PARCEL_YEP_BY_ID'].format(ID = parcel_id, YEP = content['YEAR_END_PENALTY']))
 
-
+        connection.commit()
+        mycursor.close()
+        return jsonify({"message": "Parcel YEP updated successfully!"}), 200
+    except:
+        return jsonify({"message": "Something went wrong!"}), 500

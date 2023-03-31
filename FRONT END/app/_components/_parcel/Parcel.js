@@ -10,6 +10,7 @@ import NavigationBar from '../_navigation/NavigationBar';
 import './Parcel.css';
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
+import UpdateFields from "./updateFields";
 
 import EditFeesModal from "../_ui/editFeesModal";
 import EditNotesModal from "../_ui/editNotesModal";
@@ -93,7 +94,8 @@ const Parcel = () => {
         if (parcelDetails) {
             return (
                 <div>
-                    <table className='table table-sm small'>
+                    {<UpdateFields parcel_data={parcelDetails} />}
+                    <table className='table table-sm small mt-3'>
                         <thead className="thead-dark">
 
                         </thead>
@@ -235,7 +237,7 @@ const Parcel = () => {
                                                 <td>{utils.getCategorybyValue(data['CATEGORY'])}</td>
                                                 <td>{utils.convertTimeStampToString(data['EFFECTIVE_DATE'])}</td>
                                                 <td>{utils.convertTimeStampToString(data['EFFECTIVE_END_DATE'])}</td>
-                                                <td>{ Math.round((data['INTEREST']) * 100) + '%'}</td>
+                                                <td>{Math.round((data['INTEREST']) * 100) + '%'}</td>
                                                 <td>{utils.toCurrency(data['AMOUNT'])}</td>
                                             </tr>)
 

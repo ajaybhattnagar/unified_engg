@@ -25,7 +25,8 @@ export const utils = {
   getInterestIntervalbyValue,
   delteDocumentByID,
   getParcelAuditData,
-  reportsArray
+  reportsArray,
+  updateYEPbyID
 
 }
 
@@ -513,4 +514,41 @@ function getParcelAuditData(parcel_id) {
       }
     })
     .catch((err) => console.error(err));
+}
+
+
+function updateYEPbyID(id, yep) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.UPDATE_YEP_BY_UNIQUE_ID).concat(id);
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      'x-access-token': localStorage.getItem('token')
+    },
+    body: JSON.stringify({
+      "YEAR_END_PENALTY": yep
+    })
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        window.location.reload();
+        alert(data.message);
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err));
+
 }
