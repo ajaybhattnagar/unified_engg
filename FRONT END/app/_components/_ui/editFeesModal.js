@@ -125,7 +125,7 @@ const EditFeesModal = (props) => {
       "AMOUNT": amount,
       "INTEREST": interest,
       "INTEREST_ACC_INTERVAL": intersAccInterval,
-      "EFFECTIVE_DATE": utils.convertTimeStampToDateForInputBox(effStartDate),
+      "EFFECTIVE_DATE": effStartDate,
       "EFFECTIVE_END_DATE": 'NULL'
     }
     fetch(url, {

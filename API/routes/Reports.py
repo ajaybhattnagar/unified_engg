@@ -153,10 +153,12 @@ def fee_details(current_user):
 
         # Convert the date columns to datetime
         fee_details['EFFECTIVE_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_DATE']).dt.strftime('%m/%d/%Y')
-        fee_details['EFFECTIVE_END_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_END_DATE']).dt.strftime('%m/%d/%Y')
+        fee_details['EFFECTIVE_END_DATE_DISPLAY'] = pd.to_datetime(fee_details['EFFECTIVE_END_DATE_DISPLAY']).dt.strftime('%m/%d/%Y')
         fee_details['LAST MODIFY DATE'] = pd.to_datetime(fee_details['LAST MODIFY DATE']).dt.strftime('%m/%d/%Y')
 
         # fee_details.to_excel('all_fields.xlsx', index=False)
+        # Drop columns
+        fee_details = fee_details.drop(["EFFECTIVE_END_DATE"], axis=1)
 
         fee_details = fee_details.rename(columns = {
            "UNIQUE_ID": "REFERENCE ID",
@@ -164,11 +166,12 @@ def fee_details(current_user):
            "CATEGORY_STRING": "FEES: CATEGORY",
            "FEES": "FEES: AMOUNT",
            "EFFECTIVE_DATE": "FEES: EFFECTIVE DATE",
-           "EFFECTIVE_END_DATE": "FEES: END DATE",
+        #    "EFFECTIVE_END_DATE": "FEES: END DATE",
            "INTEREST": "FEES: INTEREST",
            "INTEREST_ACC_INTERVAL": "FEES: INTERVAL",
            "DESCRIPTION": "FEES: DESCRIPTION",
-           "TOTAL_INTEREST": "INTEREST ACCRUED VALUE"
+           "TOTAL_INTEREST": "INTEREST ACCRUED VALUE",
+           "EFFECTIVE_END_DATE_DISPLAY": "FEES: END DATE"
         })
         fee_details = fee_details[['STATUS', 'STATE', 'COUNTY', 'MUNICIPALITY', 'REFERENCE ID', 'PARCEL', 'CERTIFICATE', 'CUSTODIAN REFERENCE NUMBER', 'FEES: CATEGORY',
                     'FEES: AMOUNT', 'FEES: EFFECTIVE DATE', 'FEES: END DATE', 'FEES: INTEREST', 'FEES: INTERVAL', 'FEES: NON-REDEEMABLE', 'FEES: DESCRIPTION', 'INTEREST ACCRUED VALUE', 'LAST MODIFY DATE']]
@@ -440,6 +443,7 @@ def wsfs_new_lien_export_template(current_user):
         redem_report = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         redem_report = pd.DataFrame.from_dict(redem_report)
         
+        redem_report['BEGINNING BALANCE EFFECTIVE DATE'] = redem_report['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
         # Close the connection
         mycursor.close()
         connection.close()

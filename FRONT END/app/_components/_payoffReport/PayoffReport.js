@@ -57,7 +57,6 @@ const PayoffReport = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
-                    console.log(data);
                     setData(data);
                     setParcelDetails(data.parcel_details[0]);
                     setParcelFees(data.parcel_fees);

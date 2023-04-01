@@ -28,7 +28,7 @@ reports_query = {
         WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
         WHEN PARCELS.STATUS = 8 THEN 'REO'
         WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-        WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+        WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
         ELSE 'ERROR' END AS 'STATUS',
         PARCELS.*
         FROM FEES
@@ -48,10 +48,10 @@ reports_query = {
             WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
             WHEN PARCELS.STATUS = 8 THEN 'REO'
             WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-            WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+            WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
             ELSE 'ERROR' END AS 'STATUS',
         PARCELS.STATE, PARCELS.COUNTY, PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID, PARCELS.PARCEL_ID, PARCELS.CERTIFICATE,
-        FEES.ID, FEES.CATEGORY,
+        FEES.ID, FEES.CATEGORY, FEES.EFFECTIVE_END_DATE 'EFFECTIVE_END_DATE_DISPLAY',
         CASE 
             WHEN FEES.CATEGORY = 1 THEN 'Beginning Balance'
             WHEN FEES.CATEGORY = 2 THEN 'Premium'
@@ -63,6 +63,7 @@ reports_query = {
             WHEN FEES.CATEGORY = 8 THEN 'Recording Fees'
             WHEN FEES.CATEGORY = 9 THEN 'Refunds'
             WHEN FEES.CATEGORY = 10 THEN 'TDA Fees'
+            WHEN PARCELS.STATUS = 11 THEN 'Redemption Variance'
             ELSE 'ERROR' END AS 'CATEGORY_STRING', 
         FEES.DESCRIPTION, 
         CASE 
@@ -81,7 +82,7 @@ reports_query = {
             ELSE STR_TO_DATE(CURDATE(), '%Y-%m-%d')
         END AS 'EFFECTIVE_END_DATE', 
         NULL 'CUSTODIAN REFERENCE NUMBER', NULL 'FEES: NON-REDEEMABLE',
-        GREATEST(FEES.LAST_MODIFY_DATE, PARCELS.LAST_MODIFY_DATE) 'LAST MODIFY DATE'
+        FEES.LAST_MODIFY_DATE 'LAST MODIFY DATE'
         FROM FEES
         LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
         WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL""",
@@ -114,7 +115,7 @@ reports_query = {
                                                 WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
                                                 WHEN PARCELS.STATUS = 8 THEN 'REO'
                                                 WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                                WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                                                WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
                                             ELSE 'ERROR' END AS 'STATUS',
                                             PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.COUNTY, PARCELS.COUNTY_LAND_USE_DESC,
                                             PARCELS.PARCEL_ID, PARCELS.CERTIFICATE, PARCELS.TOTAL_MARKET_VALUE, PARCELS.TOTAL_ASSESSED_VALUE, PARCELS.ORIGINAL_LIEN_AMOUNT, PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE,
@@ -170,7 +171,7 @@ reports_query = {
                                                 WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
                                                 WHEN PARCELS.STATUS = 8 THEN 'REO'
                                                 WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                                WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                                                WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
                                                 ELSE 'ERROR' END AS 'STATUS',
                                                 PARCELS.CERTIFICATE,
                                                 FEES.ID, FEES.CATEGORY,
@@ -205,7 +206,7 @@ reports_query = {
                                         WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
                                         WHEN PARCELS.STATUS = 8 THEN 'REO'
                                         WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                        WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                                        WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
                                         ELSE 'ERROR' END AS 'STATUS',
                                         NULL 'MANAGER PROPERTY STATUS',
                                         DATE_FORMAT(RED.DATE_REDEEMED, '%m/%d/%Y') 'REDEMPTION DATE',
@@ -227,7 +228,7 @@ reports_query = {
                                                         WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
                                                         WHEN PARCELS.STATUS = 8 THEN 'REO'
                                                         WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                                        WHEN PARCELS.STATUS = 10 THEN 'REDEEM'
+                                                        WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
                                                         ELSE 'ERROR' END AS 'STATUS',
                                                     PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', NULL 'ANNUAL TAXES', PARCELS.LEGAL_BLOCK 'LEGAL BLOCK', PARCELS.LEGAL_LOT_NUMBER 'LEGAL LOT NUMBER', NULL 'TAX COLLECTOR - EMAIL',
                                                     PARCELS.CERTIFICATE

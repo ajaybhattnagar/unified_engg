@@ -289,12 +289,15 @@ function categoryArray(filter_value) {
     { value: 8, label: 'Recording Fees' },
     { value: 9, label: 'Refunds' },
     { value: 10, label: 'TDA Fees' },
+    { value: 11, label: 'Redemption Variance' },
     { value: 101, label: 'Redeemable' },
     { value: 102, label: 'Non-Redeemable' },
     { value: 103, label: 'Refunds' },
     { value: 104, label: 'Payments' },
     { value: 105, label: 'Deducted' },
     { value: 106, label: 'Total' },
+    { value: 107, label: 'Year End Penalty' },
+
   ]
   arr = arr.filter((item) => item.value < filter_value);
   return arr;

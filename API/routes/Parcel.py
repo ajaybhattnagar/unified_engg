@@ -247,6 +247,8 @@ def get_payoff_report(current_user, parcel_id):
         parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         parcel_fees = pd.DataFrame.from_dict(parcel_fees)
 
+        print (parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id, END_DATE = end_date))
+
         # Get all payments
         mycursor.execute(parcel_query['GET_PAYMENTS_SUM_BY_ID'].format(ID = parcel_id))
         payments = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
@@ -262,7 +264,7 @@ def get_payoff_report(current_user, parcel_id):
     total_interest = []
     total_days_of_interest = []
     for i in np.arange(0, len(parcel_fees)):
-        if parcel_fees.iloc[i]['CATEGORY'] > 2:
+        if (parcel_fees.iloc[i]['CATEGORY'] > 2) & (parcel_fees.iloc[i]['CATEGORY'] < 12):
             ti = get_total_interest(parcel_fees.iloc[i]['AMOUNT'], parcel_fees.iloc[i]['INTEREST'], parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
             td = get_total_days_of_interest(parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
         else :
