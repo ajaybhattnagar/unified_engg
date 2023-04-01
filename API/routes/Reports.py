@@ -458,5 +458,85 @@ def wsfs_new_lien_export_template(current_user):
     except Exception as e:
         return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
 
+# REDEMPTION REPORT
+@reports_blueprint.route('/api/v1/reports/redemption_report', methods=['GET'])
+@token_required
+def redemption_report(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
 
+        mycursor.execute(reports_query['REDEMPTION_REPORT'])
+        header_details = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        header_details = pd.DataFrame.from_dict(header_details)
+        # Removing the duplicates
 
+        mycursor.execute(reports_query['LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS'])
+        all_parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        all_parcel_fees = pd.DataFrame.from_dict(all_parcel_fees)
+
+    except Exception as e:
+        return jsonify("Failed while querying data. Message: {m}".format(m = e)), 500
+    
+   
+    # Get the unique parcel ids
+    results_df = pd.DataFrame()
+    unique_parcel_ids = all_parcel_fees['UNIQUE_ID'].unique()
+
+    try:
+    # Loop through the unique parcel ids
+        for i in unique_parcel_ids:
+            total_interest = []
+            df = all_parcel_fees[all_parcel_fees['UNIQUE_ID'] == i]
+            
+            # Get the total penalty
+            total_penalty = get_total_penalty(df.iloc[0]['BEGINNING_BALANCE'], df.iloc[0]['AMOUNT'], 'false')
+            df['TOTAL_PENALTY'] = round(total_penalty,2)
+
+            # Get the total interest
+            for i in np.arange(0, len(df)):
+                if df.iloc[i]['CATEGORY'] > 2:
+                    ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
+                else :
+                    ti = 0
+                    td = 0
+                total_interest.append(ti)
+            
+            df['TOTAL_INTEREST'] = total_interest
+            results_df = pd.concat([results_df, df], ignore_index=True)
+        
+        results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
+        results_df['TOTAL_AMOUNT'] = round(results_df['AMOUNT'] + results_df['TOTAL_INTEREST'] + results_df['FEES'] + results_df['TOTAL_PENALTY'], 2)
+
+        results_df = results_df.groupby("UNIQUE_ID", as_index=False).agg(
+                {"UNIQUE_ID": "min", "AMOUNT": "sum", 'FEES': 'sum', 'TOTAL_PENALTY': 'min', 'TOTAL_INTEREST': 'sum'}
+        )
+        results_df['TOTAL_AMOUNT'] = results_df['AMOUNT'] + results_df['FEES'] + results_df['TOTAL_PENALTY'] + results_df['TOTAL_INTEREST']
+
+        header_details = pd.merge(header_details, results_df, how='left')
+
+        header_details = header_details.rename(columns = {
+            "UNIQUE_ID": "REFERENCE ID",
+            "TOTAL_AMOUNT": "REDEMPTION CALCULATED AMOUNT",
+            "TOTAL_INTEREST": "INTEREST ACCRUED VALUE",
+        })
+
+        header_details['BEGINNING BALANCE EFFECTIVE DATE'] = header_details['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
+        header_details['REDEMPTION DATE'] = header_details['REDEMPTION DATE'].dt.strftime('%m/%d/%Y')
+        header_details['REDEMPTION CHECK EFFECTIVE DATE'] = header_details['REDEMPTION CHECK EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
+        header_details['REDEMPTION CHECK RECEIVED'] = header_details['REDEMPTION CHECK RECEIVED'].dt.strftime('%m/%d/%Y')
+        header_details['SUB 1 EFFECTIVE DATE'] = header_details['SUB 1 EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
+
+        mycursor.close()
+        connection.close()
+    except Exception as e:
+        return jsonify("Failed while processing data. Message: {m}".format(m = e)), 500
+    
+    # Setting the response to json
+    response = Response(
+                    response=header_details.to_json(orient='records', date_format='iso'),
+                    mimetype='application/json'
+                )
+    response.headers['content-type'] = 'application/json'
+    return response, 200
+    

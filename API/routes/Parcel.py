@@ -247,7 +247,7 @@ def get_payoff_report(current_user, parcel_id):
         parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         parcel_fees = pd.DataFrame.from_dict(parcel_fees)
 
-        print (parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id, END_DATE = end_date))
+        # print (parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id, END_DATE = end_date))
 
         # Get all payments
         mycursor.execute(parcel_query['GET_PAYMENTS_SUM_BY_ID'].format(ID = parcel_id))

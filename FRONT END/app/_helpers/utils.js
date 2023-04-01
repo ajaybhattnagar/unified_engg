@@ -117,6 +117,8 @@ function reportsArray() {
     { value: 'WSFS_REDEMPTION_NOTIFICATION', label: 'WSFS Redemption Notification' },
     { value: 'MUNI_QUERY_FOR_SUBS', label: 'Municipality Specific Query For Subs' },
     { value: 'WSFS_NEW_LIEN_EXPORT_TEMPLATE', label: 'WSFS New Lien Export Template' },
+    { value: 'REDEMPTION_REPORT', label: 'Redemption Report' },
+
   ]
 }
 
