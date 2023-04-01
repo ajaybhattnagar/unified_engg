@@ -292,6 +292,7 @@ function categoryArray(filter_value) {
     { value: 9, label: 'Refunds' },
     { value: 10, label: 'TDA Fees' },
     { value: 11, label: 'Redemption Variance' },
+    { value: 12, label: 'Overage' },
     { value: 101, label: 'Redeemable' },
     { value: 102, label: 'Non-Redeemable' },
     { value: 103, label: 'Refunds' },

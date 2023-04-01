@@ -70,7 +70,8 @@ parcel_query = {
                     -- ELSE 0 END AS 'AMOUNT',
                     CASE 
                         WHEN CATEGORY <= 3 THEN 0
-                        WHEN CATEGORY > 4 THEN AMOUNT
+                        WHEN CATEGORY = 9 THEN 0
+                        WHEN CATEGORY IN (4,5,6,7,8,10) THEN 0
                     ELSE 0 END AS 'FEES',
                     CASE
                         WHEN CONVERT(EFFECTIVE_END_DATE, DATE) > '1994-10-21' THEN CONVERT(EFFECTIVE_END_DATE, DATE)
