@@ -105,56 +105,69 @@ reports_query = {
                             WHERE PARCELS.UNIQUE_ID IS NOT NULL""",
     
     "LIEN_DETAILS_WEEKLY_REPORT_HEADER": """SELECT PARCELS.UNIQUE_ID, 
-                                            CASE 
-                                                WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
-                                                WHEN PARCELS.STATUS = 2 THEN 'PENDING'
-                                                WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
-                                                WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
-                                                WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
-                                                WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
-                                                WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
-                                                WHEN PARCELS.STATUS = 8 THEN 'REO'
-                                                WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                                WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
-                                            ELSE 'ERROR' END AS 'STATUS',
-                                            PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.COUNTY, PARCELS.COUNTY_LAND_USE_DESC,
-                                            PARCELS.PARCEL_ID, PARCELS.CERTIFICATE, PARCELS.TOTAL_MARKET_VALUE, PARCELS.TOTAL_ASSESSED_VALUE, PARCELS.ORIGINAL_LIEN_AMOUNT, PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE,
-                                            PARCELS.PREMIUM_AMOUNT,  NULL 'LIEN/MARKET VALUE', NULL 'REFUNDED',
-                                            (SELECT SUM(AMOUNT) FROM FEES WHERE CATEGORY = 9 AND UNIQUE_ID = PARCELS.UNIQUE_ID) 'REFUNDS',
-                                            (SELECT AMOUNT FROM FEES WHERE CATEGORY = 3 AND UNIQUE_ID = PARCELS.UNIQUE_ID LIMIT 1) 'SUB 1 AMOUNT',
-                                            (SELECT AMOUNT FROM FEES WHERE CATEGORY = 3 AND UNIQUE_ID = PARCELS.UNIQUE_ID LIMIT 1, 1 ) 'SUB 2 AMOUNT',
-                                            (SELECT SUM(AMOUNT) FROM FEES WHERE CATEGORY NOT IN (1, 2, 3) AND UNIQUE_ID = PARCELS.UNIQUE_ID LIMIT 1, 1 ) 'OTHER FEES',
-                                            RED.DATE_REDEEMED 'REDEMPTION DATE', RED.CHECK_AMOUNT 'REDEMPTION CHECK AMOUNT', RED.CHECK_RECEIVED 'REDEMPTION CHECK RECEIVED'
+                                                CASE 
+                                                    WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
+                                                    WHEN PARCELS.STATUS = 2 THEN 'PENDING'
+                                                    WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
+                                                    WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
+                                                    WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
+                                                    WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
+                                                    WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
+                                                    WHEN PARCELS.STATUS = 8 THEN 'REO'
+                                                    WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
+                                                    WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
+                                                ELSE 'ERROR' END AS 'STATUS',
+                                                PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.COUNTY, PARCELS.COUNTY_LAND_USE_DESC,
+                                                PARCELS.PARCEL_ID, PARCELS.CERTIFICATE, PARCELS.TOTAL_MARKET_VALUE, PARCELS.TOTAL_ASSESSED_VALUE, PARCELS.ORIGINAL_LIEN_AMOUNT, PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE,
+                                                PARCELS.PREMIUM_AMOUNT,  NULL 'LIEN/MARKET VALUE', NULL 'REFUNDED',
+                                                F_REFUNDS.AMOUNT 'REFUNDS',
+                                                TOP_SUB.AMOUNT 'SUB 1 AMOUNT',
+                                                (SELECT AMOUNT FROM FEES WHERE CATEGORY = 3 AND UNIQUE_ID = PARCELS.UNIQUE_ID LIMIT 1, 1 ) 'SUB 2 AMOUNT',
+                                                F_OTHERS.AMOUNT 'OTHER FEES',
+                                                RED.DATE_REDEEMED 'REDEMPTION DATE', RED.CHECK_AMOUNT 'REDEMPTION CHECK AMOUNT', RED.CHECK_RECEIVED 'REDEMPTION CHECK RECEIVED'
 
-                                            FROM PARCELS
-                                            LEFT JOIN (SELECT UNIQUE_ID, MIN(DATE_REDEEMED) 'DATE_REDEEMED', SUM(CHECK_AMOUNT) 'CHECK_AMOUNT', MIN(CHECK_RECEIVED) 'CHECK_RECEIVED'
-                                                        FROM REDEEM 
-                                                        GROUP BY UNIQUE_ID) RED ON RED.UNIQUE_ID = PARCELS.UNIQUE_ID
-                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = 'b1fd772b';""",
+                                                FROM PARCELS
+                                                LEFT JOIN (SELECT UNIQUE_ID, MIN(DATE_REDEEMED) 'DATE_REDEEMED', SUM(CHECK_AMOUNT) 'CHECK_AMOUNT', MIN(CHECK_RECEIVED) 'CHECK_RECEIVED'
+                                                            FROM REDEEM 
+                                                            GROUP BY UNIQUE_ID) RED ON RED.UNIQUE_ID = PARCELS.UNIQUE_ID
+
+                                                LEFT JOIN (SELECT UNIQUE_ID, CATEGORY, SUM(AMOUNT) 'AMOUNT'
+                                                            FROM FEES
+                                                            WHERE CATEGORY = 9
+                                                            GROUP BY UNIQUE_ID, CATEGORY) F_REFUNDS ON F_REFUNDS.UNIQUE_ID = PARCELS.UNIQUE_ID
+
+                                                LEFT JOIN (SELECT UNIQUE_ID, CATEGORY, SUM(AMOUNT) 'AMOUNT'
+                                                            FROM FEES
+                                                            WHERE CATEGORY NOT IN (1, 2, 3) 
+                                                            GROUP BY UNIQUE_ID, CATEGORY) F_OTHERS ON F_OTHERS.UNIQUE_ID = PARCELS.UNIQUE_ID
+
+                                                LEFT JOIN (SELECT UNIQUE_ID, AMOUNT FROM FEES 
+                                                            WHERE CATEGORY = 3 AND ID IN (SELECT MIN(ID) FROM FEES WHERE CATEGORY = 3 GROUP BY UNIQUE_ID)) TOP_SUB ON TOP_SUB.UNIQUE_ID = PARCELS.UNIQUE_ID
+
+                                                WHERE PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = 'b1fd772b';""",
 
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
-                                CASE 
-                                    WHEN FEES.CATEGORY > 2 THEN FEES.AMOUNT
-                                    WHEN FEES.CATEGORY < 3 THEN 0
-                                ELSE 0 END AS 'AMOUNT',
-                                CASE 
-                                    WHEN FEES.CATEGORY > 2 THEN 0
-                                    WHEN FEES.CATEGORY < 3 THEN FEES.AMOUNT
-                                ELSE 0 END AS 'FEES',
-                                FEES.INTEREST, FEES.INTEREST_ACC_INTERVAL, CONVERT(FEES.EFFECTIVE_DATE, DATE) 'EFFECTIVE_DATE',
-                                CASE
-                                    WHEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE) > '1994-10-21' THEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE)
-                                    WHEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE) = '0000-00-00' THEN STR_TO_DATE(CURDATE(), '%Y-%m-%d')
+                                                CASE 
+                                                    WHEN FEES.CATEGORY > 2 THEN FEES.AMOUNT
+                                                    WHEN FEES.CATEGORY < 3 THEN 0
+                                                ELSE 0 END AS 'AMOUNT',
+                                                CASE 
+                                                    WHEN FEES.CATEGORY > 2 THEN 0
+                                                    WHEN FEES.CATEGORY < 3 THEN FEES.AMOUNT
+                                                ELSE 0 END AS 'FEES',
+                                                FEES.INTEREST, FEES.INTEREST_ACC_INTERVAL, CONVERT(FEES.EFFECTIVE_DATE, DATE) 'EFFECTIVE_DATE',
+                                                CASE
+                                                    WHEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE) > '1994-10-21' THEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE)
+                                                    WHEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE) = '0000-00-00' THEN STR_TO_DATE(CURDATE(), '%Y-%m-%d')
 
-                                    ELSE STR_TO_DATE(CURDATE(), '%Y-%m-%d')
-                                END AS 'EFFECTIVE_END_DATE',
-                                (SELECT F1.AMOUNT FROM FEES F1 WHERE F1.CATEGORY = 1 AND F1.IS_ACTIVE = '1' AND F1.UNIQUE_ID = FEES.UNIQUE_ID) 'BEGINNING_BALANCE',
-                                (SELECT F1.AMOUNT FROM FEES F1 WHERE F1.CATEGORY = 2 AND F1.IS_ACTIVE = '1' AND F1.UNIQUE_ID = FEES.UNIQUE_ID) 'PREMIUM',
-                                (SELECT IFNULL(SUM(CHECK_AMOUNT),0) 'PAYMENTS' FROM REDEEM WHERE UNIQUE_ID = FEES.UNIQUE_ID) 'PAYMENTS'
+                                                    ELSE STR_TO_DATE(CURDATE(), '%Y-%m-%d')
+                                                END AS 'EFFECTIVE_END_DATE',
+                                                PARCELS.ORIGINAL_LIEN_AMOUNT, PARCELS.PREMIUM_AMOUNT, PAY.PAYMENTS
 
-                                FROM FEES
-                                LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
-                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = '7ed48031'""",
+                                                FROM FEES
+                                                LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
+                                                LEFT JOIN (SELECT UNIQUE_ID, IFNULL(SUM(CHECK_AMOUNT),0) 'PAYMENTS' FROM REDEEM GROUP BY UNIQUE_ID) PAY ON PAY.UNIQUE_ID = FEES.UNIQUE_ID
+                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL  -- and PARCELS.UNIQUE_ID = '7ed48031'""",
 
     "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT 
                                                 concat(PARCELS.COUNTY ,', ', PARCELS.STATE) 'COUNTY, STATE' ,PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', 
