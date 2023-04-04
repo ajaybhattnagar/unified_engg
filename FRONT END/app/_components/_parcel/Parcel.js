@@ -157,7 +157,7 @@ const Parcel = () => {
                     </div>
 
                     <div className="d-flex justify-content-end mr-3">
-                        <button className="btn btn-outline-success btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true} onClick={() => openRedeemModal(10)}>Redeem</button>
+                        <button className="btn btn-outline-success btn-sm mr-2" disabled={parcelDetails['Status'] < 10 ? false : true} onClick={() => openRedeemModal(10)}>Redeem</button>
                         <button className="btn btn-outline-secondary btn-sm mr-2" disabled={parcelDetails['Status'] < 9 ? false : true} onClick={() => openRedeemModal(9)}>Partial Redemption</button>
                         <button className="btn btn-outline-primary btn-sm mr-2" onClick={() => open_payoff_report()}>Payoff Report</button>
                         <button className="btn btn-outline-secondary btn-sm mr-2" onClick={() => navigate_history_page()}>History</button>
