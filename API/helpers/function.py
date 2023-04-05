@@ -87,4 +87,8 @@ def get_total_interest(subs, interest, start_date, end_date):
       total_interest = sub_per_diem * subs * interest * -1
     return (round(total_interest, 2))
 
-
+def get_interst_acc_for_florida(bg, interest):
+  if float(bg) * (0.25/12) < float(bg) * (0.05):
+      return (float(bg) * (0.05))
+  else:
+      return (float(bg) * (25/12) /100)

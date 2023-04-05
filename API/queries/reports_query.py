@@ -144,7 +144,7 @@ reports_query = {
                                                 LEFT JOIN (SELECT UNIQUE_ID, AMOUNT FROM FEES 
                                                             WHERE CATEGORY = 3 AND ID IN (SELECT MIN(ID) FROM FEES WHERE CATEGORY = 3 GROUP BY UNIQUE_ID)) TOP_SUB ON TOP_SUB.UNIQUE_ID = PARCELS.UNIQUE_ID
 
-                                                WHERE PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID = 'b1fd772b';""",
+                                                WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = 'e2d0f1c7';""",
 
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
                                                 CASE 
@@ -162,12 +162,12 @@ reports_query = {
 
                                                     ELSE STR_TO_DATE(CURDATE(), '%Y-%m-%d')
                                                 END AS 'EFFECTIVE_END_DATE',
-                                                PARCELS.ORIGINAL_LIEN_AMOUNT, PARCELS.PREMIUM_AMOUNT, PAY.PAYMENTS
+                                                PARCELS.ORIGINAL_LIEN_AMOUNT, PARCELS.PREMIUM_AMOUNT, PAY.PAYMENTS, PARCELS.STATE
 
                                                 FROM FEES
                                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
                                                 LEFT JOIN (SELECT UNIQUE_ID, IFNULL(SUM(CHECK_AMOUNT),0) 'PAYMENTS' FROM REDEEM GROUP BY UNIQUE_ID) PAY ON PAY.UNIQUE_ID = FEES.UNIQUE_ID
-                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL  -- and PARCELS.UNIQUE_ID = '7ed48031'""",
+                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = 'e2d0f1c7'""",
 
     "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT 
                                                 concat(PARCELS.COUNTY ,', ', PARCELS.STATE) 'COUNTY, STATE' ,PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', 

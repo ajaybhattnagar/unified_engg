@@ -12,7 +12,7 @@ warnings.filterwarnings('ignore')
 import bcrypt
 import jwt
 from utils import check_user, get_user_details
-from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest
+from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest, get_interst_acc_for_florida
 
 from queries.reports_query import reports_query
 
@@ -231,9 +231,6 @@ def weekly_report(current_user):
         all_parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         all_parcel_fees = pd.DataFrame.from_dict(all_parcel_fees)
 
-        # Create a new dataframe to store the results
-        results_df = pd.DataFrame()
-
         # Get the unique parcel ids
         unique_parcel_ids = all_parcel_fees['UNIQUE_ID'].unique()
 
@@ -253,22 +250,28 @@ def weekly_report(current_user):
             df = [x for x in all_parcel_fees if x[0] == i]
 
             # Get the total penalty
-            total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
-            
+            if 'florida' in df[0][12].lower():
+                total_penalty = 0
+            else:
+                total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
+
             # Get the total interest
             for i in np.arange(0, len(df)):
-                if df[i][2] > 2:
+
+                if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
                     ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
                 else :
                     ti = 0
-                    td = 0
-                df[i].insert(12, ti)
-                df[i].insert(13, total_penalty)
+
+                if ('florida' in df[0][12].lower()) and (df[i][2] == 1):
+                    ti = get_interst_acc_for_florida(df[i][4], df[i][5])
+                
+                df[i].insert(13, ti)
+                df[i].insert(14, total_penalty)
                 final_results.append(df[i])
 
         # Convert the list of list to dataframe
         final_results = pd.DataFrame(final_results, columns=column_names)
-
         final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
         final_results['TOTAL_AMOUNT'] = round(final_results['AMOUNT'] + final_results['TOTAL_INTEREST'] + final_results['FEES'] + final_results['TOTAL_PENALTY'], 2)
         final_results = final_results[['UNIQUE_ID', 'TOTAL_INTEREST', 'TOTAL_PENALTY', 'TOTAL_AMOUNT']]
@@ -301,58 +304,6 @@ def weekly_report(current_user):
         for i in data_type_cols:
             header_details[i] = pd.to_datetime(header_details[i], errors='coerce')
             header_details[i] = header_details[i].dt.strftime('%m/%d/%Y')
-
-        # return jsonify(final_results), 200
-            # Get the total penalty
-            # total_penalty = get_total_penalty(df.iloc[0]['BEGINNING_BALANCE'], df.iloc[0]['AMOUNT'], 'false')
-            # df['TOTAL_PENALTY'] = round(total_penalty,2)
-
-            # # Get the total interest
-            # for i in np.arange(0, len(df)):
-            #     if df.iloc[i]['CATEGORY'] > 2:
-            #         ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
-            #     else :
-            #         ti = 0
-            #         td = 0
-            #     total_interest.append(ti)
-            
-            # df['TOTAL_INTEREST'] = total_interest
-
-            # Append to the results dataframe
-        #     results_df = pd.concat([results_df, df], ignore_index=True)
-
-        # results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
-        # results_df['TOTAL_AMOUNT'] = round(results_df['AMOUNT'] + results_df['TOTAL_INTEREST'] + results_df['FEES'] + results_df['TOTAL_PENALTY'], 2)
-        # results_df = results_df[['UNIQUE_ID', 'TOTAL_INTEREST', 'TOTAL_PENALTY', 'TOTAL_AMOUNT']]
-
-        # results_df = results_df.groupby("UNIQUE_ID", as_index=False).agg(
-        #     {"UNIQUE_ID": "min", "TOTAL_INTEREST": "sum", 'TOTAL_PENALTY': 'min', 'TOTAL_AMOUNT': 'sum'}
-        # )
-
-        # header_details = pd.merge(header_details, results_df, how='left')
-
-        # header_details = header_details.rename(columns = {
-        #    "UNIQUE_ID": "REFERENCE ID",
-        #    "COUNTY_LAND_USE_DESC": "PROPERTY TYPE",
-        #    "PARCEL_ID": "PARCEL",
-        #    "TOTAL_MARKET_VALUE": "TOTAL MARKET VALUE",
-        #    "TOTAL_ASSESSED_VALUE": "TOTAL ASSESSED VALUE",
-        #    "ORIGINAL_LIEN_AMOUNT": "BEGINNING BALANCE",
-        #    "ORIGINAL_LIEN_EFFECTIVE_DATE": "BEGINNING BALANCE EFFECTIVE DATE",
-        #    "PREMIUM_AMOUNT": "PREMIUMS",
-        #    "TOTAL_INTEREST": "INTEREST ACCRUED VALUE",
-        #    "TOTAL_PENALTY": "PENALTY",
-        #    "TOTAL_AMOUNT": "TOTAL PAYOFF"
-        # })
-        # header_details = header_details[['REFERENCE ID', 'STATUS', 'BEGINNING BALANCE EFFECTIVE DATE', 'STATE', 'MUNICIPALITY', 'COUNTY', 'PROPERTY TYPE',
-        # 'PARCEL', 'CERTIFICATE', 'TOTAL MARKET VALUE', 'TOTAL ASSESSED VALUE', 'BEGINNING BALANCE', 'REFUNDS', 'SUB 1 AMOUNT', 'SUB 2 AMOUNT', 'LIEN/MARKET VALUE',
-        # 'OTHER FEES', 'INTEREST ACCRUED VALUE', 'PENALTY', 'PREMIUMS', 'TOTAL PAYOFF', 'REDEMPTION DATE', 'REFUNDED', 'REDEMPTION CHECK RECEIVED', 'REDEMPTION CHECK AMOUNT'
-        # ]]
-
-        # data_type_cols = ['BEGINNING BALANCE EFFECTIVE DATE', 'REDEMPTION DATE', 'REDEMPTION CHECK RECEIVED']
-        # for i in data_type_cols:
-        #     header_details[i] = pd.to_datetime(header_details[i], errors='coerce')
-        #     header_details[i] = header_details[i].dt.strftime('%m/%d/%Y')
 
         # header_details.to_excel('all_fields.xlsx', index=False)
         # Close the connection
