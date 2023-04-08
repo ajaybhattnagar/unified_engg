@@ -53,7 +53,7 @@ def token_required(f):
         return f(user_email, *args, **kwargs)
     return decorator
 
-
+# Needs florida settings
 @reports_blueprint.route('/api/v1/reports/all_fields', methods=['GET'])
 @token_required
 def all_fields(current_user):
@@ -118,7 +118,7 @@ def all_fields(current_user):
         return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
     
 
-# Report Fee Details
+# Report Fee Details - need florida settings
 @reports_blueprint.route('/api/v1/reports/fee_details', methods=['GET'])
 @token_required
 def fee_details(current_user):
@@ -321,7 +321,7 @@ def weekly_report(current_user):
         return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
 
 
-# New Pending Redemption Notice
+# New Pending Redemption Notice -- needs florida setting
 @reports_blueprint.route('/api/v1/reports/new_pending_redemeption_notice', methods=['GET'])
 @token_required
 def new_pending_redemption(current_user):
@@ -344,7 +344,10 @@ def new_pending_redemption(current_user):
             df = redem_report[redem_report['REFERENCE ID'] == i]
             
             # Get the total penalty
-            total_penalty = get_total_penalty(df.iloc[0]['BEGINNING BALANCE'], df.iloc[0]['AMOUNT'], 'false')
+            if ('florida' in df.iloc[0]['COUNTY, STATE'].lower()):
+                total_penalty = 0
+            else :
+                total_penalty = round(get_total_penalty(df.iloc[0]['BEGINNING BALANCE'], df.iloc[0]['AMOUNT'], 'false'),2)
             df['TOTAL_PENALTY'] = total_penalty
 
             # Get the total interest
@@ -352,10 +355,11 @@ def new_pending_redemption(current_user):
                 if df.iloc[i]['CATEGORY'] > 2:
                     ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
                 else :
-                    ti = 0
-                    td = 0
+                    ti = 0.00
+                
+                if ('florida' in df.iloc[0]['COUNTY, STATE'].lower()) and (df.iloc[i]['CATEGORY'] == 1):
+                    ti = get_interst_acc_for_florida(df.iloc[i]['BEGINNING BALANCE'], df.iloc[i]['INTEREST'])
                 total_interest.append(ti)
-                total_days_of_interest.append(td)
             
             df['TOTAL_INTEREST'] = total_interest
 
@@ -368,8 +372,9 @@ def new_pending_redemption(current_user):
 
             final_results = pd.concat([final_results, df], ignore_index=True)
 
+
         final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES']] = final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES']].apply(pd.to_numeric)
-        final_results['TOTAL REDEEMABLE'] = df['TOTAL_INTEREST'] + df['TOTAL_PENALTY'] + list(map(float, df['AMOUNT'])) + list(map(float, df['FEES']))
+        final_results['TOTAL REDEEMABLE'] = final_results['TOTAL_INTEREST'] + final_results['TOTAL_PENALTY'] + final_results['AMOUNT'] + final_results['FEES']
         final_results = final_results.drop(['TOTAL_INTEREST', 'TOTAL_PENALTY', 'AMOUNT', 'FEES'], axis=1)
 
         # Change date format
