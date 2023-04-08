@@ -16,7 +16,7 @@ from queries.notes_query import notes_query
 from queries.documents_query import documents_query
 
 import random, string
-from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest
+from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest, get_interst_acc_for_florida
 
 
 parcel_blueprint = Blueprint('parcel_blueprint', __name__)
@@ -247,14 +247,16 @@ def get_payoff_report(current_user, parcel_id):
         parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         parcel_fees = pd.DataFrame.from_dict(parcel_fees)
 
-        # print (parcel_query['GET_PARCEL_FEES_BY_ID_PAYOFF_REPORT'].format(ID = parcel_id, END_DATE = end_date))
-
         # Get all payments
         mycursor.execute(parcel_query['GET_PAYMENTS_SUM_BY_ID'].format(ID = parcel_id))
         payments = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         payments = payments[0]['PAYMENTS'] * (-1)
-        #  Get the total penalty
-        total_penalty = get_total_penalty(parcel_fees.iloc[0]['BEGINNING_BALANCE'], parcel_fees.iloc[0]['AMOUNT'], 'false')
+
+        #  Get the total penalty and interest for Florida
+        if ('florida' in parcel_fees.iloc[0]['STATE'].lower()):
+            total_penalty = 0
+        else:
+            total_penalty = get_total_penalty(parcel_fees.iloc[0]['BEGINNING_BALANCE'], parcel_fees.iloc[0]['AMOUNT'], 'false')
 
     except:
         return jsonify({"message": "Failed while querying data or calculating total penalty."}), 500
@@ -270,6 +272,10 @@ def get_payoff_report(current_user, parcel_id):
         else :
             ti = 0
             td = 0
+        
+        if (parcel_fees.iloc[i]['CATEGORY'] == 1) & ('florida' in parcel_fees.iloc[0]['STATE'].lower()):
+            ti = round(get_interst_acc_for_florida(parcel_fees.iloc[0]['BEGINNING_BALANCE'], 0),2)
+
         total_interest.append(ti)
         total_days_of_interest.append(td)
 
@@ -281,7 +287,7 @@ def get_payoff_report(current_user, parcel_id):
 
     # Add penalty to the parcel fees df
     # 16 is the index of the penalty column
-    parcel_fees.iloc[0, 16] = total_penalty
+    parcel_fees.iloc[0, 17] = total_penalty
     # parcel_fees.to_excel('parcel_fees.xlsx')
 
     parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 

@@ -93,7 +93,7 @@ export const columns = [
     },
     {
         title: "Beg. Bal.",
-        field: "BEGINNING_BALANCE",
+        field: "ORIGINAL_LIEN_AMOUNT",
         filtering: false,
         editable: "never",
         hidden: false,
