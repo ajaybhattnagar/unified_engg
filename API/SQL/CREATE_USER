@@ -1,0 +1,11 @@
+-- DB USER ALWAYS 22774284
+
+drop user 'desrwright@gmail.com'@'%';
+flush privileges;
+CREATE USER 'desrwright@gmail.com'@'%' IDENTIFIED BY '22774284';
+
+
+GRANT ALL PRIVILEGES ON `Sda` . * TO 'desrwright@gmail.com'@'%';
+FLUSH PRIVILEGES;
+
+lowvoltaxliens.cp67dvvnpnqf.us-east-2.rds.amazonaws.com
