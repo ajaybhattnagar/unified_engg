@@ -321,7 +321,7 @@ def weekly_report(current_user):
         return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
 
 
-# New Pending Redemption Notice -- needs florida setting
+# New Pending Redemption Notice
 @reports_blueprint.route('/api/v1/reports/new_pending_redemeption_notice', methods=['GET'])
 @token_required
 def new_pending_redemption(current_user):
@@ -366,15 +366,15 @@ def new_pending_redemption(current_user):
             df = df.groupby("REFERENCE ID", as_index=False).agg(
                 {"COUNTY, STATE": 'min', "MUNICIPALITY": 'min', "REFERENCE ID": "min", "BEGINNING BALANCE EFFECTIVE DATE": 'min', "ADDRESS": 'min',
                 "LOCATION CITY": "min", 'ZIP CODE': 'min', 'LEGAL BLOCK': 'min', 'LEGAL LOT NUMBER': 'min', 'QUALIFIER': 'min', 'BEGINNING BALANCE': 'min',
-                "TOTAL REDEEMABLE": 'min', 'STATUS': 'min', 'CERTIFICATE': 'min',
+                "TOTAL REDEEMABLE": 'min', 'STATUS': 'min', 'CERTIFICATE': 'min', 'PAYMENT': 'min',
                 "TOTAL_INTEREST": "sum", 'TOTAL_PENALTY': 'min', 'AMOUNT': 'sum', 'FEES': 'sum'}
             )
 
             final_results = pd.concat([final_results, df], ignore_index=True)
 
 
-        final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES']] = final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES']].apply(pd.to_numeric)
-        final_results['TOTAL REDEEMABLE'] = final_results['TOTAL_INTEREST'] + final_results['TOTAL_PENALTY'] + final_results['AMOUNT'] + final_results['FEES']
+        final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES', 'PAYMENT']] = final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES', 'PAYMENT']].apply(pd.to_numeric)
+        final_results['TOTAL REDEEMABLE'] = final_results['TOTAL_INTEREST'] + final_results['TOTAL_PENALTY'] + final_results['AMOUNT'] + final_results['FEES'] - final_results['PAYMENT']
         final_results = final_results.drop(['TOTAL_INTEREST', 'TOTAL_PENALTY', 'AMOUNT', 'FEES'], axis=1)
 
         # Change date format

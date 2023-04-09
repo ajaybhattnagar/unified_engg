@@ -201,11 +201,12 @@ reports_query = {
                                                     WHEN CONVERT(FEES.EFFECTIVE_END_DATE, DATE) = '0000-00-00' THEN STR_TO_DATE(CURDATE(), '%Y-%m-%d')
 
                                                     ELSE STR_TO_DATE(CURDATE(), '%Y-%m-%d')
-                                                END AS 'EFFECTIVE_END_DATE'
+                                                END AS 'EFFECTIVE_END_DATE', IFNULL(PAY.PAYMENT, 0) AS 'PAYMENT'
 
                                                 FROM FEES
                                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
-                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID in ('e2d0f1c7', '501274b3')""",
+                                                LEFT JOIN (SELECT UNIQUE_ID, SUM(CHECK_AMOUNT) AS 'PAYMENT' FROM REDEEM GROUP BY UNIQUE_ID) PAY ON PAY.UNIQUE_ID = FEES.UNIQUE_ID
+                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- and PARCELS.UNIQUE_ID in ('d3371af2', '501274b3')""",
 
     "WSFS_REDEMPTION_NOTIFICATION": """SELECT PARCELS.STATE, PARCELS.COUNTY, PARCELS.PARCEL_ID 'PARCEL', PARCELS.CERTIFICATE, PARCELS.UNIQUE_ID 'REFERENCE ID', 
                                         CASE 
