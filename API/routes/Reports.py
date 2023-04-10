@@ -118,7 +118,7 @@ def all_fields(current_user):
         return jsonify("Something went wrong. Message: {m}".format(m = e)), 500
     
 
-# Report Fee Details - need florida settings
+# Report Fee Details
 @reports_blueprint.route('/api/v1/reports/fee_details', methods=['GET'])
 @token_required
 def fee_details(current_user):
@@ -130,20 +130,19 @@ def fee_details(current_user):
         fee_details = pd.DataFrame.from_dict(fee_details)
         
         total_interest = []
-        total_days_of_interest = []
         
         # Get the total interest
         for i in np.arange(0, len(fee_details)):
             if fee_details.iloc[i]['CATEGORY'] > 2:
                 ti = get_total_interest(fee_details.iloc[i]['AMOUNT'], fee_details.iloc[i]['INTEREST'], fee_details.iloc[i]['EFFECTIVE_DATE'], fee_details.iloc[i]['EFFECTIVE_END_DATE'])
-                td = get_total_days_of_interest(fee_details.iloc[i]['EFFECTIVE_DATE'], fee_details.iloc[i]['EFFECTIVE_END_DATE'])
             else :
                 ti = 0
-                td = 0
+            
+            if ('florida' in fee_details.iloc[i]['STATE'].lower()) and (fee_details.iloc[i]['CATEGORY'] == 1):
+                ti = get_interst_acc_for_florida(fee_details.iloc[i]['BEGINNING BALANCE'], fee_details.iloc[i]['FEES'])
+
             total_interest.append(ti)
-            total_days_of_interest.append(td)
         
-        fee_details['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
         fee_details['TOTAL_INTEREST_FEE'] = total_interest
         
         df_accrued_interest = fee_details.groupby('UNIQUE_ID')['TOTAL_INTEREST_FEE'].sum().reset_index()
