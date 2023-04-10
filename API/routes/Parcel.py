@@ -295,7 +295,6 @@ def get_payoff_report(current_user, parcel_id):
     # Change the data type of the columns
     parcel_fees[["AMOUNT", "INTEREST", "FEES"]] = parcel_fees[["AMOUNT", "INTEREST", "FEES"]].apply(pd.to_numeric)
     parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'] + parcel_fees['FEES'] + parcel_fees['PENALTY'],2)
-    print (parcel_fees)
 
     # Summary total row
     total = round(float(parcel_fees['TOTAL_AMOUNT'].sum()) + float(payments), 2)
