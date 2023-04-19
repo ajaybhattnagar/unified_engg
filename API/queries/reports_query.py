@@ -123,7 +123,7 @@ reports_query = {
                                             F_REFUNDS.AMOUNT 'REFUNDS',
                                             TOP_SUB.AMOUNT 'SUB 1 AMOUNT',
                                             0.00 'SUB 2 AMOUNT',
-                                            F_OTHERS.AMOUNT 'OTHER FEES',
+                                            O_FEES.AMOUNT 'OTHER FEES',
                                             RED_DATE.DATE_REDEEMED 'REDEMPTION DATE', RED.CHECK_AMOUNT 'REDEMPTION CHECK AMOUNT', RED.CHECK_RECEIVED 'REDEMPTION CHECK RECEIVED'
 
                                             FROM PARCELS
@@ -135,15 +135,13 @@ reports_query = {
                                                         WHERE CATEGORY = 9
                                                         GROUP BY UNIQUE_ID, CATEGORY) F_REFUNDS ON F_REFUNDS.UNIQUE_ID = PARCELS.UNIQUE_ID
 
-                                            LEFT JOIN (SELECT UNIQUE_ID, CATEGORY, SUM(AMOUNT) 'AMOUNT'
-                                                        FROM FEES
-                                                        WHERE CATEGORY NOT IN (1, 2, 3) 
-                                                        GROUP BY UNIQUE_ID, CATEGORY) F_OTHERS ON F_OTHERS.UNIQUE_ID = PARCELS.UNIQUE_ID
-
                                             LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'AMOUNT' FROM FEES 
                                                         WHERE CATEGORY = 3 GROUP BY UNIQUE_ID) TOP_SUB ON TOP_SUB.UNIQUE_ID = PARCELS.UNIQUE_ID
 
-                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = 'e2d0f1c7';""",
+                                            LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'AMOUNT' FROM FEES 
+                                                        WHERE CATEGORY = 12 GROUP BY UNIQUE_ID) O_FEES ON O_FEES.UNIQUE_ID = PARCELS.UNIQUE_ID
+
+                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '6ac71fbc';""",
 
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
                                                 CASE 
