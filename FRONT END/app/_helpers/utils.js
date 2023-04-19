@@ -186,10 +186,12 @@ function exportCSV(array, fileName) {
 }
 
 function exportExcel(array, fileName) {
-  let d = new Date();
-  let dformat = `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}-${d.getHours()}-${d.getMinutes()}`;
+  let d = new Date().toLocaleDateString();
+  let month = d.split('/')[0];
+  let day = d.split('/')[1];
+  let year = d.split('/')[2];
+  let dformat = `${month}-${day}-${year}-${new Date().getHours()}-${new Date().getMinutes()}`;
   let file_name = fileName + ' - ' + dformat;
-
   const worksheet = XLSX.utils.json_to_sheet(array);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "PARCELS");
