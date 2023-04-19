@@ -122,7 +122,7 @@ reports_query = {
                                             PARCELS.PREMIUM_AMOUNT,  NULL 'LIEN/MARKET VALUE', NULL 'REFUNDED',
                                             F_REFUNDS.AMOUNT 'REFUNDS',
                                             TOP_SUB.AMOUNT 'SUB 1 AMOUNT',
-                                            (SELECT AMOUNT FROM FEES WHERE CATEGORY = 3 AND UNIQUE_ID = PARCELS.UNIQUE_ID LIMIT 1, 1 ) 'SUB 2 AMOUNT',
+                                            0.00 'SUB 2 AMOUNT',
                                             F_OTHERS.AMOUNT 'OTHER FEES',
                                             RED_DATE.DATE_REDEEMED 'REDEMPTION DATE', RED.CHECK_AMOUNT 'REDEMPTION CHECK AMOUNT', RED.CHECK_RECEIVED 'REDEMPTION CHECK RECEIVED'
 
@@ -140,10 +140,10 @@ reports_query = {
                                                         WHERE CATEGORY NOT IN (1, 2, 3) 
                                                         GROUP BY UNIQUE_ID, CATEGORY) F_OTHERS ON F_OTHERS.UNIQUE_ID = PARCELS.UNIQUE_ID
 
-                                            LEFT JOIN (SELECT UNIQUE_ID, AMOUNT FROM FEES 
-                                                        WHERE CATEGORY = 3 AND ID IN (SELECT MIN(ID) FROM FEES WHERE CATEGORY = 3 GROUP BY UNIQUE_ID)) TOP_SUB ON TOP_SUB.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                            LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'AMOUNT' FROM FEES 
+                                                        WHERE CATEGORY = 3 GROUP BY UNIQUE_ID) TOP_SUB ON TOP_SUB.UNIQUE_ID = PARCELS.UNIQUE_ID
 
-                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL  -- AND PARCELS.UNIQUE_ID = 'e2d0f1c7';""",
+                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = 'e2d0f1c7';""",
 
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
                                                 CASE 
