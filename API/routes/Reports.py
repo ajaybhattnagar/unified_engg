@@ -303,6 +303,9 @@ def weekly_report(current_user):
         for i in data_type_cols:
             header_details[i] = pd.to_datetime(header_details[i], errors='coerce')
             header_details[i] = header_details[i].dt.strftime('%m/%d/%Y')
+        
+        # Updating total accrued interest to zero if status is REFUNDED
+        header_details.loc[header_details['STATUS'] == 'REFUNDED', 'INTEREST ACCRUED VALUE'] = 0
 
         # header_details.to_excel('all_fields.xlsx', index=False)
         # Close the connection
