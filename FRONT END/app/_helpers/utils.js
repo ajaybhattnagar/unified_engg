@@ -320,6 +320,8 @@ function getCategorybyValue(value) {
 function convertTimeStampToDateForInputBox(timeStamp) {
   if (timeStamp) {
     var date = new Date(timeStamp);
+    // convert to local date
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
     var year = date.getFullYear();
 
     var month = date.getMonth() + 1;

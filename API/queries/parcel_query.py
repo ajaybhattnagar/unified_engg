@@ -123,4 +123,13 @@ parcel_query = {
 "UPDATE_FEES_DATE_BY_ID": """UPDATE FEES SET EFFECTIVE_END_DATE = '{EFFECTIVE_END_DATE}' WHERE UNIQUE_ID = '{ID}' """,
 
 "UPDATE_PARCEL_YEP_BY_ID": """UPDATE PARCELS SET YEAR_END_PENALTY = '{YEP}' WHERE UNIQUE_ID = '{ID}' """,
+
+"UPDATE_PAYMENT_BY_ID": """UPDATE REDEEM 
+                            SET CHECK_RECEIVED = '{CHECK_RECEIVED}', 
+                            CHECK_AMOUNT = '{CHECK_AMOUNT}', 
+                            CHECK_NUMBER = '{CHECK_NUMBER}', 
+                            SOURCE = '{SOURCE}',
+                            METHOD = '{METHOD}',
+                            DESCRIPTION = '{DESCRIPTION}'
+                            WHERE ID = '{ID}'""",
 }

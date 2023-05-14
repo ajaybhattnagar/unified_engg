@@ -27,6 +27,7 @@ export const appConstants = {
 
     REDEEM_OR_PARTIAL_REDEEM_OR_ADD_PAYMENT: '/api/v1/parcel/redeem/',
     DELETE_PAYMENT_BY_ID: 'api/v1/parcel/delete_payment/',
+    UPDATE_PAYMENT_BY_ID: 'api/v1/parcel/edit_payment/',
 
     ADD_NEW_DOCUMENT: 'api/v1/document/add/',
     DELETE_DOCUMENT_BY_ID: 'api/v1/document/delete/',
