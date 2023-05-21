@@ -1,7 +1,7 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
-    BASE_URL: 'http://3.15.2.157:5000/',
-    // BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'http://3.15.2.157:5000/',
+    BASE_URL: 'http://localhost:5000/',
 
     REGISTER: 'api/v1/register',
     LOGIN: 'api/v1/login',
@@ -43,6 +43,7 @@ export const appConstants = {
     GET_MUNI_SPECIFIC_QUERY_FOR_SUBS: 'api/v1/reports/municipality_specific_query_for_subs',
     GET_WSFS_NEW_LIEN_EXPORT_TEMPLATE: 'api/v1/reports/wsfs_new_lien_export_template',
     GET_REDEMPTION_REPORT: 'api/v1/reports/redemption_report',
+    GET_WSFS_LTVL_STATUS_REPORT: 'api/v1/reports/wsfs_ltvl_status',
 
     UPDATE_YEP_BY_UNIQUE_ID: 'api/v1/parcel/update_penalty/',
 };

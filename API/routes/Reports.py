@@ -558,48 +558,6 @@ def redemption_report(current_user):
            "TOTAL_AMOUNT": "TOTAL PAYOFF"
         })
    
-    # # Get the unique parcel ids
-    # results_df = pd.DataFrame()
-    # unique_parcel_ids = all_parcel_fees['UNIQUE_ID'].unique()
-
-    # try:
-    # # Loop through the unique parcel ids
-    #     for i in unique_parcel_ids:
-    #         total_interest = []
-    #         df = all_parcel_fees[all_parcel_fees['UNIQUE_ID'] == i]
-            
-    #         # Get the total penalty
-    #         total_penalty = get_total_penalty(df.iloc[0]['BEGINNING_BALANCE'], df.iloc[0]['AMOUNT'], 'false')
-    #         df['TOTAL_PENALTY'] = round(total_penalty,2)
-
-    #         # Get the total interest
-    #         for i in np.arange(0, len(df)):
-    #             if df.iloc[i]['CATEGORY'] > 2:
-    #                 ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
-    #             else :
-    #                 ti = 0
-    #                 td = 0
-    #             total_interest.append(ti)
-            
-    #         df['TOTAL_INTEREST'] = total_interest
-    #         results_df = pd.concat([results_df, df], ignore_index=True)
-        
-    #     results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = results_df[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
-    #     results_df['TOTAL_AMOUNT'] = round(results_df['AMOUNT'] + results_df['TOTAL_INTEREST'] + results_df['FEES'] + results_df['TOTAL_PENALTY'], 2)
-
-    #     results_df = results_df.groupby("UNIQUE_ID", as_index=False).agg(
-    #             {"UNIQUE_ID": "min", "AMOUNT": "sum", 'FEES': 'sum', 'TOTAL_PENALTY': 'min', 'TOTAL_INTEREST': 'sum'}
-    #     )
-    #     results_df['TOTAL_AMOUNT'] = results_df['AMOUNT'] + results_df['FEES'] + results_df['TOTAL_PENALTY'] + results_df['TOTAL_INTEREST']
-
-    #     header_details = pd.merge(header_details, results_df, how='left')
-
-    #     header_details = header_details.rename(columns = {
-    #         "UNIQUE_ID": "REFERENCE ID",
-    #         "TOTAL_AMOUNT": "REDEMPTION CALCULATED AMOUNT",
-    #         "TOTAL_INTEREST": "INTEREST ACCRUED VALUE",
-    #     })
-
     header_details['BEGINNING BALANCE EFFECTIVE DATE'] = header_details['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
     header_details['REDEMPTION DATE'] = header_details['REDEMPTION DATE'].dt.strftime('%m/%d/%Y')
     header_details['REDEMPTION CHECK EFFECTIVE DATE'] = header_details['REDEMPTION CHECK EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
@@ -617,3 +575,95 @@ def redemption_report(current_user):
     response.headers['content-type'] = 'application/json'
     return response, 200
     
+# WSFS V LTVL Status
+@reports_blueprint.route('/api/v1/reports/wsfs_ltvl_status', methods=['GET'])
+@token_required
+def wsfs_ltvl_status(current_user):
+    connection = connect_database(current_user)
+    try:
+        mycursor = connection.cursor()
+
+        mycursor.execute(reports_query['WSFS_LTVL_STATUS'])
+        header_details = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        header_details = pd.DataFrame.from_dict(header_details)
+        # Removing the duplicates
+
+        mycursor.execute(reports_query['LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS'])
+        all_parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        all_parcel_fees = pd.DataFrame.from_dict(all_parcel_fees)
+
+    except Exception as e:
+        return jsonify("Failed while querying data. Message: {m}".format(m = e)), 500
+
+    # Get the unique parcel ids
+    unique_parcel_ids = all_parcel_fees['UNIQUE_ID'].unique()
+
+    # Save column names
+    column_names = all_parcel_fees.columns.to_list()
+    column_names.append('TOTAL_INTEREST')
+    column_names.append('TOTAL_PENALTY')
+
+    # dataframe to list of list
+    all_parcel_fees = all_parcel_fees.values.tolist()
+
+    final_results = []
+
+    # Loop through the unique parcel ids
+    for i in unique_parcel_ids:
+        # filter all_parcel_fees by the unique parcel id
+        df = [x for x in all_parcel_fees if x[0] == i]
+
+        # Get the total penalty
+        if 'florida' in df[0][12].lower():
+            total_penalty = 0
+        else:
+            total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
+
+        # Get the total interest
+        for i in np.arange(0, len(df)):
+
+            if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
+                ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
+            else :
+                ti = 0
+
+            if ('florida' in df[0][12].lower()) and (df[i][2] == 1):
+                ti = get_interst_acc_for_florida(df[i][4], df[i][5])
+            
+            df[i].insert(13, ti)
+            df[i].insert(14, total_penalty)
+            final_results.append(df[i])
+    
+    # Convert the list of list to dataframe
+    final_results = pd.DataFrame(final_results, columns=column_names)
+    final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
+    final_results['TOTAL_REDEEMABLE'] = round(final_results['AMOUNT'] + final_results['TOTAL_INTEREST'] + final_results['FEES'] + final_results['TOTAL_PENALTY'], 2)
+    final_results = final_results.groupby("UNIQUE_ID", as_index=False).agg(
+            {"UNIQUE_ID": "min", "TOTAL_INTEREST": "sum", 'TOTAL_PENALTY': 'min', 'FEES': 'sum', 'AMOUNT': 'sum'}
+        )
+    final_results['TOTAL_REDEEMABLE'] = round(final_results['AMOUNT'] + final_results['TOTAL_INTEREST'] + final_results['FEES'] + final_results['TOTAL_PENALTY'], 2)
+
+    # Rename the columns
+    final_results = final_results.rename(columns = {"UNIQUE_ID": "REFERENCE ID"})
+    final_results = final_results[['REFERENCE ID', 'TOTAL_REDEEMABLE']]
+
+    header_details = pd.merge(header_details, final_results, how='left')
+    
+    header_details.drop(['STATUS'], axis=1, inplace=True)
+    header_details = header_details.rename(columns = {"STATUS_S" : "STATUS"})
+    header_details.loc[header_details['STATUS'] == 'REFUNDED', 'INTEREST ACCRUED VALUE'] = 0
+
+    data_type_cols = ['BEGINNING BALANCE EFFECTIVE DATE', 'REDEMPTION DATE', 'REDEMPTION CHECK RECEIVED', 'ACTIVE', 'PARTIAL_RED_DT', 'PEND_RED_DT', 'REFUND_DT', 'BANKRUP_DT', 'REDEEMED']
+    for i in data_type_cols:
+        header_details[i] = pd.to_datetime(header_details[i], errors='coerce')
+        header_details[i] = header_details[i].dt.strftime('%m/%d/%Y')
+
+    mycursor.close()
+    connection.close()
+    # Setting the response to json
+    response = Response(
+                    response=header_details.to_json(orient='records', date_format='iso'),
+                    mimetype='application/json'
+                )
+    response.headers['content-type'] = 'application/json'
+    return response, 200
