@@ -56,7 +56,7 @@ const Reports = () => {
         else if (selected_report.current === 'REDEMPTION_REPORT') {
             url = appConstants.BASE_URL.concat(appConstants.GET_REDEMPTION_REPORT);
         }
-        else if (selected_report.current === 'WFSF_LTVL_STATUS') {
+        else if (selected_report.current === 'WSFS_LTVL_STATUS') {
             url = appConstants.BASE_URL.concat(appConstants.GET_WSFS_LTVL_STATUS_REPORT);
         }
 

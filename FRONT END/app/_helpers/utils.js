@@ -118,7 +118,7 @@ function reportsArray() {
     { value: 'MUNI_QUERY_FOR_SUBS', label: 'Municipality Specific Query For Subs' },
     { value: 'WSFS_NEW_LIEN_EXPORT_TEMPLATE', label: 'WSFS New Lien Export Template' },
     { value: 'REDEMPTION_REPORT', label: 'Redemption Report' },
-    { value: 'WFSF_LTVL_STATUS', label: 'WSFS LTVL Status Report' },
+    { value: 'WSFS_LTVL_STATUS', label: 'WSFS LTVL Status Report' },
 
   ]
 }

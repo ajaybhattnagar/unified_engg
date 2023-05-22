@@ -653,7 +653,7 @@ def wsfs_ltvl_status(current_user):
     header_details = header_details.rename(columns = {"STATUS_S" : "STATUS"})
     header_details.loc[header_details['STATUS'] == 'REFUNDED', 'INTEREST ACCRUED VALUE'] = 0
 
-    data_type_cols = ['BEGINNING BALANCE EFFECTIVE DATE', 'REDEMPTION DATE', 'REDEMPTION CHECK RECEIVED', 'ACTIVE', 'PARTIAL_RED_DT', 'PEND_RED_DT', 'REFUND_DT', 'BANKRUP_DT', 'REDEEMED']
+    data_type_cols = ['BEGINNING BALANCE EFFECTIVE DATE', 'REDEMPTION DATE', 'REDEMPTION CHECK RECEIVED', 'ACTIVE', 'PARTIAL REDEMPTION', 'PENDING REDEPTION', 'REFUNDED', 'BANKRUPTCY', 'REDEEMED']
     for i in data_type_cols:
         header_details[i] = pd.to_datetime(header_details[i], errors='coerce')
         header_details[i] = header_details[i].dt.strftime('%m/%d/%Y')
