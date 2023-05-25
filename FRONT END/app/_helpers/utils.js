@@ -103,6 +103,7 @@ function statusArray() {
     { value: 8, label: 'REO' },
     { value: 9, label: 'Partial Redemption', disabled: true },
     { value: 10, label: 'Redeemed', disabled: true },
+    { value: 11, label: 'TDA', disabled: false },
 
   ]
 }
@@ -295,6 +296,7 @@ function categoryArray(filter_value) {
     { value: 10, label: 'TDA Fees' },
     { value: 11, label: 'Redemption Variance' },
     { value: 12, label: 'Overage' },
+    { value: 13, label: 'TDA Rollup' },
     { value: 101, label: 'Redeemable' },
     { value: 102, label: 'Non-Redeemable' },
     { value: 103, label: 'Refunds' },

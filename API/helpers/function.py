@@ -92,3 +92,8 @@ def get_interst_acc_for_florida(bg, interest):
       return (float(bg) * (0.05))
   else:
       return (float(bg) * (25/12) /100)
+
+
+def get_months_difference(start_date, end_date):
+  months_diff = (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month)
+  return months_diff

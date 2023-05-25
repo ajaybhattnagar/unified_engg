@@ -10,13 +10,14 @@ from datetime import date
 import simplejson
 from sqlalchemy import create_engine
 from utils import check_user, get_user_details
+from dateutil import relativedelta
 
 from queries.parcel_query import parcel_query
 from queries.notes_query import notes_query
 from queries.documents_query import documents_query
 
 import random, string
-from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest, get_interst_acc_for_florida
+from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest, get_interst_acc_for_florida, get_months_difference
 
 
 parcel_blueprint = Blueprint('parcel_blueprint', __name__)
@@ -261,75 +262,93 @@ def get_payoff_report(current_user, parcel_id):
     except:
         return jsonify({"message": "Failed while querying data or calculating total penalty."}), 500
 
+    # check if TDA rollup status
+    if (13 in list(parcel_fees['CATEGORY'])):
+        TDA_rollup = True
+    else:
+        TDA_rollup = False
+
     # Get the total interest
-    # try:
-    total_interest = []
-    total_days_of_interest = []
-    for i in np.arange(0, len(parcel_fees)):
-        if (parcel_fees.iloc[i]['CATEGORY'] > 2) & (parcel_fees.iloc[i]['CATEGORY'] < 12):
-            ti = get_total_interest(parcel_fees.iloc[i]['AMOUNT'], parcel_fees.iloc[i]['INTEREST'], parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
-            td = get_total_days_of_interest(parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
-        else :
-            ti = 0
-            td = 0
+    try:
+        total_interest = []
+        total_days_of_interest = []
+        for i in np.arange(0, len(parcel_fees)):
+            if (parcel_fees.iloc[i]['CATEGORY'] > 2) & (parcel_fees.iloc[i]['CATEGORY'] < 12):
+                ti = get_total_interest(parcel_fees.iloc[i]['AMOUNT'], parcel_fees.iloc[i]['INTEREST'], parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
+                td = get_total_days_of_interest(parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
+            else :
+                ti = 0
+                td = 0
+            
+            # Get the total interest for Florida and TDA rollup
+            if (parcel_fees.iloc[i]['CATEGORY'] == 1) & ('florida' in parcel_fees.iloc[0]['STATE'].lower()) & (TDA_rollup == False):
+                ti = round(get_interst_acc_for_florida(parcel_fees.iloc[0]['BEGINNING_BALANCE'], 0),2)
+            else:
+                ti = 0
+
+            # Get the total interest for Florida and TDA rollup
+            if (parcel_fees.iloc[i]['CATEGORY'] == 13) & ('florida' in parcel_fees.iloc[0]['STATE'].lower()) & (TDA_rollup == True):
+                months_diff = get_months_difference(parcel_fees.iloc[i]['EFFECTIVE_DATE'], parcel_fees.iloc[i]['EFFECTIVE_END_DATE'])
+                months_diff = float(months_diff)
+                amount = float(parcel_fees.iloc[i]['AMOUNT'])
+                ti = round(months_diff*0.015*amount,2)
+            else:
+                ti = 0
+
+            total_interest.append(ti)
+            total_days_of_interest.append(td)
+
+        parcel_fees['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
+        parcel_fees['TOTAL_INTEREST'] = total_interest
+        parcel_fees['TOTAL_AMOUNT'] = 0
+        parcel_fees['PAYMENTS_RECIEVED'] = 0
+        parcel_fees['PENALTY'] = 0
+
+        # Add penalty to the parcel fees df
+        # 16 is the index of the penalty column
+        parcel_fees.iloc[0, 17] = total_penalty
+        # parcel_fees.to_excel('parcel_fees.xlsx')
+
+        parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 
+                                'TOTAL_INTEREST', 'PAYMENTS_RECIEVED', 'TOTAL_AMOUNT', 'EFFECTIVE_END_DATE', 'FEES', 'PENALTY']]
+        # Change the data type of the columns
+        parcel_fees[["AMOUNT", "INTEREST", "FEES"]] = parcel_fees[["AMOUNT", "INTEREST", "FEES"]].apply(pd.to_numeric)
+        parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'] + parcel_fees['FEES'] + parcel_fees['PENALTY'],2)
+
+        # Summary total row
+        total = round(float(parcel_fees['TOTAL_AMOUNT'].sum()) + float(payments), 2)
+
+        summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
+                        payments, total, '', round(parcel_fees['FEES'].sum(),2), round(parcel_fees['PENALTY'].sum(),2)]
         
-        if (parcel_fees.iloc[i]['CATEGORY'] == 1) & ('florida' in parcel_fees.iloc[0]['STATE'].lower()):
-            ti = round(get_interst_acc_for_florida(parcel_fees.iloc[0]['BEGINNING_BALANCE'], 0),2)
+        summary_row = pd.DataFrame([summary_row], columns = parcel_fees.columns)
+        parcel_fees = pd.concat([parcel_fees, summary_row])
+        principal = parcel_fees[parcel_fees['CATEGORY'] == 1]['AMOUNT'].sum()
+        overbid = parcel_fees[parcel_fees['CATEGORY'] == 2]['AMOUNT'].sum()
 
-        total_interest.append(ti)
-        total_days_of_interest.append(td)
+        penalty = total_penalty
+        sub_taxes = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['AMOUNT'].sum()
+        sub_taxes_interest = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['TOTAL_INTEREST'].sum()
+        total = round(principal + overbid + penalty + sub_taxes + sub_taxes_interest,2)
+        # Calculate the payment recieved work around
+        payment_recieved = payments
+        balance = round(float(total) - float(payment_recieved),2)
 
-    parcel_fees['TOTAL_DAYS_OF_INTEREST'] = total_days_of_interest
-    parcel_fees['TOTAL_INTEREST'] = total_interest
-    parcel_fees['TOTAL_AMOUNT'] = 0
-    parcel_fees['PAYMENTS_RECIEVED'] = 0
-    parcel_fees['PENALTY'] = 0
+        summary_dict = {
+                'PRINCIPAL': str(principal),
+                'OVERBID': str(overbid),
+                'PENALTY': str(penalty),
+                'SUB_TAXES': str(sub_taxes),
+                'SUB_TAXES_INTEREST': str(sub_taxes_interest),
+                'TOTAL': str(total),
+                'PAYMENT_RECIEVED': str(payment_recieved),
+                'BALANCE': str(balance)
+            }
 
-    # Add penalty to the parcel fees df
-    # 16 is the index of the penalty column
-    parcel_fees.iloc[0, 17] = total_penalty
-    # parcel_fees.to_excel('parcel_fees.xlsx')
-
-    parcel_fees = parcel_fees[['CATEGORY', 'AMOUNT', 'INTEREST', 'EFFECTIVE_DATE', 'TOTAL_DAYS_OF_INTEREST', 
-                            'TOTAL_INTEREST', 'PAYMENTS_RECIEVED', 'TOTAL_AMOUNT', 'EFFECTIVE_END_DATE', 'FEES', 'PENALTY']]
-    # Change the data type of the columns
-    parcel_fees[["AMOUNT", "INTEREST", "FEES"]] = parcel_fees[["AMOUNT", "INTEREST", "FEES"]].apply(pd.to_numeric)
-    parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'] + parcel_fees['FEES'] + parcel_fees['PENALTY'],2)
-
-    # Summary total row
-    total = round(float(parcel_fees['TOTAL_AMOUNT'].sum()) + float(payments), 2)
-
-    summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
-                    payments, total, '', round(parcel_fees['FEES'].sum(),2), round(parcel_fees['PENALTY'].sum(),2)]
-    
-    summary_row = pd.DataFrame([summary_row], columns = parcel_fees.columns)
-    parcel_fees = pd.concat([parcel_fees, summary_row])
-    principal = parcel_fees[parcel_fees['CATEGORY'] == 1]['AMOUNT'].sum()
-    overbid = parcel_fees[parcel_fees['CATEGORY'] == 2]['AMOUNT'].sum()
-
-    penalty = total_penalty
-    sub_taxes = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['AMOUNT'].sum()
-    sub_taxes_interest = parcel_fees[(parcel_fees['CATEGORY'] != 1) & (parcel_fees['CATEGORY'] != 2) & (parcel_fees['CATEGORY'] != 'Total')]['TOTAL_INTEREST'].sum()
-    total = round(principal + overbid + penalty + sub_taxes + sub_taxes_interest,2)
-    # Calculate the payment recieved work around
-    payment_recieved = payments
-    balance = round(float(total) - float(payment_recieved),2)
-
-    summary_dict = {
-            'PRINCIPAL': str(principal),
-            'OVERBID': str(overbid),
-            'PENALTY': str(penalty),
-            'SUB_TAXES': str(sub_taxes),
-            'SUB_TAXES_INTEREST': str(sub_taxes_interest),
-            'TOTAL': str(total),
-            'PAYMENT_RECIEVED': str(payment_recieved),
-            'BALANCE': str(balance)
-        }
-
-    connection.commit()
-    mycursor.close()
-    # except:
-    #     return jsonify({"message": "Failed while calculating total interest."}), 500
+        connection.commit()
+        mycursor.close()
+    except:
+        return jsonify({"message": "Failed while calculating total interest."}), 500
 
     try:
         # Get the parcel details
