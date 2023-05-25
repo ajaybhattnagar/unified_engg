@@ -16,6 +16,7 @@ import EditFeesModal from "../_ui/editFeesModal";
 import EditNotesModal from "../_ui/editNotesModal";
 import RedeemModal from "../_ui/redeemModal";
 import EditDocumentsModal from "../_ui/editDocumentsModal";
+import EditPaymentsModal from "../_ui/editPaymentsModal";
 
 
 const Parcel = () => {
@@ -27,6 +28,7 @@ const Parcel = () => {
     const [parcelFees, setParcelFees] = useState(null);
     const [parceNotes, setParcelNotes] = useState(null);
     const [selectedFee, setSelectedFee] = useState(null);
+    const [selectedPayment, setSelectedPayment] = useState(null);
     const [redeemLevel, setRedeemLevel] = useState(null);
     const [parcelPayments, setParcelPayments] = useState(null);
     const [parcelDocuments, setParcelDocuments] = useState(null);
@@ -37,6 +39,8 @@ const Parcel = () => {
     const [showNewNotesModal, setNewNotesModal] = useState(false);
     const [showRedeemModal, setRedeemModal] = useState(0);
     const [showNewDocumentsModal, setNewDocumentsModal] = useState(false);
+    const [showEditPaymentModal, setShowEditPaymentModal] = useState(false);
+
     const [refresh, setRefresh] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -183,6 +187,11 @@ const Parcel = () => {
 
     const openModalDocumentsNew = (data) => {
         setNewDocumentsModal(true)
+    }
+
+    const openModalPaymentEdit = (data) => {
+        setSelectedPayment(data);
+        setShowEditPaymentModal(true)
     }
 
     const openModalFeeNew = (data) => {
@@ -351,6 +360,7 @@ const Parcel = () => {
                                 <thead className="thead-dark">
                                     <tr>
                                         <th></th>
+                                        <th></th>
                                         <th>Effective Date</th>
                                         <th>Check Received</th>
                                         <th>Check Number</th>
@@ -363,6 +373,9 @@ const Parcel = () => {
                                             <tr key={index} className=''>
                                                 <td>
                                                     <a href="#"><FontAwesomeIcon className="" icon={faTrash} onClick={() => utils.deltePaymentByID(data['ID'])} /></a>
+                                                </td>
+                                                <td>
+                                                    <a href="#"><FontAwesomeIcon className="" icon={faEdit} onClick={() => openModalPaymentEdit(data) } /></a>
                                                 </td>
                                                 <td>{utils.convertTimeStampToString(data['DATE_REDEEMED'])}</td>
                                                 <td>{utils.convertTimeStampToString(data['CHECK_RECEIVED'])}</td>
@@ -417,6 +430,7 @@ const Parcel = () => {
                 <EditNotesModal show={showNewNotesModal} close={() => { setNewNotesModal(false), get_parcel_details() }} />
                 <RedeemModal show={showRedeemModal} level={redeemLevel} close={() => { setRedeemModal(false), get_parcel_details() }} />
                 <EditDocumentsModal show={showNewDocumentsModal} close={() => { setNewDocumentsModal(false), get_parcel_details() }} />
+                <EditPaymentsModal show={showEditPaymentModal} data={selectedPayment} close={() => { setShowEditPaymentModal(false), get_parcel_details()}} />
             </div>
         );
     }

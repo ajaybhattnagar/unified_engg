@@ -119,6 +119,7 @@ function reportsArray() {
     { value: 'MUNI_QUERY_FOR_SUBS', label: 'Municipality Specific Query For Subs' },
     { value: 'WSFS_NEW_LIEN_EXPORT_TEMPLATE', label: 'WSFS New Lien Export Template' },
     { value: 'REDEMPTION_REPORT', label: 'Redemption Report' },
+    { value: 'WSFS_LTVL_STATUS', label: 'WSFS LTVL Status Report' },
 
   ]
 }
@@ -322,6 +323,8 @@ function getCategorybyValue(value) {
 function convertTimeStampToDateForInputBox(timeStamp) {
   if (timeStamp) {
     var date = new Date(timeStamp);
+    // convert to local date
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
     var year = date.getFullYear();
 
     var month = date.getMonth() + 1;

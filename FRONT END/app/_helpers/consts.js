@@ -27,6 +27,7 @@ export const appConstants = {
 
     REDEEM_OR_PARTIAL_REDEEM_OR_ADD_PAYMENT: '/api/v1/parcel/redeem/',
     DELETE_PAYMENT_BY_ID: 'api/v1/parcel/delete_payment/',
+    UPDATE_PAYMENT_BY_ID: 'api/v1/parcel/edit_payment/',
 
     ADD_NEW_DOCUMENT: 'api/v1/document/add/',
     DELETE_DOCUMENT_BY_ID: 'api/v1/document/delete/',
@@ -42,6 +43,7 @@ export const appConstants = {
     GET_MUNI_SPECIFIC_QUERY_FOR_SUBS: 'api/v1/reports/municipality_specific_query_for_subs',
     GET_WSFS_NEW_LIEN_EXPORT_TEMPLATE: 'api/v1/reports/wsfs_new_lien_export_template',
     GET_REDEMPTION_REPORT: 'api/v1/reports/redemption_report',
+    GET_WSFS_LTVL_STATUS_REPORT: 'api/v1/reports/wsfs_ltvl_status',
 
     UPDATE_YEP_BY_UNIQUE_ID: 'api/v1/parcel/update_penalty/',
 };
