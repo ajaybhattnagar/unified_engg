@@ -316,10 +316,19 @@ def get_payoff_report(current_user, parcel_id):
         parcel_fees['TOTAL_AMOUNT'] = round(parcel_fees['AMOUNT'] + parcel_fees['TOTAL_INTEREST'] + parcel_fees['FEES'] + parcel_fees['PENALTY'],2)
 
         # Summary total row
-        total = round(float(parcel_fees['TOTAL_AMOUNT'].sum()) + float(payments), 2)
+        # total = round(float(parcel_fees['TOTAL_AMOUNT'].sum()) + float(payments), 2)
 
-        summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
+        
+        # Summary row if TDA rollup
+        if (TDA_rollup == True):
+            total = round(float(parcel_fees[parcel_fees['CATEGORY'] != 1]['TOTAL_AMOUNT'].sum()) + float(payments), 2)
+            summary_row = ['Total', round(parcel_fees[parcel_fees['CATEGORY'] != 1]['AMOUNT'].sum(),2), 
+                            round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
                         payments, total, '', round(parcel_fees['FEES'].sum(),2), round(parcel_fees['PENALTY'].sum(),2)]
+        else:
+            total = round(float(parcel_fees['TOTAL_AMOUNT'].sum()) + float(payments), 2)
+            summary_row = ['Total', round(parcel_fees['AMOUNT'].sum(),2), round(parcel_fees['INTEREST'].sum(),2), '', '', round(parcel_fees['TOTAL_INTEREST'].sum(),2), 
+                            payments, total, '', round(parcel_fees['FEES'].sum(),2), round(parcel_fees['PENALTY'].sum(),2)]
         
         summary_row = pd.DataFrame([summary_row], columns = parcel_fees.columns)
         parcel_fees = pd.concat([parcel_fees, summary_row])

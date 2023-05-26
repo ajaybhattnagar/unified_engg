@@ -29,20 +29,23 @@ parcel_query = {
 
                             SELECT * FROM ALL_FEES
                             UNION
-                            SELECT NULL AS ID, NULL AS UNIQUE_ID, 101 AS CATEGORY, NULL AS DESCRIPTION, SUM(AMOUNT), NULL AS INTEREST, NULL AS INTEREST_ACC_INTERVAL, NULL AS EFFECTIVE_DATE, 
-                            NULL AS EFFECTIVE_END_DATE 
-                            FROM FEES 
-                            WHERE UNIQUE_ID = '{ID}' AND IS_ACTIVE = '1'
+                                SELECT NULL AS ID, NULL AS UNIQUE_ID, 101 AS CATEGORY, NULL AS DESCRIPTION, 
+                                CASE WHEN (SELECT STATUS FROM PARCELS WHERE UNIQUE_ID = '{ID}') = 11 THEN (SELECT SUM(AMOUNT) FROM FEES WHERE UNIQUE_ID = '{ID}' AND CATEGORY = 13) ELSE SUM(AMOUNT) END 'AMOUNT',
+                                NULL AS INTEREST, NULL AS INTEREST_ACC_INTERVAL, NULL AS EFFECTIVE_DATE, 
+                                NULL AS EFFECTIVE_END_DATE 
+                                FROM FEES 
+                                WHERE UNIQUE_ID = '{ID}' AND IS_ACTIVE = '1'
                             UNION
-                            SELECT NULL AS ID, NULL AS UNIQUE_ID, 102 AS CATEGORY, NULL AS DESCRIPTION, 0 AS AMOUNT, NULL AS INTEREST, NULL AS INTEREST_ACC_INTERVAL, NULL AS EFFECTIVE_DATE, 
-                            NULL AS EFFECTIVE_END_DATE 
-                            FROM FEES 
-                            WHERE UNIQUE_ID = '{ID}' AND IS_ACTIVE = '1'
+                                SELECT NULL AS ID, NULL AS UNIQUE_ID, 102 AS CATEGORY, NULL AS DESCRIPTION, 0 AS AMOUNT, NULL AS INTEREST, NULL AS INTEREST_ACC_INTERVAL, NULL AS EFFECTIVE_DATE, 
+                                NULL AS EFFECTIVE_END_DATE 
+                                FROM FEES 
+                                WHERE UNIQUE_ID = '008f5bd0' AND IS_ACTIVE = '1'
                             UNION
-                            SELECT NULL AS ID, NULL AS UNIQUE_ID, 106 AS CATEGORY, NULL AS DESCRIPTION, SUM(AMOUNT), NULL AS INTEREST, NULL AS INTEREST_ACC_INTERVAL, NULL AS EFFECTIVE_DATE, 
-                            NULL AS EFFECTIVE_END_DATE 
-                            FROM FEES 
-                            WHERE UNIQUE_ID = '{ID}' AND IS_ACTIVE = '1'
+                                SELECT NULL AS ID, NULL AS UNIQUE_ID, 106 AS CATEGORY, NULL AS DESCRIPTION, 
+                                CASE WHEN (SELECT STATUS FROM PARCELS WHERE UNIQUE_ID = '{ID}') = 11 THEN (SELECT SUM(AMOUNT) FROM FEES WHERE UNIQUE_ID = '{ID}' AND CATEGORY = 13) ELSE SUM(AMOUNT) END 'AMOUNT',    NULL AS INTEREST, NULL AS INTEREST_ACC_INTERVAL, NULL AS EFFECTIVE_DATE, 
+                                NULL AS EFFECTIVE_END_DATE 
+                                FROM FEES 
+                                WHERE UNIQUE_ID = '{ID}' AND IS_ACTIVE = '1'
                             """,
 
 "UPDATE_STATUS_BY_ID": """UPDATE PARCELS SET STATUS = '{STATUS}' WHERE UNIQUE_ID = '{ID}'""",
