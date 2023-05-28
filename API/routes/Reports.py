@@ -53,6 +53,65 @@ def token_required(f):
         return f(user_email, *args, **kwargs)
     return decorator
 
+
+def calc_total_payoff_and_other_interest(unique_parcel_ids, all_parcel_fees): 
+    # unique_parcel_ids is a list of unique parcel ids
+    # all_parcel_fees is a list of list for all the parcel fees
+
+    # Get the unique parcel ids
+    final_results = []
+
+    for i in unique_parcel_ids:
+            # filter all_parcel_fees by the unique parcel id
+            df = [x for x in all_parcel_fees if x[0] == i]
+
+            # Check if TDA roll up is true
+            if (13 in [row[2] for row in df]):
+                tda_roll_up = True
+            else:
+                tda_roll_up = False
+
+            # Get the total penalty
+            if 'florida' in df[0][12].lower():
+                total_penalty = 0
+            else:
+                total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
+
+            # Get the total interest
+            for i in np.arange(0, len(df)):
+
+                if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
+                    ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
+                else :
+                    ti = 0
+                
+                if ('florida' in df[0][12].lower()) and (df[i][2] == 1) and (tda_roll_up == False):
+                    ti = get_interst_acc_for_florida(df[i][4], df[i][5])
+                
+                if ('florida' in df[0][12].lower()) and (df[i][2] == 13) and (tda_roll_up == True):
+                    months_diff = get_months_difference(df[i][7], df[i][8])
+                    months_diff = float(months_diff)
+                    amount = float(df[i][3])
+                    ti = round(months_diff*0.015*amount,2)
+
+                
+                df[i].insert(13, ti)
+                df[i].insert(14, total_penalty)
+
+                if tda_roll_up == True:
+                    if df[i][2] == 13:
+                        final_results.append(df[i])
+                else:
+                    final_results.append(df[i])
+                
+                # change penelty to 0 if there and only for category 1. So that it does not add for all the categroy
+                if (df[i][2] > 1):
+                    df[i][14] = 0
+            
+    return final_results
+                
+
+
 # Needs florida settings
 @reports_blueprint.route('/api/v1/reports/all_fields', methods=['GET'])
 @token_required
@@ -244,54 +303,57 @@ def weekly_report(current_user):
         final_results = []
 
         # Loop through the unique parcel ids
-        for i in unique_parcel_ids:
-            # filter all_parcel_fees by the unique parcel id
-            df = [x for x in all_parcel_fees if x[0] == i]
+        # for i in unique_parcel_ids:
+        #     # filter all_parcel_fees by the unique parcel id
+        #     df = [x for x in all_parcel_fees if x[0] == i]
 
-            # Check if TDA roll up is true
-            if (13 in [row[2] for row in df]):
-                tda_roll_up = True
-            else:
-                tda_roll_up = False
+        #     # Check if TDA roll up is true
+        #     if (13 in [row[2] for row in df]):
+        #         tda_roll_up = True
+        #     else:
+        #         tda_roll_up = False
 
-            # Get the total penalty
-            if 'florida' in df[0][12].lower():
-                total_penalty = 0
-            else:
-                total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
+        #     # Get the total penalty
+        #     if 'florida' in df[0][12].lower():
+        #         total_penalty = 0
+        #     else:
+        #         total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
 
-            # Get the total interest
-            for i in np.arange(0, len(df)):
+        #     # Get the total interest
+        #     for i in np.arange(0, len(df)):
 
-                if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
-                    ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
-                else :
-                    ti = 0
+        #         if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
+        #             ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
+        #         else :
+        #             ti = 0
                 
-                if ('florida' in df[0][12].lower()) and (df[i][2] == 1) and (tda_roll_up == False):
-                    ti = get_interst_acc_for_florida(df[i][4], df[i][5])
+        #         if ('florida' in df[0][12].lower()) and (df[i][2] == 1) and (tda_roll_up == False):
+        #             ti = get_interst_acc_for_florida(df[i][4], df[i][5])
                 
-                if ('florida' in df[0][12].lower()) and (df[i][2] == 13) and (tda_roll_up == True):
-                    months_diff = get_months_difference(df[i][7], df[i][8])
-                    months_diff = float(months_diff)
-                    amount = float(df[i][3])
-                    ti = round(months_diff*0.015*amount,2)
+        #         if ('florida' in df[0][12].lower()) and (df[i][2] == 13) and (tda_roll_up == True):
+        #             months_diff = get_months_difference(df[i][7], df[i][8])
+        #             months_diff = float(months_diff)
+        #             amount = float(df[i][3])
+        #             ti = round(months_diff*0.015*amount,2)
 
                 
-                df[i].insert(13, ti)
-                df[i].insert(14, total_penalty)
+        #         df[i].insert(13, ti)
+        #         df[i].insert(14, total_penalty)
 
-                if tda_roll_up == True:
-                    if df[i][2] == 13:
-                        final_results.append(df[i])
-                else:
-                    final_results.append(df[i])
+        #         if tda_roll_up == True:
+        #             if df[i][2] == 13:
+        #                 final_results.append(df[i])
+        #         else:
+        #             final_results.append(df[i])
                 
-                # change penelty to 0 if there and only for category 1. So that it does not add for all the categroy
-                if (df[i][2] > 1):
-                    df[i][14] = 0
+        #         # change penelty to 0 if there and only for category 1. So that it does not add for all the categroy
+        #         if (df[i][2] > 1):
+        #             df[i][14] = 0
                 
-                # final_results.append(df[i])
+        #         # final_results.append(df[i])
+
+        # Calc pay off and other interest
+        final_results = calc_total_payoff_and_other_interest(unique_parcel_ids, all_parcel_fees)
 
         # Convert the list of list to dataframe
         final_results = pd.DataFrame(final_results, columns=column_names)
@@ -535,31 +597,33 @@ def redemption_report(current_user):
     final_results = []
 
     # Loop through the unique parcel ids
-    for i in unique_parcel_ids:
-        # filter all_parcel_fees by the unique parcel id
-        df = [x for x in all_parcel_fees if x[0] == i]
+    # for i in unique_parcel_ids:
+    #     # filter all_parcel_fees by the unique parcel id
+    #     df = [x for x in all_parcel_fees if x[0] == i]
 
-        # Get the total penalty
-        if 'florida' in df[0][12].lower():
-            total_penalty = 0
-        else:
-            total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
+    #     # Get the total penalty
+    #     if 'florida' in df[0][12].lower():
+    #         total_penalty = 0
+    #     else:
+    #         total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
 
-        # Get the total interest
-        for i in np.arange(0, len(df)):
+    #     # Get the total interest
+    #     for i in np.arange(0, len(df)):
 
-            if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
-                ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
-            else :
-                ti = 0
+    #         if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
+    #             ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
+    #         else :
+    #             ti = 0
 
-            if ('florida' in df[0][12].lower()) and (df[i][2] == 1):
-                ti = get_interst_acc_for_florida(df[i][4], df[i][5])
+    #         if ('florida' in df[0][12].lower()) and (df[i][2] == 1):
+    #             ti = get_interst_acc_for_florida(df[i][4], df[i][5])
             
-            df[i].insert(13, ti)
-            df[i].insert(14, total_penalty)
-            final_results.append(df[i])
+    #         df[i].insert(13, ti)
+    #         df[i].insert(14, total_penalty)
+    #         final_results.append(df[i])
     
+    final_results = calc_total_payoff_and_other_interest(unique_parcel_ids, all_parcel_fees)
+
     # Convert the list of list to dataframe
     final_results = pd.DataFrame(final_results, columns=column_names)
     final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
@@ -637,39 +701,43 @@ def wsfs_ltvl_status(current_user):
     final_results = []
 
     # Loop through the unique parcel ids
-    for i in unique_parcel_ids:
-        # filter all_parcel_fees by the unique parcel id
-        df = [x for x in all_parcel_fees if x[0] == i]
+    # for i in unique_parcel_ids:
+    #     # filter all_parcel_fees by the unique parcel id
+    #     df = [x for x in all_parcel_fees if x[0] == i]
 
-        # Get the total penalty
-        if 'florida' in df[0][12].lower():
-            total_penalty = 0
-        else:
-            total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
+    #     # Get the total penalty
+    #     if 'florida' in df[0][12].lower():
+    #         total_penalty = 0
+    #     else:
+    #         total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
 
-        # Get the total interest
-        for i in np.arange(0, len(df)):
+    #     # Get the total interest
+    #     for i in np.arange(0, len(df)):
 
-            if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
-                ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
-            else :
-                ti = 0
+    #         if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
+    #             ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
+    #         else :
+    #             ti = 0
 
-            if ('florida' in df[0][12].lower()) and (df[i][2] == 1):
-                ti = get_interst_acc_for_florida(df[i][4], df[i][5])
+    #         if ('florida' in df[0][12].lower()) and (df[i][2] == 1):
+    #             ti = get_interst_acc_for_florida(df[i][4], df[i][5])
             
-            df[i].insert(13, ti)
-            df[i].insert(14, total_penalty)
-            final_results.append(df[i])
+    #         df[i].insert(13, ti)
+    #         df[i].insert(14, total_penalty)
+    #         final_results.append(df[i])
     
+    # Calc total payoff and other interest ------------------------------------
+    final_results = calc_total_payoff_and_other_interest(unique_parcel_ids, all_parcel_fees)
+    # Calc total payoff and other interest ------------------------------------
+
     # Convert the list of list to dataframe
     final_results = pd.DataFrame(final_results, columns=column_names)
     final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
     final_results['TOTAL_REDEEMABLE'] = round(final_results['AMOUNT'] + final_results['TOTAL_INTEREST'] + final_results['FEES'] + final_results['TOTAL_PENALTY'], 2)
+    print (final_results)
     final_results = final_results.groupby("UNIQUE_ID", as_index=False).agg(
-            {"UNIQUE_ID": "min", "TOTAL_INTEREST": "sum", 'TOTAL_PENALTY': 'min', 'FEES': 'sum', 'AMOUNT': 'sum'}
+            {"UNIQUE_ID": "min", "TOTAL_INTEREST": "sum", 'TOTAL_PENALTY': 'min', 'FEES': 'sum', 'AMOUNT': 'sum', 'TOTAL_REDEEMABLE': 'sum'}
         )
-    final_results['TOTAL_REDEEMABLE'] = round(final_results['AMOUNT'] + final_results['TOTAL_INTEREST'] + final_results['FEES'] + final_results['TOTAL_PENALTY'], 2)
 
     # Rename the columns
     final_results = final_results.rename(columns = {"UNIQUE_ID": "REFERENCE ID"})
@@ -680,8 +748,9 @@ def wsfs_ltvl_status(current_user):
     header_details.drop(['STATUS'], axis=1, inplace=True)
     header_details = header_details.rename(columns = {"STATUS_S" : "STATUS"})
     header_details.loc[header_details['STATUS'] == 'REFUNDED', 'INTEREST ACCRUED VALUE'] = 0
+    header_details.loc[header_details['STATUS'] == 'REDEEMED', 'TOTAL_REDEEMABLE'] = 0
 
-    data_type_cols = ['BEGINNING BALANCE EFFECTIVE DATE', 'REDEMPTION DATE', 'REDEMPTION CHECK RECEIVED', 'ACTIVE', 'PARTIAL REDEMPTION', 'PENDING REDEPTION', 'REFUNDED', 'BANKRUPTCY', 'REDEEMED']
+    data_type_cols = ['BEGINNING BALANCE EFFECTIVE DATE', 'REDEMPTION DATE', 'REDEMPTION CHECK RECEIVED', 'ACTIVE', 'PARTIAL REDEMPTION', 'PENDING REDEPTION', 'REFUNDED', 'BANKRUPTCY', 'REDEEMED', 'TDA']
     for i in data_type_cols:
         header_details[i] = pd.to_datetime(header_details[i], errors='coerce')
         header_details[i] = header_details[i].dt.strftime('%m/%d/%Y')

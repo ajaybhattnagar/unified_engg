@@ -282,50 +282,56 @@ reports_query = {
                             """,
     
     "WSFS_LTVL_STATUS" : """SELECT PARCELS.COUNTY, PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE 'BEGINNING BALANCE EFFECTIVE DATE',
-                            PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', PARCELS.LOCATION_CITY, PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', PARCELS.LOCATION_ZIP 'ZIP CODE',
-                            PARCELS.ORIGINAL_LIEN_AMOUNT 'BEGINNING BALANCE', NULL 'TOTAL REDEEMABLE', PARCELS.STATUS, 
-                            CASE 
-                                WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
-                                WHEN PARCELS.STATUS = 2 THEN 'PENDING'
-                                WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
-                                WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
-                                WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
-                                WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
-                                WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
-                                WHEN PARCELS.STATUS = 8 THEN 'REO'
-                                WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
-                                WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
-                            ELSE 'ERROR' END AS 'STATUS_S', NULL 'CUSTODIAN REFERENCE NUMBER',
-                            NULL 'MANAGER PROPERTY STATUS', REDE.CHECK_RECEIVED 'REDEMPTION CHECK RECEIVED', REDE.DATE_REDEEMED 'REDEMPTION DATE',
-                            SUBS.AMOUNT 'SUB 1 AMOUNT', PARCELS.ORIGINAL_LIEN_INTEREST 'PREMIUMS', PARCELS.CREATE_DATE 'ACTIVE', 
-                            P_RED_DT.PARTIAL_RED_DT 'PARTIAL REDEMPTION', PEND_RED_DT.PEND_RED_DT 'PENDING REDEPTION', REFUND_DT.REFUND_DT 'REFUNDED', BANKRUP_DT.BANKRUP_DT 'BANKRUPTCY',
-                            REDE.CHECK_RECEIVED 'REDEEMED'
-                            FROM PARCELS 
-                            LEFT JOIN (SELECT UNIQUE_ID, MIN(CHECK_RECEIVED) 'CHECK_RECEIVED', MIN(DATE_REDEEMED) 'DATE_REDEEMED'
-                                        FROM REDEEM
-                                        GROUP BY UNIQUE_ID) REDE ON REDE.UNIQUE_ID = PARCELS.UNIQUE_ID
-                            LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'AMOUNT'
-                                        FROM FEES 
-                                        WHERE CATEGORY = 3
-                                        GROUP BY UNIQUE_ID) SUBS ON SUBS.UNIQUE_ID = PARCELS.UNIQUE_ID
-                            LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'PARTIAL_RED_DT'
-                                        FROM AUDIT 
-                                        WHERE NEW_VALUE = 9 AND COLUMN_NAME = 'PARCEL_STATUS' 
-                                        GROUP BY UNIQUE_ID) P_RED_DT ON P_RED_DT.UNIQUE_ID = PARCELS.UNIQUE_ID
-                            LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'PEND_RED_DT'
-                                        FROM AUDIT 
-                                        WHERE NEW_VALUE = 3 AND COLUMN_NAME = 'PARCEL_STATUS' 
-                                        GROUP BY UNIQUE_ID) PEND_RED_DT ON PEND_RED_DT.UNIQUE_ID = PARCELS.UNIQUE_ID
-                            LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'REFUND_DT'
-                                        FROM AUDIT 
-                                        WHERE NEW_VALUE = 4 AND COLUMN_NAME = 'PARCEL_STATUS' 
-                                        GROUP BY UNIQUE_ID) REFUND_DT ON REFUND_DT.UNIQUE_ID = PARCELS.UNIQUE_ID
-                            LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'BANKRUP_DT'
-                                        FROM AUDIT 
-                                        WHERE NEW_VALUE = 6 AND COLUMN_NAME = 'PARCEL_STATUS' 
-                                        GROUP BY UNIQUE_ID) BANKRUP_DT ON BANKRUP_DT.UNIQUE_ID = PARCELS.UNIQUE_ID
-                                        
-                            -- WHERE PARCELS.UNIQUE_ID = '66e1eb0e'
+                                PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', PARCELS.LOCATION_CITY, PARCELS.LOCATION_FULL_STREET_ADDRESS 'ADDRESS', PARCELS.LOCATION_ZIP 'ZIP CODE',
+                                PARCELS.ORIGINAL_LIEN_AMOUNT 'BEGINNING BALANCE', NULL 'TOTAL REDEEMABLE', PARCELS.STATUS, TDA_ROLL.TDA 'TDA ROLL UP',
+                                CASE 
+                                    WHEN PARCELS.STATUS = 1 THEN 'ACTIVE'
+                                    WHEN PARCELS.STATUS = 2 THEN 'PENDING'
+                                    WHEN PARCELS.STATUS = 3 THEN 'PENDING REDEMPTION'
+                                    WHEN PARCELS.STATUS = 4 THEN 'REFUNDED'
+                                    WHEN PARCELS.STATUS = 5 THEN 'FORECLOSURE'
+                                    WHEN PARCELS.STATUS = 6 THEN 'BANKRUPTCY'
+                                    WHEN PARCELS.STATUS = 7 THEN 'WRITE-OFF'
+                                    WHEN PARCELS.STATUS = 8 THEN 'REO'
+                                    WHEN PARCELS.STATUS = 9 THEN 'PARTIAL REDEMPTION'
+                                    WHEN PARCELS.STATUS = 10 THEN 'REDEEMED'
+                                    WHEN PARCELS.STATUS = 11 THEN 'TDA'
+                                ELSE 'ERROR' END AS 'STATUS_S', NULL 'CUSTODIAN REFERENCE NUMBER',
+                                NULL 'MANAGER PROPERTY STATUS', REDE.CHECK_RECEIVED 'REDEMPTION CHECK RECEIVED', REDE.DATE_REDEEMED 'REDEMPTION DATE',
+                                SUBS.AMOUNT 'SUB 1 AMOUNT', PARCELS.ORIGINAL_LIEN_INTEREST 'PREMIUMS', PARCELS.CREATE_DATE 'ACTIVE', 
+                                P_RED_DT.PARTIAL_RED_DT 'PARTIAL REDEMPTION', PEND_RED_DT.PEND_RED_DT 'PENDING REDEPTION', REFUND_DT.REFUND_DT 'REFUNDED', BANKRUP_DT.BANKRUP_DT 'BANKRUPTCY',
+                                REDE.CHECK_RECEIVED 'REDEEMED', TDA.TDA_DT 'TDA' 
+                                FROM PARCELS 
+                                LEFT JOIN (SELECT UNIQUE_ID, MIN(CHECK_RECEIVED) 'CHECK_RECEIVED', MIN(DATE_REDEEMED) 'DATE_REDEEMED'
+                                            FROM REDEEM
+                                            GROUP BY UNIQUE_ID) REDE ON REDE.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'AMOUNT'
+                                            FROM FEES 
+                                            WHERE CATEGORY = 3
+                                            GROUP BY UNIQUE_ID) SUBS ON SUBS.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'PARTIAL_RED_DT'
+                                            FROM AUDIT 
+                                            WHERE NEW_VALUE = 9 AND COLUMN_NAME = 'PARCEL_STATUS' 
+                                            GROUP BY UNIQUE_ID) P_RED_DT ON P_RED_DT.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'PEND_RED_DT'
+                                            FROM AUDIT 
+                                            WHERE NEW_VALUE = 3 AND COLUMN_NAME = 'PARCEL_STATUS' 
+                                            GROUP BY UNIQUE_ID) PEND_RED_DT ON PEND_RED_DT.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'REFUND_DT'
+                                            FROM AUDIT 
+                                            WHERE NEW_VALUE = 4 AND COLUMN_NAME = 'PARCEL_STATUS' 
+                                            GROUP BY UNIQUE_ID) REFUND_DT ON REFUND_DT.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'BANKRUP_DT'
+                                            FROM AUDIT 
+                                            WHERE NEW_VALUE = 6 AND COLUMN_NAME = 'PARCEL_STATUS' 
+                                            GROUP BY UNIQUE_ID) BANKRUP_DT ON BANKRUP_DT.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                LEFT JOIN (SELECT UNIQUE_ID, MIN(DONE_AT) 'TDA_DT'
+                                            FROM AUDIT 
+                                            WHERE NEW_VALUE = 11 AND COLUMN_NAME = 'PARCEL_STATUS' 
+                                            GROUP BY UNIQUE_ID) TDA ON TDA.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'TDA' FROM FEES  WHERE CATEGORY = 13 GROUP BY UNIQUE_ID) TDA_ROLL ON TDA_ROLL.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                            
+                                -- WHERE PARCELS.UNIQUE_ID = '726ae025'
                             """
 
 
