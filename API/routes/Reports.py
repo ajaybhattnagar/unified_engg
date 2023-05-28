@@ -192,13 +192,21 @@ def fee_details(current_user):
         
         # Get the total interest
         for i in np.arange(0, len(fee_details)):
+
             if fee_details.iloc[i]['CATEGORY'] > 2:
                 ti = get_total_interest(fee_details.iloc[i]['AMOUNT'], fee_details.iloc[i]['INTEREST'], fee_details.iloc[i]['EFFECTIVE_DATE'], fee_details.iloc[i]['EFFECTIVE_END_DATE'])
             else :
                 ti = 0
             
-            if ('florida' in fee_details.iloc[i]['STATE'].lower()) and (fee_details.iloc[i]['CATEGORY'] == 1):
+            if ('florida' in fee_details.iloc[i]['STATE'].lower()) and (fee_details.iloc[i]['CATEGORY'] == 1) and (fee_details.iloc[i]['STATUS'] != 'TDA'):
                 ti = get_interst_acc_for_florida(fee_details.iloc[i]['BEGINNING BALANCE'], fee_details.iloc[i]['FEES'])
+            
+            if ('florida' in fee_details.iloc[i]['STATE'].lower()) and (fee_details.iloc[i]['STATUS'] == 'TDA'):
+                months_diff = get_months_difference(fee_details.iloc[i]['EFFECTIVE_DATE'], fee_details.iloc[i]['EFFECTIVE_END_DATE'])
+                months_diff = float(months_diff)
+                amount = float(fee_details.iloc[i]['AMOUNT'])
+                ti = round(months_diff*0.015*amount,2)
+
 
             total_interest.append(ti)
         
