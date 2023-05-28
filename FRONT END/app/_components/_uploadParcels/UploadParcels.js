@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import NavigationBar from '../_navigation/NavigationBar';
 import InputList from "../../_components/_ui/inputList";
 import { appConstants } from '../../_helpers/consts.js';
@@ -27,6 +27,7 @@ const UploadParcels = () => {
     const uploadData = (e) => {
         setIsLoadingUpload(true);
         var response_status = 0;
+        console.log(JSON.stringify(e));
         fetch(appConstants.BASE_URL.concat(appConstants.UPLOAD_PARCELS), {
             method: "POST",
             body: JSON.stringify(e),
