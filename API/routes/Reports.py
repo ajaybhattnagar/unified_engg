@@ -12,7 +12,7 @@ warnings.filterwarnings('ignore')
 import bcrypt
 import jwt
 from utils import check_user, get_user_details
-from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest, get_interst_acc_for_florida
+from helpers.function import get_total_penalty, get_total_interest, get_total_days_of_interest, get_interst_acc_for_florida, get_months_difference
 
 from queries.reports_query import reports_query
 
@@ -248,6 +248,12 @@ def weekly_report(current_user):
             # filter all_parcel_fees by the unique parcel id
             df = [x for x in all_parcel_fees if x[0] == i]
 
+            # Check if TDA roll up is true
+            if (13 in [row[2] for row in df]):
+                tda_roll_up = True
+            else:
+                tda_roll_up = False
+
             # Get the total penalty
             if 'florida' in df[0][12].lower():
                 total_penalty = 0
@@ -261,18 +267,39 @@ def weekly_report(current_user):
                     ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
                 else :
                     ti = 0
-
-                if ('florida' in df[0][12].lower()) and (df[i][2] == 1):
+                
+                if ('florida' in df[0][12].lower()) and (df[i][2] == 1) and (tda_roll_up == False):
                     ti = get_interst_acc_for_florida(df[i][4], df[i][5])
+                
+                if ('florida' in df[0][12].lower()) and (df[i][2] == 13) and (tda_roll_up == True):
+                    months_diff = get_months_difference(df[i][7], df[i][8])
+                    months_diff = float(months_diff)
+                    amount = float(df[i][3])
+                    ti = round(months_diff*0.015*amount,2)
+
                 
                 df[i].insert(13, ti)
                 df[i].insert(14, total_penalty)
-                final_results.append(df[i])
+
+                if tda_roll_up == True:
+                    if df[i][2] == 13:
+                        final_results.append(df[i])
+                else:
+                    final_results.append(df[i])
+                
+                # change penelty to 0 if there and only for category 1. So that it does not add for all the categroy
+                if (df[i][2] > 1):
+                    df[i][14] = 0
+                
+                # final_results.append(df[i])
 
         # Convert the list of list to dataframe
         final_results = pd.DataFrame(final_results, columns=column_names)
+        
         final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
         final_results['TOTAL_AMOUNT'] = round(final_results['AMOUNT'] + final_results['TOTAL_INTEREST'] + final_results['FEES'] + final_results['TOTAL_PENALTY'], 2)
+        # print (final_results)
+
         final_results = final_results[['UNIQUE_ID', 'TOTAL_INTEREST', 'TOTAL_PENALTY', 'TOTAL_AMOUNT']]
 
         final_results = final_results.groupby("UNIQUE_ID", as_index=False).agg(
@@ -295,7 +322,7 @@ def weekly_report(current_user):
            "TOTAL_AMOUNT": "TOTAL PAYOFF"
         })
         header_details = header_details[['REFERENCE ID', 'STATUS', 'BEGINNING BALANCE EFFECTIVE DATE', 'STATE', 'MUNICIPALITY', 'COUNTY', 'PROPERTY TYPE',
-        'PARCEL', 'CERTIFICATE', 'TOTAL MARKET VALUE', 'TOTAL ASSESSED VALUE', 'BEGINNING BALANCE', 'REFUNDS', 'SUB 1 AMOUNT', 'SUB 2 AMOUNT', 'LIEN/MARKET VALUE',
+        'PARCEL', 'CERTIFICATE', 'TOTAL MARKET VALUE', 'TOTAL ASSESSED VALUE', 'BEGINNING BALANCE', 'REFUNDS', 'SUB 1 AMOUNT', 'TDA ROLL UP', 'LIEN/MARKET VALUE',
         'OTHER FEES', 'INTEREST ACCRUED VALUE', 'PENALTY', 'PREMIUMS', 'TOTAL PAYOFF', 'REDEMPTION DATE', 'REFUNDED', 'REDEMPTION CHECK RECEIVED', 'REDEMPTION CHECK AMOUNT'
         ]]
 
@@ -306,6 +333,7 @@ def weekly_report(current_user):
         
         # Updating total accrued interest to zero if status is REFUNDED
         header_details.loc[header_details['STATUS'] == 'REFUNDED', 'INTEREST ACCRUED VALUE'] = 0
+        header_details.loc[header_details['STATUS'] == 'REDEEMED', 'TOTAL PAYOFF'] = 0
 
         # header_details.to_excel('all_fields.xlsx', index=False)
         # Close the connection

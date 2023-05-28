@@ -128,7 +128,7 @@ reports_query = {
                                             PARCELS.PREMIUM_AMOUNT,  NULL 'LIEN/MARKET VALUE', NULL 'REFUNDED',
                                             F_REFUNDS.AMOUNT 'REFUNDS',
                                             TOP_SUB.AMOUNT 'SUB 1 AMOUNT',
-                                            0.00 'SUB 2 AMOUNT',
+                                            TDA_ROLL.TDA 'TDA ROLL UP',
                                             O_FEES.AMOUNT 'OTHER FEES',
                                             RED_DATE.DATE_REDEEMED 'REDEMPTION DATE', RED.CHECK_AMOUNT 'REDEMPTION CHECK AMOUNT', RED.CHECK_RECEIVED 'REDEMPTION CHECK RECEIVED'
 
@@ -146,8 +146,10 @@ reports_query = {
 
                                             LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'AMOUNT' FROM FEES 
                                                         WHERE CATEGORY = 12 GROUP BY UNIQUE_ID) O_FEES ON O_FEES.UNIQUE_ID = PARCELS.UNIQUE_ID
+                                                        
+                                            LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'TDA' FROM FEES  WHERE CATEGORY = 13 GROUP BY UNIQUE_ID) TDA_ROLL ON TDA_ROLL.UNIQUE_ID = PARCELS.UNIQUE_ID
 
-                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '6ac71fbc';""",
+                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '726ae025';""",
 
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
                                                 CASE 
@@ -170,7 +172,7 @@ reports_query = {
                                                 FROM FEES
                                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
                                                 LEFT JOIN (SELECT UNIQUE_ID, IFNULL(SUM(CHECK_AMOUNT),0) 'PAYMENTS' FROM REDEEM GROUP BY UNIQUE_ID) PAY ON PAY.UNIQUE_ID = FEES.UNIQUE_ID
-                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '790ac625'""",
+                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '726ae025'""",
 
     "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT 
                                                 concat(PARCELS.COUNTY ,', ', PARCELS.STATE) 'COUNTY, STATE' ,PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', 
