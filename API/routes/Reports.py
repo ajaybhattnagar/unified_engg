@@ -431,54 +431,57 @@ def new_pending_redemption(current_user):
         mycursor.execute(reports_query['NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS'])
         redem_report = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
         redem_report = pd.DataFrame.from_dict(redem_report)
+
+        mycursor.execute(reports_query['LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS'])
+        all_parcel_fees = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
+        all_parcel_fees = pd.DataFrame.from_dict(all_parcel_fees)
+
+        # Get the unique parcel ids
+        unique_parcel_ids = all_parcel_fees['UNIQUE_ID'].unique()
+
+        # Save column names
+        column_names = all_parcel_fees.columns.to_list()
+        column_names.append('TOTAL_INTEREST')
+        column_names.append('TOTAL_PENALTY')
+
+        # dataframe to list of list
+        all_parcel_fees = all_parcel_fees.values.tolist()
+
+        final_results = []
         
         final_results = pd.DataFrame()
-        total_interest = []
     
         unique_parcel_ids = redem_report['REFERENCE ID'].unique()
-        ti = []
-        # Loop through the unique parcel ids
-        for i in unique_parcel_ids:
-            total_interest = []
-            total_days_of_interest = []
-            df = redem_report[redem_report['REFERENCE ID'] == i]
-            
-            # Get the total penalty
-            if ('florida' in df.iloc[0]['COUNTY, STATE'].lower()):
-                total_penalty = 0
-            else :
-                total_penalty = round(get_total_penalty(df.iloc[0]['BEGINNING BALANCE'], df.iloc[0]['AMOUNT'], 'false'),2)
-            df['TOTAL_PENALTY'] = total_penalty
 
-            # Get the total interest
-            for i in np.arange(0, len(df)):
-                if df.iloc[i]['CATEGORY'] > 2:
-                    ti = get_total_interest(df.iloc[i]['AMOUNT'], df.iloc[i]['INTEREST'], df.iloc[i]['EFFECTIVE_DATE'], df.iloc[i]['EFFECTIVE_END_DATE'])
-                else :
-                    ti = 0.00
+        # Calc pay off and other interest
+        final_results = calc_total_payoff_and_other_interest(unique_parcel_ids, all_parcel_fees)
+
+        # Convert the list of list to dataframe
+        final_results = pd.DataFrame(final_results, columns=column_names)
+        
+        final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']] = final_results[["AMOUNT", "INTEREST", 'TOTAL_INTEREST', 'FEES']].apply(pd.to_numeric)
+        final_results['TOTAL_AMOUNT'] = round(final_results['AMOUNT'] + final_results['TOTAL_INTEREST'] + final_results['FEES'] + final_results['TOTAL_PENALTY'], 2)
+        # print (final_results)
+
+        final_results = final_results[['UNIQUE_ID', 'TOTAL_INTEREST', 'TOTAL_PENALTY', 'TOTAL_AMOUNT']]
+
+        final_results = final_results.groupby("UNIQUE_ID", as_index=False).agg(
+            {"UNIQUE_ID": "min", 'TOTAL_AMOUNT': 'sum'}
+        )
+
+        # Rename Columns
+        final_results = final_results.rename(columns={'UNIQUE_ID': 'REFERENCE ID', 'TOTAL_AMOUNT': 'TOTAL REDEEMABLE'})
+        final_results = pd.merge(redem_report, final_results, how='left')
                 
-                if ('florida' in df.iloc[0]['COUNTY, STATE'].lower()) and (df.iloc[i]['CATEGORY'] == 1):
-                    ti = get_interst_acc_for_florida(df.iloc[i]['BEGINNING BALANCE'], df.iloc[i]['INTEREST'])
-                total_interest.append(ti)
-            
-            df['TOTAL_INTEREST'] = total_interest
-
-            df = df.groupby("REFERENCE ID", as_index=False).agg(
-                {"COUNTY, STATE": 'min', "MUNICIPALITY": 'min', "REFERENCE ID": "min", "BEGINNING BALANCE EFFECTIVE DATE": 'min', "ADDRESS": 'min',
-                "LOCATION CITY": "min", 'ZIP CODE': 'min', 'LEGAL BLOCK': 'min', 'LEGAL LOT NUMBER': 'min', 'QUALIFIER': 'min', 'BEGINNING BALANCE': 'min',
-                "TOTAL REDEEMABLE": 'min', 'STATUS': 'min', 'CERTIFICATE': 'min', 'PAYMENT': 'min',
-                "TOTAL_INTEREST": "sum", 'TOTAL_PENALTY': 'min', 'AMOUNT': 'sum', 'FEES': 'sum'}
-            )
-
-            final_results = pd.concat([final_results, df], ignore_index=True)
-
-
-        final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES', 'PAYMENT']] = final_results[["TOTAL_INTEREST", "TOTAL_PENALTY", 'AMOUNT', 'FEES', 'PAYMENT']].apply(pd.to_numeric)
-        final_results['TOTAL REDEEMABLE'] = final_results['TOTAL_INTEREST'] + final_results['TOTAL_PENALTY'] + final_results['AMOUNT'] + final_results['FEES'] - final_results['PAYMENT']
-        final_results = final_results.drop(['TOTAL_INTEREST', 'TOTAL_PENALTY', 'AMOUNT', 'FEES'], axis=1)
+        # Updating total accrued interest to zero if status is REFUNDED
+        final_results.loc[final_results['STATUS'] == 'REDEEMED', 'TOTAL REDEEMABLE'] = 0
 
         # Change date format
         final_results['BEGINNING BALANCE EFFECTIVE DATE'] = final_results['BEGINNING BALANCE EFFECTIVE DATE'].dt.strftime('%m/%d/%Y')
+
+        # Arrange columns
+        final_results = final_results[['COUNTY, STATE', 'MUNICIPALITY', 'REFERENCE ID', 'BEGINNING BALANCE EFFECTIVE DATE', 'ADDRESS', 'LOCATION CITY', 'ZIP CODE',
+                                       'LEGAL BLOCK', 'LEGAL LOT NUMBER', 'QUALIFIER', 'BEGINNING BALANCE', 'TOTAL REDEEMABLE', 'STATUS', 'CERTIFICATE']]
         
         # Close the connection
         mycursor.close()
