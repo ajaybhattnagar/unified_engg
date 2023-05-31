@@ -10,31 +10,18 @@ import numpy as np
 import json
 from datetime import datetime
 from sqlalchemy import create_engine
-import mysql.connector
-
 
 with open ('config.json') as f:
     configData = json.load(f)
 
-engine = create_engine(configData['engine_url'])
+engine = create_engine(configData['sandbox_engine_url'])
 
 
-def connect_database(user):
-    try:
-        mydb = mysql.connector.connect(
-            host = configData['host'],
-            user = user,
-            password = configData['db_user_password'],
-            database = configData['database']
-        )
-    except mysql.connector.Error as err:
-        print("Something went wrong: {}".format(err))
-    return mydb
 
 # ************************************************************************************************
 # Specify the part of the file here. Make sure you this "\\" twice
 
-filePath = "E:\\Bob - SDA\\API\\sample.xlsx"
+filePath = "C:\\Users\\abhattnagar\\Desktop\\Development\\BOB_SDA\\API\\sample.xlsx"
 
 # ************************************************************************************************
 
@@ -52,11 +39,16 @@ columns = ['MANAGING_COMPANY', 'CERTIFICATE', 'INVESTMENT_DATE', 'ORIGINAL_LIEN_
            'TAG_KEEP_MAYBE_REMOVE_VIEWED', 'GRADE_A_B_C_D_F', 'GROUP_1_2_3_4_5', 'NOTES']
 
 impColumns = ['TSRID', 'ORIGINAL_LIEN_AMOUNT', 'ORIGINAL_LIEN_INTEREST', 'ORIGINAL_LIEN_EFFECTIVE_DATE', 
-           'ORIGINAL_LIEN_INTERVAL', 'PREMIUM_AMOUNT', 'PREMIUM_INTEREST']
+           'ORIGINAL_LIEN_INTERVAL', 'PREMIUM_AMOUNT', 'PREMIUM_INTEREST', 'PREMIUM_EFFECTIVE_DATE']
 
 
 df = df[df['TSRID'].isnull() == False]
 df['UNIQUE_ID'] = np.random.randint(0,999999999, size=len(df))
+
+# Check for null values in required columns
+for i in impColumns:
+    if df[i].isnull().sum() > 0:
+        print('There were null values in column: ',i, df[i].isnull().sum())
 
 # Convert the date columns to datetime format
 data_type_cols = ['INVESTMENT_DATE', 'ORIGINAL_LIEN_EFFECTIVE_DATE', 'PREMIUM_EFFECTIVE_DATE', 'LATEST_SALE_DATE', 'LATEST_ARMS_LENGTH_SALE_DATE', 'PRIOR_ARMS_LENGTH_SALE_DATE', 'LOAN1_DUE_DATE']
