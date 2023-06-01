@@ -1,13 +1,12 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox, ttk, messagebox 
 # import mysql.connector
 import json
 from sqlalchemy import create_engine
 import math
-
-
 import pandas as pd
 import numpy as np
+from functions import upload_parcels, update_parcels
 
 with open ('config.json') as f:
     configData = json.load(f)
@@ -54,11 +53,12 @@ button2.place(rely=0.60, relx=0.0)
 button1 = tk.Button(file_frame, text="Load", command=lambda: load_excel_data())
 button1.place(rely=0.60, relx=0.10)
 
-button3 = tk.Button(file_frame, text="Get TSRIDs", command=lambda: get_data())
+button3 = tk.Button(file_frame, text="Run", command=lambda: run())
 button3.place(rely=0.60, relx=0.20)
 
-button3 = tk.Button(file_frame, text="Run", command=lambda: run())
-button3.place(rely=0.60, relx=0.35)
+button4 = tk.Button(file_frame, text="Clear", command=lambda: clear_app())
+button4.place(rely=0.60, relx=0.30)
+
 
 # The file/file path text
 label_file = ttk.Label(file_frame, text="No File Selected")
@@ -94,47 +94,6 @@ def ifinf(var, val):
     if math.isinf(var):
         return val
     return var
-
-
-def get_data():
-    clear_data()
-    try:
-        mycursor = mydb.cursor()
-    except mysql.connector.Error as err :
-        tk.messagebox.showerror("Information", "Database connection error")
-        return None
-   
-    try:
-
-        if ((scrapper_check.get() == 1) and (bst_check.get() == 0)):
-            mycursor.execute(scrapper_query['GET_SCRAPPER_VALUES_ALL'])
-            myresult = mycursor.fetchall()
-            columns = ['TSRID', 'Block', 'Lot', 'Qualifier', 'Amount', 'Sale Start Date', 'Tax Amount', 'Link', 'Script', 'Month', 'LFSA', 'Acc. Sales']
-            df = pd.DataFrame(myresult, columns=columns)
-
-        elif ((bst_check.get() == 1) and (scrapper_check.get() == 0)):
-            mycursor.execute(bst_query['GET_BST_VALUES_ALL'])
-            myresult = mycursor.fetchall()
-            columns = ['TSRID', 'Amount', 'Month', 'Quat Taxes', 'Taxes Open at Sale', 'Acc Sale 6 YEP', 'Reg YEP', 'Desired Return', 'Total Market Value', 'Year Type']
-            df = pd.DataFrame(myresult, columns=columns)
-
-        else:
-            tk.messagebox.showerror("Information", "No checkbox selected or both selected")
-            return None
-
-        tv1["column"] = columns
-        tv1["show"] = "headings"
-
-        for column in tv1["columns"]:
-            tv1.heading(column, text=column) # let the column heading = column name
-
-        df_rows = df.to_numpy().tolist() # turns the dataframe into a list of lists
-        for row in df_rows:
-            tv1.insert("", "end", values=row)
-
-    except IndexError:
-        pass
-    return None
 
 def load_excel_data():
     clear_data()
@@ -175,26 +134,21 @@ def clear_data():
     tv1.delete(*tv1.get_children())
     return None
 
+def clear_app():
+    tv1.delete(*tv1.get_children())
+    label_file["text"] = "No File Selected"
+    return None
+
 def run():
-    if ((bst_check.get() == 1) and (scrapper_check.get() == 0)):
-        try:
-            bst()
-        except:
-            pass
+    filepath = label_file["text"]
     
-    if ((bst_check.get() == 0) and (scrapper_check.get() == 1)):
-        try:
-            scrapper()
-        except:
-            pass
+    if (upload_check.get() == 1) and (edit_check.get() == 0) and (subs_upload_check.get() == 0):
+        result = upload_parcels(filepath, engine)
+        messagebox.showinfo("showinfo", result)
     
-    if ((bst_check.get() == 0) and (scrapper_check.get() == 0)):
-        tk.messagebox.showerror("Information", "No checkbox selected")
-        return None
-    
-    if ((bst_check.get() == 1) and (scrapper_check.get() == 1)):
-        tk.messagebox.showerror("Information", "Both checkboxes selected")
-        return None
+    if (upload_check.get() == 0) and (edit_check.get() == 1) and (subs_upload_check.get() == 0):
+        result = update_parcels(filepath, configData)
+        messagebox.showinfo("showinfo", result)
     
 
 root.mainloop()
