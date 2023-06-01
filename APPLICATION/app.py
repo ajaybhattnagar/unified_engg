@@ -6,13 +6,13 @@ from sqlalchemy import create_engine
 import math
 import pandas as pd
 import numpy as np
-from functions import upload_parcels, update_parcels
+from functions import upload_parcels, update_parcels, upload_subs
 
 with open ('config.json') as f:
     configData = json.load(f)
 
 
-engine = create_engine(configData['sandbox_engine_url'])
+engine = create_engine(configData['engine_url'])
 
 # initalise the tkinter GUI
 root = tk.Tk()
@@ -144,11 +144,15 @@ def run():
     
     if (upload_check.get() == 1) and (edit_check.get() == 0) and (subs_upload_check.get() == 0):
         result = upload_parcels(filepath, engine)
-        messagebox.showinfo("showinfo", result)
+        messagebox.showinfo("Information", result)
     
     if (upload_check.get() == 0) and (edit_check.get() == 1) and (subs_upload_check.get() == 0):
         result = update_parcels(filepath, configData)
-        messagebox.showinfo("showinfo", result)
+        messagebox.showinfo("Information", result)
+    
+    if (upload_check.get() == 0) and (edit_check.get() == 0) and (subs_upload_check.get() == 1):
+        result = upload_subs(filepath, configData)
+        messagebox.showinfo("Information", result)
     
 
 root.mainloop()

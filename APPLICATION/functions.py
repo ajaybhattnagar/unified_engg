@@ -27,7 +27,7 @@ def upload_parcels(filepath, engine):
 
 
     df = df[df['TSRID'].isnull() == False]
-    df['UNIQUE_ID'] = np.random.randint(0,999999999, size=len(df))
+    df['UNIQUE_ID'] = df['TSRID']
 
     # Check for null values in required columns
     for i in impColumns:
@@ -53,8 +53,6 @@ def upload_parcels(filepath, engine):
         return ('Error while uploading data to the database: ', e)
     # ********************** Uploading data here ********************************
 
-
-
 def update_parcels(filepath, configData):
     columns = ['MANAGING_COMPANY', 'CERTIFICATE', 'INVESTMENT_DATE', 'ORIGINAL_LIEN_AMOUNT', 'ORIGINAL_LIEN_INTEREST', 'ORIGINAL_LIEN_EFFECTIVE_DATE', 
             'ORIGINAL_LIEN_INTERVAL', 'PREMIUM_AMOUNT', 'PREMIUM_INTEREST', 'PREMIUM_EFFECTIVE_DATE', 'PREMIUM_INTERVAL', 'TSRID', 'STATE', 'COUNTY', 
@@ -72,7 +70,7 @@ def update_parcels(filepath, configData):
             host = configData['host'],
             user = configData['user'],
             password = configData['password'],
-            database = configData['sandbox_database']
+            database = configData['database']
         )
         mycursor = mydb.cursor()
     except mysql.connector.Error as err:
@@ -121,3 +119,45 @@ def update_parcels(filepath, configData):
     
     mycursor.close()     
     return ('Data updated successfully!')
+
+def upload_subs(filepath, engine):
+    df = pd.read_excel(filepath)
+    # Rename the columns to match the database
+    df = df.rename(columns=column_dict)
+
+    # Check if null values in the dataframe
+    if (df.isnull().values.any() > 0):
+        return ('Null values found in the file!')
+
+    # Remove row with null values
+    df = df[df['UNIQUE_ID'].isnull() == False]
+    df = df[df['AMOUNT'].isnull() == False]
+    df = df[df['EFFECTIVE_DATE'].isnull() == False]
+    df = df[df['INTEREST'].isnull() == False]
+    df = df[df['INTEREST_ACC_INTERVAL'].isnull() == False]
+
+    data_type_cols = ['EFFECTIVE_DATE']
+    for i in data_type_cols:
+        df[i] = pd.to_datetime(df[i], errors='coerce')
+        df[i] = df[i].dt.strftime('%Y-%m-%d')
+
+    # Change column to lowercase
+    df['INTEREST_ACC_INTERVAL'] = df['INTEREST_ACC_INTERVAL'].str.lower()
+
+    # Filter dataframe on the basis of the columns
+    df = df[ (df['INTEREST_ACC_INTERVAL'] == 'per_diem') | (df['INTEREST_ACC_INTERVAL'] == 'monthly') ]
+
+    df = df[ df['INTEREST'] <= 1  ]
+
+    # Add Category column
+    df['CATEGORY'] = 3
+
+    print (type(df))
+
+    try:
+        df.to_sql('FEES', engine, if_exists='append', index=False)
+        return ('Subs uploaded successfully')
+    except Exception as e:
+        return ('Error while uploading data to the database: ', e)
+
+

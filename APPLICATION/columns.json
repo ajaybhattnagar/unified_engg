@@ -83,7 +83,12 @@
   "Tax Id": "TAX_ID",
   "Owner Name (Current Owner)": "OWNER_NAME_CURRENT_OWNER",
   "Standardized Land Use Desc (Property Type)": "STANDARDIZED_LAND_USE_DESC_PROPERTY_TYPE",
-  "Tag (Keep, Maybe, Remove, Viewed)" : "TAG_KEEP_MAYBE_REMOVE_VIEWED",
+  "Tag (Keep, Maybe, Remove, Viewed)": "TAG_KEEP_MAYBE_REMOVE_VIEWED",
   "Grade (A, B, C, D, F)": "GRADE_A_B_C_D_F",
-  "Group (1, 2, 3, 4, 5)": "GROUP_1_2_3_4_5"
+  "Group (1, 2, 3, 4, 5)": "GROUP_1_2_3_4_5",
+  "Reference ID": "UNIQUE_ID",
+  "Subsequent Tax (Amount)": "AMOUNT",
+  "Subsequent Tax (Effective Date)": "EFFECTIVE_DATE",
+  "Subsequent Tax (Interest)": "INTEREST",
+  "Subsequent Tax (Interval)": "INTEREST_ACC_INTERVAL"
 }
