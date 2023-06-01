@@ -17,7 +17,7 @@ engine = create_engine(configData['engine_url'])
 # initalise the tkinter GUI
 root = tk.Tk()
 root.title("SDA Application")
-# root.iconbitmap(r'favicon.ico')
+root.iconbitmap(r'favicon.ico')
 
 
 root.geometry("800x400") # set the root dimensions
@@ -151,7 +151,7 @@ def run():
         messagebox.showinfo("Information", result)
     
     if (upload_check.get() == 0) and (edit_check.get() == 0) and (subs_upload_check.get() == 1):
-        result = upload_subs(filepath, configData)
+        result = upload_subs(filepath, engine)
         messagebox.showinfo("Information", result)
     
 

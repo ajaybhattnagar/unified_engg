@@ -151,8 +151,9 @@ def upload_subs(filepath, engine):
 
     # Add Category column
     df['CATEGORY'] = 3
+    df['IS_ACTIVE'] = 1
 
-    print (type(df))
+    df = df[['UNIQUE_ID', 'CATEGORY', 'AMOUNT', 'INTEREST', 'INTEREST_ACC_INTERVAL', 'EFFECTIVE_DATE', 'IS_ACTIVE']] 
 
     try:
         df.to_sql('FEES', engine, if_exists='append', index=False)
