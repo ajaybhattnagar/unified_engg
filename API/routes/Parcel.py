@@ -283,8 +283,7 @@ def get_payoff_report(current_user, parcel_id):
             # Get the total interest for Florida and TDA rollup
             if (parcel_fees.iloc[i]['CATEGORY'] == 1) & ('florida' in parcel_fees.iloc[0]['STATE'].lower()) & (TDA_rollup == False):
                 ti = round(get_interst_acc_for_florida(parcel_fees.iloc[0]['BEGINNING_BALANCE'], 0),2)
-            else:
-                ti = 0
+
 
             # Get the total interest for Florida and TDA rollup
             if (parcel_fees.iloc[i]['CATEGORY'] == 13) & ('florida' in parcel_fees.iloc[0]['STATE'].lower()) & (TDA_rollup == True):
@@ -292,8 +291,6 @@ def get_payoff_report(current_user, parcel_id):
                 months_diff = float(months_diff)
                 amount = float(parcel_fees.iloc[i]['AMOUNT'])
                 ti = round(months_diff*0.015*amount,2)
-            else:
-                ti = 0
 
             total_interest.append(ti)
             total_days_of_interest.append(td)
