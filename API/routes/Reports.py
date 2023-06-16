@@ -710,33 +710,7 @@ def wsfs_ltvl_status(current_user):
     all_parcel_fees = all_parcel_fees.values.tolist()
 
     final_results = []
-
-    # Loop through the unique parcel ids
-    # for i in unique_parcel_ids:
-    #     # filter all_parcel_fees by the unique parcel id
-    #     df = [x for x in all_parcel_fees if x[0] == i]
-
-    #     # Get the total penalty
-    #     if 'florida' in df[0][12].lower():
-    #         total_penalty = 0
-    #     else:
-    #         total_penalty = get_total_penalty(df[0][9], df[0][3], 'false')
-
-    #     # Get the total interest
-    #     for i in np.arange(0, len(df)):
-
-    #         if ('florida' not in df[0][12].lower()) and (df[i][2] > 2):
-    #             ti = get_total_interest(df[i][3], df[i][5], df[i][7], df[i][8])
-    #         else :
-    #             ti = 0
-
-    #         if ('florida' in df[0][12].lower()) and (df[i][2] == 1):
-    #             ti = get_interst_acc_for_florida(df[i][4], df[i][5])
-            
-    #         df[i].insert(13, ti)
-    #         df[i].insert(14, total_penalty)
-    #         final_results.append(df[i])
-    
+   
     # Calc total payoff and other interest ------------------------------------
     final_results = calc_total_payoff_and_other_interest(unique_parcel_ids, all_parcel_fees)
     # Calc total payoff and other interest ------------------------------------
