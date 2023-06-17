@@ -1,7 +1,8 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
     // BASE_URL: 'http://3.15.2.157:5000/',
-    BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'http://localhost:5000/',
+    BASE_URL: 'https://sda_api.visuify.com/',
 
     REGISTER: 'api/v1/register',
     LOGIN: 'api/v1/login',
