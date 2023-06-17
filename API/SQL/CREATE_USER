@@ -9,3 +9,24 @@ GRANT ALL PRIVILEGES ON `Sda` . * TO 'desrwright@gmail.com'@'%';
 FLUSH PRIVILEGES;
 
 lowvoltaxliens.cp67dvvnpnqf.us-east-2.rds.amazonaws.com
+
+
+-- Create user ------------
+#### Step 1 ###
+# Run the first script and update a test email address
+# Run the second script and update the same test email address
+# Run the third script TWICE after replaceing the email address
+#############
+SELECT * FROM USERS
+SELECT * FROM mysql. user
+GRANT ALL PRIVILEGES ON `Sda` . * TO 'sherie.rowehaynes@gmail.com'@'%';
+
+
+-- Update password ------------
+#### Step 1 ###
+# Do to the below url and create a hash for the password.
+# Run the script and update the password field with the hash you created. 
+# Run the third script TWICE after replaceing the email address
+#############
+https://www.browserling.com/tools/bcrypt
+SELECT * FROM USERS
