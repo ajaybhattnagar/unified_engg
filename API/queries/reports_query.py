@@ -152,7 +152,7 @@ reports_query = {
                                             LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'TDA' FROM FEES  WHERE CATEGORY = 13 GROUP BY UNIQUE_ID) TDA_ROLL ON TDA_ROLL.UNIQUE_ID = PARCELS.UNIQUE_ID
                                             LEFT JOIN (SELECT UNIQUE_ID, SUM(CHECK_AMOUNT) 'AMOUNT' FROM REDEEM GROUP BY UNIQUE_ID) TOTAL_CHECK_AMT ON TOTAL_CHECK_AMT.UNIQUE_ID = PARCELS.UNIQUE_ID
 
-                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '00fbd0f2';""",
+                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '06ed377e';""",
 
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
                                                 CASE 
@@ -175,7 +175,7 @@ reports_query = {
                                                 FROM FEES
                                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
                                                 LEFT JOIN (SELECT UNIQUE_ID, IFNULL(SUM(CHECK_AMOUNT),0) 'PAYMENTS' FROM REDEEM GROUP BY UNIQUE_ID) PAY ON PAY.UNIQUE_ID = FEES.UNIQUE_ID
-                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '00fbd0f2'""",
+                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '002cc195'""",
 
     "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT 
                                                 concat(PARCELS.COUNTY ,', ', PARCELS.STATE) 'COUNTY, STATE' ,PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', 
@@ -269,7 +269,7 @@ reports_query = {
                                         FROM FEES 
                                         WHERE ID IN (SELECT MIN(ID) FROM FEES WHERE CATEGORY = 3 GROUP BY UNIQUE_ID)) FB ON FB.UNIQUE_ID = REDEEM.UNIQUE_ID 
                             LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'TDA' FROM FEES  WHERE CATEGORY = 13 GROUP BY UNIQUE_ID) TDA_ROLL ON TDA_ROLL.UNIQUE_ID = PARCELS.UNIQUE_ID
-                            -- WHERE REDEEM.UNIQUE_ID = '7ed48031'
+                            -- WHERE REDEEM.UNIQUE_ID = '002cc195'
                             """,
     
     "WSFS_LTVL_STATUS" : """SELECT PARCELS.COUNTY, PARCELS.STATE, PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', PARCELS.ORIGINAL_LIEN_EFFECTIVE_DATE 'BEGINNING BALANCE EFFECTIVE DATE',
