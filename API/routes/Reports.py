@@ -217,6 +217,9 @@ def fee_details(current_user):
 
         fee_details = pd.merge(fee_details, df_accrued_interest, how='left')
 
+        # Adding fees and amount: Note: Fees is zero when amount is present and vice versa
+        fee_details['FEES'] = fee_details['FEES'] + fee_details['AMOUNT']
+
         # Convert the date columns to datetime
         fee_details['EFFECTIVE_DATE'] = pd.to_datetime(fee_details['EFFECTIVE_DATE']).dt.strftime('%m/%d/%Y')
         fee_details['EFFECTIVE_END_DATE_DISPLAY'] = pd.to_datetime(fee_details['EFFECTIVE_END_DATE_DISPLAY']).dt.strftime('%m/%d/%Y')
