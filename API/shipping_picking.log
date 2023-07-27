@@ -1,0 +1,15 @@
+2023-07-27 09:51:13 INFO     Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2023-07-27 09:51:13 INFO     Added job "update_payoff_interest_accured" to job store "default"
+2023-07-27 09:51:13 INFO     Scheduler started
+2023-07-27 09:51:13 INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2023-07-27 09:51:13 INFO     [33mPress CTRL+C to quit[0m
+2023-07-27 09:51:13 INFO      * Restarting with stat
+2023-07-27 09:51:15 INFO     Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2023-07-27 09:51:15 INFO     Added job "update_payoff_interest_accured" to job store "default"
+2023-07-27 09:51:15 INFO     Scheduler started
+2023-07-27 09:51:15 WARNING   * Debugger is active!
+2023-07-27 09:51:15 INFO      * Debugger PIN: 582-679-022
+2023-07-27 09:51:26 INFO     127.0.0.1 - - [27/Jul/2023 09:51:26] "GET / HTTP/1.1" 200 -
+2023-07-27 09:54:00 INFO     Scheduler has been shut down
+2023-07-27 09:54:00 INFO     Scheduler has been shut down

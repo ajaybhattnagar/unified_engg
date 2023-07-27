@@ -7,6 +7,10 @@ import numpy as np
 import bcrypt
 import jwt
 from utils import check_user, get_user_details
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+from schedule.Parcels import update_payoff_interest_accured
+
 
 from routes.login import login_blueprint
 from routes.Parcels import parcels_blueprint
@@ -35,6 +39,11 @@ def welcome():
     return ("Welcome to API.")
 
 
+# Schedules
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=update_payoff_interest_accured, trigger="interval", seconds = 86400)
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == '__main__':
     # app.run(host="0.0.0.0", port=5000)

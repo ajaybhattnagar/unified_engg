@@ -152,7 +152,7 @@ reports_query = {
                                             LEFT JOIN (SELECT UNIQUE_ID, SUM(AMOUNT) 'TDA' FROM FEES  WHERE CATEGORY = 13 GROUP BY UNIQUE_ID) TDA_ROLL ON TDA_ROLL.UNIQUE_ID = PARCELS.UNIQUE_ID
                                             LEFT JOIN (SELECT UNIQUE_ID, SUM(CHECK_AMOUNT) 'AMOUNT' FROM REDEEM GROUP BY UNIQUE_ID) TOTAL_CHECK_AMT ON TOTAL_CHECK_AMT.UNIQUE_ID = PARCELS.UNIQUE_ID
 
-                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '06ed377e';""",
+                                            WHERE PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '002aa6e5';""",
 
     "LIEN_DETAILS_WEEKLY_REPORT_ITEM_DETIALS": """SELECT FEES.UNIQUE_ID, FEES.ID, FEES.CATEGORY, 
                                                 CASE 
@@ -175,7 +175,7 @@ reports_query = {
                                                 FROM FEES
                                                 LEFT JOIN PARCELS ON PARCELS.UNIQUE_ID = FEES.UNIQUE_ID
                                                 LEFT JOIN (SELECT UNIQUE_ID, IFNULL(SUM(CHECK_AMOUNT),0) 'PAYMENTS' FROM REDEEM GROUP BY UNIQUE_ID) PAY ON PAY.UNIQUE_ID = FEES.UNIQUE_ID
-                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '002cc195'""",
+                                                WHERE FEES.IS_ACTIVE = '1' AND PARCELS.UNIQUE_ID IS NOT NULL -- AND PARCELS.UNIQUE_ID = '002aa6e5'""",
 
     "NEW_PENDING_REDEMPTION_NOTICE_TO_WSFS": """SELECT 
                                                 concat(PARCELS.COUNTY ,', ', PARCELS.STATE) 'COUNTY, STATE' ,PARCELS.MUNICIPALITY, PARCELS.UNIQUE_ID 'REFERENCE ID', 
