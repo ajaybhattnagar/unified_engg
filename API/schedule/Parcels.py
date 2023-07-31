@@ -79,6 +79,9 @@ def update_payoff_interest_accured():
         header_details.loc[header_details['STATUS'] == 'REFUNDED', 'TOTAL_INTEREST'] = 0
         header_details.loc[header_details['STATUS'] == 'REDEEMED', 'TOTAL_AMOUNT'] = 0
 
+        header_details = header_details[header_details['STATUS'] != 'REFUNDED']
+        header_details = header_details[header_details['STATUS'] != 'REDEEMED']
+
         query = """UPDATE PARCELS SET TOTAL_PAYOFF = '{AMOUNT}', INTEREST_ACCRUED_VALUE = '{INTEREST}' WHERE UNIQUE_ID = '{UNIQUE_ID}'; """
         final_update_query = []
 
@@ -95,7 +98,7 @@ def update_payoff_interest_accured():
         for i in np.arange(len(final_update_query)):
             mycursor.execute(final_update_query[i])
             connection.commit()
-
+            
         
         mycursor.close()    
         print ("Payoff and interest accrued updated successfully")

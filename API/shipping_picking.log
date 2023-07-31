@@ -13,3 +13,45 @@
 2023-07-27 09:51:26 INFO     127.0.0.1 - - [27/Jul/2023 09:51:26] "GET / HTTP/1.1" 200 -
 2023-07-27 09:54:00 INFO     Scheduler has been shut down
 2023-07-27 09:54:00 INFO     Scheduler has been shut down
+2023-07-31 08:12:08 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:13:29 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:15:16 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:17:11 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:18:23 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:19:08 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:31:48 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:32:10 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:33:20 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:33:50 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:34:47 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:35:56 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:37:33 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:38:33 INFO     Payoff and interest accrued updated successfully
+2023-07-31 08:39:24 INFO     Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2023-07-31 08:39:24 INFO     Added job "update_payoff_interest_accured" to job store "default"
+2023-07-31 08:39:24 INFO     Scheduler started
+2023-07-31 08:39:24 INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2023-07-31 08:39:24 INFO     [33mPress CTRL+C to quit[0m
+2023-07-31 08:39:24 INFO      * Restarting with stat
+2023-07-31 08:39:25 INFO     Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2023-07-31 08:39:25 INFO     Added job "update_payoff_interest_accured" to job store "default"
+2023-07-31 08:39:25 INFO     Scheduler started
+2023-07-31 08:39:25 WARNING   * Debugger is active!
+2023-07-31 08:39:25 INFO      * Debugger PIN: 582-679-022
+2023-07-31 08:39:42 INFO     127.0.0.1 - - [31/Jul/2023 08:39:42] "GET / HTTP/1.1" 200 -
+2023-07-31 08:39:42 INFO     127.0.0.1 - - [31/Jul/2023 08:39:42] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2023-07-31 08:40:31 INFO     127.0.0.1 - - [31/Jul/2023 08:40:31] "GET / HTTP/1.1" 200 -
+2023-07-31 08:40:41 INFO      * Detected change in 'D:\\bob_sda\\API\\schedule\\Parcels.py', reloading
+2023-07-31 08:40:41 INFO     Scheduler has been shut down
+2023-07-31 08:40:41 INFO      * Restarting with stat
+2023-07-31 08:40:43 INFO     Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2023-07-31 08:40:43 INFO     Added job "update_payoff_interest_accured" to job store "default"
+2023-07-31 08:40:43 INFO     Scheduler started
+2023-07-31 08:40:43 WARNING   * Debugger is active!
+2023-07-31 08:40:43 INFO      * Debugger PIN: 582-679-022
+2023-07-31 08:41:21 INFO     127.0.0.1 - - [31/Jul/2023 08:41:21] "GET / HTTP/1.1" 200 -
+2023-07-31 08:41:24 INFO     Running job "update_payoff_interest_accured (trigger: interval[0:02:00], next run at: 2023-07-31 08:41:24 EDT)" (scheduled at 2023-07-31 08:41:24.031998-04:00)
+2023-07-31 08:41:39 WARNING   * Debugger is active!
+2023-07-31 08:41:39 INFO      * Debugger PIN: 582-679-022
+2023-07-31 08:41:39 INFO     Scheduler has been shut down
