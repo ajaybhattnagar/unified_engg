@@ -40,8 +40,8 @@ def welcome():
 
 
 # Schedules
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=update_payoff_interest_accured, trigger="interval", seconds = 120)
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(func=update_payoff_interest_accured, trigger="interval", hours=6)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 

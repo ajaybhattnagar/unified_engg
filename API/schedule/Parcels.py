@@ -32,6 +32,7 @@ def connect_database(user):
 
 def update_payoff_interest_accured():
     connection = connect_database('ajay.bhattnagar21@gmail.com')
+    print ("Updating payoff and interest accrued")
     try:
         mycursor = connection.cursor()
 
