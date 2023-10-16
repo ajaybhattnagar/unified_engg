@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Navbar, Nav } from 'react-bootstrap';
-import Brand from '../../_images/brand.png'
+import Brand from '../../_images/brand.svg'
 import './NavigationBar.css'
 import { Link, withRouter } from 'react-router-dom';
 
@@ -20,26 +20,19 @@ class NavigationBar extends Component {
 
     render() {
         return (
-            <Navbar >
+            <Navbar bg="light" data-bs-theme="dark">
                 <Navbar.Brand href="/">
                     <img
                         alt='logo'
                         src={Brand}
-                        // width='180'
                         height='40'
-                        className='d-inline-block align-top'
+                        className='d-inline-block align-top bg-success'
                     />
                 </Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
-                    <Nav.Link className='hover-underline-animation' as={Link} to="/uploadparcels"><strong>Upload</strong></Nav.Link>
-                    <Nav.Link className='hover-underline-animation' as={Link} to="/reports"><strong>Reports</strong></Nav.Link>
-
-                    <Nav.Link href="/signup"><strong></strong></Nav.Link>
-                    <Nav.Link href="/"><strong></strong></Nav.Link>
-                    <Nav.Link href="/parcel"><strong></strong></Nav.Link>
-                    <Nav.Link href="/parcel/payoff_report"><strong></strong></Nav.Link>
-                    <Nav.Link href="/parcel/audit"><strong></strong></Nav.Link>
+                    <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
+                    <Nav.Link className='hover-underline-animation' as={Link} to="/preferences"><strong>Preferences</strong></Nav.Link>
                 </Nav>
                 {
                     localStorage.getItem('token') ?

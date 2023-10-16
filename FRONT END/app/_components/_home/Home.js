@@ -16,14 +16,7 @@ const isBrowser = typeof window !== `undefined`
 const Home = () => {
     const navigate = useNavigate();
     const [data, setData] = useState([]);
-    const [searchString, setSearchString] = useState("");
-    const state = useRef(null);
-    const county = useRef(null);
-    const municipality = useRef(null);
-    const status = useRef(null);
-    const [distinctFilters, setDistinctFilters] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isLoadingParcels, setIsLoadingParcels] = useState(false);
 
 
     useEffect(() => {
@@ -31,166 +24,14 @@ const Home = () => {
         if (!localStorage.getItem("token")) {
             navigate("/");
         }
-        utils.getDistinctFilters()
-            .then((data) => {
-                setDistinctFilters(data);
-                setIsLoading(false);
-            })
-            .catch((err) => {
-                console.error(err);
-                setIsLoading(false);
-            });
     }, []);
 
-    const handleSearch = (e) => {
-        setIsLoadingParcels(true);
-        var response_status = 0;
-        var url = appConstants.BASE_URL.concat(appConstants.SEARCH_PARCEL).concat(searchString);
-        fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                'x-access-token': localStorage.getItem('token')
-            },
-        })
-            .then((res) => {
-                if (res.status === 200) {
-                    response_status = 200;
-                    return res.json();
-                }
-                else {
-                    response_status = 400;
-                    return res.json();
-                }
-            })
-            .then((data) => {
-                if (response_status === 200) {
-                    setIsLoadingParcels(false);
-                    if (data.length === 0) {
-                        alert("No results found");
-                    }
-                    setData(data);
-                } else {
-                    setIsLoadingParcels(false);
-                    alert(data.message);
-                }
-            })
-            .catch((err) => console.error(err));
-    }
-
-    const handleFilterSearch = (e) => {
-        setIsLoadingParcels(true);
-        if (state.current || county.current || municipality.current || status.current) {
-            var response_status = 0;
-            var url = appConstants.BASE_URL.concat(appConstants.GET_PARCELS_BASED_ON_FILTERS);
-            var params = [];
-            if (state.current) {
-                params.push(`state=${state.current}`);
-            }
-            if (county.current) {
-                params.push(`county=${county.current}`);
-            }
-            if (municipality.current) {
-                params.push(`municipality=${municipality.current}`);
-            }
-            if (status.current) {
-                params.push(`status=${status.current}`);
-            }
-            url = url.concat(params.join('&'));
-            fetch(url, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    'x-access-token': localStorage.getItem('token')
-                },
-            })
-                .then((res) => {
-                    if (res.status === 200) {
-                        response_status = 200;
-                        return res.json();
-                    }
-                    else {
-                        response_status = 400;
-                        return res.json();
-                    }
-                })
-                .then((data) => {
-                    if (response_status === 200) {
-                        if (data.length === 0) {
-                            alert("No results found");
-                        }
-                        setIsLoadingParcels(false);
-                        setData(data);
-                    } else {
-                        setIsLoadingParcels(false);
-                        alert(data.message);
-                    }
-                })
-                .catch((err) => console.error(err));
-        }
-    }
-
-    const handleClear = (e) => {
-        setSearchString("");
-        state.current = '';
-        county.current = '';
-        municipality.current = '';
-        status.current = '';
-        setData([]);
-    }
 
     const render = () => {
         return (
             <div>
                 <NavigationBar />
-
-                <div className='container mt-3 d-flex'>
-                    <div className="col col-lg-5"><Input text="Search" type="text"
-                        value={searchString} onChange={(e) => setSearchString(e)}
-                        clearbutton={true} onClear={() => handleClear()} />
-                    </div>
-                    <Button className="ml-2" variant="primary" onClick={(e) => handleSearch()}> Search </Button>
-
-                </div>
-                {
-                    distinctFilters && !isLoading ?
-                        <div className='container mt-3'>
-                            <div className="d-flex justify-content-left">
-                                <div className="col col-lg-2"><DropDown placeholder={'State'} list={distinctFilters.states} isMulti={false} prepareArray={true} onSelect={(e) => { state.current = e.value; handleFilterSearch() }} /></div>
-                                <div className="col col-lg-2"><DropDown placeholder={'County'} list={distinctFilters.counties} isMulti={false} prepareArray={true} onSelect={(e) => { county.current = e.value; handleFilterSearch() }} /></div>
-                                <div className="col col-lg-2"><DropDown placeholder={'Municipality'} list={distinctFilters.municipalities} isMulti={false} prepareArray={true} onSelect={(e) => { municipality.current = e.value; handleFilterSearch() }} /></div>
-                                <div className="col col-lg-2"><DropDown placeholder={'Status'} list={utils.statusArray()} isMulti={false} prepareArray={false} onSelect={(e) => { status.current = e.value; handleFilterSearch() }} /></div>
-                            </div>
-                        </div>
-                        :
-                        <div className="mt-3"><Loading /></div>
-                }
-                <hr className='container mt-3 d-flex' />
-
-
-                {/* Material Table */}
-                <div className='p-3'>
-                    {
-                        isLoadingParcels ? <Loading /> :
-                            data.length > 0 ?
-                                <MTable
-                                    title="Parcels"
-                                    data={data}
-                                    columns={columns}
-                                    pageSize={10}
-                                    filtering={true}
-                                    selection={false}
-                                    showTitle={true}
-                                    cellEdit={false}
-                                    rowEdit={false}
-                                    tableLayout='Fixed'
-                                    columnsButton={true}
-                                    onDownloadButtonPressed={(data) => { utils.exportCSV(data) }}
-                                />
-                                :
-                                null
-                    }
-                </div>
+                <h1>Home</h1>
 
             </div>
         );

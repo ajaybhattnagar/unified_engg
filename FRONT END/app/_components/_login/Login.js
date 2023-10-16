@@ -91,11 +91,6 @@ const Login = () => {
                 </div>
 
                 <button type="button" className="btn btn-primary" onClick={() => postLoginDetails()}>Sign In</button>
-                <p>
-                    Don't have an account?{" "}
-                    <a href="#" className="badge badge-primary" onClick={gotoSignUpPage}>Sign up</a>
-
-                </p>
             </form>
         </div>
     );

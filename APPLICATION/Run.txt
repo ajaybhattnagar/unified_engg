@@ -1,1 +1,0 @@
-pyinstaller.exe -F --onefile --icon=favicon.ico --windowed  app.py  
