@@ -9,17 +9,15 @@ import datetime
 from datetime import date
 import bcrypt
 import jwt
+import pyodbc 
 from utils import check_user, get_user_details
 
-from queries.audit_query import audit_query
+from queries.notes_query import notes_query
 
-audit_blueprint = Blueprint('audit_blueprint', __name__)
+labor_blueprint = Blueprint('labor_blueprint', __name__)
 
 with open ('config.json') as f:
     configData = json.load(f)
-
-#Salt for bcrypt
-salt = bcrypt.gensalt()
 
 def connect_database(user):
     try:
@@ -32,7 +30,6 @@ def connect_database(user):
     except mysql.connector.Error as err:
         print("Something went wrong: {}".format(err))
     return mydb
-
 
 
 # Authentication decorator
@@ -48,32 +45,26 @@ def token_required(f):
         try:
            # decode the token to obtain user public_id
             data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
-            current_user = get_user_details(data['EMAIL'])
-            user_email = data['EMAIL']
+            data = str(data['CONNECTION_STRING'])
         except:
             return jsonify({"message": "Invalid token!"}), 401
          # Return the user information attached to the token
-        return f(user_email, *args, **kwargs)
+        return f(data, *args, **kwargs)
     return decorator
 
-
-#  Get audit history per id
-@audit_blueprint.route("/api/v1/audit/<parcel_id>", methods=['GET'])
+# Add notes
+@labor_blueprint.route("/api/v1/labor/test", methods=['GET'])
 @token_required
-def get_audit_data(current_user, parcel_id):
+def add_parcel(connection_string):
+    cnxn = pyodbc.connect(connection_string)
+    # Add notes to a parcel   
     try:
-        connection = connect_database(current_user)
-        mycursor = connection.cursor()
+        sql = cnxn.cursor()
+        sql.execute("SELECT TOP 100 * FROM CUSTOMER_ORDER")
+        myresult = sql.fetchall()
 
-        mycursor.execute(audit_query['GET_AUDIT_DATA_PER_ID'].format(UNIQUE_ID = parcel_id))
-        audit_data = [dict((mycursor.description[i][0], value) for i, value in enumerate(row)) for row in mycursor.fetchall()]
-        connection.commit()
-        mycursor.close()
-        response = Response(
-                    response=simplejson.dumps(audit_data, ignore_nan=True,default=datetime.datetime.isoformat),
-                    mimetype='application/json'
-                )
-        response.headers['content-type'] = 'application/json'
-        return response, 200
-    except:
-        return jsonify({"message": "Something went wrong!"}), 500
+        print (myresult)
+        return jsonify({"message": "myresult"}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+

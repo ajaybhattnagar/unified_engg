@@ -22,12 +22,12 @@ class NavigationBar extends Component {
         return (
             <Navbar bg="light" data-bs-theme="dark">
                 <Navbar.Brand href="/">
-                    <img
+                    {/* <img
                         alt='logo'
                         src={Brand}
                         height='40'
                         className='d-inline-block align-top bg-success'
-                    />
+                    /> */}
                 </Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>

@@ -1,5 +1,0 @@
-audit_query = {
-
-"GET_AUDIT_DATA_PER_ID": """SELECT * FROM AUDIT WHERE UNIQUE_ID = '{UNIQUE_ID}'""",
-
-}
