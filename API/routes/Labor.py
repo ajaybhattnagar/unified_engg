@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, json, Blueprint, Response
 from flask_cors import CORS
-import mysql.connector
 from functools import wraps
 import pandas as pd
 import numpy as np
@@ -10,9 +9,6 @@ from datetime import date
 import bcrypt
 import jwt
 import pyodbc 
-from utils import check_user, get_user_details
-
-from queries.notes_query import notes_query
 
 labor_blueprint = Blueprint('labor_blueprint', __name__)
 

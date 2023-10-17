@@ -6,9 +6,6 @@ import numpy as np
 import bcrypt
 import jwt
 import pyodbc 
-from utils import check_user, get_user_details
-
-from queries.db_query import db_query
 
 login_blueprint = Blueprint('login_blueprint', __name__)
 
