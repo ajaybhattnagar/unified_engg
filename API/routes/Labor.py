@@ -9,23 +9,13 @@ from datetime import date
 import bcrypt
 import jwt
 import pyodbc 
+from queries.details import details_query
 
 labor_blueprint = Blueprint('labor_blueprint', __name__)
 
 with open ('config.json') as f:
     configData = json.load(f)
 
-def connect_database(user):
-    try:
-        mydb = mysql.connector.connect(
-            host = configData['host'],
-            user = user,
-            password = configData['db_user_password'],
-            database = configData['database']
-        )
-    except mysql.connector.Error as err:
-        print("Something went wrong: {}".format(err))
-    return mydb
 
 
 # Authentication decorator
@@ -49,18 +39,55 @@ def token_required(f):
     return decorator
 
 # Add notes
-@labor_blueprint.route("/api/v1/labor/test", methods=['GET'])
+@labor_blueprint.route("/api/v1/labor/get_labor_tickets", methods=['POST'])
 @token_required
-def add_parcel(connection_string):
-    cnxn = pyodbc.connect(connection_string)
-    # Add notes to a parcel   
-    try:
-        sql = cnxn.cursor()
-        sql.execute("SELECT TOP 100 * FROM CUSTOMER_ORDER")
-        myresult = sql.fetchall()
+def get_labor_tickets(connection_string):
 
-        print (myresult)
-        return jsonify({"message": "myresult"}), 200
+    content = request.get_json(silent=True)
+    try:
+
+        if 'DATE' not in content:
+            return jsonify({"message": "DATE is required"}), 401
+        else:
+            date = content['DATE'],
+            date = ''.join(date)
+
+        if 'EMPLOYEE_ID' not in content:
+            employee_id = ''
+            pass
+        else:
+            if content['EMPLOYEE_ID'] == 'ALL':
+                employee_id = ''
+            else:
+                employee_id = content['EMPLOYEE_ID'],
+                employee_id =  ''.join(employee_id)
+                employee_id = "AND EMPLOYEE_ID = '{}'".format(employee_id)
+
+        if 'APPROVED' not in content:
+            approved = ''
+            pass
+        else:
+            if content['APPROVED'] == 'ALL':
+                approved = ''
+            else:
+                approved = content['APPROVED'],
+                approved = ''.join(approved)
+                approved = "AND APPROVED = '{}'".format(approved)
+
+        query_string = details_query['GET_LABOR_TICKETS'].format(DATE=date, EMP_ID_QUERY_STRING=employee_id, APPROVED_QUERY_STRING=approved)
+
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        sql.close()
+
+        response = Response(
+                    response=simplejson.dumps(results, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
     except Exception as e:
         return jsonify({"message": str(e)}), 401
-

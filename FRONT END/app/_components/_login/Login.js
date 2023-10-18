@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { appConstants } from '../../_helpers/consts.js';
+import Brand from '../../_images/brand_png.png'
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [database, setDatabase] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
-		const checkUser = () => {
-			if (localStorage.getItem("token")) {
-				navigate("/home");
-			}
-		};
-		checkUser();
-	}, []);
+        const checkUser = () => {
+            if (localStorage.getItem("token")) {
+                navigate("/home");
+            }
+        };
+        checkUser();
+    }, []);
 
     const postLoginDetails = () => {
-        
-        if (!email || !password) {
-            alert("Please enter email and password");
+
+        if (!email || !password || !database) {
+            alert("Please enter username, password and database");
             return;
         }
 
@@ -27,8 +29,9 @@ const Login = () => {
         fetch(appConstants.BASE_URL.concat(appConstants.LOGIN), {
             method: "POST",
             body: JSON.stringify({
-                EMAIL: email,
+                USERNAME: email,
                 PASSWORD: password,
+                DATABASE: database,
             }),
             headers: {
                 "Content-Type": "application/json",
@@ -54,11 +57,6 @@ const Login = () => {
             })
             .catch((err) => console.error(err));
 
-
-        // console.log(data.data);
-        // localStorage.setItem("username", data.data.username);
-        // navigate("/phone/verify");
-
     };
 
 
@@ -72,15 +70,22 @@ const Login = () => {
     const gotoSignUpPage = () => navigate("/signup");
 
     return (
-        <div className='container mx-auto mt-3 w-25'>
-            <h2>Login </h2>
+        <div className='container mx-auto mt-3 mw-50'>
+
+            <img
+                alt='logo'
+                src={Brand}
+                height='50'
+                className='mx-auto d-block mb-3'
+            />
+            {/* <h4 className="m-2">Login </h4> */}
             <form className='login__form' onSubmit={handleSubmit}>
 
                 <div className="input-group mb-3">
                     <div className="input-group-prepend">
-                        <span className="input-group-text" id="basic-addon1">Email</span>
+                        <span className="input-group-text" id="basic-addon1">Username</span>
                     </div>
-                    <input type="text" className="form-control" placeholder="Enter Email" id='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type="text" className="form-control" placeholder="Enter Username" id='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
 
                 <div className="input-group mb-3">
@@ -90,7 +95,16 @@ const Login = () => {
                     <input type="password" className="form-control" placeholder="Enter Password" id='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
 
-                <button type="button" className="btn btn-primary" onClick={() => postLoginDetails()}>Sign In</button>
+                <div className="input-group mb-3">
+                    <div className="input-group-prepend">
+                        <span className="input-group-text" id="basic-addon1">Database</span>
+                    </div>
+                    <input type="text" className="form-control" placeholder="Enter Database" id='database' name='database' value={database} onChange={(e) => setDatabase(e.target.value)} />
+                </div>
+
+                <div className="d-flex justify-content-end">
+                    <button type="button" className="btn btn-primary" onClick={() => postLoginDetails()}>Sign In</button>
+                </div>
             </form>
         </div>
     );

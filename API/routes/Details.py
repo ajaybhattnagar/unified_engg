@@ -18,19 +18,6 @@ details_blueprint = Blueprint('details_blueprint', __name__)
 with open ('config.json') as f:
     configData = json.load(f)
 
-def connect_database(user):
-    try:
-        mydb = mysql.connector.connect(
-            host = configData['host'],
-            user = user,
-            password = configData['db_user_password'],
-            database = configData['database']
-        )
-    except mysql.connector.Error as err:
-        print("Something went wrong: {}".format(err))
-    return mydb
-
-
 # Authentication decorator
 def token_required(f):
     @wraps(f)
