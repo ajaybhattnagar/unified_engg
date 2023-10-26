@@ -10,6 +10,7 @@ import { columns } from '../../_columns/parcelsDisplayColumns';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
+import { responsiveFontSizes } from "@material-ui/core";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -17,6 +18,12 @@ const Preferences = () => {
     const navigate = useNavigate();
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedSite, setSelectedSite] = useState(null);
+    const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+
+    useEffect(() => {
+
+    }, []);
 
 
     useEffect(() => {
@@ -33,9 +40,9 @@ const Preferences = () => {
             }
         }).then(res => res.json())
             .then((response) => {
-                console.log(response);
                 setData(response);
-                setIsLoading(false);
+                setIsLoading(false);   
+
             })
             .catch((error) => {
                 console.log(error);
@@ -46,24 +53,27 @@ const Preferences = () => {
 
 
     const render = () => {
-        return (
+        const local_storage_site = localStorage.getItem("SITE") ? localStorage.getItem("SITE") : null;
+        const local_storage_warehouse = localStorage.getItem("WAREHOUSE") ? localStorage.getItem("WAREHOUSE") : null;
+
+        return (        
             <div>
                 <NavigationBar />
 
                 {
                     data.SITES && data.SITES.length > 0 ?
-                        <div>
-                            <div className="d-flex justify-content-center">
-                                <div className="">Select Site:</div>
-                                <div className="w-75"><DropDown text="Select Site" list={data.SITES} onSelect={(e) => console.log(e)} /></div>
+                        <div className="m-3">
+                            <div className="w-50 m-3">
+                                <div className="text-lg-left">Select Site:</div>
+                                <div className="w-75"><DropDown placeholder={local_storage_site} text="Select Site" list={data.SITES} onSelect={(e) => { setSelectedSite(e.value); localStorage.setItem("SITE", e.value) }} /></div>
                             </div>
-                            <div className="d-flex justify-content-center">
+                            <div className="w-50 m-3">
                                 <div className="">Select Warehouse:</div>
-                                <div className="w-75"><DropDown text="Select Site" list={data.WAREHOUSES} onSelect={(e) => console.log(e)} /></div>
+                                <div className="w-75"><DropDown placeholder={local_storage_warehouse} text="Select Site" list={data.WAREHOUSES} onSelect={(e) => { setSelectedWarehouse(e.value); localStorage.setItem("WAREHOUSE", e.value) }} /></div>
                             </div>
                         </div>
                         :
-                        null
+                        <Loading/>
                 }
 
 

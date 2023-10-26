@@ -11,29 +11,20 @@ export const utils = {
   total,
   exportCSV,
   exportExcel,
-  statusArray,
-  getDistinctFilters,
+  getLaborTickets,
   getStatusbyValue,
-  updateStatusParcelID,
-  getCategorybyValue,
-  categoryArray,
   convertTimeStampToDateForInputBox,
-  delteFeeByID,
-  delteNoteByID,
-  deltePaymentByID,
-  interestIntervalArray,
-  getInterestIntervalbyValue,
-  delteDocumentByID,
-  getParcelAuditData,
   reportsArray,
-  updateYEPbyID
-
 }
 
 function convertTimeStampToString(timeStamp) {
   if (timeStamp) {
     var date = new Date(timeStamp);
-    return date.toLocaleDateString(date, { year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'UTC' });
+    // return date.toLocaleDateString(date, { year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'UTC' });
+    date =  date.toLocaleString('en-US', { timeZone: 'America/New_York' });
+    // var isoString = date.toISOString();
+    var formattedString = date.replace('T', ' ').replace('Z', '');
+    return formattedString;
   } else {
     return ''
   }
@@ -91,23 +82,6 @@ function total(array) {
 
 }
 
-function statusArray() {
-  return [
-    { value: 1, label: 'Active' },
-    { value: 2, label: 'Pending' },
-    { value: 3, label: 'Pending Redemption' },
-    { value: 4, label: 'Refunded' },
-    { value: 5, label: 'Foreclosure' },
-    { value: 6, label: 'Bankruptcy' },
-    { value: 7, label: 'Write-off' },
-    { value: 8, label: 'REO' },
-    { value: 9, label: 'Partial Redemption', disabled: true },
-    { value: 10, label: 'Redeemed', disabled: true },
-    { value: 11, label: 'TDA', disabled: false },
-
-  ]
-}
-
 function reportsArray() {
   return [
     { value: 'ALL_FIELDS', label: 'All Fields' },
@@ -124,21 +98,6 @@ function reportsArray() {
   ]
 }
 
-function interestIntervalArray() {
-  return [
-    { value: 'per_diem', label: 'Per Diem' },
-    { value: 'monthly', label: 'Monthly' },
-  ]
-}
-
-function getInterestIntervalbyValue(value) {
-  var arr = interestIntervalArray();
-  for (var i = 0; i < arr.length; i++) {
-    if (arr[i].value === value) {
-      return arr[i].label;
-    }
-  }
-}
 
 function getStatusbyValue(value) {
   var status = statusArray();
@@ -200,15 +159,20 @@ function exportExcel(array, fileName) {
   XLSX.writeFile(workbook, file_name + '.xlsx');
 }
 
-function getDistinctFilters() {
+function getLaborTickets(date, employee_id, approved) {
   var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.GET_DISTINCT_FILTERS);
+  var url = appConstants.BASE_URL.concat(appConstants.GET_LABOR_TICKETS);
   return fetch(url, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       'x-access-token': localStorage.getItem('token')
     },
+    body: JSON.stringify({
+      "DATE": "10/17/2023",
+      "EMPLOYEE_ID": employee_id,
+      "APPROVED": approved
+    })
   })
     .then((res) => {
       if (res.status === 200) {
@@ -231,94 +195,7 @@ function getDistinctFilters() {
     .catch((err) => console.error(err));
 }
 
-function updateStatusParcelID(parcel_id, status, old_status) {
-  var confirm_string = '';
-  if (old_status < 9) {
-    confirm_string = 'Are you sure you want to update the status?';
-  }
-  if (old_status > 8) {
-    confirm_string = 'Parcel is already redeemed. Are you sure you want to update the status?';
-  } else {
-    confirm_string = 'Are you sure you want to update the status?';
-  }
 
-  var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.UPDATE_STATUS_PARCEL_ID).concat(parcel_id).concat('/').concat(status);
-  if (confirm(confirm_string)) {
-    return fetch(url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        'x-access-token': localStorage.getItem('token')
-      },
-      body: JSON.stringify({
-        PARCEL_ID: parcel_id,
-        STATUS: status
-      })
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          response_status = 200;
-          return res.json();
-        }
-        else {
-          response_status = 400;
-          return res.json();
-        }
-      })
-      .then((data) => {
-        if (response_status === 200) {
-          alert(data.message);
-          window.location.reload();
-        } else {
-          alert(data.message);
-          return null;
-        }
-      })
-      .catch((err) => console.error(err));
-  } else {
-    // Do nothing!
-    console.log('Cancelled by user!');
-  }
-}
-
-function categoryArray(filter_value) {
-  filter_value = parseInt(filter_value) || 999;
-  var arr = [
-    { value: 1, label: 'Beginning Balance' },
-    { value: 2, label: 'Premium' },
-    { value: 3, label: 'Subsequent Tax' },
-    { value: 4, label: 'Attorney Fees' },
-    { value: 5, label: 'Certificate Fees' },
-    { value: 6, label: 'Filling Fees' },
-    { value: 7, label: 'Processing Fees' },
-    { value: 8, label: 'Recording Fees' },
-    { value: 9, label: 'Refunds' },
-    { value: 10, label: 'TDA Fees' },
-    { value: 11, label: 'Redemption Variance' },
-    { value: 12, label: 'Overage' },
-    { value: 13, label: 'TDA Rollup' },
-    { value: 101, label: 'Redeemable' },
-    { value: 102, label: 'Non-Redeemable' },
-    { value: 103, label: 'Refunds' },
-    { value: 104, label: 'Payments' },
-    { value: 105, label: 'Deducted' },
-    { value: 106, label: 'Total' },
-    { value: 107, label: 'Year End Penalty' },
-
-  ]
-  arr = arr.filter((item) => item.value < filter_value);
-  return arr;
-}
-
-function getCategorybyValue(value) {
-  var category = categoryArray();
-  for (var i = 0; i < category.length; i++) {
-    if (category[i].value === value) {
-      return category[i].label;
-    }
-  }
-}
 
 function convertTimeStampToDateForInputBox(timeStamp) {
   if (timeStamp) {
@@ -343,225 +220,6 @@ function convertTimeStampToDateForInputBox(timeStamp) {
 
 }
 
-function delteFeeByID(id) {
-  var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.DELETE_FEE_BY_ID).concat(id);
-  if (confirm('Are you sure you want to delete the fee?')) {
-    return fetch(url, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        'x-access-token': localStorage.getItem('token')
-      },
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          response_status = 200;
-          return res.json();
-        }
-        else {
-          response_status = 400;
-          return res.json();
-        }
-      })
-      .then((data) => {
-        if (response_status === 200) {
-          window.location.reload();
-          alert(data.message);
-        } else {
-          alert(data.message);
-          return null;
-        }
-      })
-      .catch((err) => console.error(err));
-  } else {
-    // Do nothing!
-    console.log('Cancelled by user!');
-  }
 
 
-}
 
-function delteNoteByID(id) {
-  var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.DELETE_NOTE_BY_ID).concat(id);
-  if (confirm('Are you sure you want to delete the fee?')) {
-    return fetch(url, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        'x-access-token': localStorage.getItem('token')
-      },
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          response_status = 200;
-          return res.json();
-        }
-        else {
-          response_status = 400;
-          return res.json();
-        }
-      })
-      .then((data) => {
-        if (response_status === 200) {
-          window.location.reload();
-          alert(data.message);
-        } else {
-          alert(data.message);
-          return null;
-        }
-      })
-      .catch((err) => console.error(err));
-  } else {
-    // Do nothing!
-    console.log('Cancelled by user!');
-  }
-
-
-}
-
-function deltePaymentByID(id) {
-  var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.DELETE_PAYMENT_BY_ID).concat(id);
-  if (confirm('Are you sure you want to delete the payment?')) {
-    return fetch(url, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        'x-access-token': localStorage.getItem('token')
-      },
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          response_status = 200;
-          return res.json();
-        }
-        else {
-          response_status = 400;
-          return res.json();
-        }
-      })
-      .then((data) => {
-        if (response_status === 200) {
-          window.location.reload();
-          alert(data.message);
-        } else {
-          alert(data.message);
-          return null;
-        }
-      })
-      .catch((err) => console.error(err));
-  } else {
-    // Do nothing!
-    console.log('Cancelled by user!');
-  }
-}
-
-function delteDocumentByID(id) {
-  var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.DELETE_DOCUMENT_BY_ID).concat(id);
-  if (confirm('Are you sure you want to delete this document?')) {
-    return fetch(url, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        'x-access-token': localStorage.getItem('token')
-      },
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          response_status = 200;
-          return res.json();
-        }
-        else {
-          response_status = 400;
-          return res.json();
-        }
-      })
-      .then((data) => {
-        if (response_status === 200) {
-          window.location.reload();
-          alert(data.message);
-        } else {
-          alert(data.message);
-          return null;
-        }
-      })
-      .catch((err) => console.error(err));
-  } else {
-    // Do nothing!
-    console.log('Cancelled by user!');
-  }
-
-
-}
-
-
-function getParcelAuditData(parcel_id) {
-  var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.GET_AUDIT_HISTORY).concat(parcel_id);
-  return fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      'x-access-token': localStorage.getItem('token')
-    },
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        response_status = 200;
-        return res.json();
-      }
-      else {
-        response_status = 400;
-        return res.json();
-      }
-    })
-    .then((data) => {
-      if (response_status === 200) {
-        return data
-      } else {
-        alert(data.message);
-        return null;
-      }
-    })
-    .catch((err) => console.error(err));
-}
-
-
-function updateYEPbyID(id, yep) {
-  var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.UPDATE_YEP_BY_UNIQUE_ID).concat(id);
-  return fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      'x-access-token': localStorage.getItem('token')
-    },
-    body: JSON.stringify({
-      "YEAR_END_PENALTY": yep
-    })
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        response_status = 200;
-        return res.json();
-      }
-      else {
-        response_status = 400;
-        return res.json();
-      }
-    })
-    .then((data) => {
-      if (response_status === 200) {
-        window.location.reload();
-        alert(data.message);
-      } else {
-        alert(data.message);
-        return null;
-      }
-    })
-    .catch((err) => console.error(err));
-
-}

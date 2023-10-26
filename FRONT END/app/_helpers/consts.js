@@ -7,4 +7,5 @@ export const appConstants = {
     LOGIN: 'api/v1/login',
 
     SITE_WAREHOUSE: 'api/v1/details/site_warehouse',
+    GET_LABOR_TICKETS: 'api/v1/labor/get_labor_tickets',
 };

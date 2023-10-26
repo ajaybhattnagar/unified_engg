@@ -9,16 +9,17 @@ const Input = (props) => {
     const min = props.min || ""
     const max = props.max || ""
     const clearbutton = props.clearbutton || false
+    const disabled = props.disabled || false
 
     switch (type) {
         case "text":
             value = props.value || ""
             break;
         case "number":
-            value = props.value || null
+            value = props.value || 0
             break;
         case "date":
-            value = props.value || null
+            value = props.value || new Date()
             break;
         default:
             value = null
@@ -33,7 +34,9 @@ const Input = (props) => {
                     // value = {props.type === "text" ? value : null}
                     value={value}
                     className="form-control" aria-label="Username" aria-describedby="basic-addon1"
-                    onChange={(e) => props.onChange(e.target.value)} />
+                    onChange={(e) => props.onChange(e.target.value)}
+                    disabled={disabled}
+                />
                 {
                     clearbutton ?
                         <button className="ml-1 btn btn-outline-secondary border" type="button" onClick={() => props.onClear()}>

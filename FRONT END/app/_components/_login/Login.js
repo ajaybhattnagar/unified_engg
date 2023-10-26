@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { appConstants } from '../../_helpers/consts.js';
 import Brand from '../../_images/brand_png.png'
+import jwt_decode from "jwt-decode";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -50,6 +51,12 @@ const Login = () => {
             .then((data) => {
                 if (response_status === 200) {
                     localStorage.setItem("token", data.token);
+
+                    // Decrypt JWT token to get username and database and save to local storage
+                    var token = data.token;
+                    const decoded = jwt_decode(token);
+                    localStorage.setItem("EMPLOYEE_ID", decoded.USERNAME);
+                    localStorage.setItem("DATABASE", decoded.DATABASE);
                     navigate("/home");
                 } else {
                     alert(data.message);

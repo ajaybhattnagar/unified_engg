@@ -1,10 +1,14 @@
-.theme-color{
+.theme-color {
     background-color: '#024b91';
     color: '#024b91';
-    
+
 }
 
-.btn-primary{
+.btn-primary {
     background-color: '#024b91';
     color: '#024b91';
+}
+
+.cusor-hand {
+    cursor: pointer;
 }
