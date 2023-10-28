@@ -19,11 +19,12 @@ const RecordsLabor = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const [selectedRecentWorkOrder, setSelectedRecentWorkOrder] = useState(null);
+    const [operationDetails, setOperationDetails] = useState(null);
 
     const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
-    const [selectedLot, setSelectedLot] = useState(null);
-    const [selectedSplit, setSelectedSplit] = useState(null);
-    const [selectedSub, setSelectedSub] = useState(null);
+    const [selectedLot, setSelectedLot] = useState(1);
+    const [selectedSplit, setSelectedSplit] = useState(0);
+    const [selectedSub, setSelectedSub] = useState(0);
     const [selectedOperation, setSelectedOperation] = useState(null);
     const [selectedClockIn, setSelectedClockIn] = useState(utils.convertTimeStampToString(new Date()));
     const [selectedClockOut, setSelectedClockOut] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
@@ -57,6 +58,48 @@ const RecordsLabor = () => {
         }
     }, [selectedRecentWorkOrder]);
 
+    useEffect(() => {
+        if (selectedWorkOrder != '' && selectedLot != '' && selectedSplit != '' && selectedSub != '') {
+            var response_status = 0;
+            var url = appConstants.BASE_URL.concat(appConstants.GET_WORKORDER_OPERATION_DETAILS);
+            const request_object = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    'x-access-token': localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    "WORKORDER_TYPE": "W",
+                    "WORKORDER_ID": selectedWorkOrder,
+                    "WORKORDER_LOT_ID": selectedLot,
+                    "WORKORDER_SPLIT_ID": selectedSplit,
+                    "WORKORDER_SUB_ID": selectedSub
+                })
+            }
+            fetch(url, request_object)
+                .then((res) => {
+                    if (res.status === 200) {
+                        response_status = 200;
+                        return res.json();
+                    }
+                    else {
+                        response_status = 400;
+                        alert(res.json());
+                    }
+                })
+                .then((data) => {
+                    if (response_status === 200) {
+                        setOperationDetails(data)
+                    } else {
+                        alert(data.message);
+                        return null;
+                    }
+                })
+                .catch((err) => console.error(err));
+        }
+    }, [selectedWorkOrder]);
+
+
     const recent_labor_tickets_render = () => {
         return (
             <div className="m-3">
@@ -85,14 +128,19 @@ const RecordsLabor = () => {
                         <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} /></div>
                         <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
                     </div>
-                    <div className="w-100 mt-3">
-                        <DropDown placeholder="Select Operation" text='Operation' />
-                    </div>
+                    {
+                        operationDetails && operationDetails.length > 0 ?
+                            <div className="w-100 mt-3">
+                                <DropDown list={operationDetails} isMulti={false} prepareArray={false} placeholder={"Select Operation"} onSelect={(e) => setSelectedOperation(e.value)} />
+                            </div>
+                            :
+                            null
+                    }
                     <div className="w-100 mt-3">
                         <Input type={'text'} placeholder="Clock In" text='Clock In' disabled={true} value={selectedClockIn} />
                     </div>
                     <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="Clock Out" text='Clock Out' disabled={true} value={selectedClockIn}/>
+                        <Input type={'text'} placeholder="Clock Out" text='Clock Out' disabled={true} value={selectedClockIn} />
                     </div>
                     <div className="w-100 d-flex justify-content-between">
                         <button className="btn btn-success mt-3">Stop</button>

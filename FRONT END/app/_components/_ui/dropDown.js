@@ -13,10 +13,10 @@ const DropDown = (props) => {
   const placeholder = props.placeholder || "Select"
   const clearable = props.clearable || false
 
-  // useEffect(() => {
-  //   console.log(list)
-  //   setList(props.list)
-  // }, [list])
+
+  useEffect(() => {
+    setList(props.list)
+  }, [props.list])
 
   const createObject = (list) => {
     var arrayObject = [];
