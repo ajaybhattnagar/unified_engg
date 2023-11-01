@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useReducer, useRef, useState } from 
 import { useNavigate } from "react-router-dom";
 import { utils } from '../../_helpers/utils';
 import { appConstants } from '../../_helpers/consts.js';
-import MTable from "../_ui/materialTable";
 import Input from "../_ui/input";
 import NavigationBar from '../_navigation/NavigationBar';
 import './Preferences.css';
@@ -10,7 +9,6 @@ import { columns } from '../../_columns/parcelsDisplayColumns';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
-import { responsiveFontSizes } from "@material-ui/core";
 
 const isBrowser = typeof window !== `undefined`
 

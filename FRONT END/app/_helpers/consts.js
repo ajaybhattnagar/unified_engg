@@ -9,4 +9,7 @@ export const appConstants = {
     SITE_WAREHOUSE: 'api/v1/details/site_warehouse',
     GET_LABOR_TICKETS: 'api/v1/labor/get_labor_tickets',
     GET_WORKORDER_OPERATION_DETAILS: 'api/v1/labor/work_order_operation_details',
+    GET_EMPLOYEE_SCAN_DETAILS: 'api/v1/labor/employee_scan_details',
+
+    STOP_LABOR_TICKET: 'api/v1/labor/stop_labor_tickets',
 };

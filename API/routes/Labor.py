@@ -46,11 +46,17 @@ def get_labor_tickets(connection_string):
     content = request.get_json(silent=True)
     try:
 
-        if 'DATE' not in content:
-            return jsonify({"message": "DATE is required"}), 401
+        if 'FROM_DATE' not in content:
+            return jsonify({"message": "From Date is required"}), 401
         else:
-            date = content['DATE'],
-            date = ''.join(date)
+            from_date = content['FROM_DATE'],
+            from_date = ''.join(from_date)
+        
+        if 'TO_DATE' not in content:
+            return jsonify({"message": "To DATE is required"}), 401
+        else:
+            to_date = content['TO_DATE'],
+            to_date = ''.join(to_date)
 
         if 'EMPLOYEE_ID' not in content:
             employee_id = ''
@@ -74,7 +80,7 @@ def get_labor_tickets(connection_string):
                 approved = ''.join(approved)
                 approved = "AND APPROVED = '{}'".format(approved)
 
-        query_string = details_query['GET_LABOR_TICKETS'].format(DATE=date, EMP_ID_QUERY_STRING=employee_id, APPROVED_QUERY_STRING=approved)
+        query_string = details_query['GET_LABOR_TICKETS'].format(FROM_DATE=from_date, TO_DATE = to_date, EMP_ID_QUERY_STRING=employee_id, APPROVED_QUERY_STRING=approved)
 
         cnxn = pyodbc.connect(connection_string)
         sql = cnxn.cursor()
@@ -163,6 +169,30 @@ def create_labor_tickets(connection_string):
     except Exception as e:
         return jsonify({"message": str(e)}), 401
     
+@labor_blueprint.route("/api/v1/labor/stop_labor_tickets", methods=['POST'])
+@token_required
+def stop_labor_tickets(connection_string):
+    content = request.get_json(silent=True)
+    try:
+        query_string = labor_query['STOP_LABOR_TICKET'].format(
+            TRANSACTION_ID = content['TRANSACTION_ID'],
+        )
+        try:
+            cnxn = pyodbc.connect(connection_string)
+            sql = cnxn.cursor()
+
+            sql.execute(query_string)
+            cnxn.commit()
+            sql.close()
+            return jsonify({"message": "Ticket Stopped Successfully!"}), 200
+        
+        except Exception as e:
+            return jsonify({"message": str(e)}), 401
+            
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+
+
 
 @labor_blueprint.route("/api/v1/labor/work_order_operation_details", methods=['POST'])
 @token_required
@@ -194,3 +224,44 @@ def get_work_order_operation_details(connection_string):
             
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+
+@labor_blueprint.route("/api/v1/labor/employee_scan_details", methods=['POST'])
+@token_required
+def employee_scan_details(connection_string):
+    content = request.get_json(silent=True)
+    try:
+        query_string_last_30_tickets = labor_query['EMPLOYEE_LAST_30_LABOR_TICKETS'].format(
+            EMP_ID = content['EMP_ID'],
+        )
+        query_string_check_active_labor = labor_query['EMPLOYEE_CHECK_FOR_ACTIVE_LABOR_TICKET'].format(
+            EMP_ID = content['EMP_ID'],
+        )
+        try:
+            cnxn = pyodbc.connect(connection_string)
+            sql = cnxn.cursor()
+
+            sql.execute(query_string_last_30_tickets)
+            results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+            sql.execute(query_string_check_active_labor)
+            active_labor_ticket = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+            
+            dict_results = {
+                'last_30_tickets': results,
+                'active_labor_ticket': active_labor_ticket
+            }
+
+            sql.close()
+
+            response = Response(
+                        response=simplejson.dumps(dict_results, ignore_nan=True,default=datetime.datetime.isoformat),
+                        mimetype='application/json'
+                    )
+            response.headers['content-type'] = 'application/json'
+            return response, 200
+        except Exception as e:
+            return jsonify({"message": str(e)}), 401
+            
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+

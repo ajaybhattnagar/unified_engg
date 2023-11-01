@@ -20,7 +20,9 @@ const RecordsLabor = () => {
 
     const [selectedRecentWorkOrder, setSelectedRecentWorkOrder] = useState(null);
     const [operationDetails, setOperationDetails] = useState(null);
+    const [activeLaborTicket, setActiveLaborTicket] = useState(0);
 
+    const [transactionId, setTransactionId] = useState(0);
     const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
     const [selectedLot, setSelectedLot] = useState(1);
     const [selectedSplit, setSelectedSplit] = useState(0);
@@ -37,15 +39,66 @@ const RecordsLabor = () => {
             navigate("/");
         }
 
-        utils.getLaborTickets({}, localStorage.getItem("EMPLOYEE_ID"), '0')
-            .then((response) => {
-                setRecentLaborTickets(response)
-                setIsLoading(false);
+        // utils.getLaborTickets({}, localStorage.getItem("EMPLOYEE_ID"), '0')
+        //     .then((response) => {
+        //         setRecentLaborTickets(response)
+        //         setIsLoading(false);
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //         setIsLoading(false);
+        //     });
+        var response_status = 0;
+        var url = appConstants.BASE_URL.concat(appConstants.GET_EMPLOYEE_SCAN_DETAILS);
+        const request_object = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'x-access-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
             })
-            .catch((error) => {
-                console.log(error);
-                setIsLoading(false);
-            });
+        }
+        fetch(url, request_object)
+            .then((res) => {
+                if (res.status === 200) {
+                    response_status = 200;
+                    return res.json();
+                }
+                else {
+                    response_status = 400;
+                    alert(res.json());
+                }
+            })
+            .then((data) => {
+                if (response_status === 200) {
+                    setIsLoading(false);
+                    data.last_30_tickets && data.last_30_tickets.length > 0 ? setRecentLaborTickets(data.last_30_tickets) : null;
+                    data.active_labor_ticket && data.active_labor_ticket.length > 0 ? setActiveLaborTicket(data.active_labor_ticket) : null;
+
+                    if (data.active_labor_ticket && data.active_labor_ticket.length > 0) {
+                        setTransactionId(data.active_labor_ticket[0].TRANSACTION_ID)
+                        setSelectedWorkOrder(data.active_labor_ticket[0].WORKORDER_BASE_ID)
+                        setSelectedLot(data.active_labor_ticket[0].WORKORDER_LOT_ID)
+                        setSelectedSplit(data.active_labor_ticket[0].WORKORDER_SPLIT_ID)
+                        setSelectedSub(data.active_labor_ticket[0].WORKORDER_SUB_ID)
+                        setSelectedOperation(data.active_labor_ticket[0].RESOURCE_ID)
+                        setSelectedClockIn(utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN))
+                        setSelectedClockOut(utils.convertTimeStampToString(new Date()))
+                    }
+
+
+                } else {
+                    alert(data.message);
+                    setIsLoading(false);
+                    return null;
+                }
+            })
+            .catch((err) => console.error(err));
+
+
+
     }, []);
 
     useEffect(() => {
@@ -95,17 +148,17 @@ const RecordsLabor = () => {
                         return null;
                     }
                 })
-                .catch((err) => console.error(err));
+                .catch((err) => { console.error(err); setIsOperationLoading(false); });
         }
     }, [selectedWorkOrder]);
 
 
     const recent_labor_tickets_render = () => {
         return (
-            <div className="m-3">
+            <div className="d-flex flex-wrap">
                 {recentLaborTickets.map((ticket) => (
-                    <div key={ticket.TRANSACTION_ID}>
-                        <p className="badge badge-primary cusor-hand" onClick={(e) => setSelectedRecentWorkOrder(ticket)} >{ticket.WORKORDER_BASE_ID}</p>
+                    <div className="m-2" key={ticket.TRANSACTION_ID}>
+                        <p className="badge badge-light cusor-hand w-100 align-middle" onClick={(e) => setSelectedRecentWorkOrder(ticket)} ><h5>{ticket.WORKORDER_BASE_ID}</h5></p>
                         {/* add other ticket properties as needed */}
                     </div>
                 ))}
@@ -114,7 +167,7 @@ const RecordsLabor = () => {
     }
 
 
-    const create_labor_tickets_render = () => {
+    const create_labor_tickets_render_start = () => {
         return (
             <div>
                 <div className="mt-3" />
@@ -139,12 +192,57 @@ const RecordsLabor = () => {
                     <div className="w-100 mt-3">
                         <Input type={'text'} placeholder="Clock In" text='Clock In' disabled={true} value={selectedClockIn} />
                     </div>
-                    <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="Clock Out" text='Clock Out' disabled={true} value={selectedClockIn} />
+                    <div className="w-100 d-flex justify-content-end">
+                        <button className="btn btn-success mt-3">Start</button>
                     </div>
-                    <div className="w-100 d-flex justify-content-between">
-                        <button className="btn btn-success mt-3">Stop</button>
-                        <button className="btn btn-danger mt-3">Start</button>
+                </div>
+            </div>
+        );
+    }
+
+    const stop_labor_tickets = () => {
+        setIsLoading(true);
+        utils.stopLaborTickets(transactionId)
+            .then((response) => {
+                alert(response.message);
+                window.location.reload();
+            })
+            .catch((error) => {
+                console.log(error);
+                setIsLoading(false);
+            });
+    }
+
+
+    const create_labor_tickets_render_stop = () => {
+
+        return (
+            <div>
+                <div className="mt-3" />
+
+                <div className="container">
+                    <div className='w-100 d-flex justify-content-around'>
+                        <div className='mt-3'><Input type={'text'} placeholder="Search" value={transactionId} text='Transaction ID' disabled={true} /></div>
+                        <div className='mt-3'><Input type={'text'} placeholder="Search" value={selectedWorkOrder} text='Work Order' disabled={true} /></div>
+                    </div>
+                    <div className="d-flex justify-content-around">
+                        <div className='w-25 mt-3'><Input type={'number'} placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} disabled={true} /> </div>
+                        <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} disabled={true} /></div>
+                        <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} disabled={true} /></div>
+                    </div>
+
+                    <div className="w-100 mt-3">
+                        <Input type={'text'} placeholder="Operation" text='Operation' disabled={true} value={selectedOperation} />
+                    </div>
+
+                    <div className="w-100 mt-3">
+                        <Input type={'text'} placeholder="Clock In" text='Clock In' disabled={true} value={selectedClockIn} />
+                    </div>
+                    <div className="w-100 mt-3">
+                        <Input type={'text'} placeholder="Clock Out" text='Clock Out' disabled={true} value={selectedClockOut} />
+                    </div>
+                    <div className="w-100 d-flex justify-content-end">
+                        <button className="btn btn-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
                     </div>
                 </div>
             </div>
@@ -157,8 +255,15 @@ const RecordsLabor = () => {
             {
                 !isLoading ?
                     <div className="d-flex justify-content-around">
-                        {recent_labor_tickets_render()}
-                        {create_labor_tickets_render()}
+                        {
+                            activeLaborTicket && activeLaborTicket.length > 0 ?
+                                create_labor_tickets_render_stop()
+                                :
+                                <div className="container">
+                                    {create_labor_tickets_render_start()}
+                                    {recent_labor_tickets_render()}
+                                </div>
+                        }
                     </div>
                     :
                     <Loading />

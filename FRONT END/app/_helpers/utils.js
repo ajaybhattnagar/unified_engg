@@ -15,13 +15,15 @@ export const utils = {
   getStatusbyValue,
   convertTimeStampToDateForInputBox,
   reportsArray,
+
+  stopLaborTickets
 }
 
 function convertTimeStampToString(timeStamp) {
   if (timeStamp) {
     var date = new Date(timeStamp);
     // return date.toLocaleDateString(date, { year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'UTC' });
-    date =  date.toLocaleString('en-US', { timeZone: 'America/New_York' });
+    date = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
     // var isoString = date.toISOString();
     var formattedString = date.replace('T', ' ').replace('Z', '');
     return formattedString;
@@ -31,6 +33,8 @@ function convertTimeStampToString(timeStamp) {
 }
 
 function convertStringToTime(timeStamp) {
+  //  convert to local date and 12 hour format
+  
   var date = new Date();
   var hours = timeStamp.substring(11, 13);
   var minutes = timeStamp.substring(14, 16);
@@ -159,7 +163,7 @@ function exportExcel(array, fileName) {
   XLSX.writeFile(workbook, file_name + '.xlsx');
 }
 
-function getLaborTickets(date, employee_id, approved) {
+function getLaborTickets(from_date, to_date, employee_id, approved) {
   var response_status = 0;
   var url = appConstants.BASE_URL.concat(appConstants.GET_LABOR_TICKETS);
   return fetch(url, {
@@ -169,7 +173,8 @@ function getLaborTickets(date, employee_id, approved) {
       'x-access-token': localStorage.getItem('token')
     },
     body: JSON.stringify({
-      "DATE": "10/17/2023",
+      "TO_DATE": utils.convertTimeStampToDateForInputBox(to_date),
+      "FROM_DATE": utils.convertTimeStampToDateForInputBox(from_date),
       "EMPLOYEE_ID": employee_id,
       "APPROVED": approved
     })
@@ -195,6 +200,41 @@ function getLaborTickets(date, employee_id, approved) {
     .catch((err) => console.error(err));
 }
 
+function stopLaborTickets(transactionId) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.STOP_LABOR_TICKET);
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      'x-access-token': localStorage.getItem('token')
+    },
+    body: JSON.stringify({
+      "TRANSACTION_ID": transactionId,
+    })
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        return data
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err));
+}
+
+
 
 
 function convertTimeStampToDateForInputBox(timeStamp) {
@@ -209,11 +249,12 @@ function convertTimeStampToDateForInputBox(timeStamp) {
       month = '0' + month;
     }
 
-    var dt = date.getDate() + 1;
+    var dt = date.getDate();
     if (dt < 10) {
       dt = '0' + dt;
     }
     return year + '-' + month + '-' + dt;
+    // return month + '/' + dt + '/' + year;
   } else {
     return ''
   }

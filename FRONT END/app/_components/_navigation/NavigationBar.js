@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Navbar, Nav } from 'react-bootstrap';
-import Brand from '../../_images/brand.svg'
+import { Navbar, Nav, NavDropdown  } from 'react-bootstrap';
+import Brand from '../../_images/brand_png.png'
 import './NavigationBar.css'
 import { Link, withRouter } from 'react-router-dom';
 
@@ -22,16 +22,22 @@ class NavigationBar extends Component {
         return (
             <Navbar bg="light" data-bs-theme="dark">
                 <Navbar.Brand href="/">
-                    {/* <img
+                    <img
                         alt='logo'
                         src={Brand}
                         height='40'
-                        className='d-inline-block align-top bg-success'
-                    /> */}
+                        className='d-inline-block align-top'
+                    />
                 </Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
                     <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
+                    <Nav.Link className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
+
+                    <NavDropdown title="Reports" id="basic-nav-dropdown">
+                        <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
+                    </NavDropdown>
+
                     <Nav.Link className='hover-underline-animation' as={Link} to="/preferences"><strong>Preferences</strong></Nav.Link>
                 </Nav>
                 {

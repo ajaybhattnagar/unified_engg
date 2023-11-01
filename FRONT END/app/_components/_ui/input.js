@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from "react";
 import { Button, Card, Form } from "react-bootstrap";
+import { utils } from '../../_helpers/utils';
 
 const Input = (props) => {
     const text = props.text
@@ -19,11 +20,12 @@ const Input = (props) => {
             value = props.value || 0
             break;
         case "date":
-            value = props.value || new Date()
+            value = props.value || utils.convertTimeStampToDateForInputBox(new Date())
             break;
         default:
             value = null
     }
+
     const render = () => {
         return (
             <div className="input-group">
