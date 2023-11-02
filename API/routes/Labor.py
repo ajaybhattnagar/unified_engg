@@ -130,6 +130,10 @@ def create_labor_tickets(connection_string):
                     UDF2 = content['UDF2'] if 'UDF2' in content else '',
                     UDF3 = content['UDF3'] if 'UDF3' in content else '',
                     UDF4 = content['UDF4'] if 'UDF4' in content else '',
+                    WORK_LOCATION = content['WORK_LOCATION'] if 'WORK_LOCATION' in content else '',
+                    REGULAR_TIME = 1 if 'regular' in content['WORK_TIME'].lower() else 0,
+                    OVER_TIME = 1 if 'over' in content['WORK_TIME'].lower() else 0,
+                    DOUBLE_TIME = 1 if 'double' in content['WORK_TIME'].lower() else 0,
                     )
             
         if content['RUN_TYPE'] == 'I':
@@ -191,8 +195,6 @@ def stop_labor_tickets(connection_string):
             
     except Exception as e:
         return jsonify({"message": str(e)}), 401
-
-
 
 @labor_blueprint.route("/api/v1/labor/work_order_operation_details", methods=['POST'])
 @token_required
@@ -265,3 +267,62 @@ def employee_scan_details(connection_string):
     except Exception as e:
         return jsonify({"message": str(e)}), 401
 
+# Update labor tickets
+@labor_blueprint.route("/api/v1/labor/update_labor_tickets", methods=['POST'])
+@token_required
+def update_labor_tickets(connection_string):
+    content = request.get_json(silent=True)
+
+    # Convert content to dataframe
+    df = pd.DataFrame(content)
+    df = df.replace(np.nan, '', regex=True)
+    
+    # ['TRANSACTION_ID', 'WORKORDER_BASE_ID', 'LOT_SPLIT_SUB', 'CLOCK_IN_DATE',
+    #    'CLOCK_IN_TIME', 'CLOCK_OUT_DATE', 'CLOCK_OUT_TIME', 'HOURS_WORKED',
+    #    'APPROVED', 'APPROVED_AT', 'APPROVED_BY', 'PART_ID', 'DESIRED_QTY',
+    #    'DESIRED_WANT_DATE', 'STATUS', 'ENGINEERED_BY', 'ACT_MATERIAL_COST',
+    #    'ACT_LABOR_COST', 'ACT_SERVICE_COST', 'ID', 'CUSTOMER_ID',
+    #    'CUSTOMER_PO_REF', 'TOTAL_AMT_ORDERED', 'TOTAL_AMT_SHIPPED',
+    #    'DESCRIPTION']
+
+    # Combine date and time columns to create timestamp for sqlserver
+    df['CLOCK_IN'] = df['CLOCK_IN_DATE'] + ' ' + df['CLOCK_IN_TIME']
+    df['CLOCK_OUT'] = df['CLOCK_OUT_DATE'] + ' ' + df['CLOCK_OUT_TIME']
+    df['CLOCK_IN'] = pd.to_datetime(df['CLOCK_IN'])
+    df['CLOCK_OUT'] = pd.to_datetime(df['CLOCK_OUT'])
+
+    query_string = labor_query['UPDATE_LABOR_TICEKT'].format(
+        CLOCK_IN = df['CLOCK_IN'][0],
+        CLOCK_OUT = df['CLOCK_OUT'][0],
+        HOURS_BREAK = df['HOURS_BREAK'][0] if 'HOURS_BREAK' in df.columns else 0,
+        DESCRIPTION = df['DESCRIPTION'][0],
+        UDF1 = df['UDF1'][0],
+        UDF2 = df['UDF2'][0],
+        UDF3 = df['UDF3'][0],
+        UDF4 = df['UDF4'][0],
+        # Manage true as 1 and false as 0
+        APPROVED = 1 if df['APPROVED'][0] == 'True' else 0,
+        APPROVED_BY = df['APPROVED_BY'][0] if 'APPROVED_BY' in df.columns else '',
+        APPROVED_AT = df['APPROVED_AT'][0] if 'APPROVED_AT' in df.columns else '',
+        WORK_LOCATION = df['WORK_LOCATION'][0] if 'WORK_LOCATION' in df.columns else '',
+        REGULAR_TIME = df['REGULAR_TIME'][0] if 'REGULAR_TIME' in df.columns else 0,
+        OVER_TIME = df['OVER_TIME'][0] if 'OVER_TIME' in df.columns else 0,
+        DOUBLE_TIME = df['DOUBLE_TIME'][0] if 'DOUBLE_TIME' in df.columns else 0,
+        QA_NOTES = df['QA_NOTES'][0] if 'QA_NOTES' in df.columns else '',
+
+
+        TRANSACTION_ID = df['TRANSACTION_ID'][0],
+    )
+    try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        cnxn.commit()
+        sql.close()
+        return jsonify({"message": "Ticket Updated Successfully!"}), 200
+        
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+
+    
+      

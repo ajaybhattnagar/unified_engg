@@ -30,8 +30,13 @@ const RecordsLabor = () => {
     const [selectedOperation, setSelectedOperation] = useState(null);
     const [selectedClockIn, setSelectedClockIn] = useState(utils.convertTimeStampToString(new Date()));
     const [selectedClockOut, setSelectedClockOut] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
+    const [qaNotes, setQaNotes] = useState('');
+    const [notifyQACheckbox, setNotifyQACheckbox] = useState(false);
 
-
+    const workLocationsOptions = ['On-site', 'Off-site', 'Remote'];
+    const [selectedWorkLocation, setSelectedWorkLocation] = useState('');
+    const workTimeOptions = ['Regular Time', 'Over Time', 'Double Time'];
+    const [selectedWorkTime, setSelectedWorkTime] = useState('');
 
     useEffect(() => {
         setIsLoading(true);
@@ -39,15 +44,6 @@ const RecordsLabor = () => {
             navigate("/");
         }
 
-        // utils.getLaborTickets({}, localStorage.getItem("EMPLOYEE_ID"), '0')
-        //     .then((response) => {
-        //         setRecentLaborTickets(response)
-        //         setIsLoading(false);
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //         setIsLoading(false);
-        //     });
         var response_status = 0;
         var url = appConstants.BASE_URL.concat(appConstants.GET_EMPLOYEE_SCAN_DETAILS);
         const request_object = {
@@ -152,6 +148,55 @@ const RecordsLabor = () => {
         }
     }, [selectedWorkOrder]);
 
+    const create_labor_ticket = () => {
+        if (selectedWorkOrder === null || selectedWorkOrder === '' || selectedOperation === null || selectedOperation === '' || selectedWorkLocation === '' || selectedWorkTime === '') {
+            alert('Please fill all the fields!');
+            return;
+        }
+        var response_status = 0;
+        var url = appConstants.BASE_URL.concat(appConstants.START_LABOR_TICKET);
+        const request_object = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'x-access-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                "WORKORDER_TYPE": "W",
+                "WORKORDER_ID": selectedWorkOrder,
+                "WORKORDER_LOT_ID": selectedLot,
+                "WORKORDER_SPLIT_ID": selectedSplit,
+                "WORKORDER_SUB_ID": selectedSplit,
+                "OPERATION_SEQ_NO": selectedOperation,
+                "RUN_TYPE": "R",
+                "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
+                "RESOURCE_ID": "CUTTING",
+                "DESCRIPTION": "SOME NOTES",
+                "WORK_LOCATION": workLocationsOptions[selectedWorkLocation],
+                "WORK_TIME": workTimeOptions[selectedWorkTime]
+            })
+        }
+        fetch(url, request_object)
+            .then((res) => {
+                if (res.status === 200) {
+                    response_status = 200;
+                    return res.json();
+                }
+                else {
+                    response_status = 400;
+                    alert(res.json());
+                }
+            })
+            .then((data) => {
+                if (response_status === 200) {
+                    alert("Labor Ticket Created Successfully!");
+                } else {
+                    alert(data.message);
+                    return null;
+                }
+            });
+    }
+
 
     const recent_labor_tickets_render = () => {
         return (
@@ -166,6 +211,12 @@ const RecordsLabor = () => {
         )
     }
 
+    const on_change_work_location = (i) => {
+        setSelectedWorkLocation((prev) => (i === prev ? null : i));
+    }
+    const on_change_work_time = (i) => {
+        setSelectedWorkTime((prev) => (i === prev ? null : i));
+    }
 
     const create_labor_tickets_render_start = () => {
         return (
@@ -189,11 +240,51 @@ const RecordsLabor = () => {
                             :
                             null
                     }
+
                     <div className="w-100 mt-3">
                         <Input type={'text'} placeholder="Clock In" text='Clock In' disabled={true} value={selectedClockIn} />
                     </div>
-                    <div className="w-100 d-flex justify-content-end">
-                        <button className="btn btn-success mt-3">Start</button>
+
+                    <div className="d-flex justify-content-between mt-3">
+                        <div className="w-75"><Input type={'text'} placeholder="QA Notes" text='QA Notes' disabled={false} value={qaNotes} onChange={(e) => setQaNotes(e)} /></div>
+                        <div><input className="m-1" type="checkbox" checked={notifyQACheckbox} onChange={() => setNotifyQACheckbox(!notifyQACheckbox)} /> Notify QA</div>
+                    </div>
+
+                    <div className="w-100 d-flex justify-content-between">
+
+                        {/* Work Location Options */}
+                        <div className="">
+                            <div>
+                                {workLocationsOptions.map((o, i) => (
+                                    <label className="mt-3 ml-3" key={i}>
+                                        <input className="mr-1"
+                                            type="checkbox"
+                                            checked={i === selectedWorkLocation}
+                                            onChange={() => on_change_work_location(i)}
+                                        />
+                                        {o}
+                                    </label>
+                                ))}
+                            </div>
+
+                            <div>
+                                {workTimeOptions.map((o, i) => (
+                                    <label className="mt-1 ml-3" key={i}>
+                                        <input className="mr-1"
+                                            type="checkbox"
+                                            checked={i === selectedWorkTime}
+                                            onChange={() => on_change_work_time(i)}
+                                        />
+                                        {o}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+
+                        <div className="d-flex flex-column justify-content-end">
+                            <button className="btn btn-success mt-1" onClick={(e) => create_labor_ticket()}>Start</button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -16,7 +16,8 @@ export const utils = {
   convertTimeStampToDateForInputBox,
   reportsArray,
 
-  stopLaborTickets
+  stopLaborTickets,
+  updateLaborTickets
 }
 
 function convertTimeStampToString(timeStamp) {
@@ -34,7 +35,7 @@ function convertTimeStampToString(timeStamp) {
 
 function convertStringToTime(timeStamp) {
   //  convert to local date and 12 hour format
-  
+
   var date = new Date();
   var hours = timeStamp.substring(11, 13);
   var minutes = timeStamp.substring(14, 16);
@@ -234,14 +235,46 @@ function stopLaborTickets(transactionId) {
     .catch((err) => console.error(err));
 }
 
+function updateLaborTickets(data) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.UPDATE_LABOR_TICKETS);
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      'x-access-token': localStorage.getItem('token')
+    },
+    body: JSON.stringify(data)
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        return data
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err)); G
+}
+
 
 
 
 function convertTimeStampToDateForInputBox(timeStamp) {
   if (timeStamp) {
     var date = new Date(timeStamp);
-    // convert to local date
     date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+
     var year = date.getFullYear();
 
     var month = date.getMonth() + 1;

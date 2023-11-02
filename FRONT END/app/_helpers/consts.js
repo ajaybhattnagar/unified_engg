@@ -11,5 +11,7 @@ export const appConstants = {
     GET_WORKORDER_OPERATION_DETAILS: 'api/v1/labor/work_order_operation_details',
     GET_EMPLOYEE_SCAN_DETAILS: 'api/v1/labor/employee_scan_details',
 
+    START_LABOR_TICKET: 'api/v1/labor/create_labor_tickets',
     STOP_LABOR_TICKET: 'api/v1/labor/stop_labor_tickets',
+    UPDATE_LABOR_TICKETS: 'api/v1/labor/update_labor_tickets',
 };

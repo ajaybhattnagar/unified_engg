@@ -20,6 +20,8 @@ const ApproveLaborTickets = () => {
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(true);
 
+    
+
 
     useEffect(() => {
         setIsLoading(true);
@@ -102,6 +104,7 @@ const ApproveLaborTickets = () => {
             className: 'htCenter',
         }
     ]
+
 
     const render = () => {
         return (

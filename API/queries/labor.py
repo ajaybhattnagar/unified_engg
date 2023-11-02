@@ -7,7 +7,8 @@ labor_query = {
                         ,[CLOCK_IN] 
                         ,[DESCRIPTION]
                         ,[INDIRECT_CODE] ,[INDIRECT_ID]
-                        ,[UDF1] ,[UDF2] ,[UDF3] ,[UDF4]
+                        ,[UDF1] ,[UDF2] ,[UDF3] ,[UDF4],
+                        [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME]
                 )
                     VALUES
                         (GETDATE(), '{WORKORDER_TYPE}', '{WORKORDER_ID}', '{WORKORDER_LOT_ID}', '{WORKORDER_SPLIT_ID}', '{WORKORDER_SUB_ID}', '{OPERATION_SEQ_NO}'
@@ -15,7 +16,8 @@ labor_query = {
                         GETDATE(), 
                         '{DESCRIPTION}', 
                         '{INDIRECT_CODE}', '{INDIRECT_ID}',
-                        '{UDF1}', '{UDF2}', '{UDF3}', '{UDF4}'
+                        '{UDF1}', '{UDF2}', '{UDF3}', '{UDF4}',
+                        '{WORK_LOCATION}', '{REGULAR_TIME}', '{OVER_TIME}', '{DOUBLE_TIME}'
                         )
 """,
 
@@ -41,6 +43,26 @@ labor_query = {
 "EMPLOYEE_CHECK_FOR_ACTIVE_LABOR_TICKET": """SELECT TOP 1 * 
                                                 FROM [UNI_LABOR_TICKET]
                                                 WHERE EMPLOYEE_ID = '{EMP_ID}' AND CLOCK_OUT IS NULL
-                                                ORDER BY CREATE_DATE DESC"""
+                                                ORDER BY CREATE_DATE DESC""",
+
+"UPDATE_LABOR_TICEKT": """
+                        UPDATE UNI_LABOR_TICKET
+                        SET [CLOCK_IN] = '{CLOCK_IN}',
+                            [CLOCK_OUT] = '{CLOCK_OUT}',
+                            [HOURS_BREAK] = {HOURS_BREAK},
+                            [DESCRIPTION] = '{DESCRIPTION}',
+                            [UDF1] = '{UDF1}',
+                            [UDF2] = '{UDF2}',
+                            [UDF3] = '{UDF3}',
+                            [UDF4] = '{UDF4}',
+                            [APPROVED] = '{APPROVED}',
+                            [APPROVED_BY] = '{APPROVED_BY}',
+                            [APPROVED_AT] = '{APPROVED_AT}',
+                            [WORK_LOCATION] = '{WORK_LOCATION}',
+                            [REGULAR_TIME] = {REGULAR_TIME},
+                            [OVER_TIME] = {OVER_TIME},
+                            [DOUBLE_TIME] = {DOUBLE_TIME},
+                            [QA_NOTES] = '{QA_NOTES}'
+                        WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""" 
 
 }
