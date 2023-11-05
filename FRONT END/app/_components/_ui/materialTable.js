@@ -27,15 +27,7 @@ const MTable = (props) => {
     }, [props.data]);
 
     const on_change_table = () => {
-        console.log(data);
-        utils.updateLaborTickets(data)
-            .then((response) => {
-                console.log(response);
-                // setDataChanged(false);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        props.onChange(data)
     }
 
     return (

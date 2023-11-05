@@ -20,6 +20,8 @@ export const utils = {
   updateLaborTickets
 }
 
+
+
 function convertTimeStampToString(timeStamp) {
   if (timeStamp) {
     var date = new Date(timeStamp);
@@ -167,6 +169,7 @@ function exportExcel(array, fileName) {
 function getLaborTickets(from_date, to_date, employee_id, approved) {
   var response_status = 0;
   var url = appConstants.BASE_URL.concat(appConstants.GET_LABOR_TICKETS);
+
   return fetch(url, {
     method: "POST",
     headers: {
@@ -174,11 +177,12 @@ function getLaborTickets(from_date, to_date, employee_id, approved) {
       'x-access-token': localStorage.getItem('token')
     },
     body: JSON.stringify({
-      "TO_DATE": utils.convertTimeStampToDateForInputBox(to_date),
-      "FROM_DATE": utils.convertTimeStampToDateForInputBox(from_date),
+      "TO_DATE": to_date,
+      "FROM_DATE": from_date,
       "EMPLOYEE_ID": employee_id,
       "APPROVED": approved
     })
+
   })
     .then((res) => {
       if (res.status === 200) {
@@ -266,6 +270,7 @@ function updateLaborTickets(data) {
     })
     .catch((err) => console.error(err)); G
 }
+
 
 
 

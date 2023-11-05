@@ -28,6 +28,7 @@ const RecordsLabor = () => {
     const [selectedSplit, setSelectedSplit] = useState(0);
     const [selectedSub, setSelectedSub] = useState(0);
     const [selectedOperation, setSelectedOperation] = useState(null);
+    const [selectedResourceString, setSelectedResourceString] = useState('');
     const [selectedClockIn, setSelectedClockIn] = useState(utils.convertTimeStampToString(new Date()));
     const [selectedClockOut, setSelectedClockOut] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [qaNotes, setQaNotes] = useState('');
@@ -170,10 +171,11 @@ const RecordsLabor = () => {
                 "OPERATION_SEQ_NO": selectedOperation,
                 "RUN_TYPE": "R",
                 "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
-                "RESOURCE_ID": "CUTTING",
-                "DESCRIPTION": "SOME NOTES",
+                "RESOURCE_ID": selectedResourceString,
+                // "DESCRIPTION": "SOME NOTES",
                 "WORK_LOCATION": workLocationsOptions[selectedWorkLocation],
-                "WORK_TIME": workTimeOptions[selectedWorkTime]
+                "WORK_TIME": workTimeOptions[selectedWorkTime],
+                "QA_NOTES": qaNotes,
             })
         }
         fetch(url, request_object)
@@ -190,13 +192,13 @@ const RecordsLabor = () => {
             .then((data) => {
                 if (response_status === 200) {
                     alert("Labor Ticket Created Successfully!");
+                    window.location.reload();
                 } else {
                     alert(data.message);
                     return null;
                 }
             });
     }
-
 
     const recent_labor_tickets_render = () => {
         return (
@@ -235,7 +237,7 @@ const RecordsLabor = () => {
                     {
                         operationDetails && operationDetails.length > 0 ?
                             <div className="w-100 mt-3">
-                                <DropDown list={operationDetails} isMulti={false} prepareArray={false} placeholder={"Select Operation"} onSelect={(e) => setSelectedOperation(e.value)} />
+                                <DropDown list={operationDetails} isMulti={false} prepareArray={false} placeholder={"Select Operation"} onSelect={(e) => { setSelectedOperation(e.value), setSelectedResourceString(e.label) }} />
                             </div>
                             :
                             null

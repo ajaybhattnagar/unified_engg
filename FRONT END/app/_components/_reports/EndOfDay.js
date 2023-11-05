@@ -18,7 +18,7 @@ const EOD = () => {
     const [data, setData] = useState([]);
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     useEffect(() => {
@@ -26,6 +26,7 @@ const EOD = () => {
         if (!localStorage.getItem("token")) {
             navigate("/");
         }
+        setIsLoading(true);
         utils.getLaborTickets(selectedFromDate, selectedToDate, localStorage.getItem("EMPLOYEE_ID"), 'ALL')
             .then((response) => {
                 if (response.length > 0) {
@@ -41,6 +42,19 @@ const EOD = () => {
                 setIsLoading(false);
             });
     }, [selectedFromDate, selectedToDate]);
+
+
+    const update_labor_tickets = (data) => {
+        utils.updateLaborTickets(data)
+            .then((response) => {
+                alert(response.message);
+                setSelectedToDate((prev) => utils.convertTimeStampToDateForInputBox(prev));
+            })
+            .catch((error) => {
+                alert(error);
+                console.log(error);
+            });
+    }
 
     const columns = [
         {
@@ -98,6 +112,14 @@ const EOD = () => {
             readOnly: true
         },
         {
+            data: 'LAB_DESC',
+            type: 'text',
+        },
+        {
+            data: 'QA_NOTES',
+            type: 'text',
+        },
+        {
             data: 'APPROVED',
             type: 'checkbox',
             className: 'htCenter',
@@ -115,11 +137,16 @@ const EOD = () => {
                         <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
                     </div>
                     <div className="mx-auto">
-                        <MTable
-                            data={data}
-                            columnsTypes={columns}
-                            columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Description', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Approved']}
-                        />
+                        {
+                            isLoading ? <Loading />
+                                :
+                                <MTable
+                                    data={data}
+                                    columnsTypes={columns}
+                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Description', 'QA Notes', 'Approved']}
+                                    onChange={(e) => { update_labor_tickets(e) }}
+                                />
+                        }
                     </div>
                 </div>
 

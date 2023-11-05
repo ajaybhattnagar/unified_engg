@@ -8,21 +8,22 @@ labor_query = {
                         ,[DESCRIPTION]
                         ,[INDIRECT_CODE] ,[INDIRECT_ID]
                         ,[UDF1] ,[UDF2] ,[UDF3] ,[UDF4],
-                        [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME]
+                        [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME], [QA_NOTES]
                 )
                     VALUES
-                        (GETDATE(), '{WORKORDER_TYPE}', '{WORKORDER_ID}', '{WORKORDER_LOT_ID}', '{WORKORDER_SPLIT_ID}', '{WORKORDER_SUB_ID}', '{OPERATION_SEQ_NO}'
+                        (CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time'), 
+                        '{WORKORDER_TYPE}', '{WORKORDER_ID}', '{WORKORDER_LOT_ID}', '{WORKORDER_SPLIT_ID}', '{WORKORDER_SUB_ID}', '{OPERATION_SEQ_NO}'
                         ,'{RUN_TYPE}', '{RUN_TYPE_STRING}', '{EMP_ID}', '{RESOURCE_ID}',
-                        GETDATE(), 
+                        CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time'), 
                         '{DESCRIPTION}', 
                         '{INDIRECT_CODE}', '{INDIRECT_ID}',
                         '{UDF1}', '{UDF2}', '{UDF3}', '{UDF4}',
-                        '{WORK_LOCATION}', '{REGULAR_TIME}', '{OVER_TIME}', '{DOUBLE_TIME}'
+                        '{WORK_LOCATION}', '{REGULAR_TIME}', '{OVER_TIME}', '{DOUBLE_TIME}', '{QA_NOTES}'
                         )
 """,
 
 "STOP_LABOR_TICKET": """UPDATE UNI_LABOR_TICKET
-                            SET [CLOCK_OUT] = GETDATE()
+                            SET [CLOCK_OUT] = CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time')
                             WHERE TRANSACTION_ID = '{TRANSACTION_ID}' """,
 
 "GET_WORKORDER_OPERATION_DETAILS": """SELECT OP.SEQUENCE_NO AS [value], OP.RESOURCE_ID AS [label]
