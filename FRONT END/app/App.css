@@ -19,3 +19,7 @@ h3 {
     vertical-align: middle;
 }
 
+:root {
+    font-size: 95%; /* (62.5/100) * 16px = 10px */
+    
+  }

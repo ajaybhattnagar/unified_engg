@@ -46,6 +46,18 @@ labor_query = {
                                                 WHERE EMPLOYEE_ID = '{EMP_ID}' AND CLOCK_OUT IS NULL
                                                 ORDER BY CREATE_DATE DESC""",
 
+"EMPLOYEE_KPIS": """
+                    SELECT (SELECT SUM(HOURS_WORKED)
+                    FROM UNI_LABOR_TICKET
+                    WHERE EMPLOYEE_ID = '{EMP_ID}'  AND TYPE = 'R' AND DATEPART(ISO_WEEK, TRANSACTION_DATE) = DATEPART(ISO_WEEK, GETDATE())
+                    GROUP BY EMPLOYEE_ID)  AS [TOTAL_WEEK_HRS], 
+                    (SELECT SUM(HOURS_WORKED) AS [TOTAL_TODAY_HRS]
+                    FROM UNI_LABOR_TICKET
+                    WHERE EMPLOYEE_ID = '{EMP_ID}' AND TYPE = 'R' AND  CONVERT(DATE, TRANSACTION_DATE) =  CONVERT(DATE, GETDATE())
+                    GROUP BY EMPLOYEE_ID) AS [TOTAL_TODAY_HRS]
+                    """,
+
+
 "UPDATE_LABOR_TICEKT": """
                         UPDATE UNI_LABOR_TICKET
                         SET [CLOCK_IN] = '{CLOCK_IN}',

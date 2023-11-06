@@ -6,5 +6,13 @@
     "sqlpassword": "COPOW05",
 
     "jwt_secret": "secret",
-    "bcrypt_salt": "salt"
+    "bcrypt_salt": "salt",
+
+
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": 587,
+    "smtp_secure": true,
+    "smtp_user": "noreply.visuify@gmail.com",
+    "smtp_password": "bulz ycvh wsek lzzq"
+
 }

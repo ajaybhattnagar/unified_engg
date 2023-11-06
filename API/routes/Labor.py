@@ -11,6 +11,7 @@ import jwt
 import pyodbc 
 from queries.details import details_query
 from queries.labor import labor_query
+from utils import send_email
 
 labor_blueprint = Blueprint('labor_blueprint', __name__)
 
@@ -241,6 +242,9 @@ def employee_scan_details(connection_string, username):
         query_string_check_active_labor = labor_query['EMPLOYEE_CHECK_FOR_ACTIVE_LABOR_TICKET'].format(
             EMP_ID = content['EMP_ID'],
         )
+        query_string_employee_kpi = labor_query['EMPLOYEE_KPIS'].format(
+            EMP_ID = content['EMP_ID'],
+        )
         try:
             cnxn = pyodbc.connect(connection_string)
             sql = cnxn.cursor()
@@ -250,10 +254,14 @@ def employee_scan_details(connection_string, username):
 
             sql.execute(query_string_check_active_labor)
             active_labor_ticket = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+            sql.execute(query_string_employee_kpi)
+            employee_kpis = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
             
             dict_results = {
                 'last_30_tickets': results,
-                'active_labor_ticket': active_labor_ticket
+                'active_labor_ticket': active_labor_ticket,
+                'employee_kpis': employee_kpis,
             }
 
             sql.close()
@@ -331,5 +339,35 @@ def update_labor_tickets(connection_string, username):
     
     return jsonify({"message": "Ticket Updated Successfully!"}), 200
 
-    
-      
+
+@labor_blueprint.route("/api/v1/email/test_smtp", methods=['POST'])
+@token_required
+def test_smtp(connection_string, username):
+    content = request.get_json(silent=True)
+    try:
+        if 'EMAIL' not in content:
+            return jsonify({"message": "EMAIL is required"}), 401
+        else:
+            email = content['EMAIL'],
+            email = ''.join(email)
+
+        if 'SUBJECT' not in content:
+            return jsonify({"message": "SUBJECT is required"}), 401
+        else:
+            subject = content['SUBJECT'],
+            subject = ''.join(subject)
+
+        if 'MESSAGE' not in content:
+            return jsonify({"message": "MESSAGE is required"}), 401
+        else:
+            message = content['MESSAGE'],
+            message = ''.join(message)
+
+        try:
+            send_email(email, subject, message)
+            return jsonify({"message": "Email Sent Successfully!"}), 200
+        except Exception as e:
+            return jsonify({"message": str(e)}), 401
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401

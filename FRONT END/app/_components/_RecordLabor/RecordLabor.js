@@ -10,6 +10,7 @@ import { columns } from '../../_columns/parcelsDisplayColumns';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
+import KpiCard from "../_ui/kpiCard";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -34,6 +35,8 @@ const RecordsLabor = () => {
     const [qaNotes, setQaNotes] = useState('');
     const [notifyQACheckbox, setNotifyQACheckbox] = useState(false);
 
+    const [employeeKpi, setEmployeeKpi] = useState([]);
+
     const workLocationsOptions = ['On-site', 'Off-site', 'Remote'];
     const [selectedWorkLocation, setSelectedWorkLocation] = useState('');
     const workTimeOptions = ['Regular Time', 'Over Time', 'Double Time'];
@@ -44,7 +47,6 @@ const RecordsLabor = () => {
         if (!localStorage.getItem("token")) {
             navigate("/");
         }
-
         var response_status = 0;
         var url = appConstants.BASE_URL.concat(appConstants.GET_EMPLOYEE_SCAN_DETAILS);
         const request_object = {
@@ -73,6 +75,7 @@ const RecordsLabor = () => {
                     setIsLoading(false);
                     data.last_30_tickets && data.last_30_tickets.length > 0 ? setRecentLaborTickets(data.last_30_tickets) : null;
                     data.active_labor_ticket && data.active_labor_ticket.length > 0 ? setActiveLaborTicket(data.active_labor_ticket) : null;
+                    data.employee_kpis && data.employee_kpis.length > 0 ? setEmployeeKpi(data.employee_kpis) : null;
 
                     if (data.active_labor_ticket && data.active_labor_ticket.length > 0) {
                         setTransactionId(data.active_labor_ticket[0].TRANSACTION_ID)
@@ -97,6 +100,19 @@ const RecordsLabor = () => {
 
 
     }, []);
+
+    useEffect(() => {
+        var timer = setInterval(() => {
+            if (transactionId == null || transactionId === 0 || transactionId == undefined) {
+                setSelectedClockIn(utils.convertTimeStampToString(new Date()))
+            } else {
+                setSelectedClockOut(utils.convertTimeStampToString(new Date()))
+            }
+
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [transactionId]);
 
     useEffect(() => {
         if (selectedRecentWorkOrder) {
@@ -306,7 +322,6 @@ const RecordsLabor = () => {
             });
     }
 
-
     const create_labor_tickets_render_stop = () => {
 
         return (
@@ -315,7 +330,7 @@ const RecordsLabor = () => {
 
                 <div className="container">
                     <div className='w-100 d-flex justify-content-around'>
-                        <div className='mt-3'><Input type={'text'} placeholder="Search" value={transactionId} text='Transaction ID' disabled={true} /></div>
+                        <div className='mt-3 mr-1'><Input type={'text'} placeholder="Search" value={transactionId} text='ID' disabled={true} /></div>
                         <div className='mt-3'><Input type={'text'} placeholder="Search" value={selectedWorkOrder} text='Work Order' disabled={true} /></div>
                     </div>
                     <div className="d-flex justify-content-around">
@@ -342,6 +357,22 @@ const RecordsLabor = () => {
         );
     }
 
+    const render_kpi = () => {
+        return (
+            <div className="">
+                {
+                    employeeKpi && employeeKpi.length > 0 ?
+                        <div className="d-flex flex-wrap justify-content-around">
+                            <KpiCard header={'Today'} value={employeeKpi[0].TOTAL_TODAY_HRS + ' Hours'} />
+                            <KpiCard header={'This Week'} value={employeeKpi[0].TOTAL_WEEK_HRS + ' Hours'} />
+                        </div>
+                        :
+                        null
+                }
+            </div>
+        )
+    }
+
     return (
         <div>
             <NavigationBar />
@@ -355,6 +386,7 @@ const RecordsLabor = () => {
                                 <div className="container">
                                     {create_labor_tickets_render_start()}
                                     {recent_labor_tickets_render()}
+                                    {render_kpi()}
                                 </div>
                         }
                     </div>
