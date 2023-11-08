@@ -11,6 +11,7 @@ import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import KpiCard from "../_ui/kpiCard";
+import WebCam from "../_ui/webCam.js";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -373,6 +374,14 @@ const RecordsLabor = () => {
         )
     }
 
+    const render_camera = () => {
+        return (
+            <div>
+                <WebCam />
+            </div >
+        )
+    }
+
     return (
         <div>
             <NavigationBar />
@@ -387,6 +396,7 @@ const RecordsLabor = () => {
                                     {create_labor_tickets_render_start()}
                                     {recent_labor_tickets_render()}
                                     {render_kpi()}
+                                    {render_camera()}
                                 </div>
                         }
                     </div>

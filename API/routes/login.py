@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, json, Blueprint
+from flask import Flask, request, jsonify, json, Blueprint, Response
 from flask_cors import CORS
 from functools import wraps
 import pandas as pd
@@ -6,6 +6,11 @@ import numpy as np
 import bcrypt
 import jwt
 import pyodbc 
+import simplejson
+import datetime
+from datetime import date
+
+from queries.users import user_query
 
 login_blueprint = Blueprint('login_blueprint', __name__)
 
@@ -58,6 +63,16 @@ def login():
     connection_string = connectionString.format(configData['sqldriver'], configData['sqlserver'], database, username, password) 
     try:
         cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(user_query['ADD_USER_IF_NOT_EXIST'].format(EMP_ID=username))
+        
+        sql.execute(user_query['GET_USER_DETAILS'].format(EMP_ID=username))
+        user_details = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        # Update column create date to string
+        user_details[0]['CREATE_DATE'] = str(user_details[0]['CREATE_DATE'])
+        
+        cnxn.commit()
+        sql.close()
     except Exception as e:
         return jsonify({"message": str(e)}), 401  
     
@@ -65,9 +80,9 @@ def login():
         "USERNAME": username,
         "DATABASE": database,
         "CONNECTION_STRING": connection_string,
+        "USER_DETAILS": user_details[0],
     }
-
-
+    
     try:
         encoded_jwt = jwt.encode(user_object, configData['jwt_secret'], algorithm="HS256")
         return jsonify({"message": "Login Successfull.", "token": encoded_jwt}), 200

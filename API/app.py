@@ -6,15 +6,10 @@ import numpy as np
 import bcrypt
 import jwt
 
-# from utils import check_user, get_user_details
-
-
-# from schedule.Parcels import update_payoff_interest_accured
-
 
 from routes.login import login_blueprint
 from routes.Labor import labor_blueprint
-from routes.Details import details_blueprint
+from routes.details import details_blueprint
 
 
 app = Flask(__name__)
