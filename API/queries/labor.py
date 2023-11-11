@@ -8,7 +8,8 @@ labor_query = {
                         ,[DESCRIPTION]
                         ,[INDIRECT_CODE] ,[INDIRECT_ID]
                         ,[UDF1] ,[UDF2] ,[UDF3] ,[UDF4],
-                        [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME], [QA_NOTES]
+                        [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME], [QA_NOTES], 
+                        [IMAGE_PATH]
                 )
                     VALUES
                         (CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time'), 
@@ -18,8 +19,11 @@ labor_query = {
                         '{DESCRIPTION}', 
                         '{INDIRECT_CODE}', '{INDIRECT_ID}',
                         '{UDF1}', '{UDF2}', '{UDF3}', '{UDF4}',
-                        '{WORK_LOCATION}', '{REGULAR_TIME}', '{OVER_TIME}', '{DOUBLE_TIME}', '{QA_NOTES}'
-                        )
+                        '{WORK_LOCATION}', '{REGULAR_TIME}', '{OVER_TIME}', '{DOUBLE_TIME}', '{QA_NOTES}',
+                        '{IMAGE_PATH}'
+                        );
+
+                SELECT SCOPE_IDENTITY() as id;
 """,
 
 "STOP_LABOR_TICKET": """UPDATE UNI_LABOR_TICKET
@@ -36,10 +40,9 @@ labor_query = {
 
 
 
-"EMPLOYEE_LAST_30_LABOR_TICKETS": """SELECT TOP 30 * 
+"EMPLOYEE_LAST_30_LABOR_TICKETS": """SELECT DISTINCT TOP 30 WORKORDER_BASE_ID, WORKORDER_LOT_ID, WORKORDER_SPLIT_ID, WORKORDER_SUB_ID
                                     FROM [UNI_LABOR_TICKET]
-                                    WHERE EMPLOYEE_ID = '{EMP_ID}' 
-                                    ORDER BY CREATE_DATE DESC """,
+                                    WHERE EMPLOYEE_ID = '{EMP_ID}' """,
 
 "EMPLOYEE_CHECK_FOR_ACTIVE_LABOR_TICKET": """SELECT TOP 1 * 
                                                 FROM [UNI_LABOR_TICKET]
@@ -76,6 +79,10 @@ labor_query = {
                             [OVER_TIME] = {OVER_TIME},
                             [DOUBLE_TIME] = {DOUBLE_TIME},
                             [QA_NOTES] = '{QA_NOTES}'
-                        WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""" 
+                        WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""" ,
+
+"UPDATE_LABOR_TICKET_DOCUMENT": """ UPDATE UNI_LABOR_TICKET
+                                    SET [DOCUMENT_PATH] = '{DOCUMENT_PATH}'
+                                    WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""",
 
 }

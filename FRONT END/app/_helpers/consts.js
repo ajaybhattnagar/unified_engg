@@ -13,4 +13,6 @@ export const appConstants = {
     START_LABOR_TICKET: 'api/v1/labor/create_labor_tickets',
     STOP_LABOR_TICKET: 'api/v1/labor/stop_labor_tickets',
     UPDATE_LABOR_TICKETS: 'api/v1/labor/update_labor_tickets',
+
+    UPLOAD_DOCUMENTS: 'api/v1/labor/upload_document',
 };

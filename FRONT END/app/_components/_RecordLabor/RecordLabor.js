@@ -6,12 +6,11 @@ import MTable from "../_ui/materialTable";
 import Input from "../_ui/input";
 import NavigationBar from '../_navigation/NavigationBar';
 import './RecordLabor.css';
-import { columns } from '../../_columns/parcelsDisplayColumns';
-import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import KpiCard from "../_ui/kpiCard";
 import WebCam from "../_ui/webCam.js";
+import SingleFileUploader from "../_ui/uploadFile.js";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -42,6 +41,13 @@ const RecordsLabor = () => {
     const [selectedWorkLocation, setSelectedWorkLocation] = useState('');
     const workTimeOptions = ['Regular Time', 'Over Time', 'Double Time'];
     const [selectedWorkTime, setSelectedWorkTime] = useState('');
+
+    const uploadTypeOptions = ['Document', 'Camera'];
+    const [selectedUploadType, setSelectedUploadType] = useState(0);
+
+    const [clickedImage, setClickedImage] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+
 
     useEffect(() => {
         setIsLoading(true);
@@ -193,6 +199,7 @@ const RecordsLabor = () => {
                 "WORK_LOCATION": workLocationsOptions[selectedWorkLocation],
                 "WORK_TIME": workTimeOptions[selectedWorkTime],
                 "QA_NOTES": qaNotes,
+                "CLICKED_IMAGE": clickedImage,
             })
         }
         fetch(url, request_object)
@@ -208,6 +215,15 @@ const RecordsLabor = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
+
+                    // Upload Documents if any
+                    if (selectedFile && selectedFile !== null && data.data != 0 && data.data != null) {
+                        utils.uploadDocuments(selectedFile, data.data)
+                            .then((response) => {
+                                console.log(response);
+                            })
+                    }
+
                     alert("Labor Ticket Created Successfully!");
                     window.location.reload();
                 } else {
@@ -215,6 +231,7 @@ const RecordsLabor = () => {
                     return null;
                 }
             });
+
     }
 
     const recent_labor_tickets_render = () => {
@@ -235,6 +252,9 @@ const RecordsLabor = () => {
     }
     const on_change_work_time = (i) => {
         setSelectedWorkTime((prev) => (i === prev ? null : i));
+    }
+    const on_change_upload_type = (i) => {
+        setSelectedUploadType((prev) => (i === prev ? null : i));
     }
 
     const create_labor_tickets_render_start = () => {
@@ -374,10 +394,27 @@ const RecordsLabor = () => {
         )
     }
 
-    const render_camera = () => {
+    const render_file_camera = () => {
         return (
             <div>
-                <WebCam />
+                <div>
+                    {uploadTypeOptions.map((o, i) => (
+                        <label className="mt-3 ml-3" key={i}>
+                            <input className="mr-1"
+                                type="checkbox"
+                                checked={i === selectedUploadType}
+                                onChange={() => on_change_upload_type(i)}
+                            />
+                            {o}
+                        </label>
+                    ))}
+                </div>
+                {
+                    selectedUploadType === 0 ?
+                        <SingleFileUploader onClick={(e) => setSelectedFile(e)} />
+                        :
+                        <WebCam onClick={(e) => setClickedImage(e)} />
+                }
             </div >
         )
     }
@@ -396,7 +433,7 @@ const RecordsLabor = () => {
                                     {create_labor_tickets_render_start()}
                                     {recent_labor_tickets_render()}
                                     {render_kpi()}
-                                    {render_camera()}
+                                    {render_file_camera()}
                                 </div>
                         }
                     </div>

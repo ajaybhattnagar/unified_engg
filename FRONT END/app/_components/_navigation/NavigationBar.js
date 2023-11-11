@@ -22,12 +22,12 @@ class NavigationBar extends Component {
         return (
             <Navbar collapseOnSelect bg="light" expand="lg" data-bs-theme="dark">
                 <Navbar.Brand href="/">
-                    <img
+                    {/* <img
                         alt='logo'
                         src={Brand}
                         height='40'
                         className='d-inline-block align-top'
-                    />
+                    /> */}
                 </Navbar.Brand>
 
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
