@@ -41,6 +41,10 @@ class NavigationBar extends Component {
                         <NavDropdown title="Reports" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
                         </NavDropdown>
+
+                        <NavDropdown title="Admin" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/users">Users</NavDropdown.Item>
+                        </NavDropdown>
                     </Nav>
                     <Nav>
                         <Nav.Link className='hover-underline-animation' as={Link} to="/preferences"><strong>Preferences</strong></Nav.Link>

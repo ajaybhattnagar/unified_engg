@@ -41,12 +41,15 @@ def token_required(f):
         try:
            # decode the token to obtain user public_id
             data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
-            current_user = get_user_details(data['EMAIL'])
-        except:
+            username = str(data['USERNAME'])
+            data = str(data['CONNECTION_STRING'])
+        except Exception as e:
+            print (e)
             return jsonify({"message": "Invalid token!"}), 401
          # Return the user information attached to the token
-        return f(current_user, *args, **kwargs)
+        return f(data, username , *args, **kwargs)
     return decorator
+
 
 
 # Login API
@@ -90,4 +93,24 @@ def login():
         return jsonify({"message": str(e)}), 401
 
     
+# Get all users API
+@login_blueprint.route("/api/v1/users", methods=['GET'])
+@token_required
+def get_all_users(connection_string, username):
+    try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(user_query['GET_ALL_USERS'])
+        users = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        sql.close()
+
+        response = Response(
+                    response=simplejson.dumps(users, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
 

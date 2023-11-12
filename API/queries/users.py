@@ -7,6 +7,8 @@ user_query = {
                                 
     "GET_USER_DETAILS": """SELECT * FROM [UNI_USERS] WHERE ID = '{EMP_ID}'""",
 
+    "GET_ALL_USERS": """SELECT * FROM [UNI_USERS]""",
+
     
     
 }

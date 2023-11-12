@@ -15,4 +15,6 @@ export const appConstants = {
     UPDATE_LABOR_TICKETS: 'api/v1/labor/update_labor_tickets',
 
     UPLOAD_DOCUMENTS: 'api/v1/labor/upload_document',
+
+    GET_ALL_USERS: 'api/v1/users'
 };

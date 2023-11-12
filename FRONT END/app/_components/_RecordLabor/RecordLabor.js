@@ -173,7 +173,7 @@ const RecordsLabor = () => {
     }, [selectedWorkOrder]);
 
     const create_labor_ticket = () => {
-        if (selectedWorkOrder === null || selectedWorkOrder === '' || selectedOperation === null || selectedOperation === '' || selectedWorkLocation === '' || selectedWorkTime === '') {
+        if (selectedWorkOrder === null || selectedWorkOrder === '' || selectedOperation === null || selectedOperation === '') {
             alert('Please fill all the fields!');
             return;
         }

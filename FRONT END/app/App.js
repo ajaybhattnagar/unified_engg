@@ -10,6 +10,7 @@ import EOD from './_components/_reports/EndOfDay';
 import ApproveLaborTickets from './_components/_approve_labor_tickets/ApproveLaborTickets';
 import Preferences from './_components/_preferences/Preferences';
 import { BrowserRouter as Router, Routes , Route } from 'react-router-dom';
+import Users from './_components/_users/Users.js';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
 				<Route path='/approve_labor_tickets' element={<ApproveLaborTickets />} />
 				<Route path='/reports/eod' element={<EOD />} />
 				<Route path='/preferences' element={<Preferences />} />
+				<Route path='/users' element={<Users />} />
 			</Routes>
 		</Router>
 	);
