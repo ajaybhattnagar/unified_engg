@@ -20,8 +20,6 @@ const isBrowser = typeof window !== `undefined`
 const Users = () => {
     const navigate = useNavigate();
     const [data, setData] = useState([]);
-    const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
-    const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
 
 
@@ -32,7 +30,7 @@ const Users = () => {
         }
         setIsLoading(true);
         var response_status = 0;
-        var url = appConstants.BASE_URL.concat(appConstants.GET_ALL_USERS);
+        var url = appConstants.BASE_URL.concat(appConstants.USERS);
         const request_object = {
             method: "GET",
             headers: {
@@ -53,7 +51,16 @@ const Users = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
-                    console.log(data);
+
+                    data.forEach((item) => {
+                        item.ADMIN = item.ADMIN === '1' ? true : false;
+                        item.DASHBOARD = item.DASHBOARD === '1' ? true : false;
+                        item.SUPER_ADMIN = item.SUPER_ADMIN === '1' ? true : false;
+                        item.ALLOWED_WORKING_LOCATION = item.ALLOWED_WORKING_LOCATION === '1' ? true : false;
+                        item.ALLOWED_WORKING_TIME = item.ALLOWED_WORKING_TIME === '1' ? true : false;
+                        item.ALLOWED_APPROVE_PAGE = item.ALLOWED_APPROVE_PAGE === '1' ? true : false;
+                        item.ALLOWED_EDIT_LABOR_TICKET = item.ALLOWED_EDIT_LABOR_TICKET === '1' ? true : false;
+                    })
                     setData(data)
                     setIsLoading(false);
                 } else {
@@ -61,23 +68,11 @@ const Users = () => {
                     return null;
                 }
             })
-            .catch((err) => { console.error(err); setIsLoading(false);});
+            .catch((err) => { console.error(err); setIsLoading(false); });
 
 
     }, []);
 
-
-    const update_labor_tickets = (data) => {
-        utils.updateLaborTickets(data)
-            .then((response) => {
-                alert(response.message);
-                setSelectedToDate((prev) => utils.convertTimeStampToDateForInputBox(prev));
-            })
-            .catch((error) => {
-                alert(error);
-                console.log(error);
-            });
-    }
 
     const columns = [
         {
@@ -93,49 +88,81 @@ const Users = () => {
         {
             data: 'FIRST_NAME',
             type: 'text',
-            readOnly: true
         },
         {
             data: 'LAST_NAME',
             type: 'text',
-            readOnly: true
         },
         {
             data: 'DASHBOARD',
-            type: 'text',
-            readOnly: true
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
             data: 'ADMIN',
-            type: 'text',
-            readOnly: true
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
             data: 'SUPER_ADMIN',
-            type: 'text',
-            readOnly: true
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
             data: 'ALLOWED_WORKING_LOCATION',
-            type: 'text',
-            readOnly: true
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
             data: 'ALLOWED_WORKING_TIME',
-            type: 'text',
-            readOnly: true
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
             data: 'ALLOWED_APPROVE_PAGE',
-            type: 'text',
-            readOnly: true
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
             data: 'ALLOWED_EDIT_LABOR_TICKETS',
-            type: 'text',
-            readOnly: true
+            type: 'checkbox',
+            className: 'htCenter',
         },
     ]
+
+    const update_users = (data) => {
+        var response_status = 0;
+        var url = appConstants.BASE_URL.concat(appConstants.USERS);
+        const request_object = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'x-access-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify(data)
+        }
+        fetch(url, request_object)
+            .then((res) => {
+                if (res.status === 200) {
+                    response_status = 200;
+                    return res.json();
+                }
+                else {
+                    response_status = 400;
+                    alert(res.json());
+                }
+            })
+            .then((data) => {
+                if (response_status === 200) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                    return null;
+                }
+            })
+            .catch((err) => { console.error(err); });
+    }
 
     const render = () => {
         return (
@@ -149,8 +176,9 @@ const Users = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'First Name', 'Last Name', 'Dashboard', 'Admin', 'Super Admin', 'Allowed Working Location', 'Allowed Working Time', 'Allowed Approve Page', 'Allowed Edit Labor Tickets']}
-                                    onChange={(e) => { update_labor_tickets(e) }}
+                                    columnsHeaders={['ROWID', 'ID', 'First Name', 'Last Name', 'Dashboard', 'Admin', 'Super Admin', 'Allowed Working Location', 'Allowed Working Time',
+                                        'Allowed Approve Page', 'Allowed Edit Labor Tickets']}
+                                    onChange={(e) => { update_users(e) }}
                                 />
                         }
                     </div>

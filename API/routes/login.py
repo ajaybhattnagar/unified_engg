@@ -94,23 +94,64 @@ def login():
 
     
 # Get all users API
-@login_blueprint.route("/api/v1/users", methods=['GET'])
+@login_blueprint.route("/api/v1/users", methods=['GET', 'POST'])
 @token_required
-def get_all_users(connection_string, username):
-    try:
-        cnxn = pyodbc.connect(connection_string)
-        sql = cnxn.cursor()
-        sql.execute(user_query['GET_ALL_USERS'])
-        users = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
-        sql.close()
+def users(connection_string, username):
+    if request.method == 'GET':
+        try:
+            cnxn = pyodbc.connect(connection_string)
+            sql = cnxn.cursor()
+            sql.execute(user_query['GET_ALL_USERS'])
+            users = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+            sql.close()
 
-        response = Response(
-                    response=simplejson.dumps(users, ignore_nan=True,default=datetime.datetime.isoformat),
-                    mimetype='application/json'
+            response = Response(
+                        response=simplejson.dumps(users, ignore_nan=True,default=datetime.datetime.isoformat),
+                        mimetype='application/json'
+                    )
+            response.headers['content-type'] = 'application/json'
+            return response, 200
+
+        except Exception as e:
+            return jsonify({"message": str(e)}), 401
+    
+    if request.method == 'POST':
+        content = request.get_json(silent=True)
+        # Convert content to dataframe
+        df = pd.DataFrame(content)
+        df = df.replace(np.nan, '', regex=True)
+
+        # Reset index
+        df.reset_index(inplace=True)
+        
+        for i in range(len(df)):
+            try:
+                cnxn = pyodbc.connect(connection_string)
+                sql = cnxn.cursor()
+                user_query_string = user_query['UPDATE_USERS'].format(
+                    FIRST_NAME = df['FIRST_NAME'][i],
+                    LAST_NAME = df['LAST_NAME'][i],
+                    DASHBOARD = 1 if df['DASHBOARD'][i] == True else 0,
+                    ADMIN = 1 if df['ADMIN'][i] == True else 0,
+                    SUPER_ADMIN = 1 if df['SUPER_ADMIN'][i] == True else 0,
+                    ALLOWED_WORKING_LOCATION = 1 if df['ALLOWED_WORKING_LOCATION'][i] == True else 0,
+                    ALLOWED_WORKING_TIME = 1 if df['ALLOWED_WORKING_TIME'][i] == True else 0,
+                    ALLOWED_APPROVE_PAGE = 1 if df['ALLOWED_APPROVE_PAGE'][i] == True else 0,
+                    ALLOWED_EDIT_LABOR_TICKET =  1 if df['ALLOWED_EDIT_LABOR_TICKET'][i] == True else 0,
+                    ROWID = df['ROWID'][i]
                 )
-        response.headers['content-type'] = 'application/json'
-        return response, 200
 
-    except Exception as e:
-        return jsonify({"message": str(e)}), 401
+                sql.execute(user_query_string)
+                cnxn.commit()
+                sql.close()
+
+            except Exception as e:
+                print (e)
+                return jsonify({"message": str(e)}), 401
+            
+        return jsonify({"message": "Users updated successfully."}), 200
+
+
+        
+
 

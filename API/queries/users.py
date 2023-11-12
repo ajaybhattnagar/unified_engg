@@ -9,6 +9,19 @@ user_query = {
 
     "GET_ALL_USERS": """SELECT * FROM [UNI_USERS]""",
 
+    "UPDATE_USERS": """UPDATE [dbo].[UNI_USERS]
+                        SET [FIRST_NAME] = '{FIRST_NAME}'
+                            ,[LAST_NAME] = '{LAST_NAME}'
+                            ,[DASHBOARD] = {DASHBOARD}
+                            ,[ADMIN] = {ADMIN}
+                            ,[SUPER_ADMIN] = {SUPER_ADMIN}
+                            ,[ALLOWED_WORKING_LOCATION] = {ALLOWED_WORKING_LOCATION}
+                            ,[ALLOWED_WORKING_TIME] = {ALLOWED_WORKING_TIME}
+                            ,[ALLOWED_APPROVE_PAGE] = {ALLOWED_APPROVE_PAGE}
+                            ,[ALLOWED_EDIT_LABOR_TICKET] = {ALLOWED_EDIT_LABOR_TICKET}
+                        WHERE ROWID = {ROWID}
+                        """
+
     
     
 }

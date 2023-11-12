@@ -84,7 +84,9 @@ def get_labor_tickets(connection_string, username):
                 approved = ''.join(approved)
                 approved = "AND APPROVED = '{}'".format(approved)
 
-        query_string = details_query['GET_LABOR_TICKETS'].format(FROM_DATE=from_date, TO_DATE = to_date, EMP_ID_QUERY_STRING=employee_id, APPROVED_QUERY_STRING=approved)
+        query_string = details_query['GET_LABOR_TICKETS'].format(FROM_DATE=from_date, 
+                                                                 TO_DATE = to_date, EMP_ID_QUERY_STRING=employee_id, 
+                                                                 APPROVED_QUERY_STRING=approved)
 
         cnxn = pyodbc.connect(connection_string)
         sql = cnxn.cursor()
