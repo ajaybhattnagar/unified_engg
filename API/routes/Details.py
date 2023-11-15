@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, json, Blueprint, Response
 from flask_cors import CORS
-import mysql.connector
 from functools import wraps
 import pandas as pd
 import numpy as np
