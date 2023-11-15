@@ -6,7 +6,6 @@ import MTable from "../_ui/materialTable.js";
 import Input from "../_ui/input.js";
 import NavigationBar from '../_navigation/NavigationBar.js';
 import './Users.css';
-import { columns } from '../../_columns/parcelsDisplayColumns.js';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown.js";
 import Loading from "../_ui/loading.js";

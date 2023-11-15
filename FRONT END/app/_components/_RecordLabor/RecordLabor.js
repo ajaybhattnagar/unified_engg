@@ -48,6 +48,9 @@ const RecordsLabor = () => {
     const [clickedImage, setClickedImage] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
 
+    const isWorkLocationAllowed = useRef(false);
+    const isWorkTimeAllowed = useRef(false);
+
 
     useEffect(() => {
         setIsLoading(true);
@@ -105,6 +108,19 @@ const RecordsLabor = () => {
             .catch((err) => console.error(err));
 
 
+
+    }, []);
+
+    useEffect(() => {
+        var access_rights = utils.decodeJwt();
+        access_rights = access_rights.USER_DETAILS
+
+        if (access_rights.ALLOWED_WORKING_LOCATION === '1') {
+            isWorkLocationAllowed.current = true;
+        }
+        if (access_rights.ALLOWED_WORKING_TIME === '1') {
+            isWorkTimeAllowed.current = true;
+        }
 
     }, []);
 
@@ -297,6 +313,7 @@ const RecordsLabor = () => {
                                 {workLocationsOptions.map((o, i) => (
                                     <label className="mt-3 ml-3" key={i}>
                                         <input className="mr-1"
+                                            disabled={!isWorkLocationAllowed.current}
                                             type="checkbox"
                                             checked={i === selectedWorkLocation}
                                             onChange={() => on_change_work_location(i)}
@@ -310,6 +327,7 @@ const RecordsLabor = () => {
                                 {workTimeOptions.map((o, i) => (
                                     <label className="mt-1 ml-3" key={i}>
                                         <input className="mr-1"
+                                            disabled={!isWorkTimeAllowed.current}
                                             type="checkbox"
                                             checked={i === selectedWorkTime}
                                             onChange={() => on_change_work_time(i)}

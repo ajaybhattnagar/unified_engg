@@ -4,11 +4,15 @@ import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import Brand from '../../_images/brand_png.png'
 import './NavigationBar.css'
 import { Link, withRouter } from 'react-router-dom';
+import { utils } from '../../_helpers/utils';
 
 class NavigationBar extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            access_rights: {}
+        }
         this.handleSignOut = this.handleSignOut.bind(this);
     }
 
@@ -18,31 +22,43 @@ class NavigationBar extends Component {
         // this.props.history.push("/");
     };
 
+    componentDidMount() {
+        var access_rights = utils.decodeJwt();
+        access_rights = access_rights.USER_DETAILS
+        this.setState({ access_rights: access_rights })
+    }
+
     render() {
+        const { access_rights } = this.state;
+        var dashboard = access_rights.SUPER_ADMIN === '1' || access_rights.ADMIN === '1' || access_rights.DASHBOARD === '1' ? false : true;
+        var approve_labor_tickets = access_rights.SUPER_ADMIN === '1' || access_rights.ADMIN === '1' || access_rights.ALLOWED_APPROVE_PAGE === '1' ? false : true;
+        var super_admin = access_rights.SUPER_ADMIN === '1' ? false : true;
+
         return (
             <Navbar collapseOnSelect bg="light" expand="lg" data-bs-theme="dark">
                 <Navbar.Brand href="/">
-                    {/* <img
+                    <img
                         alt='logo'
                         src={Brand}
                         height='40'
                         className='d-inline-block align-top'
-                    /> */}
+                    />
                 </Navbar.Brand>
 
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
 
                     <Nav className="mr-auto">
-                        <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
+
+                        <Nav.Link disabled={dashboard} className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
                         <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
-                        <Nav.Link className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
+                        <Nav.Link disabled={approve_labor_tickets}  className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
 
                         <NavDropdown title="Reports" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
                         </NavDropdown>
 
-                        <NavDropdown title="Admin" id="basic-nav-dropdown">
+                        <NavDropdown disabled={super_admin} title="Admin" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/users">Users</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>

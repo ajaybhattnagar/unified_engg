@@ -6,7 +6,6 @@ import MTable from "../_ui/materialTable";
 import Input from "../_ui/input";
 import NavigationBar from '../_navigation/NavigationBar';
 import './Reports.css';
-import { columns } from '../../_columns/parcelsDisplayColumns';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
@@ -20,6 +19,19 @@ const EOD = () => {
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
 
+    const isAllowedEditLaborTicket = useRef(false);
+
+
+    useEffect(() => {
+        var access_rights = utils.decodeJwt();
+        access_rights = access_rights.USER_DETAILS
+
+        if (access_rights.ALLOWED_EDIT_LABOR_TICKET === '1') {
+            isAllowedEditLaborTicket.current = true;
+        }
+
+
+    }, []);
 
     useEffect(() => {
         setIsLoading(true);
@@ -45,15 +57,20 @@ const EOD = () => {
 
 
     const update_labor_tickets = (data) => {
-        utils.updateLaborTickets(data)
-            .then((response) => {
-                alert(response.message);
-                setSelectedToDate((prev) => utils.convertTimeStampToDateForInputBox(prev));
-            })
-            .catch((error) => {
-                alert(error);
-                console.log(error);
-            });
+        if (isAllowedEditLaborTicket.current) {
+            utils.updateLaborTickets(data)
+                .then((response) => {
+                    alert(response.message);
+                    setSelectedToDate((prev) => utils.convertTimeStampToDateForInputBox(prev));
+                })
+                .catch((error) => {
+                    alert(error);
+                    console.log(error);
+                });
+        } else {
+            alert('You do not have the permission edit labor tickets');
+        }
+
     }
 
     const columns = [

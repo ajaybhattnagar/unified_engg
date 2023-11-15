@@ -85,3 +85,30 @@ def site_warehouse(connection_string):
     except Exception as e:
         return jsonify({"message": str(e)}), 401
 
+@details_blueprint.route("/api/v1/details/dashboard", methods=['GET'])
+@token_required
+def dashboard(connection_string):
+    cnxn = pyodbc.connect(connection_string)
+    # Add notes to a parcel   
+    try:
+        sql = cnxn.cursor()
+        sql.execute(details_query['GET_ACTIVE_LABOR_TICKETS'])
+        active_labor = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        sql.execute(details_query['GET_ALL_EMPLOYEE_HOURS_KPI'])
+        employee_kpi = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        sql.close()
+
+        response_dict = {
+            "ACTIVE_LABOR_TICKETS": active_labor,
+            "EMPLOYEE_KPI": employee_kpi
+        }
+        response = Response(
+                    response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401

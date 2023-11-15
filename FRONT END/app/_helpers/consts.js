@@ -16,5 +16,7 @@ export const appConstants = {
 
     UPLOAD_DOCUMENTS: 'api/v1/labor/upload_document',
 
-    USERS: 'api/v1/users' //POST to update, GET to get all users
+    USERS: 'api/v1/users', //POST to update, GET to get all users
+
+    DASHBOARD: 'api/v1/details/dashboard',
 };

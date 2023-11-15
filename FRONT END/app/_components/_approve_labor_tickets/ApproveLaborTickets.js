@@ -6,7 +6,6 @@ import MTable from "../_ui/materialTable";
 import Input from "../_ui/input";
 import NavigationBar from '../_navigation/NavigationBar';
 import './ApproveLaborTickets.css';
-import { columns } from '../../_columns/parcelsDisplayColumns';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
