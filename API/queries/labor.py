@@ -85,4 +85,8 @@ labor_query = {
                                     SET [DOCUMENT_PATH] = '{DOCUMENT_PATH}'
                                     WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""",
 
+"GET_ALL_WORKORDER_LIST": """SELECT BASE_ID AS 'label', BASE_ID AS 'value'
+                            FROM WORK_ORDER 
+                            WHERE TYPE = 'W' AND STATUS IN ('R', 'F', 'U')"""
+
 }

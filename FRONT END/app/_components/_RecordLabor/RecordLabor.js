@@ -18,6 +18,7 @@ const RecordsLabor = () => {
     const navigate = useNavigate();
     const [recentLaborTickets, setRecentLaborTickets] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isOperationLoading, setOperationIsLoading] = useState(false);
 
     const [selectedRecentWorkOrder, setSelectedRecentWorkOrder] = useState(null);
     const [operationDetails, setOperationDetails] = useState(null);
@@ -35,6 +36,8 @@ const RecordsLabor = () => {
     const [qaNotes, setQaNotes] = useState('');
     const [notifyQACheckbox, setNotifyQACheckbox] = useState(false);
 
+    const [workorderList, setWorkorderList] = useState([]);
+
     const [employeeKpi, setEmployeeKpi] = useState([]);
 
     const workLocationsOptions = ['On-site', 'Off-site', 'Remote'];
@@ -50,7 +53,6 @@ const RecordsLabor = () => {
 
     const isWorkLocationAllowed = useRef(false);
     const isWorkTimeAllowed = useRef(false);
-
 
     useEffect(() => {
         setIsLoading(true);
@@ -97,6 +99,8 @@ const RecordsLabor = () => {
                         setSelectedClockIn(utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN))
                         setSelectedClockOut(utils.convertTimeStampToString(new Date()))
                     }
+
+                    data.all_workorders_list && data.all_workorders_list.length > 0 ? setWorkorderList(data.all_workorders_list) : null;
 
 
                 } else {
@@ -148,7 +152,8 @@ const RecordsLabor = () => {
     }, [selectedRecentWorkOrder]);
 
     useEffect(() => {
-        if (selectedWorkOrder != '' && selectedLot != '' && selectedSplit != '' && selectedSub != '') {
+        if (selectedWorkOrder !== '' && selectedLot !== '' && selectedSplit !== '' && selectedSub !== '') {
+            setOperationIsLoading(true);
             var response_status = 0;
             var url = appConstants.BASE_URL.concat(appConstants.GET_WORKORDER_OPERATION_DETAILS);
             const request_object = {
@@ -179,8 +184,10 @@ const RecordsLabor = () => {
                 .then((data) => {
                     if (response_status === 200) {
                         setOperationDetails(data)
+                        setOperationIsLoading(false);
                     } else {
                         alert(data.message);
+                        setOperationIsLoading(false);
                         return null;
                     }
                 })
@@ -280,7 +287,8 @@ const RecordsLabor = () => {
 
                 <div className="container">
                     <div className='w-100'>
-                        <Input type={'text'} placeholder="Search" value={selectedWorkOrder} text='Work Order' onChange={(e) => setSelectedWorkOrder(e)} />
+                        <DropDown list={workorderList} isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder} onSelect={(e) => { setSelectedWorkOrder(e.value) }} />
+
                     </div>
                     <div className="d-flex justify-content-around">
                         <div className='w-25 mt-3'><Input type={'number'} placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} /> </div>
@@ -288,12 +296,15 @@ const RecordsLabor = () => {
                         <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
                     </div>
                     {
-                        operationDetails && operationDetails.length > 0 ?
-                            <div className="w-100 mt-3">
-                                <DropDown list={operationDetails} isMulti={false} prepareArray={false} placeholder={"Select Operation"} onSelect={(e) => { setSelectedOperation(e.value), setSelectedResourceString(e.label) }} />
-                            </div>
+                        !isOperationLoading ?
+                            operationDetails && operationDetails.length > 0 ?
+                                <div className="w-100 mt-3">
+                                    <DropDown list={operationDetails} isMulti={false} prepareArray={false} placeholder={"Select Operation"} onSelect={(e) => { setSelectedOperation(e.value), setSelectedResourceString(e.label) }} />
+                                </div>
+                                :
+                                null
                             :
-                            null
+                            <div className="mt-1"><Loading /></div>
                     }
 
                     <div className="w-100 mt-3">

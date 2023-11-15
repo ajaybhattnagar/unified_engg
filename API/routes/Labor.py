@@ -279,11 +279,15 @@ def employee_scan_details(connection_string, username):
 
             sql.execute(query_string_employee_kpi)
             employee_kpis = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+            sql.execute(labor_query['GET_ALL_WORKORDER_LIST'])
+            all_workorders_list = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
             
             dict_results = {
                 'last_30_tickets': results,
                 'active_labor_ticket': active_labor_ticket,
                 'employee_kpis': employee_kpis,
+                'all_workorders_list': all_workorders_list
             }
 
             sql.close()

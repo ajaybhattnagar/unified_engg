@@ -7,6 +7,7 @@ import NavigationBar from '../_navigation/NavigationBar';
 import './Home.css';
 import Loading from "../_ui/loading";
 import MTable from "../_ui/materialTable";
+import { Card } from "react-bootstrap";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -55,7 +56,7 @@ const Home = () => {
             .catch((err) => console.error(err));
     }, []);
 
-    const columns = [
+    const columns_active_labor_tickets = [
         {
             data: 'WORKORDER_BASE_ID',
             type: 'text',
@@ -80,21 +81,40 @@ const Home = () => {
             data: 'CLOCK_IN_DATE',
             type: 'date',
             dateFormat: 'YYYY-MM-DD',
-            correctFormat: true
+            correctFormat: true,
+            readOnly: true
         },
         {
             data: 'CLOCK_IN_TIME',
             type: 'time',
             timeFormat: 'HH:mm:ss',
             correctFormat: true,
+            readOnly: true
         },
         {
-            data: 'QA_NOTES',
+            data: 'WORK_LOCATION',
             type: 'text',
+            readOnly: true
         },
     ]
-    console.log(data.ACTIVE_LABOR_TICKETS);
 
+    const columns_employee_kpi = [
+        {
+            data: 'EMPLOYEE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'TOTAL_TODAY_HRS',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'TOTAL_WEEK_HRS',
+            type: 'text',
+            readOnly: true
+        }
+    ]
 
     const render = () => {
         return (
@@ -105,14 +125,34 @@ const Home = () => {
                         {
                             isLoading ? <Loading />
                                 :
-                                data && data.ACTIVE_LABOR_TICKETS && data.ACTIVE_LABOR_TICKETS.length === 0 ? <h1>No active labor tickets</h1>
-                                    :
-                                    <MTable
-                                        data={data.ACTIVE_LABOR_TICKETS}
-                                        columnsTypes={columns}
-                                        // columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Description', 'QA Notes', 'Approved']}
-                                        // onChange={(e) => { update_labor_tickets(e) }}
-                                    />
+                                <div className="row">
+                                    <div className="col-12 col-md-6">
+                                        <Card bg='primary' text='white'>
+                                            <Card.Header><h5>Active Labor Tickets</h5></Card.Header>
+                                            <Card.Body>
+                                                <MTable
+                                                    data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
+                                                    columnsTypes={columns_active_labor_tickets}
+                                                    columnsHeaders={['Work order', 'Lot Split Sub', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Work Location']}
+                                                // onChange={(e) => { update_labor_tickets(e) }}
+                                                />
+                                            </Card.Body>
+                                        </Card>
+                                    </div>
+                                    <div className="col-12 col-md-6">
+                                        <Card bg='primary' text='white'>
+                                            <Card.Header><h5>Hours</h5></Card.Header>
+                                            <Card.Body>
+                                                <MTable
+                                                    data={data.EMPLOYEE_KPI ? data.EMPLOYEE_KPI : []}
+                                                    columnsTypes={columns_employee_kpi}
+                                                    columnsHeaders={['Name', 'Hours today', 'Hours current week']}
+                                                // onChange={(e) => { update_labor_tickets(e) }}
+                                                />
+                                            </Card.Body>
+                                        </Card>
+                                    </div>
+                                </div>
                         }
                     </div>
                 </div>
