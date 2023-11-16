@@ -1,5 +1,5 @@
 {
-    "sqlserver": "ajay-server",
+    "sqlserver": "localhost",
     "sqldriver": "SQL Server",
     "sqldatabase": "VISUIFY",
     "sqluser": "SYSADM",

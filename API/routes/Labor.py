@@ -177,6 +177,11 @@ def create_labor_tickets(connection_string, username):
                     UDF2 = content['UDF2'] if 'UDF2' in content else '',
                     UDF3 = content['UDF3'] if 'UDF3' in content else '',
                     UDF4 = content['UDF4'] if 'UDF4' in content else '',
+                    WORK_LOCATION = content['WORK_LOCATION'] if 'WORK_LOCATION' in content else '',
+                    REGULAR_TIME = 0,
+                    OVER_TIME = 0,
+                    DOUBLE_TIME = 0,
+                    QA_NOTES = content['QA_NOTES'] if 'QA_NOTES' in content else '',
                     IMAGE_PATH = file_path,
                     )       
 

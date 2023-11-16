@@ -103,6 +103,16 @@ const ApproveLaborTickets = () => {
             type: 'numeric',
         },
         {
+            data: 'INDIRECT_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'HOURS_BREAK',
+            type: 'numeric',
+            readOnly: true
+        },
+        {
             data: 'WORK_LOCATION',
             type: 'dropdown',
             source: ['On-site', 'Off-site', 'Remote']
@@ -159,7 +169,7 @@ const ApproveLaborTickets = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Description', 'Customer ID',
-                                        'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Location', 'Regular Time', 'Over Time', 'Double Time', 'Approved']}
+                                        'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Indirect' , 'Break hours', 'Location', 'Regular Time', 'Over Time', 'Double Time', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />
                         }

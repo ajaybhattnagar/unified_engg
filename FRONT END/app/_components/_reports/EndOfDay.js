@@ -129,6 +129,16 @@ const EOD = () => {
             readOnly: true
         },
         {
+            data: 'INDIRECT_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'HOURS_BREAK',
+            type: 'numeric',
+            readOnly: true
+        },
+        {
             data: 'LAB_DESC',
             type: 'text',
         },
@@ -160,7 +170,8 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Description', 'QA Notes', 'Approved']}
+                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 
+                                     'Indirect', 'Hours break', 'Description', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />
                         }

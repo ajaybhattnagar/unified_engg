@@ -11,6 +11,7 @@ import Loading from "../_ui/loading";
 import KpiCard from "../_ui/kpiCard";
 import WebCam from "../_ui/webCam.js";
 import SingleFileUploader from "../_ui/uploadFile.js";
+import IndirectLaborTicket from "../_ui/indirectLaborTicket.js";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -53,6 +54,8 @@ const RecordsLabor = () => {
 
     const isWorkLocationAllowed = useRef(false);
     const isWorkTimeAllowed = useRef(false);
+
+    const [isLaborTicketRun, setIsLaborTicketRun] = useState(true);
 
     useEffect(() => {
         setIsLoading(true);
@@ -260,9 +263,9 @@ const RecordsLabor = () => {
     const recent_labor_tickets_render = () => {
         return (
             <div className="d-flex flex-wrap">
-                {recentLaborTickets.map((ticket) => (
-                    <div className="m-2" key={ticket.TRANSACTION_ID}>
-                        <p className="badge badge-light cusor-hand w-100 align-middle" onClick={(e) => setSelectedRecentWorkOrder(ticket)} ><h5>{ticket.WORKORDER_BASE_ID}</h5></p>
+                {recentLaborTickets.map((ticket, index) => (
+                    <div className="m-2" key={index}>
+                        <p className="badge badge-light cusor-hand w-100 align-middle" style={{ fontSize: '1.25em', fontWeight: 'bold' }} onClick={(e) => setSelectedRecentWorkOrder(ticket)} >{ticket.WORKORDER_BASE_ID}</p>
                         {/* add other ticket properties as needed */}
                     </div>
                 ))}
@@ -458,18 +461,39 @@ const RecordsLabor = () => {
                             activeLaborTicket && activeLaborTicket.length > 0 ?
                                 create_labor_tickets_render_stop()
                                 :
-                                <div className="container">
-                                    {create_labor_tickets_render_start()}
-                                    {recent_labor_tickets_render()}
-                                    {render_kpi()}
-                                    {render_file_camera()}
+                                <div>
+                                    <div className="container d-flex justify-content-around mt-2">
+                                        <ul className="nav nav-pills">
+                                            <li className="nav-item">
+                                                <a className={isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(true) }}>Run</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a className={!isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(false) }}>Indirect</a>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                    {
+                                        isLaborTicketRun ?
+                                            <div className="container">
+                                                {create_labor_tickets_render_start()}
+                                                {recent_labor_tickets_render()}
+                                                {render_kpi()}
+                                                {render_file_camera()}
+                                            </div>
+                                            :
+                                            <div className="container">
+                                                <IndirectLaborTicket />
+                                            </div>
+                                    }
+
                                 </div>
                         }
                     </div>
                     :
                     <Loading />
             }
-        </div>
+        </div >
     );
 };
 

@@ -26,6 +26,7 @@ labor_query = {
                 SELECT SCOPE_IDENTITY() as id;
 """,
 
+
 "STOP_LABOR_TICKET": """UPDATE UNI_LABOR_TICKET
                             SET [CLOCK_OUT] = CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time')
                             WHERE TRANSACTION_ID = '{TRANSACTION_ID}' """,
@@ -41,8 +42,9 @@ labor_query = {
 
 
 "EMPLOYEE_LAST_30_LABOR_TICKETS": """SELECT DISTINCT TOP 30 WORKORDER_BASE_ID, WORKORDER_LOT_ID, WORKORDER_SPLIT_ID, WORKORDER_SUB_ID
-                                    FROM [UNI_LABOR_TICKET]
-                                    WHERE EMPLOYEE_ID = '{EMP_ID}' """,
+                                    FROM [UNI_LABOR_TICKET] LAB
+                                    LEFT JOIN WORK_ORDER WO ON WO.BASE_ID = LAB.WORKORDER_BASE_ID AND WO.LOT_ID = LAB.WORKORDER_LOT_ID AND WO.SPLIT_ID = LAB.WORKORDER_SPLIT_ID AND WO.SUB_ID = LAB.WORKORDER_SUB_ID AND WO.TYPE = 'W'
+                                    WHERE LAB.TYPE = 'R' AND WO.STATUS IN ('R', 'F', 'U') AND EMPLOYEE_ID = '{EMP_ID}' """,
 
 "EMPLOYEE_CHECK_FOR_ACTIVE_LABOR_TICKET": """SELECT TOP 1 * 
                                                 FROM [UNI_LABOR_TICKET]
@@ -50,15 +52,10 @@ labor_query = {
                                                 ORDER BY CREATE_DATE DESC""",
 
 "EMPLOYEE_KPIS": """
-                    SELECT (SELECT SUM(HOURS_WORKED)
-                    FROM UNI_LABOR_TICKET
-                    WHERE EMPLOYEE_ID = '{EMP_ID}'  AND TYPE = 'R' AND DATEPART(ISO_WEEK, TRANSACTION_DATE) = DATEPART(ISO_WEEK, GETDATE())
-                    GROUP BY EMPLOYEE_ID)  AS [TOTAL_WEEK_HRS], 
-                    (SELECT SUM(HOURS_WORKED) AS [TOTAL_TODAY_HRS]
-                    FROM UNI_LABOR_TICKET
-                    WHERE EMPLOYEE_ID = '{EMP_ID}' AND TYPE = 'R' AND  CONVERT(DATE, TRANSACTION_DATE) =  CONVERT(DATE, GETDATE())
-                    GROUP BY EMPLOYEE_ID) AS [TOTAL_TODAY_HRS]
-                    """,
+                    SELECT 
+                    ISNULL((SELECT SUM(HOURS_WORKED) FROM UNI_LABOR_TICKET WHERE EMPLOYEE_ID = '{EMP_ID}'  AND TYPE = 'R' AND DATEPART(ISO_WEEK, TRANSACTION_DATE) = DATEPART(ISO_WEEK, GETDATE()) GROUP BY EMPLOYEE_ID),0)  AS [TOTAL_WEEK_HRS], 
+                    ISNULL((SELECT SUM(HOURS_WORKED) FROM UNI_LABOR_TICKET WHERE EMPLOYEE_ID = '{EMP_ID}' AND TYPE = 'R' AND  CONVERT(DATE, TRANSACTION_DATE) =  CONVERT(DATE, GETDATE()) GROUP BY EMPLOYEE_ID),0) AS [TOTAL_TODAY_HRS]
+                                        """,
 
 
 "UPDATE_LABOR_TICEKT": """
