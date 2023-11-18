@@ -1,6 +1,7 @@
 import { ExportToCsv } from 'export-to-csv';
 import { appConstants } from '../_helpers/consts';
 import * as XLSX from 'xlsx';
+import { json } from 'react-router-dom';
 
 
 export const utils = {
@@ -19,6 +20,7 @@ export const utils = {
   stopLaborTickets,
   updateLaborTickets,
   uploadDocuments,
+  uploadImage,
 
   decodeJwt,
   open_document
@@ -284,6 +286,38 @@ function uploadDocuments(data, tranaction_id) {
       'x-access-token': localStorage.getItem('token')
     },
     body: data
+  }
+  return fetch(url, request_object)
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        return data
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err));
+}
+
+function uploadImage(data, tranaction_id) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.UPLOAD_IMAGES).concat('/').concat(tranaction_id);
+  const request_object = {
+    method: "POST",
+    headers: {
+      'x-access-token': localStorage.getItem('token')
+    },
+    body: json.stringify({ CLICKED_IMAGE: data })
   }
   return fetch(url, request_object)
     .then((res) => {

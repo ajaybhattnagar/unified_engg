@@ -16,6 +16,7 @@ export const appConstants = {
     UPDATE_LABOR_TICKETS: 'api/v1/labor/update_labor_tickets',
 
     UPLOAD_DOCUMENTS: 'api/v1/labor/upload_document',
+    UPLOAD_IMAGES: 'api/v1/labor/upload_image',
 
     USERS: 'api/v1/users', //POST to update, GET to get all users
 

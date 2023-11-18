@@ -8,8 +8,7 @@ labor_query = {
                         ,[DESCRIPTION]
                         ,[INDIRECT_CODE] ,[INDIRECT_ID]
                         ,[UDF1] ,[UDF2] ,[UDF3] ,[UDF4],
-                        [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME], [QA_NOTES], 
-                        [IMAGE_PATH]
+                        [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME], [QA_NOTES]
                 )
                     VALUES
                         (CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time'), 
@@ -19,8 +18,7 @@ labor_query = {
                         '{DESCRIPTION}', 
                         '{INDIRECT_CODE}', '{INDIRECT_ID}',
                         '{UDF1}', '{UDF2}', '{UDF3}', '{UDF4}',
-                        '{WORK_LOCATION}', '{REGULAR_TIME}', '{OVER_TIME}', '{DOUBLE_TIME}', '{QA_NOTES}',
-                        '{IMAGE_PATH}'
+                        '{WORK_LOCATION}', '{REGULAR_TIME}', '{OVER_TIME}', '{DOUBLE_TIME}', '{QA_NOTES}'
                         );
 
                 SELECT SCOPE_IDENTITY() as id;
@@ -84,6 +82,14 @@ labor_query = {
 
 "GET_ALL_WORKORDER_LIST": """SELECT BASE_ID AS 'label', BASE_ID AS 'value'
                             FROM WORK_ORDER 
-                            WHERE TYPE = 'W' AND STATUS IN ('R', 'F', 'U')"""
+                            WHERE TYPE = 'W' AND STATUS IN ('R', 'F', 'U')""",
+
+"INSERT_INTO_DOCUMENTS": """
+                        INSERT INTO [dbo].[UNI_DOCUMENTS]
+                                ([TRANSACTION_ID], [TYPE], [FILE_PATH])
+                            VALUES
+                                ({TRANSACTION_ID}, '{TYPE}', '{FILE_PATH}' )""",                   
+
+
 
 }

@@ -227,7 +227,6 @@ const RecordsLabor = () => {
                 "WORK_LOCATION": workLocationsOptions[selectedWorkLocation] || 'On-site',
                 "WORK_TIME": workTimeOptions[selectedWorkTime] || 'Regular Time',
                 "QA_NOTES": qaNotes,
-                "CLICKED_IMAGE": clickedImage,
                 "NOTIFY_QA": notifyQACheckbox ? 'Y' : 'N'
             })
         }
@@ -248,6 +247,14 @@ const RecordsLabor = () => {
                     // Upload Documents if any
                     if (selectedFile && selectedFile !== null && data.data != 0 && data.data != null) {
                         utils.uploadDocuments(selectedFile, data.data)
+                            .then((response) => {
+                                console.log(response);
+                            })
+                    }
+
+                    // Upload Images if any
+                    if (clickedImage && clickedImage !== null && data.data != 0 && data.data != null) {
+                        utils.uploadImages(clickedImage, data.data)
                             .then((response) => {
                                 console.log(response);
                             })
@@ -363,7 +370,7 @@ const RecordsLabor = () => {
                                 !isLaborTicketLoading ?
                                     <button className="btn btn-success mt-1" onClick={(e) => create_labor_ticket()}>Start</button>
                                     :
-                                    <button className="btn btn-success mt-1" disabled><Loading/></button>
+                                    <button className="btn btn-success mt-1" disabled><Loading /></button>
                             }
                         </div>
                     </div>
@@ -376,7 +383,7 @@ const RecordsLabor = () => {
         setIsLoading(true);
         utils.stopLaborTickets(transactionId)
             .then((response) => {
-                alert(response.message);
+                // alert(response.message);
                 window.location.reload();
             })
             .catch((error) => {

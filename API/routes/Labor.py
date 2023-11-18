@@ -112,19 +112,6 @@ def create_labor_tickets(connection_string, username):
     content = request.get_json(silent=True)
 
     try:
-        if 'CLICKED_IMAGE' in content and content['CLICKED_IMAGE'] != ''and content['CLICKED_IMAGE'] != None and content['CLICKED_IMAGE'] != 'null':
-            clicked_image = content['CLICKED_IMAGE']
-            file_name = str(content['WORKORDER_ID'])  + '_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            file_path = configData['save_images_to_folder'] + str(file_name) + '.png'
-            save_base64_to_image(clicked_image, file_name)
-        else:
-            file_path = ''
-    except Exception as e:
-        file_path = ''
-        pass
-        print(e)
-
-    try:
         if 'RUN_TYPE' not in content:
             return jsonify({"message": "RUN_TYPE is required"}), 401
 
@@ -154,7 +141,6 @@ def create_labor_tickets(connection_string, username):
                     OVER_TIME = 1 if 'over' in content['WORK_TIME'].lower() else 0,
                     DOUBLE_TIME = 1 if 'double' in content['WORK_TIME'].lower() else 0,
                     QA_NOTES = content['QA_NOTES'] if 'QA_NOTES' in content else '',
-                    IMAGE_PATH = file_path,
                     )
             
         if content['RUN_TYPE'] == 'I':
@@ -182,7 +168,6 @@ def create_labor_tickets(connection_string, username):
                     OVER_TIME = 0,
                     DOUBLE_TIME = 0,
                     QA_NOTES = content['QA_NOTES'] if 'QA_NOTES' in content else '',
-                    IMAGE_PATH = file_path,
                     )       
 
         try:
@@ -427,10 +412,12 @@ def upload_document(connection_string, username, trans_id):
                 f.save(os.path.join(configData['save_documents_to_folder'], filename))
 
                 # Update database with file path
-                query_string = labor_query['UPDATE_LABOR_TICKET_DOCUMENT'].format(
-                    DOCUMENT_PATH = file_path,
+                query_string = labor_query['INSERT_INTO_DOCUMENTS'].format(
+                    TYPE = 'DOCUMENT',
+                    FILE_PATH = file_path,
                     TRANSACTION_ID = transaction_id,
                 )
+                print (query_string)
                 try:
                     cnxn = pyodbc.connect(connection_string)
                     sql = cnxn.cursor()
@@ -446,3 +433,42 @@ def upload_document(connection_string, username, trans_id):
                 return jsonify({'message': 'File type not allowed'}), 400
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+
+
+
+@labor_blueprint.route("/api/v1/labor/upload_image/<trans_id>", methods=['POST'])
+@token_required
+def upload_image(connection_string, username, trans_id):
+    content = request.get_json(silent=True)
+    try:
+        if 'CLICKED_IMAGE' in content and content['CLICKED_IMAGE'] != ''and content['CLICKED_IMAGE'] != None and content['CLICKED_IMAGE'] != 'null':
+            clicked_image = content['CLICKED_IMAGE']
+            file_name = str(content['WORKORDER_ID'])  + '_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+            file_path = configData['save_images_to_folder'] + str(file_name) + '.png'
+            save_base64_to_image(clicked_image, file_name)
+        else:
+            file_path = ''
+    except Exception as e:
+        file_path = ''
+        pass
+        print(e)
+
+    query_string = labor_query['INSERT_INTO_DOCUMENTS'].format(
+                    TYPE = 'IMAGE',
+                    FILE_PATH = file_path,
+                    TRANSACTION_ID = trans_id,
+                )
+    try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        cnxn.commit()
+        sql.close()
+        return jsonify({'message': 'Image uploaded successfully'}), 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+
+
+
+
