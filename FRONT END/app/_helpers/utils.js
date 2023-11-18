@@ -20,7 +20,8 @@ export const utils = {
   updateLaborTickets,
   uploadDocuments,
 
-  decodeJwt
+  decodeJwt,
+  open_document
 }
 
 
@@ -341,6 +342,24 @@ function decodeJwt() {
   } else {
     return null;
   }
+}
+
+function open_document(path) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-access-token': localStorage.getItem("token") },
+    body: JSON.stringify({ FILE_PATH: path })
+  };
+  fetch(appConstants.BASE_URL.concat(appConstants.GET_DOCUMENTS_WITH_PATH), requestOptions)
+    .then(res => res.blob())
+    .then((blob) => {
+      var file = window.URL.createObjectURL(blob);
+      window.open(file, "_blank")
+    })
+    .catch(error => {
+      alert(error)
+      console.log(error)
+    })
 }
 
 

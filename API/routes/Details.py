@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, json, Blueprint, Response
+from flask import Flask, request, jsonify, json, Blueprint, Response, send_file
 from flask_cors import CORS
 from functools import wraps
 import pandas as pd
@@ -132,5 +132,18 @@ def labor_tickets(connection_string, username, trans_id):
                 )
         response.headers['content-type'] = 'application/json'
         return response, 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+    
+
+# Return a file 
+@details_blueprint.route("/api/v1/details/get_files", methods=['POST'])
+@token_required
+def files(connection_string, username):
+    content = request.get_json(silent=True)
+    FILE_PATH = content['FILE_PATH']
+    # Add notes to a parcel   
+    try:
+        return send_file(FILE_PATH, as_attachment=True)
     except Exception as e:
         return jsonify({"message": str(e)}), 401

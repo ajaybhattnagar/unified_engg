@@ -6,7 +6,6 @@ import Input from "../_ui/input.js";
 import NavigationBar from '../_navigation/NavigationBar.js';
 import './TicketDetails.css';
 import { Button } from "react-bootstrap";
-import DropDown from "../_ui/dropDown.js";
 import Loading from "../_ui/loading.js";
 
 const isBrowser = typeof window !== `undefined`
@@ -49,7 +48,11 @@ const TicketDetails = () => {
             });
 
     }, []);
-    console.log(data);
+
+    const open_document = (path) => {
+        utils.open_document(path);
+    }
+
 
     const render = () => {
 
@@ -87,7 +90,7 @@ const TicketDetails = () => {
                                                                 <td>{data.RESOURCE_ID}</td>
                                                                 <td>{data.EMPLOYEE_ID}</td>
                                                                 <td>{data.CLOCK_IN_DATE} {data.CLOCK_IN_TIME}</td>
-                                                                <td>{data.HOURS_WORKED_HRS.toFixed(2)}</td>
+                                                                <td>{data.HOURS_WORKED_HRS ? data.HOURS_WORKED_HRS.toFixed(2) : null}</td>
                                                                 <td>{data.QA_NOTES}</td>
                                                             </tr>
                                                         </tbody>
@@ -99,14 +102,14 @@ const TicketDetails = () => {
                                                     {
                                                         data.IMAGE_PATH ?
                                                             <div className="mr-2">
-                                                                <Button variant="primary" onClick={() => { window.open(data.IMAGE_PATH, "_blank") }}>Image</Button>
+                                                                <Button variant="primary" onClick={() => { open_document(data.IMAGE_PATH) }}>Image</Button>
                                                             </div>
                                                             : null
                                                     }
                                                     {
                                                         data.DOCUMENT_PATH ?
                                                             <div className="">
-                                                                <Button variant="primary" onClick={() => { window.open(data.IMAGE_PATH, "_blank") }}>Document</Button>
+                                                                <Button variant="primary" onClick={() => { open_document(data.DOCUMENT_PATH) }}>Document</Button>
                                                             </div>
                                                             :
                                                             null

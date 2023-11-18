@@ -24,6 +24,6 @@
                           "doc", "docx", "xls", "xlsx", "ppt", "pptx", "csv", "zip", "rar", "mp4",
                           "mp3", "wav", "avi", "mkv", "flv", "mov", "wmv"],
 
-    "deployment_url_front_end": "http:\\\\localhost:8080\\"
+    "deployment_url_front_end": "http://localhost:8080"
 
 }

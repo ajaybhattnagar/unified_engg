@@ -18,7 +18,7 @@ def send_email(email, subject, transaction_id):
         msg['To'] = email
         msg['Subject'] = subject
 
-        url_ticket = 'http://ocalhost:8080/ticket_details?transaction_id={transaction_id}'.format(transaction_id=transaction_id)
+        url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_id={TRANSACTION_ID}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], TRANSACTION_ID=transaction_id)
         # Add HTML content
         html_content = """
         <html>

@@ -68,6 +68,11 @@ const Home = () => {
             readOnly: true
         },
         {
+            data: 'INDIRECT_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
             data: 'DESCRIPTION',
             type: 'text',
             readOnly: true
@@ -126,20 +131,20 @@ const Home = () => {
                             isLoading ? <Loading />
                                 :
                                 <div className="row">
-                                    <div className="col-12 col-md-6">
+                                    <div className="col-12 col-md-8">
                                         <Card bg='primary' text='white'>
                                             <Card.Header><h5>Active Labor Tickets</h5></Card.Header>
                                             <Card.Body>
                                                 <MTable
                                                     data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
                                                     columnsTypes={columns_active_labor_tickets}
-                                                    columnsHeaders={['Work order', 'Lot Split Sub', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Work Location']}
+                                                    columnsHeaders={['Work order', 'Lot Split Sub', 'Indirect', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Work Location']}
                                                 // onChange={(e) => { update_labor_tickets(e) }}
                                                 />
                                             </Card.Body>
                                         </Card>
                                     </div>
-                                    <div className="col-12 col-md-6">
+                                    <div className="col-12 col-md-4">
                                         <Card bg='primary' text='white'>
                                             <Card.Header><h5>Hours</h5></Card.Header>
                                             <Card.Body>
