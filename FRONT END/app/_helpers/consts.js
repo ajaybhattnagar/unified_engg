@@ -20,4 +20,6 @@ export const appConstants = {
     USERS: 'api/v1/users', //POST to update, GET to get all users
 
     DASHBOARD: 'api/v1/details/dashboard',
+
+    GET_LABOR_TICKET_DETAIL_BY_ID: 'api/v1/details/labor_ticket/',  
 };

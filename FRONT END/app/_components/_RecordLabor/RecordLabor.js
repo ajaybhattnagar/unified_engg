@@ -20,6 +20,7 @@ const RecordsLabor = () => {
     const [recentLaborTickets, setRecentLaborTickets] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isOperationLoading, setOperationIsLoading] = useState(false);
+    const [isLaborTicketLoading, setLaborTicketIsLoading] = useState(false);
 
     const [selectedRecentWorkOrder, setSelectedRecentWorkOrder] = useState(null);
     const [operationDetails, setOperationDetails] = useState(null);
@@ -203,6 +204,7 @@ const RecordsLabor = () => {
             alert('Please fill all the fields!');
             return;
         }
+        setLaborTicketIsLoading(true);
         var response_status = 0;
         var url = appConstants.BASE_URL.concat(appConstants.START_LABOR_TICKET);
         const request_object = {
@@ -222,10 +224,11 @@ const RecordsLabor = () => {
                 "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
                 "RESOURCE_ID": selectedResourceString,
                 // "DESCRIPTION": "SOME NOTES",
-                "WORK_LOCATION": workLocationsOptions[selectedWorkLocation],
-                "WORK_TIME": workTimeOptions[selectedWorkTime],
+                "WORK_LOCATION": workLocationsOptions[selectedWorkLocation] || 'On-site',
+                "WORK_TIME": workTimeOptions[selectedWorkTime] || 'Regular Time',
                 "QA_NOTES": qaNotes,
                 "CLICKED_IMAGE": clickedImage,
+                "NOTIFY_QA": notifyQACheckbox ? 'Y' : 'N'
             })
         }
         fetch(url, request_object)
@@ -251,9 +254,11 @@ const RecordsLabor = () => {
                     }
 
                     alert("Labor Ticket Created Successfully!");
+                    setLaborTicketIsLoading(false);
                     window.location.reload();
                 } else {
                     alert(data.message);
+                    setLaborTicketIsLoading(false);
                     return null;
                 }
             });
@@ -354,7 +359,12 @@ const RecordsLabor = () => {
 
 
                         <div className="d-flex flex-column justify-content-end">
-                            <button className="btn btn-success mt-1" onClick={(e) => create_labor_ticket()}>Start</button>
+                            {
+                                !isLaborTicketLoading ?
+                                    <button className="btn btn-success mt-1" onClick={(e) => create_labor_ticket()}>Start</button>
+                                    :
+                                    <button className="btn btn-success mt-1" disabled><Loading/></button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -416,8 +426,8 @@ const RecordsLabor = () => {
                 {
                     employeeKpi && employeeKpi.length > 0 ?
                         <div className="d-flex flex-wrap justify-content-around">
-                            <KpiCard header={'Today'} value={employeeKpi[0].TOTAL_TODAY_HRS + ' Hours'} />
-                            <KpiCard header={'This Week'} value={employeeKpi[0].TOTAL_WEEK_HRS + ' Hours'} />
+                            <KpiCard header={'Today'} value={employeeKpi[0].TOTAL_TODAY_HRS.toFixed(2) + ' Hours'} />
+                            <KpiCard header={'This Week'} value={employeeKpi[0].TOTAL_WEEK_HRS.toFixed(2) + ' Hours'} />
                         </div>
                         :
                         null

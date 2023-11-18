@@ -11,13 +11,29 @@ import base64, binascii
 with open ('config.json') as f:
     configData = json.load(f)
 
-def send_email(email, subject, message):
+def send_email(email, subject, transaction_id):
     try:
         msg = MIMEMultipart()
         msg['From'] = configData['smtp_user']
         msg['To'] = email
         msg['Subject'] = subject
-        msg.attach(MIMEText(message, 'plain'))
+
+        url_ticket = 'http://ocalhost:8080/ticket_details?transaction_id={transaction_id}'.format(transaction_id=transaction_id)
+        # Add HTML content
+        html_content = """
+        <html>
+        <body>
+            <p>Hello,</p>
+            <p>Please review the recently created labor ticket.</p>
+            <p>You can review it <a href= '{url_ticket}' target='_blank'>here</a>.</p>
+            <p>Thank you,</p>
+        </body>
+        </html>
+        """
+
+        html_content = html_content.format(url_ticket=url_ticket)
+
+        msg.attach(MIMEText(html_content, 'html'))
         server = smtplib.SMTP(configData['smtp_host'], configData['smtp_port'])
         server.starttls()
         server.login(configData['smtp_user'], configData['smtp_password'])
@@ -27,7 +43,7 @@ def send_email(email, subject, message):
         return True
 
     except Exception as e:
-        print(e)
+        print(str(e))
         return False
     
 

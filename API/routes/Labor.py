@@ -195,6 +195,16 @@ def create_labor_tickets(connection_string, username):
             cursor.close()
             cnxn.close()
 
+            try:
+                if 'NOTIFY_QA' in content and content['NOTIFY_QA'] == 'Y':
+                    email = configData['QA_email']
+                    subject = 'Notification - Check for new Labor Ticket'
+                    message = 'New Labor Ticket Created. Please review.'
+                    send_email(email, subject, transaction_id)
+            except Exception as e:
+                print(e)
+                pass
+
             return jsonify({"message": "Ticket Created Successfully!", "data": transaction_id}), 200
 
         except Exception as e:

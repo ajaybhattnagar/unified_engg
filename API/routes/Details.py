@@ -30,16 +30,18 @@ def token_required(f):
         try:
            # decode the token to obtain user public_id
             data = jwt.decode(token, configData['jwt_secret'], algorithms=['HS256'])
+            username = str(data['USERNAME'])
             data = str(data['CONNECTION_STRING'])
-        except:
+        except Exception as e:
+            print (e)
             return jsonify({"message": "Invalid token!"}), 401
          # Return the user information attached to the token
-        return f(data, *args, **kwargs)
+        return f(data, username , *args, **kwargs)
     return decorator
 
 @details_blueprint.route("/api/v1/details/indirectcodes", methods=['GET'])
 @token_required
-def indirect_codes(connection_string):
+def indirect_codes(connection_string, username):
     cnxn = pyodbc.connect(connection_string)
     # Add notes to a parcel   
     try:
@@ -58,7 +60,7 @@ def indirect_codes(connection_string):
     
 @details_blueprint.route("/api/v1/details/site_warehouse", methods=['GET'])
 @token_required
-def site_warehouse(connection_string):
+def site_warehouse(connection_string, username):
     cnxn = pyodbc.connect(connection_string)
     # Add notes to a parcel   
     try:
@@ -86,7 +88,7 @@ def site_warehouse(connection_string):
 
 @details_blueprint.route("/api/v1/details/dashboard", methods=['GET'])
 @token_required
-def dashboard(connection_string):
+def dashboard(connection_string, username):
     cnxn = pyodbc.connect(connection_string)
     # Add notes to a parcel   
     try:
@@ -105,6 +107,27 @@ def dashboard(connection_string):
         }
         response = Response(
                     response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+    
+
+@details_blueprint.route("/api/v1/details/labor_ticket/<trans_id>", methods=['GET'])
+@token_required
+def labor_tickets(connection_string, username, trans_id):
+    transaction_id = trans_id
+    cnxn = pyodbc.connect(connection_string)
+    # Add notes to a parcel   
+    try:
+        sql = cnxn.cursor()
+        sql.execute(details_query['GET_LABOR_TICKET_BY_ID'].format(TRANSACTION_ID=transaction_id))
+        labor_tickets = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        sql.close()
+        response = Response(
+                    response=simplejson.dumps(labor_tickets, ignore_nan=True,default=datetime.datetime.isoformat),
                     mimetype='application/json'
                 )
         response.headers['content-type'] = 'application/json'
