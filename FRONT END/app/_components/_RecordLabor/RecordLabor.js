@@ -254,7 +254,7 @@ const RecordsLabor = () => {
 
                     // Upload Images if any
                     if (clickedImage && clickedImage !== null && data.data != 0 && data.data != null) {
-                        utils.uploadImages(clickedImage, data.data)
+                        utils.uploadImage(clickedImage, data.data)
                             .then((response) => {
                                 console.log(response);
                             })
@@ -422,6 +422,7 @@ const RecordsLabor = () => {
                     <div className="w-100 d-flex justify-content-end">
                         <button className="btn btn-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
                     </div>
+                    {render_file_camera()}
                 </div>
             </div>
         );
@@ -443,10 +444,29 @@ const RecordsLabor = () => {
         )
     }
 
+    const upload_image_document = () => {
+        if (selectedFile && selectedFile !== null && transactionId != 0 && transactionId != null) {
+            utils.uploadDocuments(selectedFile, transactionId)
+                .then((response) => {
+                    console.log(response);
+                    window.location.reload();
+                })
+        }
+
+        // Upload Images if any
+        if (clickedImage && clickedImage !== null && transactionId != 0 && transactionId != null) {
+            utils.uploadImage(clickedImage, transactionId)
+                .then((response) => {
+                    console.log(response);
+                    window.location.reload();
+                })
+        }
+    }
+
     const render_file_camera = () => {
         return (
-            <div>
-                <div>
+            <div className="d-flex">
+                <div className="">
                     {uploadTypeOptions.map((o, i) => (
                         <label className="mt-3 ml-3" key={i}>
                             <input className="mr-1"
@@ -457,12 +477,19 @@ const RecordsLabor = () => {
                             {o}
                         </label>
                     ))}
+                    {
+                        selectedUploadType === 0 ?
+                            <div className="ml-3"><SingleFileUploader onClick={(e) => setSelectedFile(e)} /></div>
+                            :
+                            <WebCam onClick={(e) => setClickedImage(e)} />
+                    }
                 </div>
                 {
-                    selectedUploadType === 0 ?
-                        <SingleFileUploader onClick={(e) => setSelectedFile(e)} />
-                        :
-                        <WebCam onClick={(e) => setClickedImage(e)} />
+                    activeLaborTicket && activeLaborTicket.length > 0 && clickedImage != null || selectedFile != null ?
+                        <div className="fixed-bottom mx-auto d-flex justify-content-center mb-2">
+                            <button className="btn btn-primary mt-3" onClick={(e) => upload_image_document()}>Upload</button>
+                        </div>
+                        : null
                 }
             </div >
         )

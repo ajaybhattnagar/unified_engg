@@ -12,7 +12,8 @@ const isBrowser = typeof window !== `undefined`
 
 const TicketDetails = () => {
     const navigate = useNavigate();
-    const [data, setData] = useState([]);
+    const [ticketDetails, setTicketDetails] = useState([]);
+    const [document, setDocument] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -38,7 +39,8 @@ const TicketDetails = () => {
             }
         }).then(res => res.json())
             .then((response) => {
-                setData(response[0]);
+                setTicketDetails(response.TICKET_DETAILS[0]);
+                setDocument(response.DOCUMENTS);
                 setIsLoading(false);
 
             })
@@ -61,7 +63,7 @@ const TicketDetails = () => {
                 <NavigationBar />
                 {
                     !isLoading ?
-                        data ?
+                        ticketDetails ?
                             <div className="container-fluid mt-1">
                                 <div className="row">
                                     <div className="col-12">
@@ -85,37 +87,53 @@ const TicketDetails = () => {
                                                         </thead>
                                                         <tbody>
                                                             <tr>
-                                                                <td>{data.WORKORDER_BASE_ID}</td>
-                                                                <td>{data.LOT_SPLIT_SUB}</td>
-                                                                <td>{data.RESOURCE_ID}</td>
-                                                                <td>{data.EMPLOYEE_ID}</td>
-                                                                <td>{data.CLOCK_IN_DATE} {data.CLOCK_IN_TIME}</td>
-                                                                <td>{data.HOURS_WORKED_HRS ? data.HOURS_WORKED_HRS.toFixed(2) : null}</td>
-                                                                <td>{data.QA_NOTES}</td>
+                                                                <td>{ticketDetails.WORKORDER_BASE_ID}</td>
+                                                                <td>{ticketDetails.LOT_SPLIT_SUB}</td>
+                                                                <td>{ticketDetails.RESOURCE_ID}</td>
+                                                                <td>{ticketDetails.EMPLOYEE_ID}</td>
+                                                                <td>{ticketDetails.CLOCK_IN_DATE} {ticketDetails.CLOCK_IN_TIME}</td>
+                                                                <td>{ticketDetails.HOURS_WORKED_HRS ? ticketDetails.HOURS_WORKED_HRS.toFixed(2) : null}</td>
+                                                                <td>{ticketDetails.QA_NOTES}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div className="card-footer">
-                                                <div className="d-flex">
-                                                    {
-                                                        data.IMAGE_PATH ?
-                                                            <div className="mr-2">
-                                                                <Button variant="primary" onClick={() => { open_document(data.IMAGE_PATH) }}>Image</Button>
-                                                            </div>
-                                                            : null
-                                                    }
-                                                    {
-                                                        data.DOCUMENT_PATH ?
-                                                            <div className="">
-                                                                <Button variant="primary" onClick={() => { open_document(data.DOCUMENT_PATH) }}>Document</Button>
-                                                            </div>
-                                                            :
-                                                            null
-                                                    }
-                                                </div>
-                                            </div>
+                                            {
+                                                document ?
+                                                    <div className="card-footer">
+                                                        <div className="d-flex">
+                                                            {/* Map document array */}
+                                                            {
+                                                                document.map((doc, index) => {
+                                                                    return (
+                                                                        doc.FILE_PATH == "" ? null :
+                                                                            <div className="mr-2" key={index}>
+                                                                                <Button variant="primary" onClick={() => { open_document(doc.FILE_PATH) }}>{doc.TYPE}</Button>
+                                                                            </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                            {/* {
+                                                                document.IMAGE_PATH ?
+                                                                    <div className="mr-2">
+                                                                        <Button variant="primary" onClick={() => { open_document(document.IMAGE_PATH) }}>Image</Button>
+                                                                    </div>
+                                                                    : null
+                                                            }
+                                                            {
+                                                                document.DOCUMENT_PATH ?
+                                                                    <div className="">
+                                                                        <Button variant="primary" onClick={() => { open_document(document.DOCUMENT_PATH) }}>Document</Button>
+                                                                    </div>
+                                                                    :
+                                                                    null
+                                                            } */}
+                                                        </div>
+                                                    </div>
+                                                    :
+                                                    null
+                                            }
                                         </div>
                                     </div>
                                 </div>

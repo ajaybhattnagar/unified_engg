@@ -417,7 +417,6 @@ def upload_document(connection_string, username, trans_id):
                     FILE_PATH = file_path,
                     TRANSACTION_ID = transaction_id,
                 )
-                print (query_string)
                 try:
                     cnxn = pyodbc.connect(connection_string)
                     sql = cnxn.cursor()
@@ -440,10 +439,14 @@ def upload_document(connection_string, username, trans_id):
 @token_required
 def upload_image(connection_string, username, trans_id):
     content = request.get_json(silent=True)
+    if 'CLICKED_IMAGE' not in content:
+        return jsonify({"message": "CLICKED_IMAGE is required"}), 401
+
     try:
-        if 'CLICKED_IMAGE' in content and content['CLICKED_IMAGE'] != ''and content['CLICKED_IMAGE'] != None and content['CLICKED_IMAGE'] != 'null':
+        if content['CLICKED_IMAGE'] != ''and content['CLICKED_IMAGE'] != None and content['CLICKED_IMAGE'] != 'null':
             clicked_image = content['CLICKED_IMAGE']
-            file_name = str(content['WORKORDER_ID'])  + '_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+            # Remove data:image/png;base64, from base64 string
+            file_name = str(trans_id)  + '_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             file_path = configData['save_images_to_folder'] + str(file_name) + '.png'
             save_base64_to_image(clicked_image, file_name)
         else:

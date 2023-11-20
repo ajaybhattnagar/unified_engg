@@ -315,9 +315,11 @@ function uploadImage(data, tranaction_id) {
   const request_object = {
     method: "POST",
     headers: {
+      'Content-Type': 'application/json',
       'x-access-token': localStorage.getItem('token')
     },
-    body: json.stringify({ CLICKED_IMAGE: data })
+    body: JSON.stringify({ 'CLICKED_IMAGE' : data }),
+    
   }
   return fetch(url, request_object)
     .then((res) => {

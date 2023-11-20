@@ -125,9 +125,19 @@ def labor_tickets(connection_string, username, trans_id):
         sql = cnxn.cursor()
         sql.execute(details_query['GET_LABOR_TICKET_BY_ID'].format(TRANSACTION_ID=transaction_id))
         labor_tickets = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        sql.execute(details_query['GET_ALL_DOCUMENTS_IMAGES_BY_ID'].format(TRANSACTION_ID=transaction_id))
+        documents = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
         sql.close()
+
+        response_dict = {
+            "TICKET_DETAILS": labor_tickets,
+            "DOCUMENTS": documents
+        }
+
         response = Response(
-                    response=simplejson.dumps(labor_tickets, ignore_nan=True,default=datetime.datetime.isoformat),
+                    response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
                     mimetype='application/json'
                 )
         response.headers['content-type'] = 'application/json'

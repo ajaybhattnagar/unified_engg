@@ -66,4 +66,8 @@ details_query = {
                                 LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
                                 WHERE TRANSACTION_ID = {TRANSACTION_ID}""",
 
+"GET_ALL_DOCUMENTS_IMAGES_BY_ID": """SELECT * 
+                                    FROM UNI_DOCUMENTS
+                                    WHERE TRANSACTION_ID = '{TRANSACTION_ID}'
+                                    ORDER BY CREATE_DATE DESC""",
 }
