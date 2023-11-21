@@ -101,6 +101,11 @@ const Home = () => {
             type: 'text',
             readOnly: true
         },
+        {
+            data: 'EMPLOYEE_ID',
+            type: 'text',
+            readOnly: true
+        },
     ]
 
     const columns_employee_kpi = [
@@ -138,7 +143,8 @@ const Home = () => {
                                                 <MTable
                                                     data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
                                                     columnsTypes={columns_active_labor_tickets}
-                                                    columnsHeaders={['Work order', 'Lot Split Sub', 'Indirect', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Work Location']}
+                                                    columnsHeaders={['Work order', 'Lot Split Sub', 'Indirect', 'Part Description', 
+                                                    'Customer ID', 'In Date', 'In Time', 'Work Location', 'Employee']}
                                                 // onChange={(e) => { update_labor_tickets(e) }}
                                                 />
                                             </Card.Body>

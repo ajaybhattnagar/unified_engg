@@ -465,25 +465,30 @@ const RecordsLabor = () => {
 
     const render_file_camera = () => {
         return (
+
             <div className="d-flex">
-                <div className="">
-                    {uploadTypeOptions.map((o, i) => (
-                        <label className="mt-3 ml-3" key={i}>
-                            <input className="mr-1"
-                                type="checkbox"
-                                checked={i === selectedUploadType}
-                                onChange={() => on_change_upload_type(i)}
-                            />
-                            {o}
-                        </label>
-                    ))}
-                    {
-                        selectedUploadType === 0 ?
-                            <div className="ml-3"><SingleFileUploader onClick={(e) => setSelectedFile(e)} /></div>
-                            :
-                            <WebCam onClick={(e) => setClickedImage(e)} />
-                    }
-                </div>
+                {
+                    selectedWorkOrder != null && selectedWorkOrder !== '' ?
+                        <div className="">
+                            {uploadTypeOptions.map((o, i) => (
+                                <label className="mt-3 ml-3" key={i}>
+                                    <input className="mr-1"
+                                        type="checkbox"
+                                        checked={i === selectedUploadType}
+                                        onChange={() => on_change_upload_type(i)}
+                                    />
+                                    {o}
+                                </label>
+                            ))}
+                            {
+                                selectedUploadType === 0 ?
+                                    <div className="ml-3"><SingleFileUploader onClick={(e) => setSelectedFile(e)} /></div>
+                                    :
+                                    <WebCam onClick={(e) => setClickedImage(e)} />
+                            }
+                        </div> : null
+                }
+
                 {
                     activeLaborTicket && activeLaborTicket.length > 0 && clickedImage != null || selectedFile != null ?
                         <div className="fixed-bottom mx-auto d-flex justify-content-center mb-2">
