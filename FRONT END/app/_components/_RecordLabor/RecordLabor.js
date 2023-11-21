@@ -368,9 +368,9 @@ const RecordsLabor = () => {
                         <div className="d-flex flex-column justify-content-end">
                             {
                                 !isLaborTicketLoading ?
-                                    <button className="btn btn-success mt-1" onClick={(e) => create_labor_ticket()}>Start</button>
+                                    <button className="btn btn-outline-success mt-1" onClick={(e) => create_labor_ticket()}>Start</button>
                                     :
-                                    <button className="btn btn-success mt-1" disabled><Loading /></button>
+                                    <button className="btn btn-outline-success mt-1" disabled><Loading /></button>
                             }
                         </div>
                     </div>
@@ -420,7 +420,7 @@ const RecordsLabor = () => {
                         <Input type={'text'} placeholder="Clock Out" text='Clock Out' disabled={true} value={selectedClockOut} />
                     </div>
                     <div className="w-100 d-flex justify-content-end">
-                        <button className="btn btn-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
+                        <button className="btn btn-outline-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
                     </div>
                     {render_file_camera()}
                 </div>

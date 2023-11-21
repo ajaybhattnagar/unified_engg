@@ -81,7 +81,7 @@ labor_query = {
 
 "GET_ALL_WORKORDER_LIST": """SELECT BASE_ID AS 'label', BASE_ID AS 'value'
                             FROM WORK_ORDER 
-                            WHERE TYPE = 'W' AND STATUS IN ('R', 'F', 'U')""",
+                            WHERE TYPE = 'W' AND STATUS IN ('R', 'F', 'U') AND SUB_ID = 0""",
 
 "INSERT_INTO_DOCUMENTS": """
                         INSERT INTO [dbo].[UNI_DOCUMENTS]

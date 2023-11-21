@@ -4,9 +4,8 @@
 
 }
 
-.btn-primary {
-    background-color: '#024b91';
-    color: '#024b91';
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited, .btn-outline-primary:hover {
+  background-color: #024b91 !important;
 }
 
 .cusor-hand {

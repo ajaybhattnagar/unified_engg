@@ -58,8 +58,8 @@ const MTable = (props) => {
             />
             {
                 dataChanged ?
-                    <div className='text-right'>
-                        <button type="button" className="btn btn-primary mt-2" onClick={() => { on_change_table() }}>Update</button>
+                    <div className='d-flex mx-auto justify-content-center fixed-bottom '>
+                        <button type="button" className="btn btn-outline-primary mb-2" onClick={() => { on_change_table() }}>Update</button>
                     </div>
                     : null
             }
