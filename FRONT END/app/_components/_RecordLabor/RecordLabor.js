@@ -149,11 +149,11 @@ const RecordsLabor = () => {
 
     useEffect(() => {
         if (selectedRecentWorkOrder) {
-            setSelectedWorkOrder(selectedRecentWorkOrder.WORKORDER_BASE_ID)
-            setSelectedLot(selectedRecentWorkOrder.WORKORDER_LOT_ID)
-            setSelectedSplit(selectedRecentWorkOrder.WORKORDER_SPLIT_ID)
-            setSelectedSub(selectedRecentWorkOrder.WORKORDER_SUB_ID)
-            setSelectedOperation(selectedRecentWorkOrder.OPERATION_SEQ_NO)
+            setSelectedWorkOrder(selectedRecentWorkOrder.WORKORDER_BASE_ID || '')
+            setSelectedLot(selectedRecentWorkOrder.WORKORDER_LOT_ID || 0)
+            setSelectedSplit(selectedRecentWorkOrder.WORKORDER_SPLIT_ID || 0)
+            setSelectedSub(selectedRecentWorkOrder.WORKORDER_SUB_ID || 0)
+            setSelectedOperation(null)
         }
     }, [selectedRecentWorkOrder]);
 
@@ -303,18 +303,18 @@ const RecordsLabor = () => {
             <div>
                 <div className="mt-3" />
 
-                <div className="container">
-                    <div className='w-100'>
+                <div className="">
+                    <div className=''>
                         <DropDown list={workorderList} text='Work Order'
                             isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder}
                             onSelect={(e) => { setSelectedWorkOrder(e.value) }}
                             value={{ 'value': selectedWorkOrder, 'label': selectedWorkOrder }}
                         />
                     </div>
-                    <div className="d-flex justify-content-around">
-                        <div className='w-25 mt-3'><Input type={'number'} min='0' max='99' placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} /> </div>
-                        <div className='w-25 mt-3 ml-3'><Input type={'number'} min='0' max='99' placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} /></div>
-                        <div className='w-25 mt-3 ml-3'><Input type={'number'} min='0' max='99' placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
+                    <div className="d-flex justify-content-between mt-3">
+                        <div className='w-25'><Input type={'number'} min='0' max='99' placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} /> </div>
+                        <div className='w-25'><Input type={'number'} min='0' max='99' placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} /></div>
+                        <div className='w-25'><Input type={'number'} min='0' max='99' placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
                     </div>
                     {
                         !isOperationLoading ?
@@ -545,13 +545,13 @@ const RecordsLabor = () => {
             <NavigationBar />
             {
                 !isLoading ?
-                    <div className="d-flex justify-content-around">
+                    <div className="container">
                         {
                             activeLaborTicket && activeLaborTicket.length > 0 ?
                                 create_labor_tickets_render_stop()
                                 :
                                 <div>
-                                    <div className="container d-flex justify-content-around mt-2">
+                                    <div className="d-flex justify-content-around mt-2">
                                         <ul className="nav nav-pills">
                                             <li className="nav-item">
                                                 <a className={isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(true) }}>Run</a>
@@ -564,7 +564,7 @@ const RecordsLabor = () => {
                                     </div>
                                     {
                                         isLaborTicketRun ?
-                                            <div className="container">
+                                            <div className="">
                                                 {create_labor_tickets_render_start()}
                                                 {recent_labor_tickets_render()}
                                                 {render_kpi()}
