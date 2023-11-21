@@ -110,7 +110,7 @@ const Login = () => {
                 </div>
 
                 <div className="d-flex justify-content-end">
-                    <button type="button" className="btn btn-primary" onClick={() => postLoginDetails()}>Sign In</button>
+                    <button type="button" className="btn btn-outline-primary" onClick={() => postLoginDetails()}>Sign In</button>
                 </div>
             </form>
         </div>

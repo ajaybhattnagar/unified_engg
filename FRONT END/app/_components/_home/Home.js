@@ -19,41 +19,44 @@ const Home = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        if (!localStorage.getItem("token")) {
+        if (localStorage.getItem("token")) {
+            var response_status = 0;
+            var url = appConstants.BASE_URL.concat(appConstants.DASHBOARD);
+            const request_object = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    'x-access-token': localStorage.getItem('token')
+                },
+            }
+            fetch(url, request_object)
+                .then((res) => {
+                    if (res.status === 200) {
+                        response_status = 200;
+                        return res.json();
+                    }
+                    else {
+                        response_status = 400;
+                        alert(res.json());
+                    }
+                })
+                .then((data) => {
+                    if (response_status === 200) {
+                        setIsLoading(false);
+                        setData(data);
+                    } else {
+                        alert(data.message);
+                        setIsLoading(false);
+                        return null;
+                    }
+                })
+                .catch((err) => console.error(err));
+        }
+        else {
             navigate("/");
         }
 
-        var response_status = 0;
-        var url = appConstants.BASE_URL.concat(appConstants.DASHBOARD);
-        const request_object = {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                'x-access-token': localStorage.getItem('token')
-            },
-        }
-        fetch(url, request_object)
-            .then((res) => {
-                if (res.status === 200) {
-                    response_status = 200;
-                    return res.json();
-                }
-                else {
-                    response_status = 400;
-                    alert(res.json());
-                }
-            })
-            .then((data) => {
-                if (response_status === 200) {
-                    setIsLoading(false);
-                    setData(data);
-                } else {
-                    alert(data.message);
-                    setIsLoading(false);
-                    return null;
-                }
-            })
-            .catch((err) => console.error(err));
+
     }, []);
 
     const columns_active_labor_tickets = [
@@ -143,8 +146,8 @@ const Home = () => {
                                                 <MTable
                                                     data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
                                                     columnsTypes={columns_active_labor_tickets}
-                                                    columnsHeaders={['Work order', 'Lot Split Sub', 'Indirect', 'Part Description', 
-                                                    'Customer ID', 'In Date', 'In Time', 'Work Location', 'Employee']}
+                                                    columnsHeaders={['Work order', 'Lot Split Sub', 'Indirect', 'Part Description',
+                                                        'Customer ID', 'In Date', 'In Time', 'Work Location', 'Employee']}
                                                 // onChange={(e) => { update_labor_tickets(e) }}
                                                 />
                                             </Card.Body>

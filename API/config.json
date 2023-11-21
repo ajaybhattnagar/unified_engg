@@ -1,5 +1,5 @@
 {
-    "sqlserver": "localhost",
+    "sqlserver": "192.168.2.58",
     "sqldriver": "SQL Server",
     "sqldatabase": "VISUIFY",
     "sqluser": "SYSADM",

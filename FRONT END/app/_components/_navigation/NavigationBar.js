@@ -23,9 +23,12 @@ class NavigationBar extends Component {
     };
 
     componentDidMount() {
-        var access_rights = utils.decodeJwt();
-        access_rights = access_rights.USER_DETAILS
-        this.setState({ access_rights: access_rights })
+        if (localStorage.getItem("token")) {
+            var access_rights = utils.decodeJwt();
+            access_rights = access_rights.USER_DETAILS
+            this.setState({ access_rights: access_rights })
+        }
+
     }
 
     render() {
@@ -37,12 +40,12 @@ class NavigationBar extends Component {
         return (
             <Navbar collapseOnSelect bg="light" expand="lg" data-bs-theme="dark">
                 <Navbar.Brand href="/">
-                    {/* <img
+                    <img
                         alt='logo'
                         src={Brand}
                         height='40'
                         className='d-inline-block align-top'
-                    /> */}
+                    />
                 </Navbar.Brand>
 
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -52,7 +55,7 @@ class NavigationBar extends Component {
 
                         <Nav.Link disabled={dashboard} className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
                         <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
-                        <Nav.Link disabled={approve_labor_tickets}  className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
+                        <Nav.Link disabled={approve_labor_tickets} className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
 
                         <NavDropdown title="Reports" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>

@@ -6,8 +6,7 @@ import { Button, Card, Form } from "react-bootstrap";
 const DropDown = (props) => {
   const [list, setList] = useState(props.list);
   const text = props.text
-  // const list = props.list
-  const value = props.value || ""
+  const value = props.value || { value: '', label: ''}
   const isMulti = props.isMulti || false
   const prepareArray = props.prepareArray || false
   const placeholder = props.placeholder || "Select"
@@ -28,7 +27,10 @@ const DropDown = (props) => {
 
   const render = () => {
     return (
-      <div className="d-flex justify-content-between">
+      <div className="d-flex">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">{text}</span>
+        </div>
         <div className='w-100'>
           <Select
             name='Select'
@@ -38,6 +40,7 @@ const DropDown = (props) => {
             placeholder={placeholder}
             isOptionDisabled={(option) => option.disabled}
             isClearable={clearable}
+            value={value}
           />
         </div>
       </div>

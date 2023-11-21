@@ -120,14 +120,16 @@ const RecordsLabor = () => {
     }, []);
 
     useEffect(() => {
-        var access_rights = utils.decodeJwt();
-        access_rights = access_rights.USER_DETAILS
+        if (localStorage.getItem("token")) {
+            var access_rights = utils.decodeJwt();
+            access_rights = access_rights.USER_DETAILS
 
-        if (access_rights.ALLOWED_WORKING_LOCATION === '1') {
-            isWorkLocationAllowed.current = true;
-        }
-        if (access_rights.ALLOWED_WORKING_TIME === '1') {
-            isWorkTimeAllowed.current = true;
+            if (access_rights.ALLOWED_WORKING_LOCATION === '1') {
+                isWorkLocationAllowed.current = true;
+            }
+            if (access_rights.ALLOWED_WORKING_TIME === '1') {
+                isWorkTimeAllowed.current = true;
+            }
         }
 
     }, []);
@@ -277,7 +279,8 @@ const RecordsLabor = () => {
             <div className="d-flex flex-wrap">
                 {recentLaborTickets.map((ticket, index) => (
                     <div className="m-2" key={index}>
-                        <p className="badge badge-light cusor-hand w-100 align-middle" style={{ fontSize: '1.25em', fontWeight: 'bold' }} onClick={(e) => setSelectedRecentWorkOrder(ticket)} >{ticket.WORKORDER_BASE_ID}</p>
+                        <p className="badge badge-light cusor-hand w-100 align-middle"
+                            style={{ fontSize: '1.25em', fontWeight: 'bold' }} onClick={(e) => setSelectedRecentWorkOrder(ticket)} >{ticket.WORKORDER_BASE_ID}</p>
                         {/* add other ticket properties as needed */}
                     </div>
                 ))}
@@ -302,19 +305,27 @@ const RecordsLabor = () => {
 
                 <div className="container">
                     <div className='w-100'>
-                        <DropDown list={workorderList} isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder} onSelect={(e) => { setSelectedWorkOrder(e.value) }} />
-
+                        <DropDown list={workorderList} text='Work Order'
+                            isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder}
+                            onSelect={(e) => { setSelectedWorkOrder(e.value) }}
+                            value={{ 'value': selectedWorkOrder, 'label': selectedWorkOrder }}
+                        />
                     </div>
                     <div className="d-flex justify-content-around">
-                        <div className='w-25 mt-3'><Input type={'number'} placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} /> </div>
-                        <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} /></div>
-                        <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
+                        <div className='w-25 mt-3'><Input type={'number'} min='0' max='99' placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} /> </div>
+                        <div className='w-25 mt-3 ml-3'><Input type={'number'} min='0' max='99' placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} /></div>
+                        <div className='w-25 mt-3 ml-3'><Input type={'number'} min='0' max='99' placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
                     </div>
                     {
                         !isOperationLoading ?
                             operationDetails && operationDetails.length > 0 ?
                                 <div className="w-100 mt-3">
-                                    <DropDown list={operationDetails} isMulti={false} prepareArray={false} placeholder={"Select Operation"} onSelect={(e) => { setSelectedOperation(e.value), setSelectedResourceString(e.label) }} />
+                                    <DropDown list={operationDetails} isMulti={false}
+                                        text='Operation'
+                                        prepareArray={false} placeholder={"Select Operation"}
+                                        onSelect={(e) => { setSelectedOperation(e.value), setSelectedResourceString(e.label) }}
+                                        value={{ 'value': selectedOperation, 'label': selectedResourceString }}
+                                    />
                                 </div>
                                 :
                                 null
@@ -422,7 +433,7 @@ const RecordsLabor = () => {
                     <div className="w-100 d-flex justify-content-end">
                         <button className="btn btn-outline-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
                     </div>
-                    {render_file_camera()}
+                    {render_file_camera_stop()}
                 </div>
             </div>
         );
@@ -463,7 +474,36 @@ const RecordsLabor = () => {
         }
     }
 
-    const render_file_camera = () => {
+    const render_file_camera_start = () => {
+        return (
+
+            <div className="d-flex">
+                {
+                    selectedWorkOrder != null && selectedWorkOrder !== '' ?
+                        <div className="">
+                            {uploadTypeOptions.map((o, i) => (
+                                <label className="mt-3 ml-3" key={i}>
+                                    <input className="mr-1"
+                                        type="checkbox"
+                                        checked={i === selectedUploadType}
+                                        onChange={() => on_change_upload_type(i)}
+                                    />
+                                    {o}
+                                </label>
+                            ))}
+                            {
+                                selectedUploadType === 0 ?
+                                    <div className="ml-3"><SingleFileUploader onClick={(e) => setSelectedFile(e)} /></div>
+                                    :
+                                    <WebCam onClick={(e) => setClickedImage(e)} />
+                            }
+                        </div> : null
+                }
+            </div >
+        )
+    }
+
+    const render_file_camera_stop = () => {
         return (
 
             <div className="d-flex">
@@ -528,7 +568,7 @@ const RecordsLabor = () => {
                                                 {create_labor_tickets_render_start()}
                                                 {recent_labor_tickets_render()}
                                                 {render_kpi()}
-                                                {render_file_camera()}
+                                                {render_file_camera_start()}
                                             </div>
                                             :
                                             <div className="container">
