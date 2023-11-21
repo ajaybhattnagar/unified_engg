@@ -1,7 +1,7 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
-    // BASE_URL: 'http://192.168.2.20:5000/',
-    BASE_URL: 'http://localhost:5000/',
+    BASE_URL: 'http://192.168.1.79:5000/',
+    // BASE_URL: 'http://localhost:5000/',
 
     LOGIN: 'api/v1/login',
 
