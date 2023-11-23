@@ -19,8 +19,6 @@ labor_blueprint = Blueprint('labor_blueprint', __name__)
 with open ('config.json') as f:
     configData = json.load(f)
 
-
-
 # Authentication decorator
 def token_required(f):
     @wraps(f)

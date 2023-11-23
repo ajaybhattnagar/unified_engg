@@ -12,11 +12,13 @@ import KpiCard from "../_ui/kpiCard";
 import WebCam from "../_ui/webCam.js";
 import SingleFileUploader from "../_ui/uploadFile.js";
 import IndirectLaborTicket from "../_ui/indirectLaborTicket.js";
+import Scan from "../_ui/scanOrder.js";
 
 const isBrowser = typeof window !== `undefined`
 
 const RecordsLabor = () => {
     const navigate = useNavigate();
+    const [scannedData, setScannedData] = useState(null);
     const [recentLaborTickets, setRecentLaborTickets] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isOperationLoading, setOperationIsLoading] = useState(false);
@@ -58,6 +60,10 @@ const RecordsLabor = () => {
     const isWorkTimeAllowed = useRef(false);
 
     const [isLaborTicketRun, setIsLaborTicketRun] = useState(true);
+
+
+    // Eg: *WO022721$0$20*
+    // Eg: *WO022721$1$20*
 
     useEffect(() => {
         setIsLoading(true);
@@ -136,6 +142,14 @@ const RecordsLabor = () => {
     }, []);
 
     useEffect(() => {
+        if (scannedData && scannedData !== null) {
+            setSelectedWorkOrder(scannedData.work_order)
+            setSelectedSub(scannedData.sub_id)
+            setSelectedOperation(scannedData.operation_seq)
+        }
+    }, [scannedData]);
+
+    useEffect(() => {
         var timer = setInterval(() => {
             if (transactionId == null || transactionId === 0 || transactionId == undefined) {
                 setSelectedClockIn(utils.convertTimeStampToString(new Date()))
@@ -150,11 +164,13 @@ const RecordsLabor = () => {
 
     useEffect(() => {
         if (selectedRecentWorkOrder) {
+            setScannedData(null);
             setSelectedWorkOrder(selectedRecentWorkOrder.WORKORDER_BASE_ID || '')
             setSelectedLot(selectedRecentWorkOrder.WORKORDER_LOT_ID || 0)
             setSelectedSplit(selectedRecentWorkOrder.WORKORDER_SPLIT_ID || 0)
             setSelectedSub(selectedRecentWorkOrder.WORKORDER_SUB_ID || 0)
-            setSelectedOperation(null)
+            setSelectedOperation('')
+            setSelectedResourceString('')
         }
     }, [selectedRecentWorkOrder]);
 
@@ -192,6 +208,12 @@ const RecordsLabor = () => {
                     if (response_status === 200) {
                         setOperationDetails(data)
                         setOperationIsLoading(false);
+
+                        // Setting dropdown array if scanned
+                        if (selectedOperation) {
+                            setSelectedResourceString(data.filter(item => item.value == selectedOperation)[0].label)
+                        }
+
                     } else {
                         alert(data.message);
                         setOperationIsLoading(false);
@@ -200,6 +222,8 @@ const RecordsLabor = () => {
                 })
                 .catch((err) => { console.error(err); setIsOperationLoading(false); });
         }
+
+
     }, [selectedWorkOrder, selectedSub]);
 
     const create_labor_ticket = () => {
@@ -305,6 +329,7 @@ const RecordsLabor = () => {
                 <div className="mt-3" />
 
                 <div className="">
+                    <div className="mb-3"><Scan disabled={false} onChange={(e) => setScannedData(e)} /></div>
                     <div className=''>
                         <DropDown list={workorderList} text='Work Order'
                             isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder}
