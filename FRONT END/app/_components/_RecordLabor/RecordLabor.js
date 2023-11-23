@@ -35,6 +35,7 @@ const RecordsLabor = () => {
     const [selectedResourceString, setSelectedResourceString] = useState('');
     const [selectedClockIn, setSelectedClockIn] = useState(utils.convertTimeStampToString(new Date()));
     const [selectedClockOut, setSelectedClockOut] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
+    const [desciption, setDescription] = useState('');
     const [qaNotes, setQaNotes] = useState('');
     const [notifyQACheckbox, setNotifyQACheckbox] = useState(false);
 
@@ -43,9 +44,9 @@ const RecordsLabor = () => {
     const [employeeKpi, setEmployeeKpi] = useState([]);
 
     const workLocationsOptions = ['On-site', 'Off-site', 'Remote'];
-    const [selectedWorkLocation, setSelectedWorkLocation] = useState('');
+    const [selectedWorkLocation, setSelectedWorkLocation] = useState(0);
     const workTimeOptions = ['Regular Time', 'Over Time', 'Double Time'];
-    const [selectedWorkTime, setSelectedWorkTime] = useState('');
+    const [selectedWorkTime, setSelectedWorkTime] = useState(0);
 
     const uploadTypeOptions = ['Document', 'Camera'];
     const [selectedUploadType, setSelectedUploadType] = useState(0);
@@ -225,7 +226,7 @@ const RecordsLabor = () => {
                 "RUN_TYPE": "R",
                 "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
                 "RESOURCE_ID": selectedResourceString,
-                // "DESCRIPTION": "SOME NOTES",
+                "DESCRIPTION": desciption || "",
                 "WORK_LOCATION": workLocationsOptions[selectedWorkLocation] || 'On-site',
                 "WORK_TIME": workTimeOptions[selectedWorkTime] || 'Regular Time',
                 "QA_NOTES": qaNotes,
@@ -312,8 +313,8 @@ const RecordsLabor = () => {
                         />
                     </div>
                     <div className="d-flex justify-content-between mt-3">
-                        <div className='w-25'><Input type={'number'} min='0' max='99' placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} /> </div>
-                        <div className='w-25'><Input type={'number'} min='0' max='99' placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} /></div>
+                        <div className='w-25'><Input type={'number'} min='0' max='99' disabled={true} placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} /> </div>
+                        <div className='w-25'><Input type={'number'} min='0' max='99' disabled={true} placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} /></div>
                         <div className='w-25'><Input type={'number'} min='0' max='99' placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
                     </div>
                     {
@@ -340,6 +341,10 @@ const RecordsLabor = () => {
                     <div className="d-flex justify-content-between mt-3">
                         <div className="w-75"><Input type={'text'} placeholder="QA Notes" text='QA Notes' disabled={false} value={qaNotes} onChange={(e) => setQaNotes(e)} /></div>
                         <div><input className="m-1" type="checkbox" checked={notifyQACheckbox} onChange={() => setNotifyQACheckbox(!notifyQACheckbox)} /> Notify QA</div>
+                    </div>
+
+                    <div className="w-100 mt-3">
+                        <Input type={'text'} placeholder="Additional Notes" onChange={(e) => setDescription(e)} text='Notes' value={desciption} />
                     </div>
 
                     <div className="w-100 d-flex justify-content-between">

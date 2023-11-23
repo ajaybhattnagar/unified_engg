@@ -11,10 +11,10 @@ labor_query = {
                         [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME], [QA_NOTES]
                 )
                     VALUES
-                        (CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time'), 
+                        (GETDATE(), 
                         '{WORKORDER_TYPE}', '{WORKORDER_ID}', '{WORKORDER_LOT_ID}', '{WORKORDER_SPLIT_ID}', '{WORKORDER_SUB_ID}', '{OPERATION_SEQ_NO}'
                         ,'{RUN_TYPE}', '{RUN_TYPE_STRING}', '{EMP_ID}', '{RESOURCE_ID}',
-                        CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time'), 
+                        GETDATE(), 
                         '{DESCRIPTION}', 
                         '{INDIRECT_CODE}', '{INDIRECT_ID}',
                         '{UDF1}', '{UDF2}', '{UDF3}', '{UDF4}',
@@ -26,7 +26,7 @@ labor_query = {
 
 
 "STOP_LABOR_TICKET": """UPDATE UNI_LABOR_TICKET
-                            SET [CLOCK_OUT] = CONVERT(DATETIME,GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time')
+                            SET [CLOCK_OUT] = GETDATE()
                             WHERE TRANSACTION_ID = '{TRANSACTION_ID}' """,
 
 "GET_WORKORDER_OPERATION_DETAILS": """SELECT OP.SEQUENCE_NO AS [value], OP.RESOURCE_ID AS [label]
@@ -79,9 +79,12 @@ labor_query = {
                                     SET [DOCUMENT_PATH] = '{DOCUMENT_PATH}'
                                     WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""",
 
-"GET_ALL_WORKORDER_LIST": """SELECT BASE_ID AS 'label', BASE_ID AS 'value'
-                            FROM WORK_ORDER 
-                            WHERE TYPE = 'W' AND STATUS IN ('R', 'F', 'U') AND SUB_ID = 0""",
+"GET_ALL_WORKORDER_LIST": """SELECT ISNULL(CAST(BASE_ID AS VARCHAR) + ' - ' + CAST(CO.CUSTOMER_ID AS VARCHAR) + ' - ' + CAST(WO.PART_ID AS VARCHAR), BASE_ID) AS 'label', 
+                            BASE_ID AS 'value'
+                            FROM WORK_ORDER WO
+                            LEFT JOIN DEMAND_SUPPLY_LINK DSL ON DSL.SUPPLY_BASE_ID = WO.BASE_ID AND DSL.SUPPLY_LOT_ID = WO.LOT_ID AND DSL.SUPPLY_SPLIT_ID = WO.SPLIT_ID AND DSL.SUPPLY_SUB_ID = WO.SUB_ID
+                            LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
+                            WHERE WO.TYPE = 'W' AND WO.STATUS IN ('R', 'F', 'U') AND WO.SUB_ID = 0""",
 
 "INSERT_INTO_DOCUMENTS": """
                         INSERT INTO [dbo].[UNI_DOCUMENTS]

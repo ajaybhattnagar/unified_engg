@@ -169,7 +169,6 @@ def create_labor_tickets(connection_string, username):
                     DOUBLE_TIME = 0,
                     QA_NOTES = content['QA_NOTES'] if 'QA_NOTES' in content else '',
                     )       
-
         try:
             cnxn = pyodbc.connect(connection_string, autocommit=True)
             cursor = cnxn.execute(query_string)
