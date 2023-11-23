@@ -200,7 +200,7 @@ const RecordsLabor = () => {
                 })
                 .catch((err) => { console.error(err); setIsOperationLoading(false); });
         }
-    }, [selectedWorkOrder]);
+    }, [selectedWorkOrder, selectedSub]);
 
     const create_labor_ticket = () => {
         if (selectedWorkOrder === null || selectedWorkOrder === '' || selectedOperation === null || selectedOperation === '') {
