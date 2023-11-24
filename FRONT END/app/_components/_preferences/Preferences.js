@@ -15,13 +15,9 @@ const Preferences = () => {
     const navigate = useNavigate();
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedSite, setSelectedSite] = useState(null);
-    const [selectedWarehouse, setSelectedWarehouse] = useState(null);
-
-    useEffect(() => {
-
-    }, []);
-
+    const [selectedSite, setSelectedSite] = useState(localStorage.getItem("SITE"));
+    const [selectedWarehouse, setSelectedWarehouse] = useState(localStorage.getItem("WAREHOUSE"));
+    const [isDefaultScan, setIsDefaultScan] = useState(localStorage.getItem("DEFAULT_SCAN") === 'true' ? true : false || false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -38,7 +34,35 @@ const Preferences = () => {
         }).then(res => res.json())
             .then((response) => {
                 setData(response);
-                setIsLoading(false);   
+                setIsLoading(false);
+
+                if (localStorage.getItem("SITE") && localStorage.getItem("WAREHOUSE")) {
+
+                    if (response.SITES.filter(item => item.value == selectedSite).length === 0) {
+                        alert('Invalid Site!');
+                        setSelectedOperation(null)
+                        setSelectedResourceString(null)
+                        return;
+                    } else {
+                        setSelectedSite({
+                            value: selectedSite,
+                            label: response.SITES.filter(item => item.value == selectedSite)[0].label
+                        })
+                    }
+
+                    if (response.WAREHOUSES.filter(item => item.value == selectedWarehouse).length === 0) {
+                        alert('Invalid Warehouse!');
+                        setSelectedOperation(null)
+                        setSelectedResourceString(null)
+                        return;
+                    } else {
+                        setSelectedWarehouse({
+                            value: selectedWarehouse,
+                            label: response.WAREHOUSES.filter(item => item.value == selectedWarehouse)[0].label
+                        })
+                    }
+
+                }
 
             })
             .catch((error) => {
@@ -48,30 +72,48 @@ const Preferences = () => {
 
     }, []);
 
-
     const render = () => {
-        const local_storage_site = localStorage.getItem("SITE") ? localStorage.getItem("SITE") : null;
-        const local_storage_warehouse = localStorage.getItem("WAREHOUSE") ? localStorage.getItem("WAREHOUSE") : null;
 
-        return (        
+        return (
             <div>
                 <NavigationBar />
 
                 {
                     data.SITES && data.SITES.length > 0 ?
-                        <div className="m-3">
-                            <div className="w-50 m-3">
-                                <div className="text-lg-left">Select Site:</div>
-                                <div className="w-75"><DropDown placeholder={local_storage_site} text="Select Site" list={data.SITES} onSelect={(e) => { setSelectedSite(e.value); localStorage.setItem("SITE", e.value) }} /></div>
+                        <div className="container m-3">
+                            <div className="m-3">
+                                <div className="w-50">
+                                    <div className="w-75">
+                                        <DropDown text="Select Site" list={data.SITES}
+                                            value={selectedSite}
+                                            onSelect={(e) => { setSelectedSite(e); localStorage.setItem("SITE", e.value) }} />
+                                    </div>
+                                </div>
+                                <div className="w-50 mt-3">
+                                    <div className="w-75">
+                                        <DropDown text="Select Warehouse" list={data.WAREHOUSES}
+                                            value={selectedWarehouse}
+                                            onSelect={(e) => { setSelectedWarehouse(e); localStorage.setItem("WAREHOUSE", e.value) }} />
+                                    </div>
+                                </div>
                             </div>
-                            <div className="w-50 m-3">
-                                <div className="">Select Warehouse:</div>
-                                <div className="w-75"><DropDown placeholder={local_storage_warehouse} text="Select Site" list={data.WAREHOUSES} onSelect={(e) => { setSelectedWarehouse(e.value); localStorage.setItem("WAREHOUSE", e.value) }} /></div>
+
+                            {/* Check box for scanning option */}
+                            <div className="m-3">
+                                <div className="form-check">
+                                    <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked={isDefaultScan}
+                                        onChange={(e) => { setIsDefaultScan(e.target.checked); localStorage.setItem("DEFAULT_SCAN", e.target.checked) }} />
+                                    <label className="form-check-label" for="flexCheckDefault">
+                                        Default mode to scan
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         :
-                        <Loading/>
+                        <Loading />
                 }
+
+
 
 
             </div>

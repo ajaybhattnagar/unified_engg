@@ -11,6 +11,7 @@ const DropDown = (props) => {
   const prepareArray = props.prepareArray || false
   const placeholder = props.placeholder || "Select"
   const clearable = props.clearable || false
+  const disabled = props.disabled || false
 
 
   useEffect(() => {
@@ -41,6 +42,7 @@ const DropDown = (props) => {
             isOptionDisabled={(option) => option.disabled}
             isClearable={clearable}
             value={value}
+            isDisabled={disabled}
           />
         </div>
       </div>

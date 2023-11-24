@@ -58,9 +58,9 @@ const RecordsLabor = () => {
 
     const isWorkLocationAllowed = useRef(false);
     const isWorkTimeAllowed = useRef(false);
+    const isScanOptionSelected = useRef(localStorage.getItem("DEFAULT_SCAN") === 'true' ? true : false || false);
 
     const [isLaborTicketRun, setIsLaborTicketRun] = useState(true);
-
 
     // Eg: *WO022721$0$20*
     // Eg: *WO022721$1$20*
@@ -211,7 +211,17 @@ const RecordsLabor = () => {
 
                         // Setting dropdown array if scanned
                         if (selectedOperation) {
+                            if (data.filter(item => item.value == selectedOperation).length === 0) {
+                                alert('Invalid Operation!');
+                                setSelectedOperation(null)
+                                setSelectedResourceString(null)
+                                return;
+                            }
                             setSelectedResourceString(data.filter(item => item.value == selectedOperation)[0].label)
+                        }
+                        else {
+                            setSelectedOperation(null)
+                            setSelectedResourceString(null)
                         }
 
                     } else {
@@ -335,12 +345,13 @@ const RecordsLabor = () => {
                             isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder}
                             onSelect={(e) => { setSelectedWorkOrder(e.value) }}
                             value={{ 'value': selectedWorkOrder, 'label': selectedWorkOrder }}
+                            disabled={isScanOptionSelected.current || false}
                         />
                     </div>
                     <div className="d-flex justify-content-between mt-3">
                         <div className='w-25'><Input type={'number'} min='0' max='99' disabled={true} placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} /> </div>
                         <div className='w-25'><Input type={'number'} min='0' max='99' disabled={true} placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} /></div>
-                        <div className='w-25'><Input type={'number'} min='0' max='99' placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
+                        <div className='w-25'><Input type={'number'} min='0' max='99' disabled={isScanOptionSelected.current || false} placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} /></div>
                     </div>
                     {
                         !isOperationLoading ?
