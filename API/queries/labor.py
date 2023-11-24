@@ -79,12 +79,13 @@ labor_query = {
                                     SET [DOCUMENT_PATH] = '{DOCUMENT_PATH}'
                                     WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""",
 
-"GET_ALL_WORKORDER_LIST": """SELECT ISNULL(CAST(BASE_ID AS VARCHAR) + ' - ' + CAST(CO.CUSTOMER_ID AS VARCHAR) + ' - ' + CAST(WO.PART_ID AS VARCHAR), BASE_ID) AS 'label', 
+"GET_ALL_WORKORDER_LIST": """SELECT (ISNULL(CAST(BASE_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(CO.CUSTOMER_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(WO.PART_ID AS VARCHAR), '') ) AS 'label', 
                             BASE_ID AS 'value'
                             FROM WORK_ORDER WO
                             LEFT JOIN DEMAND_SUPPLY_LINK DSL ON DSL.SUPPLY_BASE_ID = WO.BASE_ID AND DSL.SUPPLY_LOT_ID = WO.LOT_ID AND DSL.SUPPLY_SPLIT_ID = WO.SPLIT_ID AND DSL.SUPPLY_SUB_ID = WO.SUB_ID
                             LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
-                            WHERE WO.TYPE = 'W' AND WO.STATUS IN ('R', 'F', 'U') AND WO.SUB_ID = 0""",
+                            WHERE WO.TYPE = 'W' AND WO.STATUS IN ('R', 'F', 'U') AND WO.SUB_ID = 0
+""",
 
 "INSERT_INTO_DOCUMENTS": """
                         INSERT INTO [dbo].[UNI_DOCUMENTS]
