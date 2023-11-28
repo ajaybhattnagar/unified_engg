@@ -1,9 +1,9 @@
 {
-    "sqlserver": "192.168.2.58",
+    "sqlserver": "10.0.7.213",
     "sqldriver": "SQL Server",
-    "sqldatabase": "VISUIFY",
-    "sqluser": "SYSADM",
-    "sqlpassword": "COPOW05",
+    "sqldatabase": "CMB",
+    "sqluser": "sa",
+    "sqlpassword": "13245",
 
     "jwt_secret": "secret",
     "bcrypt_salt": "salt",
