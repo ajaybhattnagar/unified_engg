@@ -1,0 +1,109 @@
+[
+    {
+        "TRANSACTION_ID": 1,
+        "WORKORDER_BASE_ID": "00009",
+        "LOT_SPLIT_SUB": "1 - 0 - 0",
+        "CLOCK_IN_DATE": "2023-11-28",
+        "CLOCK_IN_TIME": "10:13:54",
+        "CLOCK_OUT_DATE": "2023-11-28",
+        "CLOCK_OUT_TIME": "10:14:13",
+        "HOURS_WORKED": 0.016666,
+        "HOURS_BREAK": null,
+        "INDIRECT_CODE": "",
+        "INDIRECT_ID": "",
+        "APPROVED": false,
+        "APPROVED_AT": null,
+        "APPROVED_BY": null,
+        "LAB_DESC": "",
+        "UDF1": "",
+        "UDF2": "",
+        "UDF3": "",
+        "UDF4": "",
+        "WORK_LOCATION": "On-site",
+        "REGULAR_TIME": true,
+        "OVER_TIME": true,
+        "DOUBLE_TIME": false,
+        "QA_NOTES": "tesatasr",
+        "PART_ID": "HBS",
+        "DESIRED_QTY": 1,
+        "DESIRED_WANT_DATE": "2023-02-09",
+        "STATUS": null,
+        "ENGINEERED_BY": null,
+        "ACT_MATERIAL_COST": 38.8,
+        "ACT_LABOR_COST": 75,
+        "ACT_SERVICE_COST": 0,
+        "ID": null,
+        "CUSTOMER_ID": null,
+        "CUSTOMER_PO_REF": null,
+        "TOTAL_AMT_ORDERED": null,
+        "TOTAL_AMT_SHIPPED": null,
+        "DESCRIPTION": null
+    },
+    {
+        "TRANSACTION_ID": 2,
+        "WORKORDER_BASE_ID": "",
+        "LOT_SPLIT_SUB": " -  - ",
+        "CLOCK_IN_DATE": "2023-11-28",
+        "CLOCK_IN_TIME": "10:14:19",
+        "CLOCK_OUT_DATE": "2023-11-28",
+        "CLOCK_OUT_TIME": "10:14:22",
+        "HOURS_WORKED": null,
+        "HOURS_BREAK": 0,
+        "INDIRECT_CODE": "Test01",
+        "INDIRECT_ID": "Test01",
+        "APPROVED": false,
+        "APPROVED_AT": null,
+        "APPROVED_BY": null,
+        "LAB_DESC": "",
+        "UDF1": "",
+        "UDF2": "",
+        "UDF3": "",
+        "UDF4": "",
+        "WORK_LOCATION": "",
+        "REGULAR_TIME": false,
+        "OVER_TIME": false,
+        "DOUBLE_TIME": false,
+        "QA_NOTES": "",
+        "PART_ID": null,
+        "DESIRED_QTY": null,
+        "DESIRED_WANT_DATE": null,
+        "STATUS": null,
+        "ENGINEERED_BY": null,
+        "ACT_MATERIAL_COST": null,
+        "ACT_LABOR_COST": null,
+        "ACT_SERVICE_COST": null,
+        "ID": null,
+        "CUSTOMER_ID": null,
+        "CUSTOMER_PO_REF": null,
+        "TOTAL_AMT_ORDERED": null,
+        "TOTAL_AMT_SHIPPED": null,
+        "DESCRIPTION": null
+    }
+]
+
+
+// DataRow dataRow = LAB.NewRunLaborRow(ticket.TransactionID);
+// dataRow["TRANSACTION_TYPE"] = "RUN";
+// dataRow["TRANSACTION_DATE"] = ticket.TransactionDate;
+// dataRow["BASE_ID"] = ticket.WorkOrderBaseID;
+// dataRow["LOT_ID"] = ticket.WorkOrderLotID;
+// dataRow["SPLIT_ID"] = ticket.WorkOrderSplitID;
+// dataRow["SUB_ID"] = ticket.WorkOrderSubID;
+// dataRow["SEQ_NO"] = ticket.SeqNo;
+// dataRow["EMPLOYEE_ID"] = ticket.EmployeeID;
+// //dataRow["CLOCK_IN"] = new DateTime(2023, 9, 13, 7, 30, 0);
+// //dataRow["CLOCK_OUT"] = new DateTime(2023, 9, 13, 16, 30, 0);
+// dataRow["HOURS_WORKED"] = ticket.HoursWorked;
+// dataRow["HOURS_BREAK"] = ticket.HoursBreak;
+// dataRow["RESOURCE_ID"] = ticket.ResourceID;
+// dataRow["DEPARTMENT_ID"] = ticket.DepartmentID;
+// dataRow["EARNING_CODE"] = ticket.EarningCode;
+// dataRow["MULTIPLIER_1"] = ticket.Multiplier1;
+// dataRow["MULTIPLIER_2"] = ticket.Multiplier2;
+// //dataRow["SHIFT_DATE"] = ticket.ShiftDate;
+// //dataRow["UNIT_COST"] = ticket.UnitCost;
+// dataRow["SETUP_COMPLETE"] = ticket.SetupComplete;
+// dataRow["USER_ID"] = ticket.UserID;
+// dataRow["HOURLY_COST"] = ticket.HourlyCost;
+// dataRow["DESCRIPTION"] = maskedTextBoxIn.Text + "-" + maskedTextBoxOut.Text + " " + textBoxComment.Text;
+// dataRow["SITE_ID"] = ticket.SiteID;

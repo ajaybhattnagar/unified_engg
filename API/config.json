@@ -3,7 +3,7 @@
     "sqldriver": "SQL Server",
     "sqldatabase": "CMB",
     "sqluser": "sa",
-    "sqlpassword": "13245",
+    "sqlpassword": "12345",
 
     "jwt_secret": "secret",
     "bcrypt_salt": "salt",

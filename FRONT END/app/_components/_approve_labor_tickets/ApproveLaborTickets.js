@@ -138,6 +138,11 @@ const ApproveLaborTickets = () => {
             className: 'htCenter',
         },
         {
+            data: 'EMPLOYEE_ID',
+            type: 'text',
+            className: 'htCenter',
+        },
+        {
             data: 'APPROVED',
             type: 'checkbox',
             className: 'htCenter',
@@ -174,11 +179,18 @@ const ApproveLaborTickets = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Description', 'Customer ID',
-                                        'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Indirect', 'Break hours', 'Location', 'Regular Time', 'Over Time', 'Double Time', 'Approved']}
+                                        'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Indirect', 'Break hours', 'Location',
+                                        'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />
                         }
                     </div>
+
+
+                    <hr />
+
+
+
                 </div>
 
 
