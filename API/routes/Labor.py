@@ -48,6 +48,21 @@ def get_labor_tickets(connection_string, username):
     content = request.get_json(silent=True)
     try:
 
+        if 'DATA_FOR_VISUAL_TICKET' in content:
+            query_string = details_query['GET_DATA_FOR_CREATING_LABOR_TICKET_IN_VISUAL']
+            cnxn = pyodbc.connect(connection_string)
+            sql = cnxn.cursor()
+            sql.execute(query_string)
+            results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+            sql.close()
+            response = Response(
+                    response=simplejson.dumps(results, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+            response.headers['content-type'] = 'application/json'
+            return response, 200
+
+
         if 'FROM_DATE' not in content:
             return jsonify({"message": "From Date is required"}), 401
         else:

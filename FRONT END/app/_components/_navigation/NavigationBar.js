@@ -62,6 +62,7 @@ class NavigationBar extends Component {
                         </NavDropdown>
 
                         <NavDropdown disabled={super_admin} title="Admin" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/create_labor_ticket">Create Ticket Visual</NavDropdown.Item>
                             <NavDropdown.Item href="/users">Users</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>

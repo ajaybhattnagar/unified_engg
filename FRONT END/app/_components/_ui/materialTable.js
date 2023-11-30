@@ -16,7 +16,7 @@ const MTable = (props) => {
     const [columnsTypes, setColumnsTypes] = useState(props.columnsTypes);
     const [columnsHeaders, setColumnsHeaders] = useState(props.columnsHeaders);
     const is_update = props.is_update || false;
-    const [dataChanged, setDataChanged] = useState(false);;
+    const [dataChanged, setDataChanged] = useState(false);
     // const { title, columns, pageSize, showTitle, detailsPanel, filtering, loading, rowEdit, cellEdit, columnsButton, onRowSelect } = props;
     // const [selectedRow, setSelectedRow] = React.useState(null);
     // const [muiTableKey, setMuiTableKey] = React.useState(0);
@@ -28,6 +28,10 @@ const MTable = (props) => {
 
     const on_change_table = () => {
         props.onChange(data)
+    }
+
+    const on_create = () => {
+        props.onCreate(data)
     }
 
     return (

@@ -15,6 +15,7 @@ const isBrowser = typeof window !== `undefined`
 const ApproveLaborTickets = () => {
     const navigate = useNavigate();
     const [data, setData] = useState([]);
+    const [createLabTicketData, setCreateLabTicketData] = useState([]);
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 3 * 24 * 60 * 60 * 1000));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +39,7 @@ const ApproveLaborTickets = () => {
                         item.DOUBLE_TIME = item.DOUBLE_TIME === '1' ? true : false;
                         item
                     })
+
                     setData(response);
                 }
                 setIsLoading(false);
@@ -161,7 +163,6 @@ const ApproveLaborTickets = () => {
             });
     }
 
-
     const render = () => {
         return (
             <div>
@@ -185,11 +186,6 @@ const ApproveLaborTickets = () => {
                                 />
                         }
                     </div>
-
-
-                    <hr />
-
-
 
                 </div>
 

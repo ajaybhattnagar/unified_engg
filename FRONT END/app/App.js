@@ -12,6 +12,7 @@ import Preferences from './_components/_preferences/Preferences';
 import { BrowserRouter as Router, Routes , Route } from 'react-router-dom';
 import Users from './_components/_users/Users.js';
 import TicketDetails from './_components/_ticketDetails/TicketDetails.js';
+import CreateLaborTicket from './_components/_create_labor_ticket/CreateLaborTicket.js';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
 				<Route path='/preferences' element={<Preferences />} />
 				<Route path='/users' element={<Users />} />
 				<Route path='/ticket_details' element={<TicketDetails />} />
+				<Route path='/create_labor_ticket' element={<CreateLaborTicket />} />
 			</Routes>
 		</Router>
 	);
