@@ -4,6 +4,8 @@ export const appConstants = {
     // BASE_URL: 'https://uni-vm-visdev:5002/',
     BASE_URL: 'http://localhost:5000/',
 
+    VISUAL_API: 'http://localhost:44360/',
+
     LOGIN: 'api/v1/login',
 
     SITE_WAREHOUSE: 'api/v1/details/site_warehouse',
@@ -25,4 +27,5 @@ export const appConstants = {
 
     GET_LABOR_TICKET_DETAIL_BY_ID: 'api/v1/details/labor_ticket/', 
     GET_DOCUMENTS_WITH_PATH: 'api/v1/details/get_files',
+    CREATE_LABOR_TICKET_VISUAL: 'api/ShopFloor/CreateLaborTicketBulk',
 };

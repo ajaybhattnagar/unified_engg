@@ -71,13 +71,21 @@ details_query = {
                                     WHERE TRANSACTION_ID = '{TRANSACTION_ID}'
                                     ORDER BY CREATE_DATE DESC""",
 
-"GET_DATA_FOR_CREATING_LABOR_TICKET_IN_VISUAL": """SELECT TRANSACTION_ID,
-                                                    CASE WHEN TYPE = 'R' THEN 'RUN'
-                                                    WHEN TYPE = 'I' THEN 'INDIRECT' ELSE '' END AS 'TRANSACTION_TYPE',
-                                                    WORKORDER_BASE_ID, WORKORDER_LOT_ID, WORKORDER_SPLIT_ID, WORKORDER_SUB_ID, OPERATION_SEQ_NO, CLOCK_IN, CLOCK_OUT, 
-                                                    CASE WHEN TYPE = 'R' THEN HOURS_WORKED
-                                                    WHEN TYPE = 'I' THEN HOURS_BREAK ELSE '' END AS 'HOURS_WORKED',
-                                                    REGULAR_TIME, DOUBLE_TIME, OVER_TIME, DESCRIPTION, EMPLOYEE_ID, INDIRECT_CODE
-                                                    FROM UNI_LABOR_TICKET
-                                                    WHERE APPROVED = 1 AND VISUAL_LAB_TRANS_ID IS NULL"""
+"GET_DATA_FOR_CREATING_LABOR_TICKET_IN_VISUAL": """SELECT *, CASE WHEN (HOURS_WORKED_Z/60 - FLOOR(HOURS_WORKED_Z/60)) BETWEEN 0 AND 0.25 THEN FLOOR(HOURS_WORKED_Z/60) + 0.25
+                                                    WHEN (HOURS_WORKED_Z/60 - FLOOR(HOURS_WORKED_Z/60)) BETWEEN 0.25 AND 0.50 THEN FLOOR(HOURS_WORKED_Z/60) + 0.50
+                                                    WHEN (HOURS_WORKED_Z/60 - FLOOR(HOURS_WORKED_Z/60)) BETWEEN 0.50 AND 0.75 THEN FLOOR(HOURS_WORKED_Z/60) + 0.75
+                                                    WHEN (HOURS_WORKED_Z/60 - FLOOR(HOURS_WORKED_Z/60)) BETWEEN 0.75 AND 0.99 THEN FLOOR(HOURS_WORKED_Z/60) + 1 ELSE 0 END AS [HOURS_WORKED] FROM (
+                                                SELECT TRANSACTION_ID AS [UNI_TRANSACTION_ID],
+                                                CASE WHEN TYPE = 'R' THEN 'RUN'
+                                                WHEN TYPE = 'I' THEN 'INDIRECT' ELSE '' END AS 'TRANSACTION_TYPE',
+                                                WORKORDER_BASE_ID, WORKORDER_LOT_ID, WORKORDER_SPLIT_ID, WORKORDER_SUB_ID, OPERATION_SEQ_NO, CLOCK_IN, CLOCK_OUT, 
+                                                CASE 
+                                                    WHEN TYPE = 'R' THEN ROUND(CONVERT(DECIMAL(10, 2), HOURS_WORKED) * 4, 0) / 4 
+                                                    WHEN TYPE = 'I' THEN ROUND(CONVERT(DECIMAL(10, 2), HOURS_BREAK) * 4, 0) / 4  
+                                                    ELSE '' 
+                                                END AS 'HOURS_WORKED_Z',
+                                                REGULAR_TIME, DOUBLE_TIME, OVER_TIME, DESCRIPTION, EMPLOYEE_ID, INDIRECT_CODE AS [INDIRECT_ID]
+                                                FROM UNI_LABOR_TICKET
+                                                WHERE APPROVED = 1 AND VISUAL_LAB_TRANS_ID IS NULL
+                                                ) Z"""
 }

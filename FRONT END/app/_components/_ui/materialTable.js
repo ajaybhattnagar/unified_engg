@@ -30,10 +30,6 @@ const MTable = (props) => {
         props.onChange(data)
     }
 
-    const on_create = () => {
-        props.onCreate(data)
-    }
-
     return (
         <div className=''>
             <HotTable

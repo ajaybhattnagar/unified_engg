@@ -83,6 +83,7 @@ def login():
         "USERNAME": username,
         "DATABASE": database,
         "CONNECTION_STRING": connection_string,
+        "PASSWORD": password,
         "USER_DETAILS": user_details[0],
     }
     
