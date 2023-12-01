@@ -333,6 +333,8 @@ const RecordsLabor = () => {
         setSelectedUploadType((prev) => (i === prev ? null : i));
     }
 
+    console.log(selectedOperation)
+
     const create_labor_tickets_render_start = () => {
         return (
             <div>

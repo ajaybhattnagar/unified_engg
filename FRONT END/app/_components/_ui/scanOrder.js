@@ -32,8 +32,10 @@ const Scan = (props) => {
             || e.key === "Tab" || e.code === "Tab") {
             try {
                 var input = e.target.value
+                input = input.replace('*', '')
+                input = input.slice(1, -1);
                 var result = input.split('$')
-                var wo = result[0].replace('*', '')
+                var wo = result[0]
                 var sub_id = result[1]
                 var operation_seq = result[2].replace('*', '')
                 props.onChange({

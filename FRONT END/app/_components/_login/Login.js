@@ -34,8 +34,10 @@ const Login = () => {
                 PASSWORD: password,
                 DATABASE: database,
             }),
+            referrerPolicy: "unsafe-url",
             headers: {
                 "Content-Type": "application/json",
+                "allow-origin": "*"
             },
         })
             .then((res) => {
