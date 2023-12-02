@@ -345,7 +345,7 @@ def update_labor_tickets(connection_string, username):
             CLOCK_IN = df['CLOCK_IN'][index],
             CLOCK_OUT = df['CLOCK_OUT'][index],
             HOURS_BREAK = df['HOURS_BREAK'][index] if 'HOURS_BREAK' in df.columns else 0,
-            DESCRIPTION = df['DESCRIPTION'][index],
+            # DESCRIPTION = df['DESCRIPTION'][index],
             UDF1 = df['UDF1'][index],
             UDF2 = df['UDF2'][index],
             UDF3 = df['UDF3'][index],

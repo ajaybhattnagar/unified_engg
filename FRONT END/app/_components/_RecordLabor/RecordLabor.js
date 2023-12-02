@@ -297,7 +297,6 @@ const RecordsLabor = () => {
                             })
                     }
 
-                    alert("Labor Ticket Created Successfully!");
                     setLaborTicketIsLoading(false);
                     window.location.reload();
                 } else {
@@ -332,8 +331,6 @@ const RecordsLabor = () => {
     const on_change_upload_type = (i) => {
         setSelectedUploadType((prev) => (i === prev ? null : i));
     }
-
-    console.log(selectedOperation)
 
     const create_labor_tickets_render_start = () => {
         return (

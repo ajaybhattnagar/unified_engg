@@ -60,7 +60,7 @@ labor_query = {
                         UPDATE UNI_LABOR_TICKET
                         SET [CLOCK_IN] = '{CLOCK_IN}',
                             [CLOCK_OUT] = '{CLOCK_OUT}',
-                            [DESCRIPTION] = '{DESCRIPTION}',
+                            -- [DESCRIPTION] = '{DESCRIPTION}',
                             [UDF1] = '{UDF1}',
                             [UDF2] = '{UDF2}',
                             [UDF3] = '{UDF3}',

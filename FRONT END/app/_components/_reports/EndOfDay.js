@@ -90,7 +90,7 @@ const EOD = () => {
             readOnly: true
         },
         {
-            data: 'DESCRIPTION',
+            data: 'PART_DESC',
             type: 'text',
             readOnly: true
         },
@@ -170,7 +170,7 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Description', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 
+                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 
                                      'Indirect', 'Hours break', 'Description', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />

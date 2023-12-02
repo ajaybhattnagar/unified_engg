@@ -67,7 +67,7 @@ const ApproveLaborTickets = () => {
             readOnly: true
         },
         {
-            data: 'DESCRIPTION',
+            data: 'PART_DESC',
             type: 'text',
             readOnly: true
         },
@@ -179,7 +179,7 @@ const ApproveLaborTickets = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Description', 'Customer ID',
+                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID',
                                         'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Indirect', 'Break hours', 'Location',
                                         'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
