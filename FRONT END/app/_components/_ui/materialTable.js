@@ -1,13 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { useState } from "react";
-import { utils } from '../../_helpers/utils';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDownload, faRetweet, faTrash, faRegistered } from "@fortawesome/free-solid-svg-icons";
-import { appConstants } from '../../_helpers/consts.js';
-
+import 'handsontable/dist/handsontable.full.min.css';
+import Handsontable from 'handsontable/base';
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
-import 'handsontable/dist/handsontable.full.min.css';
+
 registerAllModules();
 
 const MTable = (props) => {

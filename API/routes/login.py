@@ -8,7 +8,8 @@ import jwt
 import pyodbc 
 import simplejson
 import datetime
-from datetime import date
+import time 
+
 
 from queries.users import user_query
 
@@ -78,13 +79,15 @@ def login():
         sql.close()
     except Exception as e:
         return jsonify({"message": str(e)}), 401  
-    
+
+
     user_object = {
         "USERNAME": username,
         "DATABASE": database,
         "CONNECTION_STRING": connection_string,
         "PASSWORD": password,
         "USER_DETAILS": user_details[0],
+        "EXP": int(time.time() + 7200)
     }
     
     try:

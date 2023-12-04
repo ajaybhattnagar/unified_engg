@@ -205,7 +205,7 @@ const CreateLaborTicket = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Type', 'Work Order', 'Lot', 'Split',
-                                        'Split', 'Sub', 'Operation Seq', 'Indirect ID', 'In Time', 'Out Time', 'Hours', 'Description', 'Employee ID']}
+                                        'Split', 'Sub', 'Operation Seq', 'Indirect ID', 'In Time', 'Out Time', 'Hours', 'Notes', 'Employee ID']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />
                         }

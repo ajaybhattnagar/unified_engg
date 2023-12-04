@@ -148,6 +148,12 @@ const ApproveLaborTickets = () => {
             data: 'APPROVED',
             type: 'checkbox',
             className: 'htCenter',
+        },
+        {
+            data: 'VISUAL_LAB_TRANS_ID',
+            type: 'numeric',
+            readOnly: true,
+            format: '0.00',
         }
     ]
 
@@ -181,7 +187,7 @@ const ApproveLaborTickets = () => {
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID',
                                         'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Indirect', 'Break hours', 'Location',
-                                        'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Approved']}
+                                        'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Approved', 'Visual Labor ID']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />
                         }

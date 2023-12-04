@@ -29,6 +29,20 @@ class NavigationBar extends Component {
             this.setState({ access_rights: access_rights })
         }
 
+        // Check if token is expired
+        var token = localStorage.getItem("token");
+        if (token) {
+            var decoded = utils.decodeJwt();
+            var exp = decoded.EXP;
+            var current_time = Date.now() / 1000;
+            if (exp < current_time) {
+                localStorage.removeItem("token");
+                window.location.reload();
+            } else {
+                console.log("token not expired -> Pass");
+            }
+        }
+
     }
 
     render() {
