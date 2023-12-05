@@ -586,7 +586,7 @@ const RecordsLabor = () => {
     const render_clock_in = () => {
         return (
             <div className="d-flex justify-content-center w-100 mt-3">
-                <button className="btn btn-outline-success mt-1" onClick={(e) => {
+                <button className="btn btn-outline-danger mt-1" onClick={(e) => {
                     utils.clock_in_out_users("clock_in")
                         .then((response) => {
                             window.location.reload();
@@ -613,11 +613,22 @@ const RecordsLabor = () => {
                                     <div>
                                         <div className="d-flex justify-content-around mt-2">
                                             <ul className="nav nav-pills">
+                                                {/* Button to Labor run */}
                                                 <li className="nav-item">
                                                     <a className={isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(true) }}>Run</a>
                                                 </li>
+                                                {/* Button for Indirect */}
                                                 <li className="nav-item">
                                                     <a className={!isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(false) }}>Indirect</a>
+                                                </li>
+                                                {/* Button to logout */}
+                                                <li className="nav-item btn btn-outline-dark ml-1">
+                                                    <a className="" onClick={(e) => {
+                                                        utils.clock_in_out_users("clock_out")
+                                                        .then((response) => {
+                                                            window.location.reload();
+                                                        })
+                                                    }}>Clock out</a>
                                                 </li>
                                             </ul>
 
