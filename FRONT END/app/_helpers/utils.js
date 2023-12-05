@@ -23,7 +23,9 @@ export const utils = {
   uploadImage,
 
   decodeJwt,
-  open_document
+  open_document,
+
+  clock_in_out_users
 }
 
 
@@ -318,8 +320,8 @@ function uploadImage(data, tranaction_id) {
       'Content-Type': 'application/json',
       'x-access-token': localStorage.getItem('token')
     },
-    body: JSON.stringify({ 'CLICKED_IMAGE' : data }),
-    
+    body: JSON.stringify({ 'CLICKED_IMAGE': data }),
+
   }
   return fetch(url, request_object)
     .then((res) => {
@@ -398,4 +400,36 @@ function open_document(path) {
     })
 }
 
+function clock_in_out_users(type) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.CLOCK_IN_OUT_USER).concat(type);
+  const request_object = {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': localStorage.getItem('token')
+    },
+
+  }
+  return fetch(url, request_object)
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        return data
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err));
+}
 

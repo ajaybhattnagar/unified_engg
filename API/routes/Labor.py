@@ -294,12 +294,16 @@ def employee_scan_details(connection_string, username):
 
             sql.execute(labor_query['GET_ALL_WORKORDER_LIST'])
             all_workorders_list = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+            sql.execute(labor_query['GET_USER_CLOCK_IN_DETAILS'].format(EMP_ID = username))
+            emp_clock_in_details = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
             
             dict_results = {
                 'last_30_tickets': results,
                 'active_labor_ticket': active_labor_ticket,
                 'employee_kpis': employee_kpis,
-                'all_workorders_list': all_workorders_list
+                'all_workorders_list': all_workorders_list,
+                "emp_clock_in_details": emp_clock_in_details,
             }
 
             sql.close()
@@ -483,6 +487,37 @@ def upload_image(connection_string, username, trans_id):
 
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+
+
+@labor_blueprint.route("/api/v1/labor/clock_in_out/<type>", methods=['POST', 'GET', 'PUT'])
+@token_required
+def clock_in_out(connection_string, username, type):
+    if type == '':
+        return jsonify({"message": "Type is required"}), 401
+    print (connection_string)
+
+    if type.lower() == 'clock_in':
+        #run query to update clock in
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(labor_query['INSERT_INTO_UNI_USERS_LOGIN'].format(EMP_ID = username))
+        cnxn.commit()
+        sql.close()
+        return jsonify({'message': 'Clocked in successfully!'}), 200
+    
+    elif type.lower() == 'clock_out':
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(labor_query['UPDATE_CLOCK_OUT_TIME'].format(EMP_ID = username))
+        cnxn.commit()
+        sql.close()
+        return jsonify({'message': 'Clocked out successfully!'}), 200
+    else:
+        return jsonify({"message": "Type is invalid"}), 401
+    
+
+
+    
 
 
 

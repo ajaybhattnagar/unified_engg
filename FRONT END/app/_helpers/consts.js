@@ -29,4 +29,6 @@ export const appConstants = {
     GET_LABOR_TICKET_DETAIL_BY_ID: 'api/v1/details/labor_ticket/', 
     GET_DOCUMENTS_WITH_PATH: 'api/v1/details/get_files',
     CREATE_LABOR_TICKET_VISUAL: 'api/ShopFloor/CreateLaborTicketBulk',
+
+    CLOCK_IN_OUT_USER: 'api/v1/labor/clock_in_out/',
 };

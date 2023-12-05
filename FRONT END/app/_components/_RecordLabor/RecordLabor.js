@@ -13,6 +13,7 @@ import WebCam from "../_ui/webCam.js";
 import SingleFileUploader from "../_ui/uploadFile.js";
 import IndirectLaborTicket from "../_ui/indirectLaborTicket.js";
 import Scan from "../_ui/scanOrder.js";
+import { render } from "react-dom";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -27,6 +28,7 @@ const RecordsLabor = () => {
     const [selectedRecentWorkOrder, setSelectedRecentWorkOrder] = useState(null);
     const [operationDetails, setOperationDetails] = useState(null);
     const [activeLaborTicket, setActiveLaborTicket] = useState(0);
+    const [clockInDetails, setClockInDetails] = useState(null);
 
     const [transactionId, setTransactionId] = useState(0);
     const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
@@ -99,6 +101,7 @@ const RecordsLabor = () => {
                     data.last_30_tickets && data.last_30_tickets.length > 0 ? setRecentLaborTickets(data.last_30_tickets) : null;
                     data.active_labor_ticket && data.active_labor_ticket.length > 0 ? setActiveLaborTicket(data.active_labor_ticket) : null;
                     data.employee_kpis && data.employee_kpis.length > 0 ? setEmployeeKpi(data.employee_kpis) : null;
+                    data.emp_clock_in_details && data.emp_clock_in_details.length > 0 ? setClockInDetails(data.emp_clock_in_details) : null;
 
                     if (data.active_labor_ticket && data.active_labor_ticket.length > 0) {
                         setTransactionId(data.active_labor_ticket[0].TRANSACTION_ID)
@@ -580,6 +583,20 @@ const RecordsLabor = () => {
         )
     }
 
+    const render_clock_in = () => {
+        return (
+            <div className="d-flex justify-content-center w-100 mt-3">
+                <button className="btn btn-outline-success mt-1" onClick={(e) => {
+                    utils.clock_in_out_users("clock_in")
+                        .then((response) => {
+                            window.location.reload();
+                        })
+                }}>
+                    Clock In</button>
+            </div>
+        )
+    }
+
     return (
         <div>
             <NavigationBar />
@@ -587,36 +604,50 @@ const RecordsLabor = () => {
                 !isLoading ?
                     <div className="container">
                         {
-                            activeLaborTicket && activeLaborTicket.length > 0 ?
-                                create_labor_tickets_render_stop()
-                                :
-                                <div>
-                                    <div className="d-flex justify-content-around mt-2">
-                                        <ul className="nav nav-pills">
-                                            <li className="nav-item">
-                                                <a className={isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(true) }}>Run</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className={!isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(false) }}>Indirect</a>
-                                            </li>
-                                        </ul>
+                            clockInDetails && clockInDetails.length > 0 ?
 
+                                // Ticket creationa and stopping it
+                                activeLaborTicket && activeLaborTicket.length > 0 ?
+                                    create_labor_tickets_render_stop()
+                                    :
+                                    <div>
+                                        <div className="d-flex justify-content-around mt-2">
+                                            <ul className="nav nav-pills">
+                                                <li className="nav-item">
+                                                    <a className={isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(true) }}>Run</a>
+                                                </li>
+                                                <li className="nav-item">
+                                                    <a className={!isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(false) }}>Indirect</a>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                        {
+                                            isLaborTicketRun ?
+                                                <div className="">
+                                                    {
+                                                        <div className="">
+                                                            {create_labor_tickets_render_start()}
+                                                            {recent_labor_tickets_render()}
+                                                            {render_kpi()}
+                                                            {render_file_camera_start()}
+                                                        </div>
+                                                    }
+
+                                                </div>
+                                                :
+                                                <div className="container">
+                                                    <IndirectLaborTicket />
+                                                </div>
+                                        }
                                     </div>
-                                    {
-                                        isLaborTicketRun ?
-                                            <div className="">
-                                                {create_labor_tickets_render_start()}
-                                                {recent_labor_tickets_render()}
-                                                {render_kpi()}
-                                                {render_file_camera_start()}
-                                            </div>
-                                            :
-                                            <div className="container">
-                                                <IndirectLaborTicket />
-                                            </div>
-                                    }
+                                // Ticket creationa and stopping it
 
+                                :
+                                <div className="">
+                                    {render_clock_in()}
                                 </div>
+
                         }
                     </div>
                     :
