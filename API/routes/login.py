@@ -87,7 +87,7 @@ def login():
         "CONNECTION_STRING": connection_string,
         "PASSWORD": password,
         "USER_DETAILS": user_details[0],
-        "EXP": int(time.time() + 7200)
+        "EXP": int(time.time() + 172800)
     }
     
     try:
