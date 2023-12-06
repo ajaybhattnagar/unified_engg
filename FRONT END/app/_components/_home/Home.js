@@ -43,6 +43,24 @@ const Home = () => {
                 .then((data) => {
                     if (response_status === 200) {
                         setIsLoading(false);
+
+                        // Update data.CLOCK_IN_VS_LABOR_KPI to have the correct values
+                        data.CLOCK_IN_VS_LABOR_KPI.forEach((element) => {
+                            if (element.IS_CLOCKED_IN >= 1) {
+                                element.IS_CLOCKED_IN = "Yes";
+                            }
+                            else {
+                                element.IS_CLOCKED_IN = "No";
+                            }
+                            if (element.IS_LABOR_START >= 1) {
+                                element.IS_LABOR_START = "Yes";
+                            }
+                            else {
+                                element.IS_LABOR_START = "No";
+                            }
+
+                        });
+
                         setData(data);
                     } else {
                         alert(data.message);
@@ -129,6 +147,24 @@ const Home = () => {
         }
     ]
 
+    const columns_clocked_in_employees = [
+        {
+            data: 'ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'IS_CLOCKED_IN',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'IS_LABOR_START',
+            type: 'text',
+            readOnly: true
+        }
+    ]
+
     const render = () => {
         return (
             <div>
@@ -138,34 +174,56 @@ const Home = () => {
                         {
                             isLoading ? <Loading />
                                 :
-                                <div className="row">
-                                    <div className="col-12 col-md-8">
-                                        <Card bg='primary' text='white'>
-                                            <Card.Header><h5>Active Labor Tickets</h5></Card.Header>
-                                            <Card.Body>
-                                                <MTable
-                                                    data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
-                                                    columnsTypes={columns_active_labor_tickets}
-                                                    columnsHeaders={['Work order', 'Lot Split Sub', 'Indirect', 'Part Description',
-                                                        'Customer ID', 'In Date', 'In Time', 'Work Location', 'Employee']}
-                                                // onChange={(e) => { update_labor_tickets(e) }}
-                                                />
-                                            </Card.Body>
-                                        </Card>
+                                <div>
+                                    {/* First row */}
+                                    <div className="row">
+                                        <div className="col-12 col-md-8">
+                                            <Card bg='primary' text='white'>
+                                                <Card.Header><h5>Active Labor Tickets</h5></Card.Header>
+                                                <Card.Body>
+                                                    <MTable
+                                                        data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
+                                                        columnsTypes={columns_active_labor_tickets}
+                                                        columnsHeaders={['Work order', 'Lot Split Sub', 'Indirect', 'Part Description',
+                                                            'Customer ID', 'In Date', 'In Time', 'Work Location', 'Employee']}
+                                                    // onChange={(e) => { update_labor_tickets(e) }}
+                                                    />
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
+                                        <div className="col-12 col-md-4">
+                                            <Card bg='primary' text='white'>
+                                                <Card.Header><h5>Hours</h5></Card.Header>
+                                                <Card.Body>
+                                                    <MTable
+                                                        data={data.EMPLOYEE_KPI ? data.EMPLOYEE_KPI : []}
+                                                        columnsTypes={columns_employee_kpi}
+                                                        columnsHeaders={['Name', 'Hours today', 'Hours current week']}
+                                                    // onChange={(e) => { update_labor_tickets(e) }}
+                                                    />
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
                                     </div>
-                                    <div className="col-12 col-md-4">
-                                        <Card bg='primary' text='white'>
-                                            <Card.Header><h5>Hours</h5></Card.Header>
-                                            <Card.Body>
-                                                <MTable
-                                                    data={data.EMPLOYEE_KPI ? data.EMPLOYEE_KPI : []}
-                                                    columnsTypes={columns_employee_kpi}
-                                                    columnsHeaders={['Name', 'Hours today', 'Hours current week']}
-                                                // onChange={(e) => { update_labor_tickets(e) }}
-                                                />
-                                            </Card.Body>
-                                        </Card>
+
+                                    {/* Second row */}
+                                    <div className="row mt-3">
+                                        <div className="col-12 col-md-4">
+                                            <Card bg='primary' text='white'>
+                                                <Card.Header><h5>Clocked In Employees</h5></Card.Header>
+                                                <Card.Body>
+                                                    <MTable
+                                                        data={data.CLOCK_IN_VS_LABOR_KPI ? data.CLOCK_IN_VS_LABOR_KPI : []}
+                                                        columnsTypes={columns_clocked_in_employees}
+                                                        columnsHeaders={['Name', 'Clocked in?', 'Labor Ticket Started?']}
+                                                    // onChange={(e) => { update_labor_tickets(e) }}
+                                                    />
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
                                     </div>
+
+
                                 </div>
                         }
                     </div>

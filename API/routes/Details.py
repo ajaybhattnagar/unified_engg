@@ -99,11 +99,16 @@ def dashboard(connection_string, username):
         sql.execute(details_query['GET_ALL_EMPLOYEE_HOURS_KPI'])
         employee_kpi = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
 
+        sql.execute(details_query['GET_CLOCK_IN_VS_LABOR_KPI'])
+        clock_in_vs_labor = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+
         sql.close()
 
         response_dict = {
             "ACTIVE_LABOR_TICKETS": active_labor,
-            "EMPLOYEE_KPI": employee_kpi
+            "EMPLOYEE_KPI": employee_kpi,
+            "CLOCK_IN_VS_LABOR_KPI": clock_in_vs_labor
         }
         response = Response(
                     response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),

@@ -48,6 +48,11 @@ details_query = {
                                 (SELECT SUM(HOURS_WORKED) FROM UNI_LABOR_TICKET WHERE EMPLOYEE_ID = LAB.EMPLOYEE_ID AND TYPE = 'R' AND  CONVERT(DATE, TRANSACTION_DATE) =  CONVERT(DATE, GETDATE())) /60 AS [TOTAL_TODAY_HRS] 
                                 FROM UNI_LABOR_TICKET LAB""",
 
+"GET_CLOCK_IN_VS_LABOR_KPI": """SELECT DISTINCT ID,
+                                (SELECT COUNT(*) FROM UNI_USERS_LOGIN WHERE ID = USERS.ID AND CLOCK_OUT IS NULL AND CAST(CREATE_DATE AS DATE) = CAST(GETDATE() AS DATE)) AS [IS_CLOCKED_IN],
+                                (SELECT COUNT(*) FROM UNI_LABOR_TICKET WHERE EMPLOYEE_ID = USERS.ID AND CLOCK_OUT IS NULL AND CAST(CREATE_DATE AS DATE) = CAST(GETDATE() AS DATE)) AS [IS_LABOR_START]
+                                FROM UNI_USERS USERS""",
+
 "GET_LABOR_TICKET_BY_ID": """SELECT ULAB.*,
                                 CONCAT(CONVERT(VARCHAR(10), ULAB.WORKORDER_LOT_ID), ' - ', CONVERT(VARCHAR(10), ULAB.WORKORDER_SPLIT_ID), ' - ',  CONVERT(VARCHAR(10), ULAB.WORKORDER_SUB_ID)) AS [LOT_SPLIT_SUB],
                                 CAST(ULAB.CLOCK_IN AS DATE) AS [CLOCK_IN_DATE], CONVERT(VARCHAR(8), ULAB.CLOCK_IN, 108) AS [CLOCK_IN_TIME],
@@ -87,5 +92,7 @@ details_query = {
                                                 REGULAR_TIME, DOUBLE_TIME, OVER_TIME, DESCRIPTION, EMPLOYEE_ID, INDIRECT_CODE AS [INDIRECT_ID]
                                                 FROM UNI_LABOR_TICKET
                                                 WHERE APPROVED = 1 AND VISUAL_LAB_TRANS_ID IS NULL
-                                                ) Z"""
+                                                ) Z""",
+
+
 }

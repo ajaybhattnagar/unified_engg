@@ -1,11 +1,11 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
     // BASE_URL: 'http://192.168.1.79:5000/',
-    BASE_URL: 'https://uni-vm-visdev.unified.local:5003/',
-    // BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'https://uni-vm-visdev.unified.local:5003/',
+    BASE_URL: 'http://localhost:5000/',
 
     VISUAL_API: 'http://localhost:44360/',
-    VISUAL_API: 'https://uni-vm-visdev.unified.local:5005/',
+    // VISUAL_API: 'https://uni-vm-visdev.unified.local:5005/',
 
     LOGIN: 'api/v1/login',
 
