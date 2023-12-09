@@ -94,5 +94,17 @@ details_query = {
                                                 WHERE APPROVED = 1 AND VISUAL_LAB_TRANS_ID IS NULL
                                                 ) Z""",
 
+"GET_WORKORDER_HEADER_DETAILS" : """SELECT ROWID, TYPE, BASE_ID, LOT_ID, SPLIT_ID, SUB_ID, PART_ID, DESIRED_QTY, RECEIVED_QTY, CREATE_DATE, DESIRED_WANT_DATE
+                                    FROM WORK_ORDER 
+                                    WHERE TYPE = 'W' AND BASE_ID = '{BASE_ID}' AND LOT_ID = 1 AND SPLIT_ID = 0 """,
+"GET_OPERATION_DETAILS_PER_SUB_ID": """SELECT * 
+                                        FROM OPERATION 
+                                        WHERE WORKORDER_TYPE = 'W' AND WORKORDER_BASE_ID = '{BASE_ID}' AND WORKORDER_LOT_ID = 1 AND WORKORDER_SPLIT_ID = 0 AND WORKORDER_SUB_ID = {SUB_ID}""",
+
+"GET_ALL_ACTIVE_WORKORDERS": """SELECT *
+                            FROM WORK_ORDER WO
+                            LEFT JOIN DEMAND_SUPPLY_LINK DSL ON DSL.SUPPLY_BASE_ID = WO.BASE_ID AND DSL.SUPPLY_LOT_ID = WO.LOT_ID AND DSL.SUPPLY_SPLIT_ID = WO.SPLIT_ID AND DSL.SUPPLY_SUB_ID = WO.SUB_ID
+                            LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
+                            WHERE WO.TYPE = 'W' AND WO.STATUS IN ('R', 'F', 'U') AND WO.SUB_ID = 0"""
 
 }

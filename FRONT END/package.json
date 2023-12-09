@@ -45,6 +45,7 @@
     "react-webcam": "^7.2.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "tree-model": "^1.0.7",
     "valid-url": "^1.0.9",
     "webpack": "^5.76.0",
     "xlsx": "^0.18.5"

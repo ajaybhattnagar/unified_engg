@@ -162,3 +162,52 @@ def files(connection_string, username):
         return send_file(FILE_PATH, as_attachment=True)
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+    
+# Get work order details for tree diagram
+@details_blueprint.route("/api/v1/details/work_order", methods=['GET'])
+@token_required
+def work_order_details_tree_diagram(connection_string, username):
+    cnxn = pyodbc.connect(connection_string)
+    base_id = request.args.get('base_id')
+    # Add notes to a parcel   
+    try:
+
+        if base_id == '' or base_id == None or base_id == 'undefined' or base_id == 'null' or base_id == 'None':
+            sql = cnxn.cursor()
+            sql.execute(details_query['GET_ALL_ACTIVE_WORKORDERS'])
+            header_details = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+            sql.close()
+            response = Response(
+                        response=simplejson.dumps(header_details, ignore_nan=True,default=datetime.datetime.isoformat),
+                        mimetype='application/json'
+                    )
+            response.headers['content-type'] = 'application/json'
+            return response, 200
+
+        if (base_id):
+            sql = cnxn.cursor()
+            sql.execute(details_query['GET_WORKORDER_HEADER_DETAILS'].format(BASE_ID = base_id))
+            header_details = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+            # Loop over the header details and get the children
+            for header in header_details:
+                sql.execute(details_query['GET_OPERATION_DETAILS_PER_SUB_ID'].format(BASE_ID = base_id, SUB_ID = header['SUB_ID']))
+                operation_details = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+                header['children'] = operation_details
+
+            sql.close()
+
+            response_dict = {
+            'id': "root",
+                'name': "root",
+                'children': header_details
+            }
+
+            response = Response(
+                        response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
+                        mimetype='application/json'
+                    )
+            response.headers['content-type'] = 'application/json'
+            return response, 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401

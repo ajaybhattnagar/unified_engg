@@ -31,4 +31,6 @@ export const appConstants = {
     CREATE_LABOR_TICKET_VISUAL: 'api/ShopFloor/CreateLaborTicketBulk',
 
     CLOCK_IN_OUT_USER: 'api/v1/labor/clock_in_out/',
+
+    GET_ALL_ACTIVE_WORKORDER_DETAILS: 'api/v1/details/work_order',
 };

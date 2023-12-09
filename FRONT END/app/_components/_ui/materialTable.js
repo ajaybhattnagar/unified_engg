@@ -14,6 +14,7 @@ const MTable = (props) => {
     const [columnsHeaders, setColumnsHeaders] = useState(props.columnsHeaders);
     const is_update = props.is_update || false;
     const [dataChanged, setDataChanged] = useState(false);
+    const [cellSelected, setCellSelected] = useState(false);
     // const { title, columns, pageSize, showTitle, detailsPanel, filtering, loading, rowEdit, cellEdit, columnsButton, onRowSelect } = props;
     // const [selectedRow, setSelectedRow] = React.useState(null);
     // const [muiTableKey, setMuiTableKey] = React.useState(0);
@@ -25,6 +26,12 @@ const MTable = (props) => {
 
     const on_change_table = () => {
         props.onChange(data)
+    }
+
+    const on_cell_selected = (e) => {
+        if (props.onSelectCell) {
+            props.onSelectCell(e)
+        }
     }
 
     return (
@@ -50,17 +57,18 @@ const MTable = (props) => {
                 ]}
 
                 afterChange={(changes, source) => { if (source === 'edit') { setDataChanged(true) } }}
+                afterSelection={(r, c) => { on_cell_selected(data[r]) }}
 
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
             />
             {
                 dataChanged ?
                     <div className='d-flex mx-auto justify-content-center fixed-bottom '>
-                        <button type="button" className="btn btn-outline-primary mb-2" onClick={() => { on_change_table() }}>Update</button>
-                    </div>
+                        < button type="button" className="btn btn-outline-primary mb-2" onClick={() => { on_change_table() }}>Update</button>
+                    </div >
                     : null
             }
-        </div>
+        </div >
     );
 };
 
