@@ -8,27 +8,19 @@ import TreeModel from "tree-model";
 const config = {
     id: "root",
     name: "root",
-    children: [
-        // sudo
-        {
-            id: "1",
-            name: "sudo",
-            children: []
-        }]
-
-
+    children: []
 };
 
 
 
 const Parent = ({ item, onDragStart, onDragEnd, draggable }) => (
-    <div
-        className="test"
-    // onDragStart={onDragStart}
-    // onDragEnd={onDragEnd}
-    // draggable={draggable}
+    <div className="test cusor-hand" key={item.ROWID}
+        // onDragStart={onDragStart}
+        // onDragEnd={onDragEnd}
+        // draggable={draggable}
+        onClick={(e) => console.log(item)}
     >
-        {item.BASE_ID} {item.PART_ID} &nbsp;
+        <span className="badge badge-primary">{item.SUB_ID}</span> &nbsp; {item.PART_ID} &nbsp;
         {item.RESOURCE_ID}
     </div>
 );
@@ -45,7 +37,6 @@ export default function TreeDiagram(props) {
 
     useEffect(() => {
         if (props.data) {
-            console.log("props.data", props.data);
             setRoot(tree.parse(props.data));
             var path_ = searchItemPath(props.data.id);
             setPath(path_);

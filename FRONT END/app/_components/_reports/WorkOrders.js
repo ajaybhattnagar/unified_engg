@@ -10,6 +10,8 @@ import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import TreeDiagram from "../_ui/treeDiagram";
+import { Card } from "react-bootstrap";
+
 
 const isBrowser = typeof window !== `undefined`
 
@@ -17,6 +19,7 @@ const WorkOrders = () => {
     const navigate = useNavigate();
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [treeLoading, setTreeLoading] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
     const [treeDiagramData, setTreeDiagramData] = useState(null);
     const isAllowedEditLaborTicket = useRef(false);
@@ -72,6 +75,7 @@ const WorkOrders = () => {
 
     useEffect(() => {
         if (selectedRow) {
+            setTreeLoading(true);
             var response_status = 0;
             var url = appConstants.BASE_URL.concat(appConstants.GET_ALL_ACTIVE_WORKORDER_DETAILS).concat('?base_id=' + selectedRow.BASE_ID);
             const request_object = {
@@ -94,10 +98,12 @@ const WorkOrders = () => {
                 })
                 .then((data) => {
                     if (response_status === 200) {
+                        setTreeLoading(false);
                         setTreeDiagramData(data);
                     }
                 })
                 .catch((error) => {
+                    setTreeLoading(false);
                     console.log(error);
                 });
         }
@@ -132,22 +138,35 @@ const WorkOrders = () => {
         return (
             <div>
                 <NavigationBar />
-                <div className="m-3">
-                    <div className="">
+                <div className="d-flex m-3">
+                    <div className="col-12 col-md-5">
                         {
                             isLoading ? <Loading />
                                 :
-                                <MTable
-                                    data={data}
-                                    columnsTypes={columns}
-                                    columnsHeaders={['Base ID', 'Part ID', 'Customer', 'Desired Qty']}
-                                    onSelectCell={(e) => { setSelectedRow(e) }}
-                                />
+                                <div className="">
+                                    <Card bg='primary' text='white'>
+                                        <Card.Header><h5>Active Labor Tickets</h5></Card.Header>
+                                        <Card.Body>
+                                            <MTable
+                                                data={data}
+                                                columnsTypes={columns}
+                                                columnsHeaders={['Base ID', 'Part ID', 'Customer', 'Desired Qty']}
+                                                onSelectCell={(e) => { setSelectedRow(e) }}
+                                            />
+                                        </Card.Body>
+                                    </Card>
+                                </div>
                         }
                     </div>
 
-                    <div className="">
-                        <TreeDiagram data={treeDiagramData} />
+                    <div className="w-100 ml-3">
+                        {
+                            treeLoading ? <Loading />
+                                :
+                                <div className="d-flex justify-content-center">
+                                    <TreeDiagram data={treeDiagramData} />
+                                </div>
+                        }
                     </div>
                 </div>
 

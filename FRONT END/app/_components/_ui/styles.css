@@ -664,19 +664,19 @@ body.currentapp_noapp
   .hr-teams
   .item__parent.active
   .item__parent__element.has-children:after {
-  background-color: #666666;
+  background-color: #ccc
 }
 body.currentapp_noapp .hr-teams .item__parent.active .test {
-  border-color: #666666;
+  border-color: #ccc
 }
 body.currentapp_noapp .hr-teams .item__children.dragged-over {
   background-color: rgba(102, 102, 102, 0.1);
 }
 body.currentapp_hr .hr-teams .item__parent__line.active {
-  background-color: #d16c59;
+  background-color:#ccc
 }
 body.currentapp_hr .hr-teams .item__parent.active .item__parent__element {
-  border-color: #d16c59;
+  border-color: #ccc
 }
 body.currentapp_hr
   .hr-teams
@@ -686,19 +686,19 @@ body.currentapp_hr
   .hr-teams
   .item__parent.active
   .item__parent__element.has-children:after {
-  background-color: #d16c59;
+  background-color: #ccc
 }
 body.currentapp_hr .hr-teams .item__parent.active .test {
-  border-color: #d16c59;
+  border-color: #ccc
 }
 body.currentapp_hr .hr-teams .item__children.dragged-over {
   background-color: rgba(209, 108, 89, 0.1);
 }
 body.currentapp_revenue .hr-teams .item__parent__line.active {
-  background-color: #b04387;
+  background-color: #ccc
 }
 body.currentapp_revenue .hr-teams .item__parent.active .item__parent__element {
-  border-color: #b04387;
+  border-color: #ccc
 }
 body.currentapp_revenue
   .hr-teams
@@ -711,7 +711,7 @@ body.currentapp_revenue
   background-color: #b04387;
 }
 body.currentapp_revenue .hr-teams .item__parent.active .test {
-  border-color: #b04387;
+  border-color:#ccc
 }
 body.currentapp_revenue .hr-teams .item__children.dragged-over {
   background-color: rgba(176, 67, 135, 0.1);
