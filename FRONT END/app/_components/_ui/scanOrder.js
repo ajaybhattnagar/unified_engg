@@ -33,6 +33,7 @@ const Scan = (props) => {
             try {
                 var input = e.target.value
                 input = input.replace('*', '')
+                input = input.replace('*', '')
                 input = input.slice(1, -1);
                 var result = input.split('$')
                 var wo = result[0]

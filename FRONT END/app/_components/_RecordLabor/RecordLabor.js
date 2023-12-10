@@ -64,9 +64,15 @@ const RecordsLabor = () => {
 
     const [isLaborTicketRun, setIsLaborTicketRun] = useState(true);
 
-    // Eg: *WO022721$0$20*
+    const urlParams = new URLSearchParams(window.location.search);
+    const base_id = urlParams.get('base_id');
+    const sub_id = urlParams.get('sub_id');
+    const operation_seq = urlParams.get('operation_seq');
+
+    // Eg: *%22-CFS-J15$0$10%*
     // Eg: *WO022721$1$20*
 
+    // Getting all initial details, active labor ticket, recent labor tickets, employee kpi, clock in details
     useEffect(() => {
         setIsLoading(true);
         if (!localStorage.getItem("token")) {
@@ -103,13 +109,14 @@ const RecordsLabor = () => {
                     data.employee_kpis && data.employee_kpis.length > 0 ? setEmployeeKpi(data.employee_kpis) : null;
                     data.emp_clock_in_details && data.emp_clock_in_details.length > 0 ? setClockInDetails(data.emp_clock_in_details) : null;
 
+                    // Set transaction id and details if active labor ticket present
                     if (data.active_labor_ticket && data.active_labor_ticket.length > 0) {
                         setTransactionId(data.active_labor_ticket[0].TRANSACTION_ID)
                         setSelectedWorkOrder(data.active_labor_ticket[0].WORKORDER_BASE_ID)
                         setSelectedLot(data.active_labor_ticket[0].WORKORDER_LOT_ID)
                         setSelectedSplit(data.active_labor_ticket[0].WORKORDER_SPLIT_ID)
                         setSelectedSub(data.active_labor_ticket[0].WORKORDER_SUB_ID)
-                        setSelectedOperation(data.active_labor_ticket[0].RESOURCE_ID)
+                        setSelectedResourceString(data.active_labor_ticket[0].RESOURCE_ID)
                         setSelectedClockIn(utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN))
                         setSelectedClockOut(utils.convertTimeStampToString(new Date()))
                     }
@@ -124,11 +131,9 @@ const RecordsLabor = () => {
                 }
             })
             .catch((err) => console.error(err));
-
-
-
     }, []);
 
+    // Access rights useEffect
     useEffect(() => {
         if (localStorage.getItem("token")) {
             var access_rights = utils.decodeJwt();
@@ -144,6 +149,16 @@ const RecordsLabor = () => {
 
     }, []);
 
+    // Set url params if any useEffect
+    useEffect(() => {
+        if (base_id && base_id !== null && base_id !== '' && sub_id && sub_id !== null && sub_id !== '' && operation_seq && operation_seq !== null && operation_seq !== '') {
+            setSelectedWorkOrder(base_id)
+            setSelectedSub(sub_id)
+            setSelectedOperation(operation_seq)
+        }
+    }, []);
+
+    // Set scanned data useEffect
     useEffect(() => {
         if (scannedData && scannedData !== null) {
             setSelectedWorkOrder(scannedData.work_order)
@@ -225,6 +240,15 @@ const RecordsLabor = () => {
                         else {
                             setSelectedOperation(null)
                             setSelectedResourceString(null)
+                        }
+
+                        // Set operation seq again when url parameter present
+                        if (operation_seq && operation_seq !== null && operation_seq !== '') {
+                            setSelectedOperation(operation_seq)
+                        }
+                        // Set operation resource string if stop labor ticket
+                        if (activeLaborTicket && activeLaborTicket.length > 0) {
+                            setSelectedResourceString(activeLaborTicket[0].RESOURCE_ID)
                         }
 
                     } else {
@@ -464,7 +488,7 @@ const RecordsLabor = () => {
                     </div>
 
                     <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="Operation" text='Operation' disabled={true} value={selectedOperation} />
+                        <Input type={'text'} placeholder="Operation" text='Operation' disabled={true} value={selectedResourceString} />
                     </div>
 
                     <div className="w-100 mt-3">
@@ -625,9 +649,9 @@ const RecordsLabor = () => {
                                                 <li className="nav-item btn btn-outline-dark ml-1">
                                                     <a className="" onClick={(e) => {
                                                         utils.clock_in_out_users("clock_out")
-                                                        .then((response) => {
-                                                            window.location.reload();
-                                                        })
+                                                            .then((response) => {
+                                                                window.location.reload();
+                                                            })
                                                     }}>Clock out</a>
                                                 </li>
                                             </ul>

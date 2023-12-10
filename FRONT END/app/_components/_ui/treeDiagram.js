@@ -4,6 +4,7 @@ import "./styles.css";
 // import { searchTreeNodePath } from "./utils";
 // import { cloneDeep } from "lodash";
 import TreeModel from "tree-model";
+import { appConstants } from "../../_helpers/consts";
 
 const config = {
     id: "root",
@@ -18,7 +19,11 @@ const Parent = ({ item, onDragStart, onDragEnd, draggable }) => (
         // onDragStart={onDragStart}
         // onDragEnd={onDragEnd}
         // draggable={draggable}
-        onClick={(e) => console.log(item)}
+        onClick={(e) => {
+            var url = appConstants.DEPLOYEMENT_URL.concat('recordLabor?base_id=').concat(item.WORKORDER_BASE_ID).concat('&sub_id=').concat(item.WORKORDER_SUB_ID).concat('&operation_seq=').concat(item.SEQUENCE_NO);
+            // open url in new tab
+            window.open(url, '_blank').focus();
+        }}
     >
         <span className="badge badge-primary">{item.SUB_ID}</span> &nbsp; {item.PART_ID} &nbsp;
         {item.RESOURCE_ID}
