@@ -1,9 +1,9 @@
 {
-    "sqlserver": "10.0.7.213",
+    "sqlserver": "UNI-SQL01",
     "sqldriver": "SQL Server",
-    "sqldatabase": "CMB",
-    "sqluser": "sa",
-    "sqlpassword": "12345",
+    "sqldatabase": "SANDBOX",
+    "sqluser": "MACRO",
+    "sqlpassword": "Macro123",
 
     "jwt_secret": "secret",
     "bcrypt_salt": "salt",
@@ -15,17 +15,17 @@
     "smtp_user": "noreply.visuify@gmail.com",
     "smtp_password": "bulz ycvh wsek lzzq",
 
-    "QA_email": "ajay.bhattnagar21@gmail.com",
+    "QA_email": "aaronm@unifiedengineering.com",
 
-    "save_images_to_folder": "D:\\Unified Engineering\\API\\images_docs\\",
-    "save_documents_to_folder": "D:\\Unified Engineering\\API\\images_docs\\",
+    "save_images_to_folder": "C:\\Docs_sandbox\\",
+    "save_documents_to_folder": "C:\\Docs_sandbox\\",
 
     "allowed_extenstions" : ["txt", "pdf", "png", "jpg", "jpeg", "gif",
                           "doc", "docx", "xls", "xlsx", "ppt", "pptx", "csv", "zip", "rar", "mp4",
                           "mp3", "wav", "avi", "mkv", "flv", "mov", "wmv"],
 
-    "deployment_url_front_end": "http://localhost:8080",
+    "deployment_url_front_end": "https://uni-vm-visdev.unified.local",
 
-    "u_drive_path": "U:\\Projects"
+    "u_drive_path": "\\\\charlie\\Unified\\Projects"
 
 }

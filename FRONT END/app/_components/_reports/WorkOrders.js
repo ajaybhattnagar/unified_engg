@@ -223,7 +223,7 @@ const WorkOrders = () => {
                                             return (
                                                 doc.FILE_PATH == "" ? null :
                                                     <div className="m-2" key={index}>
-                                                        <Button variant="primary" onClick={() => { open_document(doc) }}>Test</Button>
+                                                        <Button variant="primary" onClick={() => { open_document(doc.FILE_PATH) }}>{doc.FILE_NAME}</Button>
                                                     </div>
                                             )
                                         })

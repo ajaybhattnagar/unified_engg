@@ -424,8 +424,18 @@ def upload_document(connection_string, username, trans_id):
         for f in file:
             filename = secure_filename(f.filename)
             if allowedFile(filename):
-                file_path = os.path.join(configData['save_documents_to_folder'], filename)
-                f.save(os.path.join(configData['save_documents_to_folder'], filename))
+                
+                #Get base id for transaction id
+                cnxn = pyodbc.connect(connection_string)
+                sql = cnxn.cursor()
+                sql.execute("SELECT TOP 1 RIGHT(WORKORDER_BASE_ID, LEN(WORKORDER_BASE_ID) - 1) AS [STRIPPED_BASE_ID] FROM UNI_LABOR_TICKET WHERE WORKORDER_TYPE = 'W' AND TRANSACTION_ID = {ID}".format(ID = trans_id))
+                base_id = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+                s_base_id = base_id[0]['STRIPPED_BASE_ID']
+
+                file_path = configData['u_drive_path'] + "\\Q" + s_base_id + "\\"
+
+                file_path = os.path.join(file_path, filename)
+                f.save(file_path)
 
                 # Update database with file path
                 query_string = labor_query['INSERT_INTO_DOCUMENTS'].format(
@@ -463,8 +473,17 @@ def upload_image(connection_string, username, trans_id):
             clicked_image = content['CLICKED_IMAGE']
             # Remove data:image/png;base64, from base64 string
             file_name = str(trans_id)  + '_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            file_path = configData['save_images_to_folder'] + str(file_name) + '.png'
-            save_base64_to_image(clicked_image, file_name)
+
+             #Get base id for transaction id
+            cnxn = pyodbc.connect(connection_string)
+            sql = cnxn.cursor()
+            sql.execute("SELECT TOP 1 RIGHT(WORKORDER_BASE_ID, LEN(WORKORDER_BASE_ID) - 1) AS [STRIPPED_BASE_ID] FROM UNI_LABOR_TICKET WHERE WORKORDER_TYPE = 'W' AND TRANSACTION_ID = {ID}".format(ID = trans_id))
+            base_id = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+            s_base_id = base_id[0]['STRIPPED_BASE_ID']
+
+            file_path = configData['u_drive_path'] + "\\Q" + s_base_id + "\\"
+            file_path = file_path + str(file_name) + '.png'
+            save_base64_to_image(clicked_image, file_path)
         else:
             file_path = ''
     except Exception as e:

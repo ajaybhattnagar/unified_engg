@@ -227,7 +227,12 @@ def get_all_u_drive_files(connection_string, username, base_id):
         
         if (os.path.exists(file_path) and os.path.isdir(file_path)):
             for file_path in list_files(file_path):
-                array_for_files.append(file_path)
+                file_name = file_path.split("\\")[-1]
+                arr = {
+                    "FILE_NAME": file_name,
+                    "FILE_PATH": file_path
+                }
+                array_for_files.append(arr)
             return array_for_files, 200
         else:
            return jsonify({"message":"Folder does not exist!"}), 200
