@@ -1,9 +1,12 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
+
     DEPLOYEMENT_URL: 'http://localhost:8080/',
-    // BASE_URL: 'http://192.168.1.79:5000/',
-    // BASE_URL: 'https://uni-vm-visdev.unified.local:5003/',
+    // DEPLOYEMENT_URL: 'https://uni-vm-visdev.unified.local/',
+
     BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'https://uni-vm-visdev.unified.local:5003/',
+    
 
     VISUAL_API: 'http://localhost:44360/',
     // VISUAL_API: 'https://uni-vm-visdev.unified.local:5005/',

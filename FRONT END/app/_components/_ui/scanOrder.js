@@ -9,6 +9,7 @@ const Scan = (props) => {
     const type = props.type
     var value = null
     const disabled = props.disabled || false
+    const [focus, setFocus] = useState(props.focus || false)
 
     switch (type) {
         case "text":
@@ -68,6 +69,7 @@ const Scan = (props) => {
                     // onChange={(e) => props.onChange(e.target.value)}
                     onKeyDown={(e) => disectInputString(e)}
                     disabled={disabled}
+                    autoFocus={focus}
                 />
 
             </div>

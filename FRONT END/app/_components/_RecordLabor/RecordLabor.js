@@ -365,7 +365,7 @@ const RecordsLabor = () => {
                 <div className="mt-3" />
 
                 <div className="">
-                    <div className="mb-3"><Scan disabled={false} onChange={(e) => setScannedData(e)} /></div>
+                    <div className="mb-3"><Scan disabled={false} onChange={(e) => setScannedData(e)} focus={true}/></div>
                     <div className=''>
                         <DropDown list={workorderList} text='Work Order'
                             isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder}
