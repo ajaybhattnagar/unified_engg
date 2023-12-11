@@ -6,6 +6,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import json
 import base64, binascii
+import os
 
 
 with open ('config.json') as f:
@@ -58,3 +59,10 @@ def allowedFile(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in configData['allowed_extenstions']
 
+def list_files(root_folder):
+    # Iterate through all files and subfolders using os.walk
+    for folder_path, subfolders, files in os.walk(root_folder):
+        for file_name in files:
+            # Create the full file path using os.path.join
+            file_path = os.path.join(folder_path, file_name)
+            yield file_path

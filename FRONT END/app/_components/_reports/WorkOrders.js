@@ -21,6 +21,7 @@ const WorkOrders = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [treeLoading, setTreeLoading] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [documentList, setDocumentList] = useState(null);
     const [treeDiagramData, setTreeDiagramData] = useState(null);
     const isAllowedEditLaborTicket = useRef(false);
 
@@ -73,6 +74,7 @@ const WorkOrders = () => {
             });
     }, []);
 
+    // To load tree data
     useEffect(() => {
         if (selectedRow) {
             setTreeLoading(true);
@@ -109,6 +111,45 @@ const WorkOrders = () => {
         }
     }, [selectedRow]);
 
+    // To load documents
+    useEffect(() => {
+        if (selectedRow) {
+            var response_status = 0;
+            var base_id = selectedRow.BASE_ID.slice(1);
+            var url = appConstants.BASE_URL.concat(appConstants.GET_ALL_FILES_FROM_U_DRIVE).concat(base_id);
+            const request_object = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    'x-access-token': localStorage.getItem('token')
+                },
+            }
+            fetch(url, request_object)
+                .then((res) => {
+                    if (res.status === 200) {
+                        response_status = 200;
+                        return res.json();
+                    }
+                    else {
+                        response_status = 400;
+                        alert(res.json());
+                    }
+                })
+                .then((data) => {
+                    if (response_status === 200) {
+                        setDocumentList(data);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, [selectedRow]);
+
+    const open_document = (path) => {
+        utils.open_document(path);
+    }
+
 
     const columns = [
         {
@@ -139,6 +180,8 @@ const WorkOrders = () => {
             <div>
                 <NavigationBar />
                 <div className="d-flex m-3">
+
+                    {/*Table */}
                     <div className="col-12 col-md-5">
                         {
                             isLoading ? <Loading />
@@ -159,6 +202,7 @@ const WorkOrders = () => {
                         }
                     </div>
 
+                    {/* Tree Diagram */}
                     <div className="w-100 ml-3">
                         {
                             treeLoading ? <Loading />
@@ -168,10 +212,31 @@ const WorkOrders = () => {
                                 </div>
                         }
                     </div>
+
+                    {/* Documents */}
+                    <div className="col-12 col-md-5">
+                        {
+                            <div class="d-flex flex-column">
+                                {
+                                    documentList && documentList.length > 0 ?
+                                        documentList.map((doc, index) => {
+                                            return (
+                                                doc.FILE_PATH == "" ? null :
+                                                    <div className="m-2" key={index}>
+                                                        <Button variant="primary" onClick={() => { open_document(doc) }}>Test</Button>
+                                                    </div>
+                                            )
+                                        })
+                                        : null
+                                }
+                            </div>
+                        }
+                    </div>
+
                 </div>
 
 
-            </div>
+            </div >
         );
     }
 

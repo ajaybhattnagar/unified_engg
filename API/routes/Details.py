@@ -10,6 +10,8 @@ import bcrypt
 import jwt
 import pyodbc 
 from queries.details import details_query
+import os
+from utils import list_files
 
 
 details_blueprint = Blueprint('details_blueprint', __name__)
@@ -209,5 +211,26 @@ def work_order_details_tree_diagram(connection_string, username):
                     )
             response.headers['content-type'] = 'application/json'
             return response, 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+
+
+@details_blueprint.route("/api/v1/details/u_drive_files/<base_id>", methods=['GET'])
+@token_required
+def get_all_u_drive_files(connection_string, username, base_id):
+    base_id = 'Q' + str(base_id)
+    try:
+        array_for_files = []
+        folder_path = configData['u_drive_path']
+        folder_name = base_id
+        file_path = os.path.join(folder_path, folder_name)
+        
+        if (os.path.exists(file_path) and os.path.isdir(file_path)):
+            for file_path in list_files(file_path):
+                array_for_files.append(file_path)
+            return array_for_files, 200
+        else:
+           return jsonify({"message":"Folder does not exist!"}), 200
+
     except Exception as e:
         return jsonify({"message": str(e)}), 401

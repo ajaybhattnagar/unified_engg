@@ -25,6 +25,7 @@ export const appConstants = {
 
     UPLOAD_DOCUMENTS: 'api/v1/labor/upload_document',
     UPLOAD_IMAGES: 'api/v1/labor/upload_image',
+    GET_ALL_FILES_FROM_U_DRIVE: 'api/v1/details/u_drive_files/',
 
     USERS: 'api/v1/users', //POST to update, GET to get all users
 
