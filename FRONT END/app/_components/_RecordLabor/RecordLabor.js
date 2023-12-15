@@ -119,6 +119,7 @@ const RecordsLabor = () => {
                         setSelectedResourceString(data.active_labor_ticket[0].RESOURCE_ID)
                         setSelectedClockIn(utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN))
                         setSelectedClockOut(utils.convertTimeStampToString(new Date()))
+                        setQaNotes(data.active_labor_ticket[0].QA_NOTES)
                     }
 
                     data.all_workorders_list && data.all_workorders_list.length > 0 ? setWorkorderList(data.all_workorders_list) : null;
@@ -365,7 +366,7 @@ const RecordsLabor = () => {
                 <div className="mt-3" />
 
                 <div className="">
-                    <div className="mb-3"><Scan disabled={false} onChange={(e) => setScannedData(e)} focus={true}/></div>
+                    <div className="mb-3"><Scan disabled={false} onChange={(e) => setScannedData(e)} focus={true} /></div>
                     <div className=''>
                         <DropDown list={workorderList} text='Work Order'
                             isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder}
@@ -470,6 +471,17 @@ const RecordsLabor = () => {
             });
     }
 
+    const update_labor_ticket_field = (field_name, field_value) => {
+        utils.updateLaborTicketsField(transactionId, field_name, field_value)
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                alert(error.message);
+                console.log(error);
+            });
+    }
+
     const create_labor_tickets_render_stop = () => {
 
         return (
@@ -496,6 +508,11 @@ const RecordsLabor = () => {
                     </div>
                     <div className="w-100 mt-3">
                         <Input type={'text'} placeholder="Clock Out" text='Clock Out' disabled={true} value={selectedClockOut} />
+                    </div>
+                    <div className="w-100 mt-3">
+                        <Input type={'text'} placeholder="QA Notes" text='QA Notes'
+                            onChange={(e) => setQaNotes(e)}
+                            onUpdateButtonClick={(e) => update_labor_ticket_field("QA_NOTES", qaNotes)} value={qaNotes} />
                     </div>
                     <div className="w-100 d-flex justify-content-end">
                         <button className="btn btn-outline-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>

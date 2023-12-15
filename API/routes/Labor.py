@@ -534,7 +534,22 @@ def clock_in_out(connection_string, username, type):
     else:
         return jsonify({"message": "Type is invalid"}), 401
     
+@labor_blueprint.route("/api/v1/labor/update_labor_ticket/<field>", methods=['POST'])
+@token_required
+def update_labor_ticket_field(connection_string, username, field):
+    content = request.get_json(silent=True)
+    print (labor_query['UPDATE_FIELD_LABOR_TICKET'].format(FIELD = field, FIELD_VALUE = content['VALUE'], TRANSACTION_ID = content['TRANSACTION_ID']))
 
+    try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(labor_query['UPDATE_FIELD_LABOR_TICKET'].format(FIELD = field, FIELD_VALUE = content['VALUE'], TRANSACTION_ID = content['TRANSACTION_ID']))
+        cnxn.commit()
+        sql.close()
+        return jsonify({'message': 'Ticket updated successfully!'}), 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
 
     
 

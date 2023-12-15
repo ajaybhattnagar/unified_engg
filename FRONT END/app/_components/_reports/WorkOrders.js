@@ -182,7 +182,7 @@ const WorkOrders = () => {
                 <div className="d-flex m-3">
 
                     {/*Table */}
-                    <div className="col-12 col-md-5">
+                    <div className="col-12 col-lg-4">
                         {
                             isLoading ? <Loading />
                                 :
@@ -203,7 +203,7 @@ const WorkOrders = () => {
                     </div>
 
                     {/* Tree Diagram */}
-                    <div className="w-100 ml-3">
+                    <div className="">
                         {
                             treeLoading ? <Loading />
                                 :
@@ -214,7 +214,7 @@ const WorkOrders = () => {
                     </div>
 
                     {/* Documents */}
-                    <div className="col-12 col-md-5">
+                    <div className="">
                         {
                             <div class="d-flex flex-column">
                                 {

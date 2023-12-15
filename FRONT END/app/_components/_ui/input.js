@@ -12,6 +12,7 @@ const Input = (props) => {
     const max = props.max || ""
     const clearbutton = props.clearbutton || false
     const disabled = props.disabled || false
+    const onUpdateButtonClick = props.onUpdateButtonClick || false
 
     switch (type) {
         case "text":
@@ -45,6 +46,13 @@ const Input = (props) => {
                     clearbutton ?
                         <button className="ml-1 btn btn-outline-secondary border" type="button" onClick={() => props.onClear()}>
                             <i className="fa fa-times">X</i>
+                        </button>
+                        : null
+                }
+                {
+                    onUpdateButtonClick ?
+                        <button className="ml-1 btn btn-outline-primary border" type="button" onClick={(e) => props.onUpdateButtonClick(value)}>
+                            <i className="fa fa-times">Update</i>
                         </button>
                         : null
                 }

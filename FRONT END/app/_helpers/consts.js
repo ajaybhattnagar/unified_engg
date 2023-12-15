@@ -1,15 +1,15 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
 
-    // DEPLOYEMENT_URL: 'http://localhost:8080/',
-    DEPLOYEMENT_URL: 'https://uni-vm-visdev.unified.local/',
+    DEPLOYEMENT_URL: 'http://localhost:8080/',
+    // DEPLOYEMENT_URL: 'https://uni-vm-visdev.unified.local/',
 
-    // BASE_URL: 'http://localhost:5000/',
-    BASE_URL: 'https://uni-vm-visdev.unified.local:5003/',
+    BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'https://uni-vm-visdev.unified.local:5003/',
     
 
-    // VISUAL_API: 'http://localhost:44360/',
-    VISUAL_API: 'https://uni-vm-visdev.unified.local:5005/',
+    VISUAL_API: 'http://localhost:44360/',
+    // VISUAL_API: 'https://uni-vm-visdev.unified.local:5005/',
 
     LOGIN: 'api/v1/login',
 
@@ -22,6 +22,7 @@ export const appConstants = {
     START_LABOR_TICKET: 'api/v1/labor/create_labor_tickets',
     STOP_LABOR_TICKET: 'api/v1/labor/stop_labor_tickets',
     UPDATE_LABOR_TICKETS: 'api/v1/labor/update_labor_tickets',
+    UPDATE_LABOR_TICKET_FIELD: '/api/v1/labor/update_labor_ticket/',
 
     UPLOAD_DOCUMENTS: 'api/v1/labor/upload_document',
     UPLOAD_IMAGES: 'api/v1/labor/upload_image',

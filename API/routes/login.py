@@ -144,7 +144,6 @@ def users(connection_string, username):
                     ALLOWED_EDIT_LABOR_TICKET =  1 if df['ALLOWED_EDIT_LABOR_TICKET'][i] == True else 0,
                     ROWID = df['ROWID'][i]
                 )
-
                 sql.execute(user_query_string)
                 cnxn.commit()
                 sql.close()

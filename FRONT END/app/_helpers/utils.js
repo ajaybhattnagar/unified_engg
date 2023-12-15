@@ -19,6 +19,7 @@ export const utils = {
 
   stopLaborTickets,
   updateLaborTickets,
+  updateLaborTicketsField,
   uploadDocuments,
   uploadImage,
 
@@ -257,6 +258,42 @@ function updateLaborTickets(data) {
       'x-access-token': localStorage.getItem('token')
     },
     body: JSON.stringify(data)
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        response_status = 200;
+        return res.json();
+      }
+      else {
+        response_status = 400;
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (response_status === 200) {
+        return data
+      } else {
+        alert(data.message);
+        return null;
+      }
+    })
+    .catch((err) => console.error(err)); G
+}
+
+function updateLaborTicketsField(transaction_id, field, value) {
+  var response_status = 0;
+  var url = appConstants.BASE_URL.concat(appConstants.UPDATE_LABOR_TICKET_FIELD).concat(field);
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      'x-access-token': localStorage.getItem('token')
+    },
+    body: JSON.stringify({
+      "TRANSACTION_ID": transaction_id,
+      "FIELD": field,
+      "VALUE": value
+    })
   })
     .then((res) => {
       if (res.status === 200) {

@@ -15,18 +15,25 @@ const config = {
 
 
 const Parent = ({ item, onDragStart, onDragEnd, draggable }) => (
-    <div className="test cusor-hand" key={item.ROWID}
-        // onDragStart={onDragStart}
-        // onDragEnd={onDragEnd}
-        // draggable={draggable}
-        onClick={(e) => {
-            var url = appConstants.DEPLOYEMENT_URL.concat('recordLabor?base_id=').concat(item.WORKORDER_BASE_ID).concat('&sub_id=').concat(item.WORKORDER_SUB_ID).concat('&operation_seq=').concat(item.SEQUENCE_NO);
-            // open url in new tab
-            window.open(url, '_blank').focus();
-        }}
+    <div className="test d-flex justify-content-between" key={item.ROWID}
+    // onDragStart={onDragStart}
+    // onDragEnd={onDragEnd}
+    // draggable={draggable}
     >
         <span className="badge badge-primary">{item.SUB_ID}</span> &nbsp; {item.PART_ID} &nbsp;
         {item.RESOURCE_ID}
+        {
+            item.SUB_ID >= 0 ? null : <input type='checkbox'></input>
+        }
+        {
+            item.SUB_ID >= 0 ? null : <span className="cusor-hand" onClick={(e) => {
+                var url = appConstants.DEPLOYEMENT_URL.concat('recordLabor?base_id=').concat(item.WORKORDER_BASE_ID).concat('&sub_id=').concat(item.WORKORDER_SUB_ID).concat('&operation_seq=').concat(item.SEQUENCE_NO);
+                // open url in new tab
+                window.open(url, '_blank').focus();
+            }}>➡️</span>
+        }
+
+
     </div>
 );
 

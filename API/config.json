@@ -1,9 +1,9 @@
 {
-    "sqlserver": "UNI-SQL01",
+    "sqlserver": "PSI-ERP01",
     "sqldriver": "SQL Server",
-    "sqldatabase": "SANDBOX",
-    "sqluser": "MACRO",
-    "sqlpassword": "Macro123",
+    "sqldatabase": "CMB",
+    "sqluser": "SYSADM",
+    "sqlpassword": "Fmtlx41!",
 
     "jwt_secret": "secret",
     "bcrypt_salt": "salt",

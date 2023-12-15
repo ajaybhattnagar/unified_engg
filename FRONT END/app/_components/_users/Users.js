@@ -123,7 +123,7 @@ const Users = () => {
             className: 'htCenter',
         },
         {
-            data: 'ALLOWED_EDIT_LABOR_TICKETS',
+            data: 'ALLOWED_EDIT_LABOR_TICKET',
             type: 'checkbox',
             className: 'htCenter',
         },
