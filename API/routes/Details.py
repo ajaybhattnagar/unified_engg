@@ -239,3 +239,79 @@ def get_all_u_drive_files(connection_string, username, base_id):
 
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+    
+@details_blueprint.route("/api/v1/details/employees", methods=['GET'])
+@token_required
+def get_all_employees(connection_string, username):
+    try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(details_query['GET_ALL_EMPLOYEES'])
+        employees = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        sql.close()
+
+        response = Response(
+                    response=simplejson.dumps(employees, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+    
+@details_blueprint.route("/api/v1/details/operation", methods=['GET', 'POST'])
+@token_required
+def operation_details(connection_string, username):
+    if request.method == 'GET':
+        base_id = request.args.get('base_id')
+        sub_id = request.args.get('sub_id')
+        operation_seq = request.args.get('operation_seq')
+
+        try:
+            cnxn = pyodbc.connect(connection_string)
+            sql = cnxn.cursor()
+            sql.execute(details_query['GET_QUALITY_UPDATES'].format(BASE_ID = base_id, SUB_ID = sub_id))
+            operation_details = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+            # Filter operation_details dict selected operation_seq
+            operation_details = [x for x in operation_details if x['SEQUENCE_NO'] == int(operation_seq)]
+            sql.close()
+
+            response = Response(
+                        response=simplejson.dumps(operation_details, ignore_nan=True,default=datetime.datetime.isoformat),
+                        mimetype='application/json'
+                    )
+            response.headers['content-type'] = 'application/json'
+            return response, 200
+
+        except Exception as e:
+            print (e)
+            return jsonify({"message": str(e)}), 401
+    
+    if request.method == 'POST':
+        content = request.get_json(silent=True)
+        try:
+            cnxn = pyodbc.connect(connection_string)
+            sql = cnxn.cursor()
+            sql.execute(details_query['ADD_QUALITY_RECORD'].format(
+                BASE_ID = content['BASE_ID'], 
+                SUB_ID = content['SUB_ID'], 
+                OPERATION_SEQ_NO = content['SEQUENCE_NO'], 
+                NOTIFY_EMPLOYEE = content['NOTIFY_EMPLOYEE'] if 'NOTIFY_EMPLOYEE' in content else '',
+                FAB_SIGN_OFF = content['FAB_SIGN_OFF'] if 'FAB_SIGN_OFF' in content else '',
+                QA_SIGN_OFF = content['QA_SIGN_OFF'] if 'QA_SIGN_OFF' in content else '',
+                QA_ACCEPT = content['QA_ACCEPT'] if 'QA_ACCEPT' in content else '',
+                QA_REJECT = content['QA_REJECT'] if 'QA_REJECT' in content else '',
+                NOTES = content['NOTES'] if 'NOTES' in content else '',
+                EMPLOYEE_ID = username
+                )
+            )
+            cnxn.commit()
+            sql.close()
+
+            return jsonify({"message": "Quality update added successfully!"}), 200
+
+        except Exception as e:
+            print (e)
+            return jsonify({"message": str(e)}), 401

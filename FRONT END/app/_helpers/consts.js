@@ -39,4 +39,6 @@ export const appConstants = {
     CLOCK_IN_OUT_USER: 'api/v1/labor/clock_in_out/',
 
     GET_ALL_ACTIVE_WORKORDER_DETAILS: 'api/v1/details/work_order',
+    GET_ALL_EMPLOYEES: 'api/v1/details/employees',
+    GET_UPDATE_OPERATION_DETAILS: 'api/v1/details/operation'
 };
