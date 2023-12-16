@@ -28,7 +28,7 @@ const Parent = ({ item, onDragStart, onDragEnd, draggable }) => (
         <span className="badge badge-primary">{item.SUB_ID}</span> &nbsp; {item.PART_ID} &nbsp;
         {item.RESOURCE_ID}
         {
-            item.SUB_ID >= 0 ? null : <input type='checkbox'></input>
+            item.SUB_ID >= 0 ? null : <input checked={item.NOTIFY > 0 ? true : false} type='checkbox'></input>
         }
         {
             item.SUB_ID >= 0 ? null : <span className="cusor-hand" onClick={(e) => {

@@ -3,17 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { utils } from '../../_helpers/utils';
 import { appConstants } from '../../_helpers/consts.js';
 import MTable from "../_ui/materialTable";
-import Input from "../_ui/input";
-import NavigationBar from '../_navigation/NavigationBar';
 import './Reports.css';
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
-import KpiCard from "../_ui/kpiCard";
-import WebCam from "../_ui/webCam.js";
-import SingleFileUploader from "../_ui/uploadFile.js";
-import IndirectLaborTicket from "../_ui/indirectLaborTicket.js";
-import Scan from "../_ui/scanOrder.js";
-import { render } from "react-dom";
+
 
 const isBrowser = typeof window !== `undefined`
 
@@ -62,7 +55,7 @@ const WorkOrderOperations = () => {
             .then((data) => {
                 if (response_status === 200) {
                     setIsLoading(false);
-
+                    console.log(data);
                     // Update data.CLOCK_IN_VS_LABOR_KPI to have the correct values
                     data.forEach((element) => {
                         if (element.FAB_SIGN_OFF >= 1) { element.FAB_SIGN_OFF = true; } else { element.FAB_SIGN_OFF = false; }
@@ -204,7 +197,7 @@ const WorkOrderOperations = () => {
             <div>
                 <div className="mt-3" />
                 {
-                    !isLoading && operationDetails ?
+                    !isLoading && operationDetails && operationDetails.length > 0 ?
                         <div>
                             <div className="container">
 

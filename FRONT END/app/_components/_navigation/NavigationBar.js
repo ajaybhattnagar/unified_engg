@@ -71,6 +71,10 @@ class NavigationBar extends Component {
                         <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
                         <Nav.Link disabled={approve_labor_tickets} className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
 
+                        <NavDropdown title="Quality" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/quality/sign_off">Traveller Sign Off</NavDropdown.Item>
+                        </NavDropdown>
+
                         <NavDropdown title="Reports" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
                             <NavDropdown.Item href="/reports/work_orders">Work Orders</NavDropdown.Item>
