@@ -23,7 +23,7 @@ const WorkOrderOperations = () => {
     const operation_seq = urlParams.get('operation_seq');
 
 
-    // Eg: *%22-CFS-J15$0$10%*
+    // Eg: *%21-HBS-J74$0$30%*
     // Eg: *WO022721$1$20*
 
     // Getting all initial details, active labor ticket, recent labor tickets, employee kpi, clock in details
@@ -205,18 +205,20 @@ const WorkOrderOperations = () => {
                                     <span className="h5">{operationDetails[0].WORKORDER_BASE_ID} - {operationDetails[0].RESOURCE_ID}</span>
                                 </div>
 
-                                <DropDown list={employeeList} text='Notify'
-                                    isMulti={false} prepareArray={false}
-                                    onSelect={(e) => { setSelectedEmployee(e) }}
-                                    value={selectedEmployee}
-                                />
-
                                 <div className="mt-3" >
                                     <MTable
                                         data={operationDetails ? operationDetails : []}
                                         columnsTypes={columns_quality_updates}
                                         columnsHeaders={['Fabrication Sign Off', 'Quality Sign Off', 'Accept', 'Reject',
                                             'Notify?', 'Employee']} />
+                                </div>
+
+                                <div className="mt-3" >
+                                    <DropDown list={employeeList} text='Notify'
+                                        isMulti={false} prepareArray={false}
+                                        onSelect={(e) => { setSelectedEmployee(e) }}
+                                        value={selectedEmployee}
+                                    />
                                 </div>
                             </div>
 

@@ -202,6 +202,28 @@ def create_labor_tickets(connection_string, username):
                 print(e)
                 pass
 
+            # Sending email if QA emails in UNI_QUALITY_UPDATES
+            try:
+                cnxn = pyodbc.connect(connection_string)
+                sql = cnxn.cursor()
+                sql.execute(details_query['GET_QUALITY_UPDATES'].format(BASE_ID = content['WORKORDER_ID'], SUB_ID = content['WORKORDER_SUB_ID']))
+                results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+                # Filter results to sequence number and email is not null
+                results = [x for x in results if x['SEQUENCE_NO'] == int(content['OPERATION_SEQ_NO'])]
+                results = [x for x in results if x['NOTIFY_EMPLOYEE'] != '']
+                
+                for row in results:
+                    email = row['NOTIFY_EMPLOYEE']
+                    subject = 'Notification - Check for new Labor Ticket'
+                    message = 'New Labor Ticket Created. Please review.'
+                    send_email(email, subject, transaction_id)
+                sql.close()
+
+            except Exception as e:
+                print(e)
+                pass
+
             return jsonify({"message": "Ticket Created Successfully!", "data": transaction_id}), 200
 
         except Exception as e:
@@ -538,7 +560,6 @@ def clock_in_out(connection_string, username, type):
 @token_required
 def update_labor_ticket_field(connection_string, username, field):
     content = request.get_json(silent=True)
-    print (labor_query['UPDATE_FIELD_LABOR_TICKET'].format(FIELD = field, FIELD_VALUE = content['VALUE'], TRANSACTION_ID = content['TRANSACTION_ID']))
 
     try:
         cnxn = pyodbc.connect(connection_string)
