@@ -454,7 +454,11 @@ def upload_document(connection_string, username, trans_id):
                 base_id = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
                 s_base_id = base_id[0]['STRIPPED_BASE_ID']
 
-                file_path = configData['u_drive_path'] + "\\Q" + s_base_id + "\\"
+                file_path = configData['u_drive_path'] + "\\Q" + s_base_id + "\\" + "Upload"
+
+                # Create upload folder if not exist
+                if not os.path.exists(file_path):
+                    os.makedirs(file_path)
 
                 file_path = os.path.join(file_path, filename)
                 f.save(file_path)
@@ -503,7 +507,12 @@ def upload_image(connection_string, username, trans_id):
             base_id = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
             s_base_id = base_id[0]['STRIPPED_BASE_ID']
 
-            file_path = configData['u_drive_path'] + "\\Q" + s_base_id + "\\"
+            file_path = configData['u_drive_path'] + "\\Q" + s_base_id + "\\" + "Upload"
+
+             # Create upload folder if not exist
+            if not os.path.exists(file_path):
+                os.makedirs(file_path)
+
             file_path = file_path + str(file_name) + '.png'
             save_base64_to_image(clicked_image, file_path)
         else:

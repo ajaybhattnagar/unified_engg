@@ -223,7 +223,11 @@ def get_all_u_drive_files(connection_string, username, base_id):
         array_for_files = []
         folder_path = configData['u_drive_path']
         folder_name = base_id
-        file_path = os.path.join(folder_path, folder_name)
+        file_path = os.path.join(folder_path ,folder_name, 'Upload')
+
+        # Create upload folder if not exist
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
         
         if (os.path.exists(file_path) and os.path.isdir(file_path)):
             for file_path in list_files(file_path):
