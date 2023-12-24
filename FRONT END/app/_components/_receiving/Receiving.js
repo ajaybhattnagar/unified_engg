@@ -182,7 +182,7 @@ const Receiving = () => {
                 "DATABASE": decoded_token.DATABASE,
                 "USERNAME": decoded_token.USERNAME,
                 "PASSWORD": decoded_token.PASSWORD,
-                "SITEID": "CMB",
+                "SITEID": localStorage.getItem("SITE"),
                 "PURCHASE_ORDER_ID": arr[0].ID,
                 "VENDOR_PACKLIST_ID": vendorPacklistId || '',
                 "VENDOR_PACKLIST_DATE": vendorPacklistDate || '',
