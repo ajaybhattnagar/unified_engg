@@ -52,7 +52,6 @@ class NavigationBar extends Component {
         var super_admin = access_rights.SUPER_ADMIN === '1' ? false : true;
         var reciept_entry = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_RECEIPT_ENTRY === '1' ? false : true;
         var qa_notification = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_SET_QA_NOTIFICATION === '1' ? false : true;
-        console.log("access_rights", access_rights);
 
         return (
             <Navbar collapseOnSelect bg="light" expand="lg" data-bs-theme="dark">
