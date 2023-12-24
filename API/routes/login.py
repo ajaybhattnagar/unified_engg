@@ -142,6 +142,9 @@ def users(connection_string, username):
                     ALLOWED_WORKING_TIME = 1 if df['ALLOWED_WORKING_TIME'][i] == True else 0,
                     ALLOWED_APPROVE_PAGE = 1 if df['ALLOWED_APPROVE_PAGE'][i] == True else 0,
                     ALLOWED_EDIT_LABOR_TICKET =  1 if df['ALLOWED_EDIT_LABOR_TICKET'][i] == True else 0,
+                    ALLOWED_SET_QA_NOTIFICATION = 1 if df['ALLOWED_SET_QA_NOTIFICATION'][i] == True else 0,
+                    ALLOWED_RECEIPT_ENTRY = 1 if df['ALLOWED_RECEIPT_ENTRY'][i] == True else 0,
+
                     ROWID = df['ROWID'][i]
                 )
                 sql.execute(user_query_string)

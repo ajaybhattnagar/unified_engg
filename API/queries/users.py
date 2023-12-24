@@ -19,6 +19,8 @@ user_query = {
                             ,[ALLOWED_WORKING_TIME] = {ALLOWED_WORKING_TIME}
                             ,[ALLOWED_APPROVE_PAGE] = {ALLOWED_APPROVE_PAGE}
                             ,[ALLOWED_EDIT_LABOR_TICKET] = {ALLOWED_EDIT_LABOR_TICKET}
+                            ,[ALLOWED_SET_QA_NOTIFICATION] = {ALLOWED_SET_QA_NOTIFICATION}
+                            ,[ALLOWED_RECEIPT_ENTRY] = {ALLOWED_RECEIPT_ENTRY}
                         WHERE ROWID = {ROWID}
                         """
 

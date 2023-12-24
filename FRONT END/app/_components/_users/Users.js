@@ -59,6 +59,8 @@ const Users = () => {
                         item.ALLOWED_WORKING_TIME = item.ALLOWED_WORKING_TIME === '1' ? true : false;
                         item.ALLOWED_APPROVE_PAGE = item.ALLOWED_APPROVE_PAGE === '1' ? true : false;
                         item.ALLOWED_EDIT_LABOR_TICKET = item.ALLOWED_EDIT_LABOR_TICKET === '1' ? true : false;
+                        item.ALLOWED_SET_QA_NOTIFICATION = item.ALLOWED_SET_QA_NOTIFICATION === '1' ? true : false;
+                        item.ALLOWED_RECEIPT_ENTRY = item.ALLOWED_RECEIPT_ENTRY === '1' ? true : false;
                     })
                     setData(data)
                     setIsLoading(false);
@@ -127,6 +129,16 @@ const Users = () => {
             type: 'checkbox',
             className: 'htCenter',
         },
+        {
+            data: 'ALLOWED_SET_QA_NOTIFICATION',
+            type: 'checkbox',
+            className: 'htCenter',
+        },
+        {
+            data: 'ALLOWED_RECEIPT_ENTRY',
+            type: 'checkbox',
+            className: 'htCenter',
+        },
     ]
 
     const update_users = (data) => {
@@ -176,7 +188,7 @@ const Users = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ROWID', 'ID', 'First Name', 'Last Name', 'Dashboard', 'Admin', 'Super Admin', 'Allowed Working Location', 'Allowed Working Time',
-                                        'Allowed Approve Page', 'Allowed Edit Labor Tickets']}
+                                        'Allowed Approve Page', 'Allowed Edit Labor Tickets', 'Allowed Set QA Notification', 'Allowed Receipt Entry']}
                                     onChange={(e) => { update_users(e) }}
                                 />
                         }

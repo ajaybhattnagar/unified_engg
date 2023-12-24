@@ -18,6 +18,11 @@ const DropDown = (props) => {
     setList(props.list)
   }, [props.list])
 
+  const customStyles = {
+    menuPortal: provided => ({ ...provided, zIndex: 9999 }),
+    menu: provided => ({ ...provided, zIndex: 9999 })
+  }
+
   const createObject = (list) => {
     var arrayObject = [];
     for (var i = 0; i < list.length; ++i) {
@@ -43,6 +48,7 @@ const DropDown = (props) => {
             isClearable={clearable}
             value={value}
             isDisabled={disabled}
+            styles={customStyles}
           />
         </div>
       </div>

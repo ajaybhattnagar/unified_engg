@@ -40,5 +40,8 @@ export const appConstants = {
 
     GET_ALL_ACTIVE_WORKORDER_DETAILS: 'api/v1/details/work_order',
     GET_ALL_EMPLOYEES: 'api/v1/details/employees',
-    GET_UPDATE_OPERATION_DETAILS: 'api/v1/details/operation'
+    GET_UPDATE_OPERATION_DETAILS: 'api/v1/details/operation',
+
+    GET_PURCHASE_ORDERS: 'api/v1/purchasing/get_purchase_order', // ADD PO ID AS PARAMS TO GET LINES 
+    CREATE_RECEIVER_VISUAL: 'api/Purchasing/ReceiveOrder',
 };

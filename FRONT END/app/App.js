@@ -15,6 +15,7 @@ import TicketDetails from './_components/_ticketDetails/TicketDetails.js';
 import CreateLaborTicket from './_components/_create_labor_ticket/CreateLaborTicket.js';
 import WorkOrders from './_components/_reports/WorkOrders.js';
 import WorkOrderOperations from './_components/_reports/WorkOrderOperations.js';
+import Receiving from './_components/_receiving/Receiving.js';
 import SignOff from './_components/_quality/SignOff.js';
 
 
@@ -34,6 +35,7 @@ function App() {
 				<Route path='/create_labor_ticket' element={<CreateLaborTicket />} />
 				<Route path='/reports/work_orders' element={<WorkOrders />} />
 				<Route path='/reports/work_order_operations' element={<WorkOrderOperations />} />
+				<Route path='/receiving' element={<Receiving />} />
 				<Route path='/quality/sign_off' element={<SignOff />} />
 				
 			</Routes>

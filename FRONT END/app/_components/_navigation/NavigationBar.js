@@ -50,6 +50,9 @@ class NavigationBar extends Component {
         var dashboard = access_rights.SUPER_ADMIN === '1' || access_rights.ADMIN === '1' || access_rights.DASHBOARD === '1' ? false : true;
         var approve_labor_tickets = access_rights.SUPER_ADMIN === '1' || access_rights.ADMIN === '1' || access_rights.ALLOWED_APPROVE_PAGE === '1' ? false : true;
         var super_admin = access_rights.SUPER_ADMIN === '1' ? false : true;
+        var reciept_entry = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_RECEIPT_ENTRY === '1' ? false : true;
+        var qa_notification = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_SET_QA_NOTIFICATION === '1' ? false : true;
+        console.log("access_rights", access_rights);
 
         return (
             <Navbar collapseOnSelect bg="light" expand="lg" data-bs-theme="dark">
@@ -72,7 +75,11 @@ class NavigationBar extends Component {
                         <Nav.Link disabled={approve_labor_tickets} className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
 
                         <NavDropdown title="Quality" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/quality/sign_off">Traveller Sign Off</NavDropdown.Item>
+                            <NavDropdown.Item disabled={qa_notification} href="/quality/sign_off">Traveller Sign Off</NavDropdown.Item>
+                        </NavDropdown>
+
+                        <NavDropdown title="Purchasing" id="basic-nav-dropdown">
+                            <NavDropdown.Item disabled={reciept_entry} href="/receiving">Receipt Entry</NavDropdown.Item>
                         </NavDropdown>
 
                         <NavDropdown title="Reports" id="basic-nav-dropdown">
