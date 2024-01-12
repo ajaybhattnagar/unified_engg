@@ -26,7 +26,9 @@ export const utils = {
   decodeJwt,
   open_document,
 
-  clock_in_out_users
+  clock_in_out_users,
+
+  calcHoursWorked
 }
 
 
@@ -470,3 +472,16 @@ function clock_in_out_users(type) {
     .catch((err) => console.error(err));
 }
 
+function calcHoursWorked(clock_in_date, clock_in_time, clock_out_date, clock_out_time) {
+  var total_hours = 0;
+  if (clock_in_date && clock_in_time && clock_out_date && clock_out_time) {
+    var clock_in = new Date(clock_in_date + ' ' + clock_in_time);
+    var clock_out = new Date(clock_out_date + ' ' + clock_out_time);
+    var diff = (clock_out.getTime() - clock_in.getTime()) / 1000;
+    diff /= (60 * 60);
+    total_hours = Math.abs(Math.round(diff, 2));
+    // Round to nearest quarter hour
+    total_hours = Math.round(total_hours * 4) / 4;
+  }
+  return total_hours;
+}

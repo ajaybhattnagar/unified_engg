@@ -18,6 +18,7 @@ const EOD = () => {
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
+    const [totalHours, setTotalHours] = useState(0);
 
     const isAllowedEditLaborTicket = useRef(false);
 
@@ -42,8 +43,10 @@ const EOD = () => {
         utils.getLaborTickets(selectedFromDate, selectedToDate, localStorage.getItem("EMPLOYEE_ID"), 'ALL')
             .then((response) => {
                 if (response.length > 0) {
+                    var total_hours = 0;
                     response.forEach((item) => {
                         item.APPROVED = item.APPROVED === 'true' ? true : false;
+                        total_hours += parseFloat(item.HOURS_WORKED);
                     })
                     setData(response);
                 }
@@ -54,6 +57,16 @@ const EOD = () => {
                 setIsLoading(false);
             });
     }, [selectedFromDate, selectedToDate]);
+
+    const test = (data) => {
+        // Calc hours worked by subtracting clock in time from clock out time
+        if (data){
+            data.forEach((item) => {
+                item.HOURS_WORKED = utils.calcHoursWorked(item.CLOCK_IN_DATE, item.CLOCK_IN_TIME, item.CLOCK_OUT_DATE, item.CLOCK_OUT_TIME);
+            })
+            console.log(data);
+        }
+    }
 
 
     const update_labor_tickets = (data) => {
@@ -170,9 +183,10 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 
-                                     'Indirect', 'Hours break', 'Description', 'QA Notes', 'Approved']}
+                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked',
+                                        'Indirect', 'Hours break', 'Description', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
+                                    getInstantDataChange={(e) => { test(e) }}
                                 />
                         }
                     </div>

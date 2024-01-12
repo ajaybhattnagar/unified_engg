@@ -1,3 +1,4 @@
+
 CREATE TABLE [dbo].[UNI_QUALITY_UPDATES](
 	[ROWID] [int] IDENTITY(1,1) NOT NULL,
 	[CREATE_DATE] [datetime] DEFAULT GETDATE() NOT NULL,
@@ -8,14 +9,14 @@ CREATE TABLE [dbo].[UNI_QUALITY_UPDATES](
 	[WORKORDER_SUB_ID] [nvarchar](3) NULL,
 	[OPERATION_SEQ_NO] [smallint] NULL,
 
-	[NOTIFY_EMPLOYEE] [nvarchar](30) NULL,
+	[NOTIFY_EMPLOYEE] [nvarchar](MAX) NULL,
 	[FAB_SIGN_OFF] [smallint] NULL,
 	[QA_SIGN_OFF] [smallint] NULL,
 	[QA_ACCEPT] [smallint] NULL,
 	[QA_REJECT] [smallint] NULL,
 
 	[NOTES] [nvarchar](MAX) NULL,
-	[EMPLOYEE_ID] [nvarchar](30) NULL,
+	[EMPLOYEE_ID] [nvarchar](MAX) NULL,
 
 )
 

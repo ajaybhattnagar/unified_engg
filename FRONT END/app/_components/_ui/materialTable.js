@@ -46,12 +46,12 @@ const MTable = (props) => {
                 columns={columnsTypes}
                 columnSummary={[
                     {
-                        sourceColumn: 0,
+                        sourceColumn: 9,
                         type: 'sum',
                         // now, to always display this column summary in the bottom row,
                         // set `destinationRow` to `0` (i.e. the last possible row)
-                        destinationRow: 4,
-                        destinationColumn: 1,
+                        destinationRow: 0,
+                        destinationColumn: 9,
                         forceNumeric: true
                     }
                 ]}
@@ -67,6 +67,9 @@ const MTable = (props) => {
                         < button type="button" className="btn btn-outline-primary mb-2" onClick={() => { on_change_table() }}>Update</button>
                     </div >
                     : null
+            }
+            {
+                dataChanged && props.getInstantDataChange ? props.getInstantDataChange(data) : null
             }
         </div >
     );

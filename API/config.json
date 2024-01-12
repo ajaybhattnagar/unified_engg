@@ -1,9 +1,9 @@
 {
-    "sqlserver": "PSI-ERP01",
+    "sqlserver": "192.168.2.3",
     "sqldriver": "SQL Server",
-    "sqldatabase": "CMB",
-    "sqluser": "SYSADM",
-    "sqlpassword": "Fmtlx41!",
+    "sqldatabase": "VISUIFY",
+    "sqluser": "sa",
+    "sqlpassword": "1q2w#E$R%T",
 
     "jwt_secret": "secret",
     "bcrypt_salt": "salt",
@@ -15,7 +15,7 @@
     "smtp_user": "noreply.visuify@gmail.com",
     "smtp_password": "bulz ycvh wsek lzzq",
 
-    "QA_email": "aaronm@unifiedengineering.com",
+    "QA_email": "ajay.bhattnagar21@gmail.com",
 
     "save_images_to_folder": "C:\\Docs_sandbox\\",
     "save_documents_to_folder": "C:\\Docs_sandbox\\",

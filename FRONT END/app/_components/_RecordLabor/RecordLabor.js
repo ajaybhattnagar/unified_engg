@@ -41,7 +41,6 @@ const RecordsLabor = () => {
     const [selectedClockOut, setSelectedClockOut] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [desciption, setDescription] = useState('');
     const [qaNotes, setQaNotes] = useState('');
-    const [notifyQACheckbox, setNotifyQACheckbox] = useState(false);
 
     const [workorderList, setWorkorderList] = useState([]);
 
@@ -103,7 +102,6 @@ const RecordsLabor = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
-                    setIsLoading(false);
                     data.last_30_tickets && data.last_30_tickets.length > 0 ? setRecentLaborTickets(data.last_30_tickets) : null;
                     data.active_labor_ticket && data.active_labor_ticket.length > 0 ? setActiveLaborTicket(data.active_labor_ticket) : null;
                     data.employee_kpis && data.employee_kpis.length > 0 ? setEmployeeKpi(data.employee_kpis) : null;
@@ -120,11 +118,12 @@ const RecordsLabor = () => {
                         setSelectedClockIn(utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN))
                         setSelectedClockOut(utils.convertTimeStampToString(new Date()))
                         setQaNotes(data.active_labor_ticket[0].QA_NOTES)
+                        setDescription(data.active_labor_ticket[0].DESCRIPTION)
                     }
 
                     data.all_workorders_list && data.all_workorders_list.length > 0 ? setWorkorderList(data.all_workorders_list) : null;
 
-
+                    setIsLoading(false);
                 } else {
                     alert(data.message);
                     setIsLoading(false);
@@ -292,7 +291,6 @@ const RecordsLabor = () => {
                 "WORK_LOCATION": workLocationsOptions[selectedWorkLocation] || 'On-site',
                 "WORK_TIME": workTimeOptions[selectedWorkTime] || 'Regular Time',
                 "QA_NOTES": qaNotes,
-                "NOTIFY_QA": notifyQACheckbox ? 'Y' : 'N'
             })
         }
         fetch(url, request_object)
@@ -403,11 +401,10 @@ const RecordsLabor = () => {
 
                     <div className="d-flex justify-content-between mt-3">
                         <div className="w-75"><Input type={'text'} placeholder="QA Notes" text='QA Notes' disabled={false} value={qaNotes} onChange={(e) => setQaNotes(e)} /></div>
-                        <div><input className="m-1" type="checkbox" checked={notifyQACheckbox} onChange={() => setNotifyQACheckbox(!notifyQACheckbox)} /> Notify QA</div>
                     </div>
 
-                    <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="Additional Notes" onChange={(e) => setDescription(e)} text='Notes' value={desciption} />
+                    <div className="d-flex justify-content-between mt-3">
+                        <div className="w-75"><Input type={'text'} placeholder="Additional Notes" onChange={(e) => setDescription(e)} text='Notes' value={desciption} /></div>
                     </div>
 
                     <div className="w-100 d-flex justify-content-between">
@@ -513,6 +510,11 @@ const RecordsLabor = () => {
                         <Input type={'text'} placeholder="QA Notes" text='QA Notes'
                             onChange={(e) => setQaNotes(e)}
                             onUpdateButtonClick={(e) => update_labor_ticket_field("QA_NOTES", qaNotes)} value={qaNotes} />
+                    </div>
+                    <div className="w-100 mt-3">
+                        <Input type={'text'} placeholder="Description" text='Description'
+                            onChange={(e) => setDescription(e)}
+                            onUpdateButtonClick={(e) => update_labor_ticket_field("DESCRIPTION", desciption)} value={desciption} />
                     </div>
                     <div className="w-100 d-flex justify-content-end">
                         <button className="btn btn-outline-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
@@ -665,10 +667,23 @@ const RecordsLabor = () => {
                                                 {/* Button to logout */}
                                                 <li className="nav-item btn btn-outline-dark ml-1">
                                                     <a className="" onClick={(e) => {
+
+                                                        // Stop labor ticket if any
+                                                        if (transactionId != 0 && transactionId != null) {
+                                                            utils.stopLaborTickets(transactionId)
+                                                                .then((response) => {
+                                                                    // alert(response.message);
+                                                                })
+                                                                .catch((error) => {
+                                                                    console.log(error);
+                                                                });
+                                                        }
+                                                        // Clock out
                                                         utils.clock_in_out_users("clock_out")
                                                             .then((response) => {
                                                                 window.location.reload();
                                                             })
+
                                                     }}>Clock out</a>
                                                 </li>
                                             </ul>

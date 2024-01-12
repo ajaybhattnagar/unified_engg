@@ -193,7 +193,7 @@ def create_labor_tickets(connection_string, username):
             cnxn.close()
 
             try:
-                if 'NOTIFY_QA' in content and content['NOTIFY_QA'] == 'Y':
+                if 'QA_NOTES' in content and content['QA_NOTES'] != '' and content['QA_NOTES'] != None and content['QA_NOTES'] != 'null':
                     email = configData['QA_email']
                     subject = 'Notification - Check for new Labor Ticket'
                     message = 'New Labor Ticket Created. Please review.'
@@ -544,7 +544,6 @@ def upload_image(connection_string, username, trans_id):
 def clock_in_out(connection_string, username, type):
     if type == '':
         return jsonify({"message": "Type is required"}), 401
-    print (connection_string)
 
     if type.lower() == 'clock_in':
         #run query to update clock in

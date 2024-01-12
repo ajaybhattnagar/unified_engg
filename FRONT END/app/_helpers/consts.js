@@ -1,17 +1,17 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
 
-    // DEPLOYEMENT_URL: 'http://localhost:8080/',
+    DEPLOYEMENT_URL: 'http://localhost:8080/',
     // DEPLOYEMENT_URL: 'https://uni-vm-visdev.unified.local/',
-    DEPLOYEMENT_URL: 'https://unified.ajaybhattnagar.com/',
+    // DEPLOYEMENT_URL: 'https://unified.ajaybhattnagar.com/',
 
-    // BASE_URL: 'http://localhost:5000/',
+    BASE_URL: 'http://localhost:5000/',
     // BASE_URL: 'https://uni-vm-visdev.unified.local:5003/',
-    BASE_URL: 'https://uni-api.visuify.com/',
+    // BASE_URL: 'https://uni-api.visuify.com/',
     
 
-    // VISUAL_API: 'http://localhost:44360/',
-    VISUAL_API: 'https://uni-vm-visdev.unified.local:5005/',
+    VISUAL_API: 'http://localhost:44360/',
+    // VISUAL_API: 'https://uni-vm-visdev.unified.local:5005/',
 
     LOGIN: 'api/v1/login',
 
