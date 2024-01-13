@@ -457,7 +457,7 @@ const RecordsLabor = () => {
 
     const stop_labor_tickets = () => {
         setIsLoading(true);
-        utils.stopLaborTickets(transactionId)
+        utils.stopLaborTickets(transactionId, selectedClockIn)
             .then((response) => {
                 // alert(response.message);
                 window.location.reload();

@@ -77,28 +77,14 @@ const ApproveLaborTickets = () => {
             readOnly: true
         },
         {
-            data: 'CLOCK_IN_DATE',
-            type: 'date',
-            dateFormat: 'YYYY-MM-DD',
-            correctFormat: true
+            data: 'CLOCK_IN',
+            type: 'text',
+            readOnly: true
         },
         {
-            data: 'CLOCK_IN_TIME',
-            type: 'time',
-            timeFormat: 'HH:mm:ss',
-            correctFormat: true,
-        },
-        {
-            data: 'CLOCK_OUT_DATE',
-            type: 'date',
-            dateFormat: 'YYYY-MM-DD',
-            correctFormat: true
-        },
-        {
-            data: 'CLOCK_OUT_TIME',
-            type: 'time',
-            timeFormat: 'HH:mm:ss',
-            correctFormat: true
+            data: 'CLOCK_OUT',
+            type: 'text',
+            readOnly: true
         },
         {
             data: 'HOURS_WORKED',
@@ -106,18 +92,11 @@ const ApproveLaborTickets = () => {
             numericFormat: {
                 pattern: '0,00',
             },
-            readOnly: true
         },
         {
             data: 'INDIRECT_ID',
             type: 'text',
             readOnly: true
-        },
-        {
-            data: 'HOURS_BREAK',
-            type: 'numeric',
-            readOnly: true,
-            format: '0.00',
         },
         {
             data: 'WORK_LOCATION',
@@ -186,7 +165,7 @@ const ApproveLaborTickets = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID',
-                                        'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked', 'Indirect', 'Break hours', 'Location',
+                                        'In', 'Out', 'Hours worked', 'Indirect', 'Location',
                                         'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Approved', 'Visual Labor ID']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />

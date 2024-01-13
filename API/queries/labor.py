@@ -26,7 +26,8 @@ labor_query = {
 
 
 "STOP_LABOR_TICKET": """UPDATE UNI_LABOR_TICKET
-                            SET [CLOCK_OUT] = GETDATE()
+                            SET [CLOCK_OUT] = GETDATE(), 
+                                [HOURS_WORKED] = {HOURS_WORKED}
                             WHERE TRANSACTION_ID = '{TRANSACTION_ID}' """,
 
 "GET_WORKORDER_OPERATION_DETAILS": """SELECT OP.SEQUENCE_NO AS [value], OP.RESOURCE_ID AS [label]
@@ -37,7 +38,7 @@ labor_query = {
                                     LEFT JOIN WORK_ORDER WO ON WO.TYPE = OP.WORKORDER_TYPE AND WO.BASE_ID = OP.WORKORDER_BASE_ID AND WO.LOT_ID = OP.WORKORDER_LOT_ID AND WO.SPLIT_ID = OP.WORKORDER_SPLIT_ID AND WO.SUB_ID = OP.WORKORDER_SPLIT_ID
                                     WHERE WORKORDER_TYPE = '{WORKORDER_TYPE}' AND WORKORDER_BASE_ID = '{WORKORDER_ID}' AND OP.WORKORDER_LOT_ID = {WORKORDER_LOT_ID} AND OP.WORKORDER_SPLIT_ID = {WORKORDER_SPLIT_ID} AND OP.WORKORDER_SUB_ID = {WORKORDER_SUB_ID}""",
 
-
+"GET_TIMESTAMP_DURATION_SERVER": """SELECT DATEDIFF(MINUTE, (SELECT CLOCK_IN FROM UNI_LABOR_TICKET WHERE TRANSACTION_ID = '{TRANSACTION_ID}'), GETDATE()) AS [DURATION]""",
 
 "EMPLOYEE_LAST_30_LABOR_TICKETS": """SELECT DISTINCT TOP 30 WORKORDER_BASE_ID, WORKORDER_LOT_ID, WORKORDER_SPLIT_ID, WORKORDER_SUB_ID
                                     FROM [UNI_LABOR_TICKET] LAB
@@ -58,13 +59,12 @@ labor_query = {
 
 "UPDATE_LABOR_TICEKT": """
                         UPDATE UNI_LABOR_TICKET
-                        SET [CLOCK_IN] = '{CLOCK_IN}',
-                            [CLOCK_OUT] = '{CLOCK_OUT}',
-                            [DESCRIPTION] = '{DESCRIPTION}',
+                        SET [DESCRIPTION] = '{DESCRIPTION}',
                             [UDF1] = '{UDF1}',
                             [UDF2] = '{UDF2}',
                             [UDF3] = '{UDF3}',
                             [UDF4] = '{UDF4}',
+                            [HOURS_WORKED] = {HOURS_WORKED},
                             [APPROVED] = '{APPROVED}',
                             [APPROVED_BY] = '{APPROVED_BY}',
                             [APPROVED_AT] = '{APPROVED_AT}',

@@ -9,6 +9,7 @@ import './Reports.css';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
+import KpiCard from "../_ui/kpiCard";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -48,6 +49,7 @@ const EOD = () => {
                         item.APPROVED = item.APPROVED === 'true' ? true : false;
                         total_hours += parseFloat(item.HOURS_WORKED);
                     })
+                    setTotalHours(total_hours);
                     setData(response);
                 }
                 setIsLoading(false);
@@ -57,17 +59,6 @@ const EOD = () => {
                 setIsLoading(false);
             });
     }, [selectedFromDate, selectedToDate]);
-
-    const test = (data) => {
-        // Calc hours worked by subtracting clock in time from clock out time
-        if (data){
-            data.forEach((item) => {
-                item.HOURS_WORKED = utils.calcHoursWorked(item.CLOCK_IN_DATE, item.CLOCK_IN_TIME, item.CLOCK_OUT_DATE, item.CLOCK_OUT_TIME);
-            })
-            console.log(data);
-        }
-    }
-
 
     const update_labor_tickets = (data) => {
         if (isAllowedEditLaborTicket.current) {
@@ -84,6 +75,14 @@ const EOD = () => {
             alert('You do not have the permission edit labor tickets');
         }
 
+    }
+
+    const update_total_hours = (data) => {
+        var total_hours = 0;
+        data.forEach((item) => {
+            total_hours += parseFloat(item.HOURS_WORKED);
+        })
+        setTotalHours(total_hours);
     }
 
     const columns = [
@@ -113,42 +112,22 @@ const EOD = () => {
             readOnly: true
         },
         {
-            data: 'CLOCK_IN_DATE',
-            type: 'date',
-            dateFormat: 'YYYY-MM-DD',
-            correctFormat: true
-        },
-        {
-            data: 'CLOCK_IN_TIME',
-            type: 'time',
-            timeFormat: 'HH:mm:ss',
-            correctFormat: true,
-        },
-        {
-            data: 'CLOCK_OUT_DATE',
-            type: 'date',
-            dateFormat: 'YYYY-MM-DD',
-            correctFormat: true
-        },
-        {
-            data: 'CLOCK_OUT_TIME',
-            type: 'time',
-            timeFormat: 'HH:mm:ss',
-            correctFormat: true
-        },
-        {
-            data: 'HOURS_WORKED',
-            type: 'numeric',
-            readOnly: true
-        },
-        {
-            data: 'INDIRECT_ID',
+            data: 'CLOCK_IN',
             type: 'text',
             readOnly: true
         },
         {
-            data: 'HOURS_BREAK',
+            data: 'CLOCK_OUT',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'HOURS_WORKED',
             type: 'numeric',
+        },
+        {
+            data: 'INDIRECT_ID',
+            type: 'text',
             readOnly: true
         },
         {
@@ -183,15 +162,19 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'In Date', 'In Time', 'Out Date', 'Out Time', 'Hours worked',
-                                        'Indirect', 'Hours break', 'Description', 'QA Notes', 'Approved']}
+                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'In', 'Out', 'Hours worked',
+                                        'Indirect', 'Description', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
-                                    getInstantDataChange={(e) => { test(e) }}
+                                    onInstantDataChange={(e) => { update_total_hours(e) }}
                                 />
                         }
                     </div>
                 </div>
-
+                <div className="d-flex justify-content-center">
+                    <button type="button" class="btn btn-outline-success">
+                        Total Hours <span class="ml-2 badge badge-light">{totalHours}</span>
+                    </button>
+                </div>
 
             </div>
         );

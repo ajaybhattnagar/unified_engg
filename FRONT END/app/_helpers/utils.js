@@ -216,7 +216,7 @@ function getLaborTickets(from_date, to_date, employee_id, approved) {
     .catch((err) => console.error(err));
 }
 
-function stopLaborTickets(transactionId) {
+function stopLaborTickets(transactionId, clockInTime) {
   var response_status = 0;
   var url = appConstants.BASE_URL.concat(appConstants.STOP_LABOR_TICKET);
   return fetch(url, {
@@ -227,6 +227,7 @@ function stopLaborTickets(transactionId) {
     },
     body: JSON.stringify({
       "TRANSACTION_ID": transactionId,
+      "CLOCK_IN_TIME": new Date(clockInTime),
     })
   })
     .then((res) => {
@@ -472,16 +473,16 @@ function clock_in_out_users(type) {
     .catch((err) => console.error(err));
 }
 
-function calcHoursWorked(clock_in_date, clock_in_time, clock_out_date, clock_out_time) {
+function calcHoursWorked(clock_in, clock_out) {
   var total_hours = 0;
-  if (clock_in_date && clock_in_time && clock_out_date && clock_out_time) {
-    var clock_in = new Date(clock_in_date + ' ' + clock_in_time);
-    var clock_out = new Date(clock_out_date + ' ' + clock_out_time);
-    var diff = (clock_out.getTime() - clock_in.getTime()) / 1000;
-    diff /= (60 * 60);
-    total_hours = Math.abs(Math.round(diff, 2));
-    // Round to nearest quarter hour
-    total_hours = Math.round(total_hours * 4) / 4;
+  if (clock_in && clock_out) {
+    var clock_in_date = new Date(clock_in);
+    var clock_out_date = new Date(clock_out);
+    var diff = (clock_out_date.getTime() - clock_in_date.getTime());
+
+    // Round to the nearest quatrer hour
+    diff = Math.floor(diff / (1000 * 60));
+    total_hours = Math.ceil(diff / 15) * 15;
   }
   return total_hours;
 }

@@ -44,19 +44,8 @@ const MTable = (props) => {
                 dropdownMenu={['filter_by_condition', 'filter_by_value', 'filter_action_bar']}
                 height="auto"
                 columns={columnsTypes}
-                columnSummary={[
-                    {
-                        sourceColumn: 9,
-                        type: 'sum',
-                        // now, to always display this column summary in the bottom row,
-                        // set `destinationRow` to `0` (i.e. the last possible row)
-                        destinationRow: 0,
-                        destinationColumn: 9,
-                        forceNumeric: true
-                    }
-                ]}
 
-                afterChange={(changes, source) => { if (source === 'edit') { setDataChanged(true) } }}
+                afterChange={(changes, source) => { if (source === 'edit') { setDataChanged(true); props.onInstantDataChange(data) } }}
                 afterSelection={(r, c) => { on_cell_selected(data[r]) }}
 
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
@@ -67,9 +56,6 @@ const MTable = (props) => {
                         < button type="button" className="btn btn-outline-primary mb-2" onClick={() => { on_change_table() }}>Update</button>
                     </div >
                     : null
-            }
-            {
-                dataChanged && props.getInstantDataChange ? props.getInstantDataChange(data) : null
             }
         </div >
     );

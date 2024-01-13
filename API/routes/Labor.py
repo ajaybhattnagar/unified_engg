@@ -13,6 +13,7 @@ from queries.details import details_query
 from queries.labor import labor_query
 from utils import send_email, save_base64_to_image, allowedFile
 import os
+import math
 
 labor_blueprint = Blueprint('labor_blueprint', __name__)
 
@@ -105,7 +106,15 @@ def get_labor_tickets(connection_string, username):
         sql = cnxn.cursor()
         sql.execute(query_string)
         results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
         sql.close()
+
+        # Convert clock and clcok out to string
+        for row in results:
+            if row['CLOCK_IN'] != None:
+                row['CLOCK_IN'] = row['CLOCK_IN'].strftime('%Y-%m-%d %I:%M:%S %p')
+            if row['CLOCK_OUT'] != None:
+                row['CLOCK_OUT'] = row['CLOCK_OUT'].strftime('%Y-%m-%d %I:%M:%S %p')
 
         response = Response(
                     response=simplejson.dumps(results, ignore_nan=True,default=datetime.datetime.isoformat),
@@ -236,24 +245,36 @@ def create_labor_tickets(connection_string, username):
 @token_required
 def stop_labor_tickets(connection_string, username):
     content = request.get_json(silent=True)
+
+    # Get timestamp duration from server
+    query_string = labor_query['GET_TIMESTAMP_DURATION_SERVER'].format(TRANSACTION_ID = content['TRANSACTION_ID'])
+
     try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        timestamp_duration = results[0]['DURATION'] / 60
+
+        # Round up to nearest highest quarter
+        timestamp_duration =  math.ceil(timestamp_duration * 4) / 4
+        
+        # Update labor ticket
         query_string = labor_query['STOP_LABOR_TICKET'].format(
             TRANSACTION_ID = content['TRANSACTION_ID'],
+            HOURS_WORKED = timestamp_duration,
         )
-        try:
-            cnxn = pyodbc.connect(connection_string)
-            sql = cnxn.cursor()
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
 
-            sql.execute(query_string)
-            cnxn.commit()
-            sql.close()
-            return jsonify({"message": "Ticket Stopped Successfully!"}), 200
-        
-        except Exception as e:
-            return jsonify({"message": str(e)}), 401
-            
+        sql.execute(query_string)
+        cnxn.commit()
+        sql.close()
+        return jsonify({"message": "Ticket Stopped Successfully!"}), 200
+   
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+    
 
 @labor_blueprint.route("/api/v1/labor/work_order_operation_details", methods=['POST'])
 @token_required
@@ -351,14 +372,7 @@ def update_labor_tickets(connection_string, username):
     df = pd.DataFrame(content)
     df = df.replace(np.nan, '', regex=True)
     
-    df['CLOCK_IN'] = df['CLOCK_IN_DATE'] + ' ' + df['CLOCK_IN_TIME']
-    df['CLOCK_OUT'] = df['CLOCK_OUT_DATE'] + ' ' + df['CLOCK_OUT_TIME']
-    df['CLOCK_IN'] = pd.to_datetime(df['CLOCK_IN'])
-    df['CLOCK_OUT'] = pd.to_datetime(df['CLOCK_OUT'])
-
     for index, row in df.iterrows():
-        if df['CLOCK_IN'][index] > df['CLOCK_OUT'][index]:
-            return jsonify({"message": "Clock In Date cannot be greater than Clock Out Date. Note: Some transactions might have been affected."}), 401
         
         if df['APPROVED'][index] == True:
             approved_by = username
@@ -368,9 +382,7 @@ def update_labor_tickets(connection_string, username):
             approved_at = ''
 
         query_string = labor_query['UPDATE_LABOR_TICEKT'].format(
-            CLOCK_IN = df['CLOCK_IN'][index],
-            CLOCK_OUT = df['CLOCK_OUT'][index],
-            HOURS_BREAK = df['HOURS_BREAK'][index] if 'HOURS_BREAK' in df.columns else 0,
+            HOURS_WORKED = df['HOURS_WORKED'][index] if 'HOURS_WORKED' in df.columns else 0,
             DESCRIPTION = df['LAB_DESC'][index],
             UDF1 = df['UDF1'][index],
             UDF2 = df['UDF2'][index],
