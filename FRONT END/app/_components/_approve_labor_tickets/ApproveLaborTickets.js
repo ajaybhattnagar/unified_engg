@@ -29,7 +29,7 @@ const ApproveLaborTickets = () => {
             navigate("/");
         }
         setIsLoading(true);
-        utils.getLaborTickets(selectedFromDate, selectedToDate, localStorage.getItem("EMPLOYEE_ID"), 'ALL')
+        utils.getLaborTickets(selectedFromDate, selectedToDate, 'ALL', 'ALL')
             .then((response) => {
                 if (response.length > 0) {
                     response.forEach((item) => {

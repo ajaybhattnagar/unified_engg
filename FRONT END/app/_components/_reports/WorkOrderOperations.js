@@ -220,6 +220,10 @@ const WorkOrderOperations = () => {
                                         value={selectedEmployee}
                                     />
                                 </div>
+
+                                <div className="mt-3" >
+                                    <textarea disabled={true} className="form-control" rows="5" id="comment">{operationDetails[0].NOTES}</textarea>
+                                </div>
                             </div>
 
                         </div>

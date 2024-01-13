@@ -109,12 +109,12 @@ def get_labor_tickets(connection_string, username):
 
         sql.close()
 
-        # Convert clock and clcok out to string
-        for row in results:
-            if row['CLOCK_IN'] != None:
-                row['CLOCK_IN'] = row['CLOCK_IN'].strftime('%Y-%m-%d %I:%M:%S %p')
-            if row['CLOCK_OUT'] != None:
-                row['CLOCK_OUT'] = row['CLOCK_OUT'].strftime('%Y-%m-%d %I:%M:%S %p')
+        # Convert clock and clock out to string
+        # for row in results:
+        #     if row['CLOCK_IN'] != None:
+        #         row['CLOCK_IN'] = row['CLOCK_IN'].strftime('%Y-%m-%d %I:%M:%S %p')
+        #     if row['CLOCK_OUT'] != None:
+        #         row['CLOCK_OUT'] = row['CLOCK_OUT'].strftime('%Y-%m-%d %I:%M:%S %p')
 
         response = Response(
                     response=simplejson.dumps(results, ignore_nan=True,default=datetime.datetime.isoformat),

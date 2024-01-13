@@ -26,7 +26,7 @@ const Parent = ({ item, onDragStart, onDragEnd, draggable }) => (
         }}
     >
         <span className="badge badge-primary">{item.SUB_ID}</span> &nbsp; {item.PART_ID} &nbsp;
-        {item.RESOURCE_ID}
+        <div className="truncate-text">{item.OP_DESCRIPTION}</div>
         {
             item.SUB_ID >= 0 ? null : <input checked={item.NOTIFY > 0 ? true : false} type='checkbox'></input>
         }

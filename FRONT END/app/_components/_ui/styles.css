@@ -88,157 +88,161 @@
   vertical-align: middle;
 }
 
-input{
+input {
   color: black;
 }
 
-.form-control{
+.form-control {
   color: #353434 !important;
 }
 
 .notification-container {
-	font-size: 14px;
-	box-sizing: border-box;
-	position: fixed;
-	z-index: 999999
+  font-size: 14px;
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 999999
 }
 
 .top-right {
-	top: 12px;
-	right: 12px;
-	transition: transform .6s ease-in-out;
-	animation: toast-in-right .7s;
+  top: 12px;
+  right: 12px;
+  transition: transform .6s ease-in-out;
+  animation: toast-in-right .7s;
 }
 
 .bottom-right {
-	bottom: 12px;
-	right: 12px;
-	transition: transform .6s ease-in-out;
-	animation: toast-in-right .7s;
+  bottom: 12px;
+  right: 12px;
+  transition: transform .6s ease-in-out;
+  animation: toast-in-right .7s;
 }
 
 .top-left {
-	top: 12px;
-	left: 12px;
-	transition: transform .6s ease-in;
-	animation: toast-in-left .7s;
+  top: 12px;
+  left: 12px;
+  transition: transform .6s ease-in;
+  animation: toast-in-left .7s;
 }
 
 .bottom-left {
-	bottom: 12px;
-	left: 12px;
-	transition: transform .6s ease-in;
-	animation: toast-in-left .7s;
+  bottom: 12px;
+  left: 12px;
+  transition: transform .6s ease-in;
+  animation: toast-in-left .7s;
 }
 
 .notification {
-	background: #fff;
-	transition: .3s ease;
-	position: relative;
-	pointer-events: auto;
-	overflow: hidden;
-	margin: 0 0 6px;
-	padding: 30px;
-	margin-bottom: 15px;
-	width: 300px;
-	max-height: 100px;
-	border-radius: 3px 3px 3px 3px;
-	box-shadow: 0 0 10px #999;
-	color: #000;
-	opacity: .9;
-	background-position: 15px;
-	background-repeat: no-repeat;
+  background: #fff;
+  transition: .3s ease;
+  position: relative;
+  pointer-events: auto;
+  overflow: hidden;
+  margin: 0 0 6px;
+  padding: 30px;
+  margin-bottom: 15px;
+  width: 300px;
+  max-height: 100px;
+  border-radius: 3px 3px 3px 3px;
+  box-shadow: 0 0 10px #999;
+  color: #000;
+  opacity: .9;
+  background-position: 15px;
+  background-repeat: no-repeat;
 }
 
 .notification:hover {
-	box-shadow: 0 0 12px #fff;
-	opacity: 1;
-	cursor: pointer
+  box-shadow: 0 0 12px #fff;
+  opacity: 1;
+  cursor: pointer
 }
 
 .notification-title {
-	font-weight: 700;
-	font-size: 16px;
-	text-align: left;
-	margin-top: 0;
-	margin-bottom: 6px;
-    width: 300px;
-    height: 18px;
+  font-weight: 700;
+  font-size: 16px;
+  text-align: left;
+  margin-top: 0;
+  margin-bottom: 6px;
+  width: 300px;
+  height: 18px;
 }
 
 .notification-message {
-	margin: 0;
-	text-align: left;
-    height: 18px;
-    margin-left: -1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  margin: 0;
+  text-align: left;
+  height: 18px;
+  margin-left: -1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .notification-image {
-    float: left;
-    margin-right: 15px;
+  float: left;
+  margin-right: 15px;
 }
 
 .notification-image img {
-    width: 30px;
-    height: 30px;
+  width: 30px;
+  height: 30px;
 }
 
 .toast {
-    height: 50px;
-    width: 365px;
-	color: #fff;
-	padding: 20px 15px 10px 10px;
+  height: 50px;
+  width: 365px;
+  color: #fff;
+  padding: 20px 15px 10px 10px;
 }
 
 .notification-container button {
-	position: relative;
-	right: -.3em;
-	top: -.3em;
-	float: right;
-	font-weight: 700;
-	color: #fff;
-	outline: none;
-	border: none;
-	text-shadow: 0 1px 0 #fff;
-	opacity: .8;
-	line-height: 1;
-	font-size: 16px;
-	padding: 0;
-	cursor: pointer;
-	background: 0 0;
-	border: 0
+  position: relative;
+  right: -.3em;
+  top: -.3em;
+  float: right;
+  font-weight: 700;
+  color: #fff;
+  outline: none;
+  border: none;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .8;
+  line-height: 1;
+  font-size: 16px;
+  padding: 0;
+  cursor: pointer;
+  background: 0 0;
+  border: 0
 }
 
 @keyframes toast-in-right {
-	from {
-	  transform: translateX(100%);
-	  
-	}
-	to {
-	  transform: translateX(0);
-	}
+  from {
+    transform: translateX(100%);
+
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 @keyframes toast-in-left {
-	from {
-		transform: translateX(-100%);
-		
-	}
-	to {
-		transform: translateX(0);
-	}
+  from {
+    transform: translateX(-100%);
+
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 
 
 /* Tree Diagram */
 @import url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+
 body * {
   box-sizing: border-box;
 }
+
 .test {
   padding: 5px;
   display: flex;
@@ -249,18 +253,22 @@ body * {
   height: 100%;
   background-color: #fff;
 }
+
 .hr-teams {
   display: flex;
   flex-direction: column;
   min-width: 1000px;
 }
+
 .hr-teams .item {
   display: flex;
 }
+
 .hr-teams .item__parent {
   position: relative;
   min-width: 150px;
 }
+
 .hr-teams .item__parent__line {
   position: absolute;
   width: 1px;
@@ -269,6 +277,7 @@ body * {
   z-index: 10;
   transition: background-color 0.3s;
 }
+
 .hr-teams .item__parent__element {
   min-width: 200px;
   width: 100%;
@@ -276,6 +285,7 @@ body * {
   display: flex;
   align-items: center;
 }
+
 .hr-teams .item__parent__element.has-children:after {
   content: "";
   display: block;
@@ -287,6 +297,7 @@ body * {
   transition: background-color 0.3s;
   left: 100%;
 }
+
 .hr-teams .item__parent__element.has-parent:before {
   content: "";
   display: block;
@@ -298,694 +309,668 @@ body * {
   transition: background-color 0.3s;
   right: 100%;
 }
+
 .hr-teams .item__parent__element:last-child {
   margin-bottom: 0;
 }
-.hr-teams
-  .item__parent.active
-  .item__parent__element.has-children.no-active-children:after {
+
+.hr-teams .item__parent.active .item__parent__element.has-children.no-active-children:after {
   background-color: #ccc;
 }
+
 .hr-teams .item__children {
   margin-left: 40px;
   position: relative;
   flex: 1;
 }
+
 body.currentapp_noapp .hr-teams .item__parent__line.active {
   background-color: #999999;
 }
+
 body.currentapp_noapp .hr-teams .item__parent.active .item__parent__element {
   border-color: #999999;
 }
-body.currentapp_noapp
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_noapp
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_noapp .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_noapp .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #999999;
 }
+
 body.currentapp_noapp .hr-teams .item__parent.active .test {
   border-color: #999999;
 }
+
 body.currentapp_noapp .hr-teams .item__children.dragged-over {
   background-color: rgba(153, 153, 153, 0.1);
 }
+
 body.currentapp_hr .hr-teams .item__parent__line.active {
   background-color: #ff8360;
 }
+
 body.currentapp_hr .hr-teams .item__parent.active .item__parent__element {
   border-color: #ff8360;
 }
-body.currentapp_hr
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_hr
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_hr .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_hr .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #ff8360;
 }
+
 body.currentapp_hr .hr-teams .item__parent.active .test {
   border-color: #ff8360;
 }
+
 body.currentapp_hr .hr-teams .item__children.dragged-over {
   background-color: rgba(255, 131, 96, 0.1);
 }
+
 body.currentapp_revenue .hr-teams .item__parent__line.active {
   background-color: #cd4e9d;
 }
+
 body.currentapp_revenue .hr-teams .item__parent.active .item__parent__element {
   border-color: #cd4e9d;
 }
-body.currentapp_revenue
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_revenue
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_revenue .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_revenue .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #cd4e9d;
 }
+
 body.currentapp_revenue .hr-teams .item__parent.active .test {
   border-color: #cd4e9d;
 }
+
 body.currentapp_revenue .hr-teams .item__children.dragged-over {
   background-color: rgba(205, 78, 157, 0.1);
 }
+
 body.currentapp_calendar .hr-teams .item__parent__line.active {
   background-color: #5c8eca;
 }
+
 body.currentapp_calendar .hr-teams .item__parent.active .item__parent__element {
   border-color: #5c8eca;
 }
-body.currentapp_calendar
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_calendar
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_calendar .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_calendar .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #5c8eca;
 }
+
 body.currentapp_calendar .hr-teams .item__parent.active .test {
   border-color: #5c8eca;
 }
+
 body.currentapp_calendar .hr-teams .item__children.dragged-over {
   background-color: rgba(92, 142, 202, 0.1);
 }
+
 body.currentapp_doc .hr-teams .item__parent__line.active {
   background-color: #2085aa;
 }
+
 body.currentapp_doc .hr-teams .item__parent.active .item__parent__element {
   border-color: #2085aa;
 }
-body.currentapp_doc
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_doc
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_doc .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_doc .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #2085aa;
 }
+
 body.currentapp_doc .hr-teams .item__parent.active .test {
   border-color: #2085aa;
 }
+
 body.currentapp_doc .hr-teams .item__children.dragged-over {
   background-color: rgba(32, 133, 170, 0.1);
 }
+
 body.currentapp_mc .hr-teams .item__parent__line.active {
   background-color: #2085aa;
 }
+
 body.currentapp_mc .hr-teams .item__parent.active .item__parent__element {
   border-color: #2085aa;
 }
-body.currentapp_mc
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_mc
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_mc .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_mc .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #2085aa;
 }
+
 body.currentapp_mc .hr-teams .item__parent.active .test {
   border-color: #2085aa;
 }
+
 body.currentapp_mc .hr-teams .item__children.dragged-over {
   background-color: rgba(32, 133, 170, 0.1);
 }
+
 body.currentapp_crm .hr-teams .item__parent__line.active {
   background-color: #dd8447;
 }
+
 body.currentapp_crm .hr-teams .item__parent.active .item__parent__element {
   border-color: #dd8447;
 }
-body.currentapp_crm
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_crm
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_crm .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_crm .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #dd8447;
 }
+
 body.currentapp_crm .hr-teams .item__parent.active .test {
   border-color: #dd8447;
 }
+
 body.currentapp_crm .hr-teams .item__children.dragged-over {
   background-color: rgba(221, 132, 71, 0.1);
 }
+
 body.currentapp_settings .hr-teams .item__parent__line.active {
   background-color: #cc474f;
 }
+
 body.currentapp_settings .hr-teams .item__parent.active .item__parent__element {
   border-color: #cc474f;
 }
-body.currentapp_settings
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_settings
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_settings .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_settings .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #cc474f;
 }
+
 body.currentapp_settings .hr-teams .item__parent.active .test {
   border-color: #cc474f;
 }
+
 body.currentapp_settings .hr-teams .item__children.dragged-over {
   background-color: rgba(204, 71, 79, 0.1);
 }
+
 body.currentapp_bills .hr-teams .item__parent__line.active {
   background-color: #3ca09d;
 }
+
 body.currentapp_bills .hr-teams .item__parent.active .item__parent__element {
   border-color: #3ca09d;
 }
-body.currentapp_bills
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_bills
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_bills .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_bills .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #3ca09d;
 }
+
 body.currentapp_bills .hr-teams .item__parent.active .test {
   border-color: #3ca09d;
 }
+
 body.currentapp_bills .hr-teams .item__children.dragged-over {
   background-color: rgba(60, 160, 157, 0.1);
 }
+
 body.currentapp_accounting .hr-teams .item__parent__line.active {
   background-color: #e2bb62;
 }
-body.currentapp_accounting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element {
+
+body.currentapp_accounting .hr-teams .item__parent.active .item__parent__element {
   border-color: #e2bb62;
 }
-body.currentapp_accounting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_accounting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_accounting .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_accounting .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #e2bb62;
 }
+
 body.currentapp_accounting .hr-teams .item__parent.active .test {
   border-color: #e2bb62;
 }
+
 body.currentapp_accounting .hr-teams .item__children.dragged-over {
   background-color: rgba(226, 187, 98, 0.1);
 }
+
 body.currentapp_customers .hr-teams .item__parent__line.active {
   background-color: #dd8447;
 }
-body.currentapp_customers
-  .hr-teams
-  .item__parent.active
-  .item__parent__element {
+
+body.currentapp_customers .hr-teams .item__parent.active .item__parent__element {
   border-color: #dd8447;
 }
-body.currentapp_customers
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_customers
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_customers .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_customers .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #dd8447;
 }
+
 body.currentapp_customers .hr-teams .item__parent.active .test {
   border-color: #dd8447;
 }
+
 body.currentapp_customers .hr-teams .item__children.dragged-over {
   background-color: rgba(221, 132, 71, 0.1);
 }
+
 body.currentapp_reporting .hr-teams .item__parent__line.active {
   background-color: #b280ea;
 }
-body.currentapp_reporting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element {
+
+body.currentapp_reporting .hr-teams .item__parent.active .item__parent__element {
   border-color: #b280ea;
 }
-body.currentapp_reporting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_reporting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_reporting .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_reporting .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #b280ea;
 }
+
 body.currentapp_reporting .hr-teams .item__parent.active .test {
   border-color: #b280ea;
 }
+
 body.currentapp_reporting .hr-teams .item__children.dragged-over {
   background-color: rgba(178, 128, 234, 0.1);
 }
+
 body.currentapp_good .hr-teams .item__parent__line.active {
   background-color: #3dbd90;
 }
+
 body.currentapp_good .hr-teams .item__parent.active .item__parent__element {
   border-color: #3dbd90;
 }
-body.currentapp_good
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_good
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_good .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_good .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #3dbd90;
 }
+
 body.currentapp_good .hr-teams .item__parent.active .test {
   border-color: #3dbd90;
 }
+
 body.currentapp_good .hr-teams .item__children.dragged-over {
   background-color: rgba(61, 189, 144, 0.1);
 }
+
 body.currentapp_neutral .hr-teams .item__parent__line.active {
   background-color: #bc8d3f;
 }
+
 body.currentapp_neutral .hr-teams .item__parent.active .item__parent__element {
   border-color: #bc8d3f;
 }
-body.currentapp_neutral
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_neutral
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_neutral .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_neutral .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #bc8d3f;
 }
+
 body.currentapp_neutral .hr-teams .item__parent.active .test {
   border-color: #bc8d3f;
 }
+
 body.currentapp_neutral .hr-teams .item__children.dragged-over {
   background-color: rgba(188, 141, 63, 0.1);
 }
+
 body.currentapp_bad .hr-teams .item__parent__line.active {
   background-color: #cc474f;
 }
+
 body.currentapp_bad .hr-teams .item__parent.active .item__parent__element {
   border-color: #cc474f;
 }
-body.currentapp_bad
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_bad
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_bad .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_bad .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #cc474f;
 }
+
 body.currentapp_bad .hr-teams .item__parent.active .test {
   border-color: #cc474f;
 }
+
 body.currentapp_bad .hr-teams .item__children.dragged-over {
   background-color: rgba(204, 71, 79, 0.1);
 }
+
 body.currentapp_noapp .hr-teams .item__parent__line.active {
   background-color: #666666;
 }
+
 body.currentapp_noapp .hr-teams .item__parent.active .item__parent__element {
   border-color: #666666;
 }
-body.currentapp_noapp
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_noapp
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_noapp .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_noapp .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #ccc
 }
+
 body.currentapp_noapp .hr-teams .item__parent.active .test {
   border-color: #ccc
 }
+
 body.currentapp_noapp .hr-teams .item__children.dragged-over {
   background-color: rgba(102, 102, 102, 0.1);
 }
+
 body.currentapp_hr .hr-teams .item__parent__line.active {
-  background-color:#ccc
+  background-color: #ccc
 }
+
 body.currentapp_hr .hr-teams .item__parent.active .item__parent__element {
   border-color: #ccc
 }
-body.currentapp_hr
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_hr
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_hr .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_hr .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #ccc
 }
+
 body.currentapp_hr .hr-teams .item__parent.active .test {
   border-color: #ccc
 }
+
 body.currentapp_hr .hr-teams .item__children.dragged-over {
   background-color: rgba(209, 108, 89, 0.1);
 }
+
 body.currentapp_revenue .hr-teams .item__parent__line.active {
   background-color: #ccc
 }
+
 body.currentapp_revenue .hr-teams .item__parent.active .item__parent__element {
   border-color: #ccc
 }
-body.currentapp_revenue
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_revenue
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_revenue .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_revenue .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #b04387;
 }
+
 body.currentapp_revenue .hr-teams .item__parent.active .test {
-  border-color:#ccc
+  border-color: #ccc
 }
+
 body.currentapp_revenue .hr-teams .item__children.dragged-over {
   background-color: rgba(176, 67, 135, 0.1);
 }
+
 body.currentapp_calendar .hr-teams .item__parent__line.active {
   background-color: #3a597e;
 }
+
 body.currentapp_calendar .hr-teams .item__parent.active .item__parent__element {
   border-color: #3a597e;
 }
-body.currentapp_calendar
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_calendar
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_calendar .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_calendar .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #3a597e;
 }
+
 body.currentapp_calendar .hr-teams .item__parent.active .test {
   border-color: #3a597e;
 }
+
 body.currentapp_calendar .hr-teams .item__children.dragged-over {
   background-color: rgba(58, 89, 126, 0.1);
 }
+
 body.currentapp_doc .hr-teams .item__parent__line.active {
   background-color: #115d78;
 }
+
 body.currentapp_doc .hr-teams .item__parent.active .item__parent__element {
   border-color: #115d78;
 }
-body.currentapp_doc
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_doc
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_doc .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_doc .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #115d78;
 }
+
 body.currentapp_doc .hr-teams .item__parent.active .test {
   border-color: #115d78;
 }
+
 body.currentapp_doc .hr-teams .item__children.dragged-over {
   background-color: rgba(17, 93, 120, 0.1);
 }
+
 body.currentapp_mc .hr-teams .item__parent__line.active {
   background-color: #115d78;
 }
+
 body.currentapp_mc .hr-teams .item__parent.active .item__parent__element {
   border-color: #115d78;
 }
-body.currentapp_mc
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_mc
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_mc .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_mc .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #115d78;
 }
+
 body.currentapp_mc .hr-teams .item__parent.active .test {
   border-color: #115d78;
 }
+
 body.currentapp_mc .hr-teams .item__children.dragged-over {
   background-color: rgba(17, 93, 120, 0.1);
 }
+
 body.currentapp_crm .hr-teams .item__parent__line.active {
   background-color: #c46627;
 }
+
 body.currentapp_crm .hr-teams .item__parent.active .item__parent__element {
   border-color: #c46627;
 }
-body.currentapp_crm
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_crm
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_crm .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_crm .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #c46627;
 }
+
 body.currentapp_crm .hr-teams .item__parent.active .test {
   border-color: #c46627;
 }
+
 body.currentapp_crm .hr-teams .item__children.dragged-over {
   background-color: rgba(196, 102, 39, 0.1);
 }
+
 body.currentapp_settings .hr-teams .item__parent__line.active {
   background-color: #a83b42;
 }
+
 body.currentapp_settings .hr-teams .item__parent.active .item__parent__element {
   border-color: #a83b42;
 }
-body.currentapp_settings
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_settings
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_settings .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_settings .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #a83b42;
 }
+
 body.currentapp_settings .hr-teams .item__parent.active .test {
   border-color: #a83b42;
 }
+
 body.currentapp_settings .hr-teams .item__children.dragged-over {
   background-color: rgba(168, 59, 66, 0.1);
 }
+
 body.currentapp_bills .hr-teams .item__parent__line.active {
   background-color: #2c8484;
 }
+
 body.currentapp_bills .hr-teams .item__parent.active .item__parent__element {
   border-color: #2c8484;
 }
-body.currentapp_bills
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_bills
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_bills .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_bills .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #2c8484;
 }
+
 body.currentapp_bills .hr-teams .item__parent.active .test {
   border-color: #2c8484;
 }
+
 body.currentapp_bills .hr-teams .item__children.dragged-over {
   background-color: rgba(44, 132, 132, 0.1);
 }
+
 body.currentapp_accounting .hr-teams .item__parent__line.active {
   background-color: #ddb047;
 }
-body.currentapp_accounting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element {
+
+body.currentapp_accounting .hr-teams .item__parent.active .item__parent__element {
   border-color: #ddb047;
 }
-body.currentapp_accounting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_accounting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_accounting .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_accounting .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #ddb047;
 }
+
 body.currentapp_accounting .hr-teams .item__parent.active .test {
   border-color: #ddb047;
 }
+
 body.currentapp_accounting .hr-teams .item__children.dragged-over {
   background-color: rgba(221, 176, 71, 0.1);
 }
+
 body.currentapp_customers .hr-teams .item__parent__line.active {
   background-color: #c46627;
 }
-body.currentapp_customers
-  .hr-teams
-  .item__parent.active
-  .item__parent__element {
+
+body.currentapp_customers .hr-teams .item__parent.active .item__parent__element {
   border-color: #c46627;
 }
-body.currentapp_customers
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_customers
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_customers .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_customers .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #c46627;
 }
+
 body.currentapp_customers .hr-teams .item__parent.active .test {
   border-color: #c46627;
 }
+
 body.currentapp_customers .hr-teams .item__children.dragged-over {
   background-color: rgba(196, 102, 39, 0.1);
 }
+
 body.currentapp_reporting .hr-teams .item__parent__line.active {
   background-color: #936bc1;
 }
-body.currentapp_reporting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element {
+
+body.currentapp_reporting .hr-teams .item__parent.active .item__parent__element {
   border-color: #936bc1;
 }
-body.currentapp_reporting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_reporting
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_reporting .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_reporting .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #936bc1;
 }
+
 body.currentapp_reporting .hr-teams .item__parent.active .test {
   border-color: #936bc1;
 }
+
 body.currentapp_reporting .hr-teams .item__children.dragged-over {
   background-color: rgba(147, 107, 193, 0.1);
 }
+
 body.currentapp_good .hr-teams .item__parent__line.active {
   background-color: #2b8666;
 }
+
 body.currentapp_good .hr-teams .item__parent.active .item__parent__element {
   border-color: #2b8666;
 }
-body.currentapp_good
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_good
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_good .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_good .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #2b8666;
 }
+
 body.currentapp_good .hr-teams .item__parent.active .test {
   border-color: #2b8666;
 }
+
 body.currentapp_good .hr-teams .item__children.dragged-over {
   background-color: rgba(43, 134, 102, 0.1);
 }
+
 body.currentapp_neutral .hr-teams .item__parent__line.active {
   background-color: #ac7513;
 }
+
 body.currentapp_neutral .hr-teams .item__parent.active .item__parent__element {
   border-color: #ac7513;
 }
-body.currentapp_neutral
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_neutral
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_neutral .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_neutral .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #ac7513;
 }
+
 body.currentapp_neutral .hr-teams .item__parent.active .test {
   border-color: #ac7513;
 }
+
 body.currentapp_neutral .hr-teams .item__children.dragged-over {
   background-color: rgba(172, 117, 19, 0.1);
 }
+
 body.currentapp_bad .hr-teams .item__parent__line.active {
   background-color: #a83b42;
 }
+
 body.currentapp_bad .hr-teams .item__parent.active .item__parent__element {
   border-color: #a83b42;
 }
-body.currentapp_bad
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-parent:before,
-body.currentapp_bad
-  .hr-teams
-  .item__parent.active
-  .item__parent__element.has-children:after {
+
+body.currentapp_bad .hr-teams .item__parent.active .item__parent__element.has-parent:before,
+body.currentapp_bad .hr-teams .item__parent.active .item__parent__element.has-children:after {
   background-color: #a83b42;
 }
+
 body.currentapp_bad .hr-teams .item__parent.active .test {
   border-color: #a83b42;
 }
+
 body.currentapp_bad .hr-teams .item__children.dragged-over {
   background-color: rgba(168, 59, 66, 0.1);
+}
+
+
+.truncate-text {
+  width:5rem;
+  /* height: 2em;  */
+  /* line-height: 1em;  */
+  text-overflow: ellipsis;
+  /* margin-bottom: 12px; */
+  /* cursor: pointer; */
+  font-size: 0.6rem;;
+  word-break: break-all;
+  overflow:hidden;
+  white-space: nowrap;
+  margin-left: -50px;
+}
+
+.truncate:hover {
+  overflow: visible;
+  white-space: normal;
+  height: auto;
 }

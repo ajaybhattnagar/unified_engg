@@ -91,6 +91,17 @@ class NavigationBar extends Component {
                             <NavDropdown.Item href="/users">Users</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
+
+                    {
+                        localStorage.getItem('ACTIVE_WO') ?
+                            <div className='d-flex align-items-center'>
+                                <span class="badge badge-warning">
+                                    <div>{localStorage.getItem('ACTIVE_WO')} </div>
+                                    <div>{localStorage.getItem('ACTIVE_WO_CLOCK_IN')} </div>
+                                </span>
+                            </div> : null
+                    }
+
                     <Nav>
                         <Nav.Link className='hover-underline-animation' as={Link} to="/preferences"><strong>Preferences</strong></Nav.Link>
                     </Nav>

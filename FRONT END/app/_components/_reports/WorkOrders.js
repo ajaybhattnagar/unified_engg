@@ -188,7 +188,7 @@ const WorkOrders = () => {
                                 :
                                 <div className="">
                                     <Card bg='primary' text='white'>
-                                        <Card.Header><h5>Active Labor Tickets</h5></Card.Header>
+                                        <Card.Header><h5>Work Orders</h5></Card.Header>
                                         <Card.Body>
                                             <MTable
                                                 data={data}

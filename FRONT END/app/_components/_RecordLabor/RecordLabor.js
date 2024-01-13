@@ -119,6 +119,10 @@ const RecordsLabor = () => {
                         setSelectedClockOut(utils.convertTimeStampToString(new Date()))
                         setQaNotes(data.active_labor_ticket[0].QA_NOTES)
                         setDescription(data.active_labor_ticket[0].DESCRIPTION)
+
+                        // Set clocked in time and work order in local-storage
+                        localStorage.setItem("ACTIVE_WO_CLOCK_IN", utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN));
+                        localStorage.setItem("ACTIVE_WO", data.active_labor_ticket[0].WORKORDER_BASE_ID);
                     }
 
                     data.all_workorders_list && data.all_workorders_list.length > 0 ? setWorkorderList(data.all_workorders_list) : null;
@@ -460,6 +464,11 @@ const RecordsLabor = () => {
         utils.stopLaborTickets(transactionId, selectedClockIn)
             .then((response) => {
                 // alert(response.message);
+
+                // Clear local storage
+                localStorage.removeItem("ACTIVE_WO_CLOCK_IN");
+                localStorage.removeItem("ACTIVE_WO");
+
                 window.location.reload();
             })
             .catch((error) => {

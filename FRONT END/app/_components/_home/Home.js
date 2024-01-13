@@ -104,16 +104,8 @@ const Home = () => {
             readOnly: true
         },
         {
-            data: 'CLOCK_IN_DATE',
-            type: 'date',
-            dateFormat: 'YYYY-MM-DD',
-            correctFormat: true,
-            readOnly: true
-        },
-        {
-            data: 'CLOCK_IN_TIME',
-            type: 'time',
-            timeFormat: 'HH:mm:ss',
+            data: 'CLOCK_IN',
+            type: 'text',
             correctFormat: true,
             readOnly: true
         },

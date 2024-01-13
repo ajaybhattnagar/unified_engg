@@ -163,7 +163,7 @@ const EOD = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'In', 'Out', 'Hours worked',
-                                        'Indirect', 'Description', 'QA Notes', 'Approved']}
+                                        'Indirect', 'Notes', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
                                 />

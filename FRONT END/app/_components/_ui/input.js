@@ -28,6 +28,12 @@ const Input = (props) => {
             value = null
     }
 
+    const onChangeInputValue = (e) => {
+        var sanitizedValue = e.replace(/'/g, '');
+        sanitizedValue = sanitizedValue.replace(/"/g, '');
+        return props.onChange(sanitizedValue)
+    }
+
     const render = () => {
         return (
             <div className="input-group text-dark">
@@ -38,7 +44,7 @@ const Input = (props) => {
                     // value = {props.type === "text" ? value : null}
                     value={value}
                     className="form-control" aria-label="Username" aria-describedby="basic-addon1"
-                    onChange={(e) => props.onChange(e.target.value)}
+                    onChange={(e) => onChangeInputValue(e.target.value)}
                     disabled={disabled}
                     // pattern={type == 'number' ? "\d*" : '[A-Za-z]{3}'}
                 />
