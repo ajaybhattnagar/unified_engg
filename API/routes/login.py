@@ -135,7 +135,6 @@ def users(connection_string, username):
                 user_query_string = user_query['UPDATE_USERS'].format(
                     FIRST_NAME = df['FIRST_NAME'][i],
                     LAST_NAME = df['LAST_NAME'][i],
-                    DASHBOARD = 1 if df['DASHBOARD'][i] == True else 0,
                     ADMIN = 1 if df['ADMIN'][i] == True else 0,
                     SUPER_ADMIN = 1 if df['SUPER_ADMIN'][i] == True else 0,
                     ALLOWED_WORKING_LOCATION = 1 if df['ALLOWED_WORKING_LOCATION'][i] == True else 0,

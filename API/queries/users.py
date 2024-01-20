@@ -12,7 +12,6 @@ user_query = {
     "UPDATE_USERS": """UPDATE [dbo].[UNI_USERS]
                         SET [FIRST_NAME] = '{FIRST_NAME}'
                             ,[LAST_NAME] = '{LAST_NAME}'
-                            ,[DASHBOARD] = {DASHBOARD}
                             ,[ADMIN] = {ADMIN}
                             ,[SUPER_ADMIN] = {SUPER_ADMIN}
                             ,[ALLOWED_WORKING_LOCATION] = {ALLOWED_WORKING_LOCATION}

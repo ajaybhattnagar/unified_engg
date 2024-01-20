@@ -95,11 +95,6 @@ const Users = () => {
             type: 'text',
         },
         {
-            data: 'DASHBOARD',
-            type: 'checkbox',
-            className: 'htCenter',
-        },
-        {
             data: 'ADMIN',
             type: 'checkbox',
             className: 'htCenter',
@@ -187,7 +182,7 @@ const Users = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ROWID', 'ID', 'First Name', 'Last Name', 'Dashboard', 'Admin', 'Super Admin', 'Allowed Working Location', 'Allowed Working Time',
+                                    columnsHeaders={['ROWID', 'ID', 'First Name', 'Last Name', 'Admin', 'Super Admin', 'Allowed Working Location', 'Allowed Working Time',
                                         'Allowed Approve Page', 'Allowed Edit Labor Tickets', 'Allowed Set QA Notification', 'Allowed Receipt Entry']}
                                     onChange={(e) => { update_users(e) }}
                                 />

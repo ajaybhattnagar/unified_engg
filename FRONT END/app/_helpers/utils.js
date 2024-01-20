@@ -22,6 +22,7 @@ export const utils = {
   updateLaborTicketsField,
   uploadDocuments,
   uploadImage,
+  tranactionIdUrlLink,
 
   decodeJwt,
   open_document,
@@ -485,4 +486,10 @@ function calcHoursWorked(clock_in, clock_out) {
     total_hours = Math.ceil(diff / 15) * 15;
   }
   return total_hours;
+}
+
+function tranactionIdUrlLink(transaction_id) {
+  var url = appConstants.DEPLOYEMENT_URL.concat('ticket_details?transaction_id=').concat(transaction_id);
+  url = `<a href="${url}" target='_blank'>${transaction_id}</a>`;
+  return url;
 }

@@ -47,7 +47,6 @@ class NavigationBar extends Component {
 
     render() {
         const { access_rights } = this.state;
-        var dashboard = access_rights.SUPER_ADMIN === '1' || access_rights.ADMIN === '1' || access_rights.DASHBOARD === '1' ? false : true;
         var approve_labor_tickets = access_rights.SUPER_ADMIN === '1' || access_rights.ADMIN === '1' || access_rights.ALLOWED_APPROVE_PAGE === '1' ? false : true;
         var super_admin = access_rights.SUPER_ADMIN === '1' ? false : true;
         var reciept_entry = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_RECEIPT_ENTRY === '1' ? false : true;
@@ -69,7 +68,7 @@ class NavigationBar extends Component {
 
                     <Nav className="mr-auto">
 
-                        <Nav.Link disabled={dashboard} className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
+                        <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
                         <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
                         <Nav.Link disabled={approve_labor_tickets} className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
 

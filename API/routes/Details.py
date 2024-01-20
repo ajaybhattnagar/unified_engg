@@ -280,7 +280,7 @@ def operation_details(connection_string, username):
 
             # Filter operation_details dict selected operation_seq
             operation_details = [x for x in operation_details if x['SEQUENCE_NO'] == int(operation_seq)]
-            sql.close()
+            sql.close()           
 
             response = Response(
                         response=simplejson.dumps(operation_details, ignore_nan=True,default=datetime.datetime.isoformat),

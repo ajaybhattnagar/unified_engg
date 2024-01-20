@@ -85,11 +85,16 @@ const EOD = () => {
         setTotalHours(total_hours);
     }
 
+    const safeHtmlRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+        td.innerHTML = utils.tranactionIdUrlLink(value)
+    }
+
     const columns = [
         {
             data: 'TRANSACTION_ID',
             type: 'numeric',
-            readOnly: true
+            readOnly: true,
+            renderer: safeHtmlRenderer
         },
         {
             data: 'WORKORDER_BASE_ID',

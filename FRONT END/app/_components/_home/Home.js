@@ -77,11 +77,23 @@ const Home = () => {
 
     }, []);
 
+    // http://localhost:8080/ticket_details?transaction_id=31
+
+    const safeHtmlRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+        td.innerHTML = utils.tranactionIdUrlLink(value)
+    }
+
     const columns_active_labor_tickets = [
+        {
+            data: 'TRANSACTION_ID',
+            type: 'text',
+            readOnly: true,
+            renderer: safeHtmlRenderer
+        },
         {
             data: 'WORKORDER_BASE_ID',
             type: 'text',
-            readOnly: true
+            readOnly: true,
         },
         {
             data: 'LOT_SPLIT_SUB',
@@ -116,6 +128,16 @@ const Home = () => {
         },
         {
             data: 'EMPLOYEE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'LAB_DESC',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'QA_NOTES',
             type: 'text',
             readOnly: true
         },
@@ -176,8 +198,8 @@ const Home = () => {
                                                     <MTable
                                                         data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
                                                         columnsTypes={columns_active_labor_tickets}
-                                                        columnsHeaders={['Work order', 'Lot Split Sub', 'Indirect', 'Part Description',
-                                                            'Customer ID', 'In Date', 'In Time', 'Work Location', 'Employee']}
+                                                        columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Indirect', 'Part Description',
+                                                            'Customer ID', 'In', 'Work Location', 'Employee', 'Notes', 'QA Notes']}
                                                     // onChange={(e) => { update_labor_tickets(e) }}
                                                     />
                                                 </Card.Body>

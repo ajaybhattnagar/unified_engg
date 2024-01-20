@@ -47,6 +47,8 @@ const MTable = (props) => {
 
                 afterChange={(changes, source) => { if (source === 'edit') { setDataChanged(true); props.onInstantDataChange(data) } }}
                 afterSelection={(r, c) => { on_cell_selected(data[r]) }}
+                autoWrapRow={true}
+                autoWrapCol={true}
 
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
             />

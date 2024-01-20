@@ -82,6 +82,7 @@ const TicketDetails = () => {
                                                                 <th>Employee</th>
                                                                 <th>Start Time</th>
                                                                 <th>Hours</th>
+                                                                <th>Notes</th>
                                                                 <th>QA Notes</th>
                                                             </tr>
                                                         </thead>
@@ -93,6 +94,7 @@ const TicketDetails = () => {
                                                                 <td>{ticketDetails.EMPLOYEE_ID}</td>
                                                                 <td>{ticketDetails.CLOCK_IN_DATE} {ticketDetails.CLOCK_IN_TIME}</td>
                                                                 <td>{ticketDetails.HOURS_WORKED_HRS ? ticketDetails.HOURS_WORKED_HRS.toFixed(2) : null}</td>
+                                                                <td>{ticketDetails.LAB_DESC}</td>
                                                                 <td>{ticketDetails.QA_NOTES}</td>
                                                             </tr>
                                                         </tbody>

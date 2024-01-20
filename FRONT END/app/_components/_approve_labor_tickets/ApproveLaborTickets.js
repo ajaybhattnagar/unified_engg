@@ -50,11 +50,16 @@ const ApproveLaborTickets = () => {
             });
     }, [selectedFromDate, selectedToDate]);
 
+    const safeHtmlRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+        td.innerHTML = utils.tranactionIdUrlLink(value)
+    }
+
     const columns = [
         {
             data: 'TRANSACTION_ID',
             type: 'numeric',
-
+            readOnly: true,
+            renderer: safeHtmlRenderer
         },
         {
             data: 'WORKORDER_BASE_ID',
@@ -124,6 +129,16 @@ const ApproveLaborTickets = () => {
             className: 'htCenter',
         },
         {
+            data: 'LAB_DESC',
+            type: 'text',
+            className: 'htCenter',
+        },
+        {
+            data: 'QA_NOTES',
+            type: 'text',
+            className: 'htCenter',
+        },
+        {
             data: 'APPROVED',
             type: 'checkbox',
             className: 'htCenter',
@@ -166,7 +181,8 @@ const ApproveLaborTickets = () => {
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID',
                                         'In', 'Out', 'Hours worked', 'Indirect', 'Location',
-                                        'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Approved', 'Visual Labor ID']}
+                                        'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Notes', 'QA Notes',
+                                        'Approved', 'Visual Labor ID']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />
                         }

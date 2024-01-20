@@ -16,15 +16,17 @@ const isBrowser = typeof window !== `undefined`
 const SignOff = () => {
     const navigate = useNavigate();
     const [scannedData, setScannedData] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const acceptRejectOptions = ['Accept', 'Reject'];
+    const [acceptRejectSelection, setAcceptRejectSelection] = useState(null);
     const [scanInput, setScanInput] = useState(localStorage.getItem("SIGN_OFF_SCAN_LAST_SELECTED") || 'FABRICATED');
+    const [isLoading, setIsLoading] = useState(false);
 
-    // Eg: *%21-HBS-J74$0$60%*
+    // Eg: *%22-HBS-J37$0$30%*
 
 
     useEffect(() => {
         if (scannedData && scanInput) {
-            console.log(scannedData);
+            setIsLoading(true);
             var array_fab_sign_off = {
                 'BASE_ID': scannedData.work_order,
                 'SUB_ID': scannedData.sub_id,
@@ -36,6 +38,8 @@ const SignOff = () => {
                 'SUB_ID': scannedData.sub_id,
                 'SEQUENCE_NO': scannedData.operation_seq,
                 'QA_SIGN_OFF': scanInput === 'QUALITY' ? 1 : null,
+                'QA_ACCEPT': acceptRejectSelection === 0 ? 1 : '',
+                'QA_REJECT': acceptRejectSelection === 1 ? 1 : '',
             }
 
             var url = appConstants.BASE_URL.concat(appConstants.GET_UPDATE_OPERATION_DETAILS).concat('?base_id=').concat(scannedData.work_order,).concat('&sub_id=').concat(scannedData.sub_id,).concat('&operation_seq=').concat(scannedData.operation_seq,);
@@ -59,13 +63,17 @@ const SignOff = () => {
                 .then((data) => {
                     if (data) {
                         window.location.reload();
+                        setIsLoading(false);
                     }
                 })
-                .catch((err) => alert(err));
+                .catch((err) => { alert(err); setIsLoading(false); });
         }
 
     }, [scannedData]);
 
+    const on_change_accept_reject = (i) => {
+        setAcceptRejectSelection((prev) => (i === prev ? null : i));
+    }
 
 
     const render = () => {
@@ -73,34 +81,56 @@ const SignOff = () => {
             <div>
                 <NavigationBar />
                 <div className="m-3">
+                    {
+                        !isLoading ?
+                            <div>
 
-                    <div className="d-flex justify-content-center row">
-                        <div className="col-12 col-md-8">
-                            <Card bg={scanInput === 'FABRICATED' ? 'success' : 'primary'} text='white'>
-                                <Card.Header><h5>Fabrication Sign Off</h5></Card.Header>
-                                <Card.Body>
-                                    <div onClick={() => {setScanInput("FABRICATED"); localStorage.setItem("SIGN_OFF_SCAN_LAST_SELECTED", 'FABRICATED')}} className="mb-3">
-                                        <Scan disabled={false} focus={scanInput === 'FABRICATED' ? true : false} onChange={(e) => setScannedData(e)} />
+                                <div className="d-flex justify-content-center row">
+                                    <div className="col-12 col-md-8">
+                                        <Card bg={scanInput === 'FABRICATED' ? 'success' : 'primary'} text='white'>
+                                            <Card.Header><h5>Fabrication Sign Off</h5></Card.Header>
+                                            <Card.Body>
+                                                <div onClick={() => { setScanInput("FABRICATED"); localStorage.setItem("SIGN_OFF_SCAN_LAST_SELECTED", 'FABRICATED') }} className="mb-3">
+                                                    <Scan disabled={false} focus={scanInput === 'FABRICATED' ? true : false} onChange={(e) => setScannedData(e)} />
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
                                     </div>
-                                </Card.Body>
-                            </Card>
-                        </div>
 
-                        <div className="col-12 col-md-8 mt-3">
-                            <Card bg={scanInput === 'QUALITY' ? 'success' : 'primary'} text='white'>
-                                <Card.Header><h5>Quality Sign Off</h5></Card.Header>
-                                <Card.Body>
-                                    <div onClick={() => {setScanInput("QUALITY"); localStorage.setItem("SIGN_OFF_SCAN_LAST_SELECTED", 'QUALITY')}} className="mb-3">
-                                        <Scan disabled={false} focus={scanInput === 'QUALITY' ? true : false} onChange={(e) => setScannedData(e)} />
+                                    <div className="col-12 col-md-8 mt-3">
+                                        <Card bg={scanInput === 'QUALITY' ? 'success' : 'primary'} text='white'>
+                                            <Card.Header><h5>Quality Sign Off</h5></Card.Header>
+                                            <Card.Body>
+                                                <div onClick={() => { setScanInput("QUALITY"); localStorage.setItem("SIGN_OFF_SCAN_LAST_SELECTED", 'QUALITY') }} className="mb-3">
+
+                                                    {/* Accept and Reject option */}
+                                                    <div>
+                                                        {acceptRejectOptions.map((o, i) => (
+                                                            <label className="mr-3" key={i}>
+                                                                <input className="mr-1"
+                                                                    type="checkbox"
+                                                                    checked={i === acceptRejectSelection}
+                                                                    onChange={() => on_change_accept_reject(i)}
+                                                                />
+                                                                {o}
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                    {
+                                                        acceptRejectSelection !== null ?
+                                                            <Scan disabled={false} focus={scanInput === 'QUALITY' ? true : false} onChange={(e) => setScannedData(e)} />
+                                                            : null
+                                                    }
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
                                     </div>
-                                </Card.Body>
-                            </Card>
-                        </div>
-                    </div>
-
+                                </div>
+                            </div>
+                            :
+                            <Loading />
+                    }
                 </div>
-
-
             </div>
         );
     }
