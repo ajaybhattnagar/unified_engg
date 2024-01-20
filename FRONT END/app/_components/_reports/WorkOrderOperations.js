@@ -55,7 +55,6 @@ const WorkOrderOperations = () => {
             .then((data) => {
                 if (response_status === 200) {
                     setIsLoading(false);
-                    console.log(data);
                     // Update data.CLOCK_IN_VS_LABOR_KPI to have the correct values
                     data.forEach((element) => {
                         if (element.FAB_SIGN_OFF >= 1) { element.FAB_SIGN_OFF = true; } else { element.FAB_SIGN_OFF = false; }
@@ -157,6 +156,12 @@ const WorkOrderOperations = () => {
 
     const columns_quality_updates = [
         {
+            data: 'CREATE_DATE',
+            type: 'text',
+            className: 'htCenter',
+            readOnly: true
+        },
+        {
             data: 'FAB_SIGN_OFF',
             type: 'checkbox',
             className: 'htCenter',
@@ -209,7 +214,7 @@ const WorkOrderOperations = () => {
                                     <MTable
                                         data={operationDetails ? operationDetails : []}
                                         columnsTypes={columns_quality_updates}
-                                        columnsHeaders={['Fabrication Sign Off', 'Quality Sign Off', 'Accept', 'Reject',
+                                        columnsHeaders={['Date','Fabrication Sign Off', 'Quality Sign Off', 'Accept', 'Reject',
                                             'Notify?', 'Employee']} />
                                 </div>
 
