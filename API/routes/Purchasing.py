@@ -11,7 +11,7 @@ import jwt
 import pyodbc 
 from queries.purchasing import purchasing_query
 import os
-from utils import list_files
+from utils import list_files, send_email
 
 
 purchasing_blueprint = Blueprint('purchasing_blueprint', __name__)
@@ -79,4 +79,32 @@ def get_purchase_order(connection_string, username):
 
     except Exception as e:
         return jsonify({"message": str(e)}), 401
-   
+
+
+@purchasing_blueprint.route("/api/v1/purchasing/notify_buyer", methods=['POST'])
+@token_required
+def test_smtp(connection_string, username):
+    content = request.get_json(silent=True)
+    try:
+        if 'EMAIL' not in content:
+            return jsonify({"message": "EMAIL is required"}), 401
+        else:
+            email = content['EMAIL'],
+            email = ''.join(email)
+        if 'PO_NUMBER' not in content:
+            return jsonify({"message": "PO Number is required"}), 401
+        else:
+            po_number = content['PO_NUMBER']
+            po_number = ''.join(po_number)
+
+        subject = "Purchase Order Notification"
+        template = 'purchase_order_notification'
+       
+        try:
+            send_email(template, email, subject, po_number)
+            return jsonify({"message": "Email Sent Successfully!"}), 200
+        except Exception as e:
+            return jsonify({"message": str(e)}), 401
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401

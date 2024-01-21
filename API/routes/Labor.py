@@ -205,8 +205,7 @@ def create_labor_tickets(connection_string, username):
                 if 'QA_NOTES' in content and content['QA_NOTES'] != '' and content['QA_NOTES'] != None and content['QA_NOTES'] != 'null':
                     email = configData['QA_email']
                     subject = 'Notification - Check for new Labor Ticket'
-                    message = 'New Labor Ticket Created. Please review.'
-                    send_email(email, subject, transaction_id)
+                    send_email('labor_ticket_start', email, subject, transaction_id)
             except Exception as e:
                 print(e)
                 pass
@@ -225,8 +224,7 @@ def create_labor_tickets(connection_string, username):
                 for row in results:
                     email = row['NOTIFY_EMPLOYEE']
                     subject = 'Notification - Check for new Labor Ticket'
-                    message = 'New Labor Ticket Created. Please review.'
-                    send_email(email, subject, transaction_id)
+                    send_email('qa_email_added', email, subject, transaction_id)
                 sql.close()
 
             except Exception as e:
@@ -440,7 +438,7 @@ def test_smtp(connection_string, username):
             message = ''.join(message)
 
         try:
-            send_email(email, subject, message)
+            send_email('labor_ticket_start', email, subject, message)
             return jsonify({"message": "Email Sent Successfully!"}), 200
         except Exception as e:
             return jsonify({"message": str(e)}), 401

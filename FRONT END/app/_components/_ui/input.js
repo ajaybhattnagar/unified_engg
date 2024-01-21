@@ -13,6 +13,7 @@ const Input = (props) => {
     const clearbutton = props.clearbutton || false
     const disabled = props.disabled || false
     const onUpdateButtonClick = props.onUpdateButtonClick || false
+    const onUpdateButtonText = props.onUpdateButtonText || "Update"
 
     switch (type) {
         case "text":
@@ -46,7 +47,7 @@ const Input = (props) => {
                     className="form-control" aria-label="Username" aria-describedby="basic-addon1"
                     onChange={(e) => onChangeInputValue(e.target.value)}
                     disabled={disabled}
-                    // pattern={type == 'number' ? "\d*" : '[A-Za-z]{3}'}
+                // pattern={type == 'number' ? "\d*" : '[A-Za-z]{3}'}
                 />
                 {
                     clearbutton ?
@@ -58,7 +59,7 @@ const Input = (props) => {
                 {
                     onUpdateButtonClick ?
                         <button className="ml-1 btn btn-outline-primary border" type="button" onClick={(e) => props.onUpdateButtonClick(value)}>
-                            <i className="fa fa-times">Update</i>
+                            <i className="fa fa-times">{onUpdateButtonText}</i>
                         </button>
                         : null
                 }

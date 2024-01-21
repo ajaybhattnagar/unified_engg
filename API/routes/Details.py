@@ -11,7 +11,7 @@ import jwt
 import pyodbc 
 from queries.details import details_query
 import os
-from utils import list_files
+from utils import list_files, send_email
 
 
 details_blueprint = Blueprint('details_blueprint', __name__)

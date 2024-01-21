@@ -46,4 +46,5 @@ export const appConstants = {
 
     GET_PURCHASE_ORDERS: 'api/v1/purchasing/get_purchase_order', // ADD PO ID AS PARAMS TO GET LINES 
     CREATE_RECEIVER_VISUAL: 'api/Purchasing/ReceiveOrder',
+    NOTIFY_BUYER: 'api/v1/purchasing/notify_buyer',
 };

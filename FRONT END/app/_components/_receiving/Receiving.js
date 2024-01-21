@@ -9,6 +9,8 @@ import MTable from "../_ui/materialTable";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import { Card } from "react-bootstrap";
+import WebCam from "../_ui/webCam.js";
+import SingleFileUploader from "../_ui/uploadFile.js";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -21,6 +23,11 @@ const Receiving = () => {
     const [vendorPacklistId, setVendorPacklistId] = useState(null);
     const [vendorPacklistDate, setVendorPacklistDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [vendorFreightId, setVendorFreightId] = useState(null);
+    const allowRecieptEntry = useRef(false);
+    const uploadTypeOptions = ['Document', 'Camera'];
+    const [selectedUploadType, setSelectedUploadType] = useState(0);
+    const [clickedImage, setClickedImage] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     useEffect(() => {
         setIsLoading(true);
@@ -67,6 +74,15 @@ const Receiving = () => {
 
     }, []);
 
+    // Getting access rights
+    useEffect(() => {
+        if (localStorage.getItem("token")) {
+            var access_rights = utils.decodeJwt();
+            access_rights = access_rights.USER_DETAILS
+            allowRecieptEntry.current = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_RECEIPT_ENTRY === '1' ? true : false;
+        }
+    }, []);
+
     useEffect(() => {
         if (selectedPo) {
 
@@ -91,6 +107,7 @@ const Receiving = () => {
                 })
                 .then((data) => {
                     if (response_status === 200) {
+                        console.log(data);
                         setPoDetails(data);
                     } else {
                         alert(data.message);
@@ -227,6 +244,93 @@ const Receiving = () => {
         }
     }
 
+    const upload_image_document = () => {
+        if (selectedFile && selectedFile !== null && transactionId != 0 && transactionId != null) {
+            utils.uploadDocuments(selectedFile, transactionId)
+                .then((response) => {
+                    console.log(response);
+                    window.location.reload();
+                })
+        }
+
+        // Upload Images if any
+        if (clickedImage && clickedImage !== null && transactionId != 0 && transactionId != null) {
+            utils.uploadImage(clickedImage, transactionId)
+                .then((response) => {
+                    console.log(response);
+                    window.location.reload();
+                })
+        }
+    }
+
+    const render_file_camera_start = () => {
+        return (
+            <div className="d-flex">
+                {
+                    <div className="">
+                        {uploadTypeOptions.map((o, i) => (
+                            <label className="mt-3 ml-3" key={i}>
+                                <input className="mr-1"
+                                    type="checkbox"
+                                    checked={i === selectedUploadType}
+                                    onChange={() => on_change_upload_type(i)}
+                                />
+                                {o}
+                            </label>
+                        ))}
+                        {
+                            selectedUploadType === 0 ?
+                                <div className="ml-3"><SingleFileUploader onClick={(e) => setSelectedFile(e)} /></div>
+                                :
+                                <WebCam onClick={(e) => setClickedImage(e)} />
+                        }
+                    </div>
+                }
+            </div >
+        )
+    }
+    const on_change_upload_type = (i) => {
+        setSelectedUploadType((prev) => (i === prev ? null : i));
+    }
+
+    const send_order_notification_email = () => {
+        var url = appConstants.BASE_URL.concat(appConstants.NOTIFY_BUYER);
+        var response_status = 0;
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'x-access-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                "PO_NUMBER": selectedPo.value,
+                // "EMAIL": poDetails[0].EMAIL_ADDR,
+                "EMAIL": "ajay.bhattnagar21@gmail.com",
+            })
+        })
+            .then((res) => {
+                if (res.status === 200) {
+                    response_status = 200;
+                    return res.json();
+                }
+                else {
+                    response_status = 400;
+                    return res.json();
+                }
+            })
+            .then((data) => {
+                if (response_status === 200) {
+                    alert(data.message);
+                    window.location.reload();
+                    return null;
+                } else {
+                    alert(data.message);
+                    return null;
+                }
+            })
+            .catch((err) => { console.error(err), setIsLoading(false); });
+    }
+
     const render = () => {
         return (
             <div>
@@ -247,28 +351,46 @@ const Receiving = () => {
                                     />
                                 </div>
 
-                                <Card bg='primary' text='white'>
-                                    <Card.Header><h5>Receipt Entry</h5></Card.Header>
-                                    <Card.Body>
-                                        <div className="">
-                                            <div className='mt-1 w-25'><Input type={'text'} placeholder="Vendor Packlist ID" value={vendorPacklistId} text='Packlist ID' onChange={(e) => setVendorPacklistId(e)} /></div>
-                                            <div className='mt-1 w-25'><Input type={'date'} placeholder="Vendor Packlist Date" value={vendorPacklistDate} text='Packlist Date' onChange={(e) => setVendorPacklistDate(e)} /></div>
-                                            <div className='mt-1 w-25'><Input type={'text'} placeholder="Vendor Freight ID" value={vendorFreightId} text='Freight ID' onChange={(e) => setVendorFreightId(e)} /></div>
-                                        </div>
+                                <div className="w-100 mb-2">
+                                    {
+                                        poDetails && poDetails.length > 0 ?
+                                            <div>
+                                                <Input type={'text'} text='Notify' disabled={true}
+                                                    value={poDetails[0].BUYER_NAME + " - " + poDetails[0].EMAIL_ADDR}
+                                                    onUpdateButtonClick={() => send_order_notification_email()}
+                                                    onUpdateButtonText='Send' />
+                                                {/* {render_file_camera_start()} */}
+                                            </div>
+                                            :
+                                            null
+                                    }
+                                </div>
 
-                                        <div className="mt-3">
-                                            <MTable
-                                                data={poDetails ? poDetails : []}
-                                                columnsTypes={columns_purchase_order_details}
-                                                columnsHeaders={['ID', 'Line', 'Part ID', 'Description',
-                                                    'Order QTY', 'Received QTY', 'Balance', 'To Receive']}
-                                                onChange={(e) => { validate_create_receiver(e) }}
-                                            />
-                                        </div>
-                                    </Card.Body>
-                                </Card>
+                                {
+                                    !allowRecieptEntry.current ?
+                                        <Card bg='primary' text='white'>
+                                            <Card.Header><h5>Receipt Entry</h5></Card.Header>
+                                            <Card.Body>
+                                                <div className="">
+                                                    <div className='mt-1 w-25'><Input type={'text'} placeholder="Vendor Packlist ID" value={vendorPacklistId} text='Packlist ID' onChange={(e) => setVendorPacklistId(e)} /></div>
+                                                    <div className='mt-1 w-25'><Input type={'date'} placeholder="Vendor Packlist Date" value={vendorPacklistDate} text='Packlist Date' onChange={(e) => setVendorPacklistDate(e)} /></div>
+                                                    <div className='mt-1 w-25'><Input type={'text'} placeholder="Vendor Freight ID" value={vendorFreightId} text='Freight ID' onChange={(e) => setVendorFreightId(e)} /></div>
+                                                </div>
 
-
+                                                <div className="mt-3">
+                                                    <MTable
+                                                        data={poDetails ? poDetails : []}
+                                                        columnsTypes={columns_purchase_order_details}
+                                                        columnsHeaders={['ID', 'Line', 'Part ID', 'Description',
+                                                            'Order QTY', 'Received QTY', 'Balance', 'To Receive']}
+                                                        onChange={(e) => { validate_create_receiver(e) }}
+                                                    />
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
+                                        :
+                                        null
+                                }
 
                             </div>
                         </div>
