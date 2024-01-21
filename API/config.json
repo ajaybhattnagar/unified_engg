@@ -17,8 +17,8 @@
 
     "QA_email": "ajay.bhattnagar21@gmail.com",
 
-    "save_images_to_folder": "C:\\Docs_sandbox\\",
-    "save_documents_to_folder": "C:\\Docs_sandbox\\",
+    "save_images_to_folder": "C:\\DOCS\\",
+    "save_documents_to_folder": "C:\\DOCS\\",
 
     "allowed_extenstions" : ["txt", "pdf", "png", "jpg", "jpeg", "gif",
                           "doc", "docx", "xls", "xlsx", "ppt", "pptx", "csv", "zip", "rar", "mp4",
@@ -26,6 +26,6 @@
 
     "deployment_url_front_end": "https://uni-vm-visdev.unified.local",
 
-    "u_drive_path": "\\\\charlie\\Unified\\Projects"
+    "u_drive_path": "C:\\DOCS\\"
 
 }

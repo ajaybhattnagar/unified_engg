@@ -132,4 +132,8 @@ details_query = {
                             ('W', '{BASE_ID}', '1', '0', '{SUB_ID}', 
                             {OPERATION_SEQ_NO}, '{NOTIFY_EMPLOYEE}', '{FAB_SIGN_OFF}', '{QA_SIGN_OFF}', '{QA_ACCEPT}', '{QA_REJECT}', '{NOTES}', '{EMPLOYEE_ID}')""",
 
+"INSERT_INTO_UNI_NOTIFICATION": """INSERT INTO [dbo].[UNI_NOTIFICATION]
+           ([UNIQUE_ID], [TYPE], [TEMPLATE], [RECIPIENTS])
+     VALUES ('{UNIQUE_ID}', '{TYPE}', '{TEMPLATE}', '{RECIPIENTS}')""",
+
 }

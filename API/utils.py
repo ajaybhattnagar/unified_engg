@@ -7,6 +7,8 @@ from email.mime.multipart import MIMEMultipart
 import json
 import base64, binascii
 import os
+import pyodbc
+from queries.details import details_query
 
 
 with open ('config.json') as f:
@@ -87,21 +89,21 @@ purchase_order_notification_template = """<html lang="en">
         </body>
         </html>"""
 
-def send_email(type, email, subject, transaction_id):
+def send_email(type, email, subject, connection_string, unique_id):
     try:
         msg = MIMEMultipart()
         msg['From'] = configData['smtp_user']
         msg['To'] = email
         msg['Subject'] = subject
 
-        url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_id={TRANSACTION_ID}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], TRANSACTION_ID=transaction_id)
+        url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
 
         if type == 'labor_ticket_start':
             html_content = labor_ticket_start_template.format(url=url_ticket)
         if type == 'qa_email_added':
             html_content = qa_email_added_template.format(url=url_ticket)
         if type == 'purchase_order_notification':
-            html_content = purchase_order_notification_template.format(PO_NUMBER=transaction_id)
+            html_content = purchase_order_notification_template.format(PO_NUMBER=unique_id)
 
         msg.attach(MIMEText(html_content, 'html'))
         server = smtplib.SMTP(configData['smtp_host'], configData['smtp_port'])
@@ -110,6 +112,13 @@ def send_email(type, email, subject, transaction_id):
         text = msg.as_string()
         server.sendmail(configData['smtp_user'], email, text)
         server.quit()
+
+        # Insert into uni notifications table
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(details_query['INSERT_INTO_UNI_NOTIFICATION'].format(UNIQUE_ID = unique_id, RECIPIENTS = email, TYPE = type, TEMPLATE = type))
+        cnxn.commit()
+        sql.close()
         return True
 
     except Exception as e:
@@ -119,8 +128,7 @@ def send_email(type, email, subject, transaction_id):
 
 def save_base64_to_image(base, file_name):
     image = base64.b64decode(base, validate=True)
-    file_to_save = configData['save_images_to_folder'] + file_name + '.png'
-    with open(file_to_save, "wb") as f:
+    with open(file_name, "wb") as f:
         f.write(image)
 
 

@@ -320,9 +320,15 @@ function updateLaborTicketsField(transaction_id, field, value) {
     .catch((err) => console.error(err)); G
 }
 
-function uploadDocuments(data, tranaction_id) {
+function uploadDocuments(data, tranaction_id, anyDocument = true) {
   var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.UPLOAD_DOCUMENTS).concat('/').concat(tranaction_id);
+
+  if (anyDocument) {
+    var url = appConstants.BASE_URL.concat(appConstants.UPLOAD_DOCUMENTS).concat('/').concat(tranaction_id);
+  }
+  else {
+    var url = appConstants.BASE_URL.concat(appConstants.UPLOAD_DOCUMENTS_LABOR).concat('/').concat(tranaction_id);
+  }
   const request_object = {
     method: "POST",
     headers: {
@@ -352,9 +358,16 @@ function uploadDocuments(data, tranaction_id) {
     .catch((err) => console.error(err));
 }
 
-function uploadImage(data, tranaction_id) {
+function uploadImage(data, tranaction_id, anyDocument = true) {
   var response_status = 0;
-  var url = appConstants.BASE_URL.concat(appConstants.UPLOAD_IMAGES).concat('/').concat(tranaction_id);
+
+  if (anyDocument) {
+    var url = appConstants.BASE_URL.concat(appConstants.UPLOAD_IMAGES).concat('/').concat(tranaction_id);
+  }
+  else {
+    var url = appConstants.BASE_URL.concat(appConstants.UPLOAD_IMAGES_LABOR).concat('/').concat(tranaction_id);
+  }
+
   const request_object = {
     method: "POST",
     headers: {

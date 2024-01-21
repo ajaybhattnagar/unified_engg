@@ -101,7 +101,7 @@ def test_smtp(connection_string, username):
         template = 'purchase_order_notification'
        
         try:
-            send_email(template, email, subject, po_number)
+            send_email(template, email, subject, connection_string, po_number)
             return jsonify({"message": "Email Sent Successfully!"}), 200
         except Exception as e:
             return jsonify({"message": str(e)}), 401

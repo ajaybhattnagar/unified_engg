@@ -107,7 +107,6 @@ const Receiving = () => {
                 })
                 .then((data) => {
                     if (response_status === 200) {
-                        console.log(data);
                         setPoDetails(data);
                     } else {
                         alert(data.message);
@@ -245,20 +244,20 @@ const Receiving = () => {
     }
 
     const upload_image_document = () => {
-        if (selectedFile && selectedFile !== null && transactionId != 0 && transactionId != null) {
-            utils.uploadDocuments(selectedFile, transactionId)
+        if (selectedFile && selectedFile !== null && selectedPo != 0 && selectedPo != null) {
+            utils.uploadDocuments(selectedFile, selectedPo.value, true)
                 .then((response) => {
-                    console.log(response);
                     window.location.reload();
+                    console.log(response);
                 })
         }
 
         // Upload Images if any
-        if (clickedImage && clickedImage !== null && transactionId != 0 && transactionId != null) {
-            utils.uploadImage(clickedImage, transactionId)
+        if (clickedImage && clickedImage !== null && selectedPo != 0 && selectedPo != null) {
+            utils.uploadImage(clickedImage, selectedPo.value, true)
                 .then((response) => {
-                    console.log(response);
                     window.location.reload();
+                    console.log(response);
                 })
         }
     }
@@ -311,21 +310,12 @@ const Receiving = () => {
             .then((res) => {
                 if (res.status === 200) {
                     response_status = 200;
+                    upload_image_document();
                     return res.json();
                 }
                 else {
                     response_status = 400;
                     return res.json();
-                }
-            })
-            .then((data) => {
-                if (response_status === 200) {
-                    alert(data.message);
-                    window.location.reload();
-                    return null;
-                } else {
-                    alert(data.message);
-                    return null;
                 }
             })
             .catch((err) => { console.error(err), setIsLoading(false); });
@@ -359,15 +349,15 @@ const Receiving = () => {
                                                     value={poDetails[0].BUYER_NAME + " - " + poDetails[0].EMAIL_ADDR}
                                                     onUpdateButtonClick={() => send_order_notification_email()}
                                                     onUpdateButtonText='Send' />
-                                                {/* {render_file_camera_start()} */}
+                                                {render_file_camera_start()}
                                             </div>
                                             :
                                             null
                                     }
                                 </div>
 
-                                {
-                                    !allowRecieptEntry.current ?
+                                {/* {
+                                    allowRecieptEntry.current ?
                                         <Card bg='primary' text='white'>
                                             <Card.Header><h5>Receipt Entry</h5></Card.Header>
                                             <Card.Body>
@@ -390,7 +380,7 @@ const Receiving = () => {
                                         </Card>
                                         :
                                         null
-                                }
+                                } */}
 
                             </div>
                         </div>

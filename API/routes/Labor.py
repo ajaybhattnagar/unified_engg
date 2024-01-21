@@ -205,7 +205,7 @@ def create_labor_tickets(connection_string, username):
                 if 'QA_NOTES' in content and content['QA_NOTES'] != '' and content['QA_NOTES'] != None and content['QA_NOTES'] != 'null':
                     email = configData['QA_email']
                     subject = 'Notification - Check for new Labor Ticket'
-                    send_email('labor_ticket_start', email, subject, transaction_id)
+                    send_email('labor_ticket_start', email, subject, connection_string ,transaction_id)
             except Exception as e:
                 print(e)
                 pass
@@ -224,7 +224,7 @@ def create_labor_tickets(connection_string, username):
                 for row in results:
                     email = row['NOTIFY_EMPLOYEE']
                     subject = 'Notification - Check for new Labor Ticket'
-                    send_email('qa_email_added', email, subject, transaction_id)
+                    send_email('qa_email_added', email, subject, connection_string, transaction_id)
                 sql.close()
 
             except Exception as e:
@@ -414,39 +414,6 @@ def update_labor_tickets(connection_string, username):
     return jsonify({"message": "Ticket Updated Successfully!"}), 200
 
 
-@labor_blueprint.route("/api/v1/email/test_smtp", methods=['POST'])
-@token_required
-def test_smtp(connection_string, username):
-    content = request.get_json(silent=True)
-    try:
-        if 'EMAIL' not in content:
-            return jsonify({"message": "EMAIL is required"}), 401
-        else:
-            email = content['EMAIL'],
-            email = ''.join(email)
-
-        if 'SUBJECT' not in content:
-            return jsonify({"message": "SUBJECT is required"}), 401
-        else:
-            subject = content['SUBJECT'],
-            subject = ''.join(subject)
-
-        if 'MESSAGE' not in content:
-            return jsonify({"message": "MESSAGE is required"}), 401
-        else:
-            message = content['MESSAGE'],
-            message = ''.join(message)
-
-        try:
-            send_email('labor_ticket_start', email, subject, message)
-            return jsonify({"message": "Email Sent Successfully!"}), 200
-        except Exception as e:
-            return jsonify({"message": str(e)}), 401
-
-    except Exception as e:
-        return jsonify({"message": str(e)}), 401
-
-
 @labor_blueprint.route("/api/v1/labor/upload_document/<trans_id>", methods=['POST'])
 @token_required
 def upload_document(connection_string, username, trans_id):
@@ -494,7 +461,6 @@ def upload_document(connection_string, username, trans_id):
                 return jsonify({'message': 'File type not allowed'}), 400
     except Exception as e:
         return jsonify({"message": str(e)}), 401
-
 
 
 @labor_blueprint.route("/api/v1/labor/upload_image/<trans_id>", methods=['POST'])

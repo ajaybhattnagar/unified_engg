@@ -26,8 +26,14 @@ export const appConstants = {
     UPDATE_LABOR_TICKETS: 'api/v1/labor/update_labor_tickets',
     UPDATE_LABOR_TICKET_FIELD: '/api/v1/labor/update_labor_ticket/',
 
-    UPLOAD_DOCUMENTS: 'api/v1/labor/upload_document',
-    UPLOAD_IMAGES: 'api/v1/labor/upload_image',
+    UPLOAD_DOCUMENTS_LABOR: 'api/v1/labor/upload_document',   //Upload document only for Labor Ticket
+    UPLOAD_IMAGES_LABOR: 'api/v1/labor/upload_image',        //Upload image only for Labor Ticket
+
+    UPLOAD_DOCUMENTS: 'api/v1/details/upload_document',  //Upload any document
+    UPLOAD_IMAGES: 'api/v1/details/upload_image',        //Upload any image
+
+
+
     GET_ALL_FILES_FROM_U_DRIVE: 'api/v1/details/u_drive_files/',
 
     USERS: 'api/v1/users', //POST to update, GET to get all users

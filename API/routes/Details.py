@@ -10,8 +10,10 @@ import bcrypt
 import jwt
 import pyodbc 
 from queries.details import details_query
+from queries.labor import labor_query
 import os
-from utils import list_files, send_email
+from utils import list_files, send_email, allowedFile, save_base64_to_image
+from werkzeug.utils import secure_filename
 
 
 details_blueprint = Blueprint('details_blueprint', __name__)
@@ -319,3 +321,88 @@ def operation_details(connection_string, username):
         except Exception as e:
             print (e)
             return jsonify({"message": str(e)}), 401
+
+@details_blueprint.route("/api/v1/details/upload_document/<unique_id>", methods=['POST'])
+@token_required
+def upload_document(connection_string, username, unique_id):
+    file = request.files.getlist('file')
+    try:
+        for f in file:
+            filename = secure_filename(f.filename)
+            if allowedFile(filename):
+                
+                file_path = configData['u_drive_path'] +  "Documents"
+
+                # Create upload folder if not exist
+                if not os.path.exists(file_path):
+                    os.makedirs(file_path)
+
+                file_path = os.path.join(file_path, filename)
+                f.save(file_path)
+
+                # Update database with file path
+                query_string = labor_query['INSERT_INTO_DOCUMENTS'].format(
+                    TYPE = 'DOCUMENT',
+                    FILE_PATH = file_path,
+                    TRANSACTION_ID = unique_id,
+                )
+                try:
+                    cnxn = pyodbc.connect(connection_string)
+                    sql = cnxn.cursor()
+                    sql.execute(query_string)
+                    cnxn.commit()
+                    sql.close()
+                    return jsonify({'message': 'File uploaded successfully'}), 200
+
+                except Exception as e:
+                    return jsonify({"message": str(e)}), 401
+
+            else:
+                return jsonify({'message': 'File type not allowed'}), 400
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+
+
+@details_blueprint.route("/api/v1/details/upload_image/<unique_id>", methods=['POST'])
+@token_required
+def upload_image(connection_string, username, unique_id):
+    content = request.get_json(silent=True)
+    if 'CLICKED_IMAGE' not in content:
+        return jsonify({"message": "CLICKED_IMAGE is required"}), 401
+
+    try:
+        if content['CLICKED_IMAGE'] != ''and content['CLICKED_IMAGE'] != None and content['CLICKED_IMAGE'] != 'null':
+            clicked_image = content['CLICKED_IMAGE']
+            # Remove data:image/png;base64, from base64 string
+            file_name = str(unique_id)  + '_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+
+            file_path = configData['u_drive_path'] +  "Documents" + '\\' 
+
+             # Create upload folder if not exist
+            if not os.path.exists(file_path):
+                os.makedirs(file_path)
+
+            file_path = file_path + str(file_name) + '.png'
+            save_base64_to_image(clicked_image, file_path)
+        else:
+            file_path = ''
+    except Exception as e:
+        file_path = ''
+        pass
+        print(e)
+
+    query_string = labor_query['INSERT_INTO_DOCUMENTS'].format(
+                    TYPE = 'IMAGE',
+                    FILE_PATH = file_path,
+                    TRANSACTION_ID = unique_id,
+                )
+    try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        cnxn.commit()
+        sql.close()
+        return jsonify({'message': 'Image uploaded successfully'}), 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401

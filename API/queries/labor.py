@@ -89,7 +89,7 @@ labor_query = {
 
 "INSERT_INTO_DOCUMENTS": """
                         INSERT INTO [dbo].[UNI_DOCUMENTS]
-                                ([TRANSACTION_ID], [TYPE], [FILE_PATH])
+                                ([UNIQUE_ID], [TYPE], [FILE_PATH])
                             VALUES
                                 ({TRANSACTION_ID}, '{TYPE}', '{FILE_PATH}' )""",                   
 
