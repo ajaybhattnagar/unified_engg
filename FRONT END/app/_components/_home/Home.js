@@ -16,6 +16,7 @@ const Home = () => {
     const [data, setData] = useState([]);
     const [notificationDocumentsData, setNotificationDocumentsData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isNotificationLoading, setIsNotificationLoading] = useState(true);
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 5 * 24 * 60 * 60 * 1000));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
 
@@ -82,6 +83,7 @@ const Home = () => {
     }, []);
 
     const get_documents_notification_kpi = () => {
+        setIsNotificationLoading(true);
         var response_status = 0;
         var url = appConstants.BASE_URL.concat(appConstants.DOCUMENTS_NOTIFICATION_KPI).concat('?from_date=').concat(selectedFromDate).concat('&to_date=').concat(selectedToDate);
         const request_object = {
@@ -104,15 +106,20 @@ const Home = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
-                    console.log(data);
                     setNotificationDocumentsData(data);
+                    setIsNotificationLoading(false);
                 } else {
                     alert(data.message);
+                    setIsNotificationLoading(false);
                     return null;
                 }
             })
-            .catch((err) => console.error(err));
+            .catch((err) => {console.error(err); setIsNotificationLoading(false)});
     }
+
+    useEffect(() => {
+        get_documents_notification_kpi();
+    }, [selectedFromDate, selectedToDate])
 
 
     // http://localhost:8080/ticket_details?transaction_id=31
@@ -121,7 +128,8 @@ const Home = () => {
         td.innerHTML = utils.tranactionIdUrlLink(value)
     }
     const safeImageLinkRenderer = (instance, td, row, col, prop, value, cellProperties) => {
-        td.innerHTML = `<button class="btn btn-primary" onClick="utils.open_document('${value}')">Open</button>`;
+        var url = appConstants.DEPLOYEMENT_URL.concat('reports/open_files?path=').concat(value);
+        td.innerHTML = `<a href=${url} target="_blank">View</a>`
     }
 
     const columns_active_labor_tickets = [
@@ -333,45 +341,48 @@ const Home = () => {
                                     </div>
 
                                     {/* Third Row */}
-                                    <div className="row mt-3">
-                                        <div className="col-12">
-                                            <Card bg='primary' text='white'>
-                                                <Card.Body>
-                                                    <div className="d-flex justify-content-left mb-3">
-                                                        <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
-                                                        <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
-                                                    </div>
+                                    {
+                                        isNotificationLoading ? <Loading />
+                                            :
+                                            <div className="row mt-3">
+                                                <div className="col-12">
+                                                    <Card bg='primary' text='white'>
+                                                        <Card.Body>
+                                                            <div className="d-flex justify-content-left mb-3">
+                                                                <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
+                                                                <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
+                                                            </div>
 
-                                                    <div className="d-flex justify-content-between mb-3">
-                                                        <Card bg='primary' text='white' className="w-100">
-                                                            <Card.Header><h5>Recently Uploaded Documents</h5></Card.Header>
-                                                            <Card.Body>
-                                                                {/* Documents */}
-                                                                <MTable
-                                                                    data={notificationDocumentsData.DOCUMENTS ? notificationDocumentsData.DOCUMENTS : []}
-                                                                    columnsTypes={columns_documents}
-                                                                    columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'File Path']}
-                                                                />
-                                                            </Card.Body>
-                                                        </Card>
+                                                            <div className="d-flex justify-content-between mb-3">
+                                                                <Card bg='primary' text='white' className="w-100">
+                                                                    <Card.Header><h5>Recently Uploaded Documents</h5></Card.Header>
+                                                                    <Card.Body>
+                                                                        {/* Documents */}
+                                                                        <MTable
+                                                                            data={notificationDocumentsData.DOCUMENTS ? notificationDocumentsData.DOCUMENTS : []}
+                                                                            columnsTypes={columns_documents}
+                                                                            columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'File']}
+                                                                        />
+                                                                    </Card.Body>
+                                                                </Card>
 
-                                                        {/* Notifications */}
-                                                        <Card bg='primary' text='white' className="w-100">
-                                                            <Card.Header><h5>Recent notifications</h5></Card.Header>
-                                                            <Card.Body>
-                                                                <MTable
-                                                                    data={notificationDocumentsData.NOTIFICATIONS ? notificationDocumentsData.NOTIFICATIONS : []}
-                                                                    columnsTypes={columns_notification}
-                                                                    columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'Recipients']}
-                                                                />
-                                                            </Card.Body>
-                                                        </Card>
-                                                    </div>
-                                                </Card.Body>
-                                            </Card>
-                                        </div>
-                                    </div>
-
+                                                                {/* Notifications */}
+                                                                <Card bg='primary' text='white' className="w-100">
+                                                                    <Card.Header><h5>Recent notifications</h5></Card.Header>
+                                                                    <Card.Body>
+                                                                        <MTable
+                                                                            data={notificationDocumentsData.NOTIFICATIONS ? notificationDocumentsData.NOTIFICATIONS : []}
+                                                                            columnsTypes={columns_notification}
+                                                                            columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'Recipients']}
+                                                                        />
+                                                                    </Card.Body>
+                                                                </Card>
+                                                            </div>
+                                                        </Card.Body>
+                                                    </Card>
+                                                </div>
+                                            </div>
+                                    }
 
                                 </div>
                         }

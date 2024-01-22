@@ -17,6 +17,7 @@ import WorkOrders from './_components/_reports/WorkOrders.js';
 import WorkOrderOperations from './_components/_reports/WorkOrderOperations.js';
 import Receiving from './_components/_receiving/Receiving.js';
 import SignOff from './_components/_quality/SignOff.js';
+import OpenFiles from './_components/_reports/OpenFiles.js';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
 				<Route path='/reports/work_order_operations' element={<WorkOrderOperations />} />
 				<Route path='/receiving' element={<Receiving />} />
 				<Route path='/quality/sign_off' element={<SignOff />} />
+				<Route path='/reports/open_files' element={<OpenFiles />} />
 				
 			</Routes>
 		</Router>
