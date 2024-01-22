@@ -42,6 +42,7 @@ export const appConstants = {
     DOCUMENTS_NOTIFICATION_KPI: 'api/v1/details/dashboard_documents_notifications',
 
     GET_LABOR_TICKET_DETAIL_BY_ID: 'api/v1/details/labor_ticket/', 
+    GET_PURCHASE_ORDER_NOTIFICATION_BY_ID: '/api/v1/details/purchase_order/',
     GET_DOCUMENTS_WITH_PATH: 'api/v1/details/get_files',
     CREATE_LABOR_TICKET_VISUAL: 'api/ShopFloor/CreateLaborTicketBulk',
 

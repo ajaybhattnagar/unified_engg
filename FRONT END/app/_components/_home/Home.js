@@ -114,7 +114,7 @@ const Home = () => {
                     return null;
                 }
             })
-            .catch((err) => {console.error(err); setIsNotificationLoading(false)});
+            .catch((err) => { console.error(err); setIsNotificationLoading(false) });
     }
 
     useEffect(() => {
@@ -323,24 +323,7 @@ const Home = () => {
                                         </div>
                                     </div>
 
-                                    {/* Second row */}
-                                    <div className="row mt-3">
-                                        <div className="col-12 col-md-4">
-                                            <Card bg='primary' text='white'>
-                                                <Card.Header><h5>Clocked In Employees</h5></Card.Header>
-                                                <Card.Body>
-                                                    <MTable
-                                                        data={data.CLOCK_IN_VS_LABOR_KPI ? data.CLOCK_IN_VS_LABOR_KPI : []}
-                                                        columnsTypes={columns_clocked_in_employees}
-                                                        columnsHeaders={['Name', 'Clocked in?', 'Labor Ticket Started?']}
-                                                    // onChange={(e) => { update_labor_tickets(e) }}
-                                                    />
-                                                </Card.Body>
-                                            </Card>
-                                        </div>
-                                    </div>
-
-                                    {/* Third Row */}
+                                    {/* Second Row */}
                                     {
                                         isNotificationLoading ? <Loading />
                                             :
@@ -383,6 +366,23 @@ const Home = () => {
                                                 </div>
                                             </div>
                                     }
+
+                                    {/* Third row */}
+                                    <div className="row mt-3">
+                                        <div className="col-12 col-md-4">
+                                            <Card bg='primary' text='white'>
+                                                <Card.Header><h5>Clocked In Employees</h5></Card.Header>
+                                                <Card.Body>
+                                                    <MTable
+                                                        data={data.CLOCK_IN_VS_LABOR_KPI ? data.CLOCK_IN_VS_LABOR_KPI : []}
+                                                        columnsTypes={columns_clocked_in_employees}
+                                                        columnsHeaders={['Name', 'Clocked in?', 'Labor Ticket Started?']}
+                                                    // onChange={(e) => { update_labor_tickets(e) }}
+                                                    />
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
+                                    </div>
 
                                 </div>
                         }

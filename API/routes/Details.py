@@ -184,6 +184,33 @@ def labor_tickets(connection_string, username, trans_id):
         return response, 200
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+
+@details_blueprint.route("/api/v1/details/purchase_order/<trans_id>", methods=['GET'])
+@token_required
+def purchase_order_noti_details(connection_string, username, trans_id):
+    transaction_id = trans_id
+    cnxn = pyodbc.connect(connection_string)
+    # Add notes to a parcel   
+    try:
+        sql = cnxn.cursor()
+        sql.execute(details_query['GET_ALL_DOCUMENTS_IMAGES_BY_ID'].format(TRANSACTION_ID=transaction_id))
+        documents = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        sql.close()
+
+        response_dict = {
+            "TICKET_DETAILS": [],
+            "DOCUMENTS": documents
+        }
+
+        response = Response(
+                    response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
     
 
 # Return a file 

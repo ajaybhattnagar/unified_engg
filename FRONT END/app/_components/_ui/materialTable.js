@@ -44,11 +44,12 @@ const MTable = (props) => {
                 dropdownMenu={['filter_by_condition', 'filter_by_value', 'filter_action_bar']}
                 height="auto"
                 columns={columnsTypes}
-
                 afterChange={(changes, source) => { if (source === 'edit') { setDataChanged(true); props.onInstantDataChange(data) } }}
                 afterSelection={(r, c) => { on_cell_selected(data[r]) }}
                 autoWrapRow={true}
                 autoWrapCol={true}
+                manualColumnResize={true}
+                stretchH="all"
 
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
             />

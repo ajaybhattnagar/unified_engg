@@ -79,7 +79,7 @@ purchase_order_notification_template = """<html lang="en">
                 <p style="color: #666; text-align: center;">Order in receiving</p>
 
                 <p style="text-align: center;">
-                    <span style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">{PO_NUMBER}</span>
+                    <a href="{url}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">{PO_NUMBER}</a>
                 </p>
 
                 <p style="color: #666; text-align: center;">Thank you</p>
@@ -96,14 +96,16 @@ def send_email(type, email, subject, connection_string, unique_id):
         msg['To'] = email
         msg['Subject'] = subject
 
-        url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
 
         if type == 'labor_ticket_start':
+            url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=labor_ticket&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
             html_content = labor_ticket_start_template.format(url=url_ticket)
         if type == 'qa_email_added':
+            url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=labor_ticket&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
             html_content = qa_email_added_template.format(url=url_ticket)
         if type == 'purchase_order_notification':
-            html_content = purchase_order_notification_template.format(PO_NUMBER=unique_id)
+            url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=purchase_order&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
+            html_content = purchase_order_notification_template.format(url = url_ticket, PO_NUMBER=unique_id)
 
         msg.attach(MIMEText(html_content, 'html'))
         server = smtplib.SMTP(configData['smtp_host'], configData['smtp_port'])
