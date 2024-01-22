@@ -122,7 +122,38 @@ def dashboard(connection_string, username):
         return response, 200
     except Exception as e:
         return jsonify({"message": str(e)}), 401
-    
+
+@details_blueprint.route("/api/v1/details/dashboard_documents_notifications", methods=['GET'])
+@token_required
+def documents_notifications(connection_string, username):
+    from_date = request.args.get('from_date')
+    to_date = request.args.get('to_date')
+    cnxn = pyodbc.connect(connection_string)
+    # Add notes to a parcel   
+    try:
+        sql = cnxn.cursor()
+        sql.execute(details_query['GET_UPLOAD_DOCUMENTS_IMAGES'].format(FROM_DATE = from_date, TO_DATE = to_date))
+        documents = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        sql.execute(details_query['GET_SENT_NOTIFICATIONS'].format(FROM_DATE = from_date, TO_DATE = to_date))
+        notifications = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        sql.close()
+
+        response_dict = {
+            "DOCUMENTS": documents,
+            "NOTIFICATIONS": notifications,
+        }
+        response = Response(
+                    response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+
+
 
 @details_blueprint.route("/api/v1/details/labor_ticket/<trans_id>", methods=['GET'])
 @token_required

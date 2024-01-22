@@ -39,6 +39,7 @@ export const appConstants = {
     USERS: 'api/v1/users', //POST to update, GET to get all users
 
     DASHBOARD: 'api/v1/details/dashboard',
+    DOCUMENTS_NOTIFICATION_KPI: 'api/v1/details/dashboard_documents_notifications',
 
     GET_LABOR_TICKET_DETAIL_BY_ID: 'api/v1/details/labor_ticket/', 
     GET_DOCUMENTS_WITH_PATH: 'api/v1/details/get_files',

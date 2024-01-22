@@ -14,7 +14,11 @@ const isBrowser = typeof window !== `undefined`
 const Home = () => {
     const navigate = useNavigate();
     const [data, setData] = useState([]);
+    const [notificationDocumentsData, setNotificationDocumentsData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 5 * 24 * 60 * 60 * 1000));
+    const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
+
 
 
     useEffect(() => {
@@ -60,7 +64,7 @@ const Home = () => {
                             }
 
                         });
-
+                        get_documents_notification_kpi();
                         setData(data);
                     } else {
                         alert(data.message);
@@ -77,10 +81,47 @@ const Home = () => {
 
     }, []);
 
+    const get_documents_notification_kpi = () => {
+        var response_status = 0;
+        var url = appConstants.BASE_URL.concat(appConstants.DOCUMENTS_NOTIFICATION_KPI).concat('?from_date=').concat(selectedFromDate).concat('&to_date=').concat(selectedToDate);
+        const request_object = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                'x-access-token': localStorage.getItem('token')
+            },
+        }
+        fetch(url, request_object)
+            .then((res) => {
+                if (res.status === 200) {
+                    response_status = 200;
+                    return res.json();
+                }
+                else {
+                    response_status = 400;
+                    alert(res.json());
+                }
+            })
+            .then((data) => {
+                if (response_status === 200) {
+                    console.log(data);
+                    setNotificationDocumentsData(data);
+                } else {
+                    alert(data.message);
+                    return null;
+                }
+            })
+            .catch((err) => console.error(err));
+    }
+
+
     // http://localhost:8080/ticket_details?transaction_id=31
 
     const safeHtmlRenderer = (instance, td, row, col, prop, value, cellProperties) => {
         td.innerHTML = utils.tranactionIdUrlLink(value)
+    }
+    const safeImageLinkRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+        td.innerHTML = `<button class="btn btn-primary" onClick="utils.open_document('${value}')">Open</button>`;
     }
 
     const columns_active_labor_tickets = [
@@ -142,7 +183,6 @@ const Home = () => {
             readOnly: true
         },
     ]
-
     const columns_employee_kpi = [
         {
             data: 'EMPLOYEE_ID',
@@ -160,7 +200,6 @@ const Home = () => {
             readOnly: true
         }
     ]
-
     const columns_clocked_in_employees = [
         {
             data: 'ID',
@@ -178,6 +217,62 @@ const Home = () => {
             readOnly: true
         }
     ]
+    const columns_documents = [
+        {
+            data: 'DATE',
+            type: 'text',
+            readOnly: true,
+        },
+        {
+            data: 'ORDER_TYPE',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'UNIQUE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'RESOURCE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'FILE_PATH',
+            type: 'text',
+            readOnly: true,
+            renderer: safeImageLinkRenderer
+        },
+    ]
+    const columns_notification = [
+        {
+            data: 'DATE',
+            type: 'text',
+            readOnly: true,
+        },
+        {
+            data: 'ORDER_TYPE',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'UNIQUE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'RESOURCE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'RECIPIENTS',
+            type: 'text',
+            readOnly: true
+        },
+    ]
+
 
     const render = () => {
         return (
@@ -237,13 +332,54 @@ const Home = () => {
                                         </div>
                                     </div>
 
+                                    {/* Third Row */}
+                                    <div className="row mt-3">
+                                        <div className="col-12">
+                                            <Card bg='primary' text='white'>
+                                                <Card.Body>
+                                                    <div className="d-flex justify-content-left mb-3">
+                                                        <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
+                                                        <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
+                                                    </div>
+
+                                                    <div className="d-flex justify-content-between mb-3">
+                                                        <Card bg='primary' text='white' className="w-100">
+                                                            <Card.Header><h5>Recently Uploaded Documents</h5></Card.Header>
+                                                            <Card.Body>
+                                                                {/* Documents */}
+                                                                <MTable
+                                                                    data={notificationDocumentsData.DOCUMENTS ? notificationDocumentsData.DOCUMENTS : []}
+                                                                    columnsTypes={columns_documents}
+                                                                    columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'File Path']}
+                                                                />
+                                                            </Card.Body>
+                                                        </Card>
+
+                                                        {/* Notifications */}
+                                                        <Card bg='primary' text='white' className="w-100">
+                                                            <Card.Header><h5>Recent notifications</h5></Card.Header>
+                                                            <Card.Body>
+                                                                <MTable
+                                                                    data={notificationDocumentsData.NOTIFICATIONS ? notificationDocumentsData.NOTIFICATIONS : []}
+                                                                    columnsTypes={columns_notification}
+                                                                    columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'Recipients']}
+                                                                />
+                                                            </Card.Body>
+                                                        </Card>
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
+                                    </div>
+
+
                                 </div>
                         }
                     </div>
                 </div>
 
 
-            </div>
+            </div >
         );
     }
 
