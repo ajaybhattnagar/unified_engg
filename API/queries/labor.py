@@ -91,7 +91,7 @@ labor_query = {
                         INSERT INTO [dbo].[UNI_DOCUMENTS]
                                 ([UNIQUE_ID], [TYPE], [FILE_PATH])
                             VALUES
-                                ({TRANSACTION_ID}, '{TYPE}', '{FILE_PATH}' )""",                   
+                                ('{TRANSACTION_ID}', '{TYPE}', '{FILE_PATH}' )""",                   
 
 "INSERT_INTO_UNI_USERS_LOGIN": """INSERT INTO UNI_USERS_LOGIN  ([ID]) VALUES ('{EMP_ID}')""",
 "UPDATE_CLOCK_OUT_TIME": """UPDATE UNI_USERS_LOGIN SET CLOCK_OUT = GETDATE() WHERE ROWID = (SELECT MAX(ROWID) FROM UNI_USERS_LOGIN WHERE ID = '{EMP_ID}')""",

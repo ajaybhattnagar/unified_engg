@@ -389,7 +389,7 @@ def upload_document(connection_string, username, unique_id):
             filename = secure_filename(f.filename)
             if allowedFile(filename):
                 
-                file_path = configData['u_drive_path'] +  "Documents"
+                file_path = configData['u_drive_path'] +  "\\Documents" + '\\'
 
                 # Create upload folder if not exist
                 if not os.path.exists(file_path):
@@ -434,7 +434,7 @@ def upload_image(connection_string, username, unique_id):
             # Remove data:image/png;base64, from base64 string
             file_name = str(unique_id)  + '_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
-            file_path = configData['u_drive_path'] +  "Documents" + '\\' 
+            file_path = configData['u_drive_path'] +  "\\Documents" + '\\' 
 
              # Create upload folder if not exist
             if not os.path.exists(file_path):

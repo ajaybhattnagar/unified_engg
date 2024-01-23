@@ -552,7 +552,7 @@ const RecordsLabor = () => {
 
     const upload_image_document = () => {
         if (selectedFile && selectedFile !== null && transactionId != 0 && transactionId != null) {
-            utils.uploadDocuments(selectedFile, transactionId)
+            utils.uploadDocuments(selectedFile, transactionId, false)
                 .then((response) => {
                     console.log(response);
                     window.location.reload();
@@ -561,7 +561,7 @@ const RecordsLabor = () => {
 
         // Upload Images if any
         if (clickedImage && clickedImage !== null && transactionId != 0 && transactionId != null) {
-            utils.uploadImage(clickedImage, transactionId)
+            utils.uploadImage(clickedImage, transactionId, false)
                 .then((response) => {
                     console.log(response);
                     window.location.reload();
