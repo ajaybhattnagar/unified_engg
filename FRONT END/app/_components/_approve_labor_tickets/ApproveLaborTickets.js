@@ -167,12 +167,12 @@ const ApproveLaborTickets = () => {
         return (
             <div>
                 <NavigationBar />
-                <div className="m-3">
+                <div className="container-fluid mt-3">
                     <div className="d-flex justify-content-left mb-3">
                         <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
                         <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
                     </div>
-                    <div className="mx-auto">
+                    <div className="mx-auto scrollBar">
                         {
                             isLoading ? <Loading />
                                 :

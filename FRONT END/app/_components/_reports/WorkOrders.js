@@ -190,12 +190,14 @@ const WorkOrders = () => {
                                     <Card bg='primary' text='white'>
                                         <Card.Header><h5>Work Orders</h5></Card.Header>
                                         <Card.Body>
-                                            <MTable
-                                                data={data}
-                                                columnsTypes={columns}
-                                                columnsHeaders={['Base ID', 'Part ID', 'Customer', 'Desired Qty']}
-                                                onSelectCell={(e) => { setSelectedRow(e) }}
-                                            />
+                                            <div className="scrollBar">
+                                                <MTable
+                                                    data={data}
+                                                    columnsTypes={columns}
+                                                    columnsHeaders={['Base ID', 'Part ID', 'Customer', 'Desired Qty']}
+                                                    onSelectCell={(e) => { setSelectedRow(e) }}
+                                                />
+                                            </div>
                                         </Card.Body>
                                     </Card>
                                 </div>
@@ -207,7 +209,7 @@ const WorkOrders = () => {
                         {
                             treeLoading ? <Loading />
                                 :
-                                <div className="d-flex justify-content-center">
+                                <div className="d-flex scrollBar w-50">
                                     <TreeDiagram data={treeDiagramData} />
                                 </div>
                         }

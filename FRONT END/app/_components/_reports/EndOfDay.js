@@ -156,11 +156,18 @@ const EOD = () => {
             <div>
                 <NavigationBar />
                 <div className="m-3">
-                    <div className="d-flex justify-content-left mb-3">
-                        <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
-                        <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
+                    <div className="d-flex justify-content-between mb-3">
+                        <div className="d-flex">
+                            <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
+                            <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
+                        </div>
+                        <div className="">
+                            <button type="button" class="btn btn-outline-success">
+                                Total Hours <span class="ml-2 badge badge-light">{totalHours}</span>
+                            </button>
+                        </div>
                     </div>
-                    <div className="mx-auto">
+                    <div className="mx-auto scrollBar">
                         {
                             isLoading ? <Loading />
                                 :
@@ -175,12 +182,6 @@ const EOD = () => {
                         }
                     </div>
                 </div>
-                <div className="d-flex justify-content-center">
-                    <button type="button" class="btn btn-outline-success">
-                        Total Hours <span class="ml-2 badge badge-light">{totalHours}</span>
-                    </button>
-                </div>
-
             </div>
         );
     }

@@ -197,7 +197,7 @@ const CreateLaborTicket = () => {
             <div>
                 <NavigationBar />
                 <div className="m-3">
-                    <div className="mx-auto">
+                    <div className="mx-auto scrollBar">
                         {
                             isLoading ? <Loading />
                                 :
@@ -205,7 +205,7 @@ const CreateLaborTicket = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Type', 'Work Order', 'Lot', 'Split',
-                                        'Split', 'Sub', 'Operation Seq', 'Indirect ID', 'In Time', 'Out Time', 'Hours', 'Notes', 'Employee ID']}
+                                        'Sub', 'Operation Seq', 'Indirect ID', 'In Time', 'Out Time', 'Hours', 'Notes', 'Employee ID']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                 />
                         }
