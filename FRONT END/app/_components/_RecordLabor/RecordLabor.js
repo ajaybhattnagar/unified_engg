@@ -16,6 +16,7 @@ import Scan from "../_ui/scanOrder.js";
 import { Button, Card, Form } from "react-bootstrap";
 import { render } from "react-dom";
 import FabSignOff from "../_quality/FabSignOff.js";
+import TableList from "../_ui/tableList.js";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -366,7 +367,7 @@ const RecordsLabor = () => {
 
     const create_labor_tickets_render_start = () => {
         return (
-            <div>
+            <div className="container">
                 <div className="mt-3" />
 
                 <div className="">
@@ -496,47 +497,58 @@ const RecordsLabor = () => {
             <div>
                 <div className="mt-3" />
 
-                <div className="container">
-                    <div className='w-100 d-flex justify-content-around'>
-                        <div className='mt-3 mr-1'><Input type={'text'} placeholder="Search" value={transactionId} text='ID' disabled={true} /></div>
-                        <div className='mt-3'><Input type={'text'} placeholder="Search" value={selectedWorkOrder} text='Work Order' disabled={true} /></div>
-                    </div>
-                    <div className="d-flex justify-content-around">
-                        <div className='w-25 mt-3'><Input type={'number'} placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} disabled={true} /> </div>
-                        <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} disabled={true} /></div>
-                        <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} disabled={true} /></div>
-                    </div>
+                <div className="d-flex justify-content-around">
 
-                    <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="Operation" text='Operation' disabled={true} value={selectedResourceString} />
-                    </div>
-
-                    <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="Clock In" text='Clock In' disabled={true} value={selectedClockIn} />
-                    </div>
-                    <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="Clock Out" text='Clock Out' disabled={true} value={selectedClockOut} />
-                    </div>
-                    <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="QA Notes" text='QA Notes'
-                            onChange={(e) => setQaNotes(e)}
-                            onUpdateButtonClick={(e) => update_labor_ticket_field("QA_NOTES", qaNotes)} value={qaNotes} />
-                    </div>
-                    <div className="w-100 mt-3">
-                        <Input type={'text'} placeholder="Description" text='Description'
-                            onChange={(e) => setDescription(e)}
-                            onUpdateButtonClick={(e) => update_labor_ticket_field("DESCRIPTION", desciption)} value={desciption} />
-                    </div>
-                    <div className="w-100 d-flex justify-content-end">
-                        <button className="btn btn-outline-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
-                    </div>
-                    {render_file_camera_stop()}
-
+                    {/* Table */}
                     <div className="mt-3" >
-                        <div className="ml-3"><span className="badge badge-light align-middle">Fabrication Sign Off</span></div>
-                        <div className="w-25"><FabSignOff /></div>
+                        {/* Filtering to keep only required columns */}
+                        <TableList data={activeLaborTicket ? activeLaborTicket.map(({ CUSTOMER_NAME, JOB_COORDINATOR, WO_DESCRIPTION, CUSTOMER_CONTACT }) => ({ CUSTOMER_NAME, JOB_COORDINATOR, WO_DESCRIPTION, CUSTOMER_CONTACT })) : null} />
+                        <div className="mt-3" >
+                            <div className="ml-3"><span className="badge badge-light align-middle">Fabrication Sign Off</span></div>
+                            <div className=""><FabSignOff /></div>
+                        </div>
                     </div>
-                </div>
+
+                    {/* Scan details */}
+                    <div className="container col-lg-7">
+                        <div className='w-100 d-flex justify-content-around'>
+                            <div className='mt-3 mr-1'><Input type={'text'} placeholder="Search" value={transactionId} text='ID' disabled={true} /></div>
+                            <div className='mt-3'><Input type={'text'} placeholder="Search" value={selectedWorkOrder} text='Work Order' disabled={true} /></div>
+                        </div>
+                        <div className="d-flex justify-content-around">
+                            <div className='w-25 mt-3'><Input type={'number'} placeholder="Lot ID" value={selectedLot} text='Lot' onChange={(e) => setSelectedLot(e)} disabled={true} /> </div>
+                            <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Split ID" value={selectedSplit} text='Split' onChange={(e) => setSelectedSplit(e)} disabled={true} /></div>
+                            <div className='w-25 mt-3 ml-3'><Input type={'number'} placeholder="Sub ID" value={selectedSub} text='Sub' onChange={(e) => setSelectedSub(e)} disabled={true} /></div>
+                        </div>
+
+                        <div className="w-100 mt-3">
+                            <Input type={'text'} placeholder="Operation" text='Operation' disabled={true} value={selectedResourceString} />
+                        </div>
+
+                        <div className="w-100 mt-3">
+                            <Input type={'text'} placeholder="Clock In" text='Clock In' disabled={true} value={selectedClockIn} />
+                        </div>
+                        <div className="w-100 mt-3">
+                            <Input type={'text'} placeholder="Clock Out" text='Clock Out' disabled={true} value={selectedClockOut} />
+                        </div>
+                        <div className="w-100 mt-3">
+                            <Input type={'text'} placeholder="QA Notes" text='QA Notes'
+                                onChange={(e) => setQaNotes(e)}
+                                onUpdateButtonClick={(e) => update_labor_ticket_field("QA_NOTES", qaNotes)} value={qaNotes} />
+                        </div>
+                        <div className="w-100 mt-3">
+                            <Input type={'text'} placeholder="Description" text='Description'
+                                onChange={(e) => setDescription(e)}
+                                onUpdateButtonClick={(e) => update_labor_ticket_field("DESCRIPTION", desciption)} value={desciption} />
+                        </div>
+                        <div className="w-100 d-flex justify-content-end">
+                            <button className="btn btn-outline-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
+                        </div>
+                        {render_file_camera_stop()}
+
+                    </div>
+
+                </div>  {/* // End of d-flex justify-content-between */}
             </div >
         );
     }
@@ -661,7 +673,7 @@ const RecordsLabor = () => {
             <NavigationBar />
             {
                 !isLoading ?
-                    <div className="container">
+                    <div className="">
                         {
                             clockInDetails && clockInDetails.length > 0 ?
 
@@ -709,7 +721,7 @@ const RecordsLabor = () => {
                                             isLaborTicketRun ?
                                                 <div className="">
                                                     {
-                                                        <div className="">
+                                                        <div className="container">
                                                             {create_labor_tickets_render_start()}
                                                             {recent_labor_tickets_render()}
                                                             {render_kpi()}

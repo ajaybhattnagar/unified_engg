@@ -43,8 +43,10 @@ labor_query = {
                                     LEFT JOIN WORK_ORDER WO ON WO.BASE_ID = LAB.WORKORDER_BASE_ID AND WO.LOT_ID = LAB.WORKORDER_LOT_ID AND WO.SPLIT_ID = LAB.WORKORDER_SPLIT_ID AND WO.SUB_ID = LAB.WORKORDER_SUB_ID AND WO.TYPE = 'W'
                                     WHERE LAB.TYPE = 'R' AND WO.STATUS IN ('R', 'F', 'U') AND EMPLOYEE_ID = '{EMP_ID}' """,
 
-"EMPLOYEE_CHECK_FOR_ACTIVE_LABOR_TICKET": """SELECT TOP 1 * 
-                                                FROM [UNI_LABOR_TICKET]
+"EMPLOYEE_CHECK_FOR_ACTIVE_LABOR_TICKET": """SELECT TOP 1 ULAB.*,
+                                                WO.USER_2 AS 'CUSTOMER_NAME', WO.USER_3 AS [JOB_COORDINATOR], WO.USER_1 AS [WO_DESCRIPTION], WO.USER_5 AS [CUSTOMER_CONTACT]
+                                                FROM UNI_LABOR_TICKET ULAB
+                                                LEFT JOIN WORK_ORDER WO ON WO.TYPE = ULAB.WORKORDER_TYPE AND WO.BASE_ID = ULAB.WORKORDER_BASE_ID AND WO.LOT_ID = ULAB.WORKORDER_LOT_ID AND WO.SPLIT_ID = ULAB.WORKORDER_SPLIT_ID AND WO.SUB_ID = ULAB.WORKORDER_SUB_ID
                                                 WHERE EMPLOYEE_ID = '{EMP_ID}' AND CLOCK_OUT IS NULL
                                                 ORDER BY CREATE_DATE DESC""",
 
