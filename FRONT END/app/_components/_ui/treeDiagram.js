@@ -21,7 +21,7 @@ const Parent = ({ item, onDragStart, onDragEnd, draggable }) => (
         // draggable={draggable}
         onClick={(e) => {
             var url_to_open = appConstants.DEPLOYEMENT_URL.concat('reports/work_order_operations?base_id=').concat(item.WORKORDER_BASE_ID).concat('&sub_id=').concat(item.WORKORDER_SUB_ID).concat('&operation_seq=').concat(item.SEQUENCE_NO);
-            window.open(url_to_open, 'operations', 'toolbar=0,location=0,menubar=0,width=900,height=300').focus();
+            window.open(url_to_open, 'operations', 'toolbar=0,location=0,menubar=0,width=900,height=800').focus();
             console.log(item);
         }}
     >

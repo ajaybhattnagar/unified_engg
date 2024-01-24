@@ -13,7 +13,9 @@ import WebCam from "../_ui/webCam.js";
 import SingleFileUploader from "../_ui/uploadFile.js";
 import IndirectLaborTicket from "../_ui/indirectLaborTicket.js";
 import Scan from "../_ui/scanOrder.js";
+import { Button, Card, Form } from "react-bootstrap";
 import { render } from "react-dom";
+import FabSignOff from "../_quality/FabSignOff.js";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -529,8 +531,13 @@ const RecordsLabor = () => {
                         <button className="btn btn-outline-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
                     </div>
                     {render_file_camera_stop()}
+
+                    <div className="mt-3" >
+                        <div className="ml-3"><span className="badge badge-light align-middle">Fabrication Sign Off</span></div>
+                        <div className="w-25"><FabSignOff /></div>
+                    </div>
                 </div>
-            </div>
+            </div >
         );
     }
 

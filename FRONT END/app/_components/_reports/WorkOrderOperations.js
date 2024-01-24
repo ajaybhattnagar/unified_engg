@@ -6,6 +6,7 @@ import MTable from "../_ui/materialTable";
 import './Reports.css';
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
+import QASignOff from "../_quality/QASignOff.js";
 
 
 const isBrowser = typeof window !== `undefined`
@@ -214,7 +215,7 @@ const WorkOrderOperations = () => {
                                     <MTable
                                         data={operationDetails ? operationDetails : []}
                                         columnsTypes={columns_quality_updates}
-                                        columnsHeaders={['Date','Fabrication Sign Off', 'Quality Sign Off', 'Accept', 'Reject',
+                                        columnsHeaders={['Date', 'Fabrication Sign Off', 'Quality Sign Off', 'Accept', 'Reject',
                                             'Notify?', 'Employee']} />
                                 </div>
 
@@ -229,6 +230,12 @@ const WorkOrderOperations = () => {
                                 <div className="mt-3" >
                                     <textarea disabled={true} className="form-control" rows="5" id="comment">{operationDetails[0].NOTES}</textarea>
                                 </div>
+
+                                <div className="mt-3" >
+                                    <div className="ml-3"><span className="badge badge-light align-middle">QA Sign Off</span></div>
+                                    <div className="w-100"><QASignOff /></div>
+                                </div>
+
                             </div>
 
                         </div>
