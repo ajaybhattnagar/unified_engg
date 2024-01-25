@@ -358,7 +358,7 @@ def operation_details(connection_string, username):
         try:
             cnxn = pyodbc.connect(connection_string)
             sql = cnxn.cursor()
-            sql.execute(details_query['ADD_QUALITY_RECORD'].format(
+            query_string = details_query['ADD_QUALITY_RECORD'].format(
                 BASE_ID = content['BASE_ID'], 
                 SUB_ID = content['SUB_ID'], 
                 OPERATION_SEQ_NO = content['SEQUENCE_NO'], 
@@ -369,12 +369,16 @@ def operation_details(connection_string, username):
                 QA_REJECT = content['QA_REJECT'] if 'QA_REJECT' in content else '',
                 NOTES = content['NOTES'] if 'NOTES' in content else '',
                 EMPLOYEE_ID = username
-                )
             )
-            cnxn.commit()
-            sql.close()
 
-            return jsonify({"message": "Quality update added successfully!"}), 200
+            cursor = cnxn.execute(query_string)
+            cursor.nextset()
+            for id in cursor:
+                transaction_id = id[0]
+            cursor.close()
+            cnxn.close()
+
+            return jsonify({"message": "Quality update added successfully!", "transaction_id": transaction_id}), 200
 
         except Exception as e:
             print (e)

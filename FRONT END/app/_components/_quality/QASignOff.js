@@ -6,6 +6,8 @@ import './Quality.css';
 import Loading from "../_ui/loading";
 import Scan from "../_ui/scanOrder.js";
 import { appConstants } from '../../_helpers/consts.js';
+import SingleFileUploader from "../_ui/uploadFile.js";
+import WebCam from "../_ui/webCam.js";
 
 const QASignOff = (props) => {
     const [scannedData, setScannedData] = useState(null);
@@ -13,6 +15,10 @@ const QASignOff = (props) => {
     const [acceptRejectSelection, setAcceptRejectSelection] = useState(null);
     const [scanInput, setScanInput] = useState(localStorage.getItem("SIGN_OFF_SCAN_LAST_SELECTED") || 'FABRICATED');
     const [isLoading, setIsLoading] = useState(false);
+    const uploadTypeOptions = ['Document', 'Camera'];
+    const [selectedUploadType, setSelectedUploadType] = useState(0);
+    const [clickedImage, setClickedImage] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
 
 
     const onChangeInputValue = (e) => {
@@ -66,6 +72,55 @@ const QASignOff = (props) => {
         setAcceptRejectSelection((prev) => (i === prev ? null : i));
     }
 
+    const upload_image_document = () => {
+        if (selectedFile && selectedFile !== null && selectedPo != 0 && selectedPo != null) {
+            utils.uploadDocuments(selectedFile, selectedPo.value, true)
+                .then((response) => {
+                    window.location.reload();
+                    console.log(response);
+                })
+        }
+
+        // Upload Images if any
+        if (clickedImage && clickedImage !== null && selectedPo != 0 && selectedPo != null) {
+            utils.uploadImage(clickedImage, selectedPo.value, true)
+                .then((response) => {
+                    window.location.reload();
+                    console.log(response);
+                })
+        }
+    }
+    const on_change_upload_type = (i) => {
+        setSelectedUploadType((prev) => (i === prev ? null : i));
+    }
+
+    const render_file_camera_start = () => {
+        return (
+            <div className="d-flex">
+                {
+                    <div className="">
+                        {uploadTypeOptions.map((o, i) => (
+                            <label className="mt-3 ml-3" key={i}>
+                                <input className="mr-1"
+                                    type="checkbox"
+                                    checked={i === selectedUploadType}
+                                    onChange={() => on_change_upload_type(i)}
+                                />
+                                {o}
+                            </label>
+                        ))}
+                        {
+                            selectedUploadType === 0 ?
+                                <div className="ml-3"><SingleFileUploader onClick={(e) => setSelectedFile(e)} /></div>
+                                :
+                                <WebCam onClick={(e) => setClickedImage(e)} />
+                        }
+                    </div>
+                }
+            </div >
+        )
+    }
+
 
     const render = () => {
         return (
@@ -93,7 +148,10 @@ const QASignOff = (props) => {
                                         </div>
                                         {
                                             acceptRejectSelection !== null ?
-                                                <Scan disabled={false} focus={scanInput === 'QUALITY' ? true : false} onChange={(e) => setScannedData(e)} />
+                                                <div>
+                                                    <Scan disabled={false} focus={scanInput === 'QUALITY' ? true : false} onChange={(e) => setScannedData(e)} />
+                                                    {render_file_camera_start()}
+                                                </div>
                                                 : null
                                         }
                                     </div>

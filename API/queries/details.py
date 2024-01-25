@@ -137,7 +137,10 @@ details_query = {
                             ,[OPERATION_SEQ_NO],[NOTIFY_EMPLOYEE],[FAB_SIGN_OFF],[QA_SIGN_OFF],[QA_ACCEPT],[QA_REJECT],[NOTES],[EMPLOYEE_ID])
                         VALUES
                             ('W', '{BASE_ID}', '1', '0', '{SUB_ID}', 
-                            {OPERATION_SEQ_NO}, '{NOTIFY_EMPLOYEE}', '{FAB_SIGN_OFF}', '{QA_SIGN_OFF}', '{QA_ACCEPT}', '{QA_REJECT}', '{NOTES}', '{EMPLOYEE_ID}')""",
+                            {OPERATION_SEQ_NO}, '{NOTIFY_EMPLOYEE}', '{FAB_SIGN_OFF}', '{QA_SIGN_OFF}', '{QA_ACCEPT}', '{QA_REJECT}', '{NOTES}', '{EMPLOYEE_ID}');
+                            
+                         SELECT SCOPE_IDENTITY() as id;
+                         """,
 
 "INSERT_INTO_UNI_NOTIFICATION": """INSERT INTO [dbo].[UNI_NOTIFICATION]
            ([UNIQUE_ID], [TYPE], [TEMPLATE], [RECIPIENTS])
