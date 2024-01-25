@@ -167,7 +167,7 @@ const EOD = () => {
                             </button>
                         </div>
                     </div>
-                    <div className="mx-auto scrollBar">
+                    <div className="mx-auto">
                         {
                             isLoading ? <Loading />
                                 :
@@ -178,6 +178,7 @@ const EOD = () => {
                                         'Indirect', 'Notes', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
+                                    height={window.innerHeight - 200}
                                 />
                         }
                     </div>

@@ -114,11 +114,6 @@ const CreateLaborTicket = () => {
             readOnly: true
         },
         {
-            data: 'EMPLOYEE_ID',
-            type: 'text',
-            readOnly: true
-        },
-        {
             data: 'HOURS_WORKED',
             type: 'numeric',
             readOnly: true,
@@ -133,7 +128,7 @@ const CreateLaborTicket = () => {
             data: 'EMPLOYEE_ID',
             type: 'text',
             readOnly: true
-        }
+        },
     ]
 
     const create_labor_ticket_visual = () => {
@@ -197,7 +192,7 @@ const CreateLaborTicket = () => {
             <div>
                 <NavigationBar />
                 <div className="m-3">
-                    <div className="mx-auto scrollBar">
+                    <div className="mx-auto">
                         {
                             isLoading ? <Loading />
                                 :
@@ -206,7 +201,10 @@ const CreateLaborTicket = () => {
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Type', 'Work Order', 'Lot', 'Split',
                                         'Sub', 'Operation Seq', 'Indirect ID', 'In Time', 'Out Time', 'Hours', 'Notes', 'Employee ID']}
-                                    onChange={(e) => { update_labor_tickets(e) }}
+                                    onChange={(e) => {
+                                        update_labor_tickets(e)
+                                    }}
+                                    height={window.innerHeight - 200}
                                 />
                         }
                         {

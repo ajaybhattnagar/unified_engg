@@ -172,7 +172,7 @@ const ApproveLaborTickets = () => {
                         <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
                         <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
                     </div>
-                    <div className="mx-auto scrollBar">
+                    <div className="mx-auto">
                         {
                             isLoading ? <Loading />
                                 :
@@ -184,6 +184,7 @@ const ApproveLaborTickets = () => {
                                         'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Notes', 'QA Notes',
                                         'Approved', 'Visual Labor ID']}
                                     onChange={(e) => { update_labor_tickets(e) }}
+                                    height={window.innerHeight - 200}
                                 />
                         }
                     </div>

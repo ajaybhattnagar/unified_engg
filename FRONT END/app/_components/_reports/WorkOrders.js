@@ -207,20 +207,16 @@ const WorkOrders = () => {
                             isLoading ? <Loading />
                                 :
                                 <div className="">
-                                    <Card bg='primary' text='white'>
-                                        <Card.Header><h5>Work Orders</h5></Card.Header>
-                                        <Card.Body>
-                                            <div className="scrollBar">
-                                                <MTable
-                                                    data={data}
-                                                    columnsTypes={columns}
-                                                    columnsHeaders={['Base ID', 'Status' ,'Part ID', 'Customer', 'Desired Qty',
-                                                        'Description', 'Job Coordinator', 'Customer Contact']}
-                                                    onSelectCell={(e) => { setSelectedRow(e) }}
-                                                />
-                                            </div>
-                                        </Card.Body>
-                                    </Card>
+                                    <div className="">
+                                        <MTable
+                                            data={data}
+                                            columnsTypes={columns}
+                                            columnsHeaders={['Base ID', 'Status', 'Part ID', 'Customer', 'Desired Qty',
+                                                'Description', 'Job Coordinator', 'Customer Contact']}
+                                            onSelectCell={(e) => { setSelectedRow(e) }}
+                                            height={isBrowser ? window.innerHeight - 200 : null}
+                                        />
+                                    </div>
                                 </div>
                         }
                     </div>

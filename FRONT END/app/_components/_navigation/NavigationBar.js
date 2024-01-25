@@ -109,7 +109,7 @@ class NavigationBar extends Component {
 
                 {
                     localStorage.getItem('ACTIVE_WO') ?
-                        <div className="m-3 fixed-bottom">
+                        <div className="m-3 fixed-bottom-labor-details">
                             <div className='d-flex align-items-center'>
                                 <span class="badge">
                                     <div>{localStorage.getItem('ACTIVE_WO')} </div>

@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[UNI_LABOR_TICKET](
 	[TYPE] [nchar](1) NOT NULL,
 	[TYPE_STRING] [nvarchar](25) NOT NULL,
 	[EMPLOYEE_ID] [nvarchar](15) NOT NULL,
-	[RESOURCE_ID] [nvarchar](15) NULL,
+	[RESOURCE_ID] [nvarchar](MAX) NULL,
 	[CLOCK_IN] [datetime] NULL,
 	[CLOCK_OUT] [datetime] NULL,
 	[HOURS_WORKED] [decimal](7, 2) NULL,

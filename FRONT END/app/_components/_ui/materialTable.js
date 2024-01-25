@@ -49,7 +49,10 @@ const MTable = (props) => {
                 autoWrapRow={true}
                 autoWrapCol={true}
                 manualColumnResize={true}
+                fixedColumnsStart={1}
                 stretchH="all"
+                width="100%"
+                height={props.height || "auto"}
 
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
             />

@@ -98,7 +98,7 @@ details_query = {
                                                     CASE WHEN TYPE = 'R' THEN 'RUN'
                                                     WHEN TYPE = 'I' THEN 'INDIRECT' ELSE '' END AS 'TRANSACTION_TYPE',
                                                     WORKORDER_BASE_ID, WORKORDER_LOT_ID, WORKORDER_SPLIT_ID, WORKORDER_SUB_ID, OPERATION_SEQ_NO, CLOCK_IN, CLOCK_OUT, 
-                                                    HOURS_BREAK, REGULAR_TIME, DOUBLE_TIME, OVER_TIME, DESCRIPTION, EMPLOYEE_ID, INDIRECT_CODE AS [INDIRECT_ID]
+                                                    HOURS_WORKED, REGULAR_TIME, DOUBLE_TIME, OVER_TIME, DESCRIPTION, EMPLOYEE_ID, INDIRECT_CODE AS [INDIRECT_ID]
                                                     FROM UNI_LABOR_TICKET
                                                     WHERE APPROVED = 1 AND VISUAL_LAB_TRANS_ID IS NULL
                                                     """,
