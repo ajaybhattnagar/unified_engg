@@ -126,7 +126,7 @@ const RecordsLabor = () => {
                         // Set clocked in time and work order in local-storage
                         localStorage.setItem("ACTIVE_WO_CLOCK_IN", utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN));
                         localStorage.setItem("ACTIVE_WO", data.active_labor_ticket[0].WORKORDER_BASE_ID);
-                        localStorage.setItem("ACTIVE_OP", data.active_labor_ticket[0].RESOURCE_ID);
+                        localStorage.setItem("ACTIVE_OP", data.active_labor_ticket[0].RESOURCE_DESC);
                     }
 
                     data.all_workorders_list && data.all_workorders_list.length > 0 ? setWorkorderList(data.all_workorders_list) : null;

@@ -97,6 +97,7 @@ class NavigationBar extends Component {
                                 <span class="badge badge-warning">
                                     <div>{localStorage.getItem('ACTIVE_WO')} </div>
                                     <div>{localStorage.getItem('ACTIVE_WO_CLOCK_IN')} </div>
+                                    <div>{localStorage.getItem('ACTIVE_OP')} </div>
                                 </span>
                             </div> : null
                     }
