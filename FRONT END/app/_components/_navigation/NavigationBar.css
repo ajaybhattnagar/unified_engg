@@ -1,0 +1,15 @@
+.fixed-bottom,
+.fixed-top {
+    position: initial;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    background-color:#DCDCDC;
+    border-bottom: 1px solid #e5e5e5;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+    border-radius: 0.25rem;
+    /* Center content */
+    display: flex;
+    justify-content: right;
+    
+}

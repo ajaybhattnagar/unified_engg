@@ -53,70 +53,72 @@ class NavigationBar extends Component {
         var qa_notification = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_SET_QA_NOTIFICATION === '1' ? false : true;
 
         return (
-            <Navbar collapseOnSelect bg="light" expand="lg" data-bs-theme="dark">
-                <Navbar.Brand href="/">
-                    <img
-                        alt='logo'
-                        src={Brand}
-                        height='40'
-                        className='d-inline-block align-top'
-                    />
-                </Navbar.Brand>
+            <div>
+                <Navbar collapseOnSelect bg="light" expand="lg" data-bs-theme="dark">
+                    <Navbar.Brand href="/">
+                        <img
+                            alt='logo'
+                            src={Brand}
+                            height='40'
+                            className='d-inline-block align-top'
+                        />
+                    </Navbar.Brand>
 
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
 
-                    <Nav className="mr-auto">
+                        <Nav className="mr-auto">
 
-                        <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
-                        <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
-                        <Nav.Link disabled={approve_labor_tickets} className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
+                            <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
+                            <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
+                            <Nav.Link disabled={approve_labor_tickets} className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
 
-                        <NavDropdown title="Quality" id="basic-nav-dropdown">
-                            <NavDropdown.Item disabled={qa_notification} href="/quality/sign_off">Traveller Sign Off</NavDropdown.Item>
-                        </NavDropdown>
+                            <NavDropdown title="Quality" id="basic-nav-dropdown">
+                                <NavDropdown.Item disabled={qa_notification} href="/quality/sign_off">Traveller Sign Off</NavDropdown.Item>
+                            </NavDropdown>
 
-                        <NavDropdown title="Purchasing" id="basic-nav-dropdown">
-                            <NavDropdown.Item disabled={reciept_entry} href="/receiving">Receipt Entry</NavDropdown.Item>
-                        </NavDropdown>
+                            <NavDropdown title="Purchasing" id="basic-nav-dropdown">
+                                <NavDropdown.Item disabled={reciept_entry} href="/receiving">Receipt Entry</NavDropdown.Item>
+                            </NavDropdown>
 
-                        <NavDropdown title="Reports" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
-                            <NavDropdown.Item href="/reports/work_orders">Work Orders</NavDropdown.Item>
-                        </NavDropdown>
+                            <NavDropdown title="Reports" id="basic-nav-dropdown">
+                                <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
+                                <NavDropdown.Item href="/reports/work_orders">Work Orders</NavDropdown.Item>
+                            </NavDropdown>
 
-                        <NavDropdown disabled={super_admin} title="Admin" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/create_labor_ticket">Create Ticket Visual</NavDropdown.Item>
-                            <NavDropdown.Item href="/users">Users</NavDropdown.Item>
-                        </NavDropdown>
-                    </Nav>
+                            <NavDropdown disabled={super_admin} title="Admin" id="basic-nav-dropdown">
+                                <NavDropdown.Item href="/create_labor_ticket">Create Ticket Visual</NavDropdown.Item>
+                                <NavDropdown.Item href="/users">Users</NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
 
-                    {
-                        localStorage.getItem('ACTIVE_WO') ?
+                        <Nav>
+                            <Nav.Link className='hover-underline-animation' as={Link} to="/preferences"><strong>Preferences</strong></Nav.Link>
+                        </Nav>
+                        {
+                            localStorage.getItem('token') ?
+                                <form className="form-inline my-2 my-lg-0">
+                                    <button className="btn btn-outline-primary" type="submit" onClick={() => this.handleSignOut()}>Sign out</button>
+                                </form>
+                                : null
+
+                        }
+
+                    </Navbar.Collapse>
+                </Navbar>
+
+                {
+                    localStorage.getItem('ACTIVE_WO') ?
+                        <div className="m-3 fixed-bottom">
                             <div className='d-flex align-items-center'>
-                                <span class="badge badge-warning">
+                                <span class="badge">
                                     <div>{localStorage.getItem('ACTIVE_WO')} </div>
                                     <div>{localStorage.getItem('ACTIVE_WO_CLOCK_IN')} </div>
                                     <div>{localStorage.getItem('ACTIVE_OP')} </div>
                                 </span>
-                            </div> : null
-                    }
-
-                    <Nav>
-                        <Nav.Link className='hover-underline-animation' as={Link} to="/preferences"><strong>Preferences</strong></Nav.Link>
-                    </Nav>
-                    {
-                        localStorage.getItem('token') ?
-                            <form className="form-inline my-2 my-lg-0">
-                                <button className="btn btn-outline-primary" type="submit" onClick={() => this.handleSignOut()}>Sign out</button>
-                            </form>
-                            : null
-
-                    }
-
-                </Navbar.Collapse>
-
-            </Navbar>
+                            </div> </div> : null
+                }
+            </div>
 
         );
     }

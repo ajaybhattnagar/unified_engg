@@ -19,6 +19,7 @@ const QASignOff = (props) => {
     const [selectedUploadType, setSelectedUploadType] = useState(0);
     const [clickedImage, setClickedImage] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [createdTransactionId, setCreatedTransactionId] = useState(null);
 
 
     const onChangeInputValue = (e) => {
@@ -59,7 +60,8 @@ const QASignOff = (props) => {
                 })
                 .then((data) => {
                     if (data) {
-                        window.location.reload();
+                        setCreatedTransactionId(data.transaction_id);
+                        upload_image_document('QA' + data.transaction_id);
                         setIsLoading(false);
                     }
                 })
@@ -72,9 +74,9 @@ const QASignOff = (props) => {
         setAcceptRejectSelection((prev) => (i === prev ? null : i));
     }
 
-    const upload_image_document = () => {
-        if (selectedFile && selectedFile !== null && selectedPo != 0 && selectedPo != null) {
-            utils.uploadDocuments(selectedFile, selectedPo.value, true)
+    const upload_image_document = (trans_id) => {
+        if (selectedFile && selectedFile !== null && trans_id != 0 && trans_id != null) {
+            utils.uploadDocuments(selectedFile, trans_id, true)
                 .then((response) => {
                     window.location.reload();
                     console.log(response);
@@ -82,8 +84,8 @@ const QASignOff = (props) => {
         }
 
         // Upload Images if any
-        if (clickedImage && clickedImage !== null && selectedPo != 0 && selectedPo != null) {
-            utils.uploadImage(clickedImage, selectedPo.value, true)
+        if (clickedImage && clickedImage !== null && trans_id != 0 && trans_id != null) {
+            utils.uploadImage(clickedImage, trans_id, true)
                 .then((response) => {
                     window.location.reload();
                     console.log(response);
