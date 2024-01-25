@@ -158,17 +158,37 @@ const WorkOrders = () => {
             readOnly: true
         },
         {
+            data: 'STATUS',
+            type: 'text',
+            readOnly: true
+        },
+        {
             data: 'PART_ID',
             type: 'text',
             readOnly: true
         },
         {
-            data: 'CUSTOMER_ID',
+            data: 'CUSTOMER_NAME',
             type: 'text',
             readOnly: true
         },
         {
             data: 'DESIRED_QTY',
+            type: 'numeric',
+            readOnly: true
+        },
+        {
+            data: 'WO_DESCRIPTION',
+            type: 'numeric',
+            readOnly: true
+        },
+        {
+            data: 'JOB_COORDINATOR',
+            type: 'numeric',
+            readOnly: true
+        },
+        {
+            data: 'CUSTOMER_CONTACT',
             type: 'numeric',
             readOnly: true
         },
@@ -182,7 +202,7 @@ const WorkOrders = () => {
                 <div className="d-flex m-3">
 
                     {/*Table */}
-                    <div className="col-12 col-lg-4">
+                    <div className="col-12 col-lg-6">
                         {
                             isLoading ? <Loading />
                                 :
@@ -194,7 +214,8 @@ const WorkOrders = () => {
                                                 <MTable
                                                     data={data}
                                                     columnsTypes={columns}
-                                                    columnsHeaders={['Base ID', 'Part ID', 'Customer', 'Desired Qty']}
+                                                    columnsHeaders={['Base ID', 'Status' ,'Part ID', 'Customer', 'Desired Qty',
+                                                        'Description', 'Job Coordinator', 'Customer Contact']}
                                                     onSelectCell={(e) => { setSelectedRow(e) }}
                                                 />
                                             </div>
