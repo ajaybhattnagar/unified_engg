@@ -370,7 +370,7 @@ def operation_details(connection_string, username):
                 NOTES = content['NOTES'] if 'NOTES' in content else '',
                 EMPLOYEE_ID = username
             )
-
+            cnxn = pyodbc.connect(connection_string, autocommit=True)
             cursor = cnxn.execute(query_string)
             cursor.nextset()
             for id in cursor:
