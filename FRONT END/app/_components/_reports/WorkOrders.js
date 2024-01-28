@@ -11,6 +11,7 @@ import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import TreeDiagram from "../_ui/treeDiagram";
 import { Card } from "react-bootstrap";
+import PrintReport from "../_ui/printReport.js";
 
 
 const isBrowser = typeof window !== `undefined`
@@ -221,13 +222,21 @@ const WorkOrders = () => {
                         }
                     </div>
 
+
                     {/* Tree Diagram */}
                     <div className="">
                         {
                             treeLoading ? <Loading />
                                 :
-                                <div className="d-flex scrollBar w-50">
-                                    <TreeDiagram data={treeDiagramData} />
+                                <div>
+                                    <div className="mb-2">
+                                        {selectedRow && selectedRow.BASE_ID != '' ?
+                                            <PrintReport base_id={selectedRow.BASE_ID} report_file={'1244'} />
+                                            : null}
+                                    </div>
+                                    <div className="d-flex scrollBar w-50">
+                                        <TreeDiagram data={treeDiagramData} />
+                                    </div>
                                 </div>
                         }
                     </div>
