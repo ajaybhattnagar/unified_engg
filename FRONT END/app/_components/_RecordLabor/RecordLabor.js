@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { utils } from '../../_helpers/utils';
 import { appConstants } from '../../_helpers/consts.js';
@@ -44,6 +44,7 @@ const RecordsLabor = () => {
     const [selectedClockOut, setSelectedClockOut] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [desciption, setDescription] = useState('');
     const [qaNotes, setQaNotes] = useState('');
+    const operationSeqNo = useRef(null);
 
     const [workorderList, setWorkorderList] = useState([]);
 
@@ -122,6 +123,7 @@ const RecordsLabor = () => {
                         setSelectedClockOut(utils.convertTimeStampToString(new Date()))
                         setQaNotes(data.active_labor_ticket[0].QA_NOTES)
                         setDescription(data.active_labor_ticket[0].DESCRIPTION)
+                        operationSeqNo.current = data.active_labor_ticket[0].OPERATION_SEQ_NO;
 
                         // Set clocked in time and work order in local-storage
                         localStorage.setItem("ACTIVE_WO_CLOCK_IN", utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN));
@@ -493,7 +495,7 @@ const RecordsLabor = () => {
     }
 
     const create_labor_tickets_render_stop = () => {
-
+        var scanString = `*%${selectedWorkOrder}$${selectedSub}$${operationSeqNo.current}%*`;
         return (
             <div>
                 <div className="mt-3" />
@@ -506,7 +508,7 @@ const RecordsLabor = () => {
                         <TableList data={activeLaborTicket ? activeLaborTicket.map(({ CUSTOMER_NAME, JOB_COORDINATOR, WO_DESCRIPTION, CUSTOMER_CONTACT }) => ({ CUSTOMER_NAME, JOB_COORDINATOR, WO_DESCRIPTION, CUSTOMER_CONTACT })) : null} />
                         <div className="mt-3" >
                             <div className="ml-3"><span className="badge badge-light align-middle">Fabrication Sign Off</span></div>
-                            <div className=""><FabSignOff /></div>
+                            <div className=""><FabSignOff scanString={scanString} /></div>
                         </div>
                     </div>
 

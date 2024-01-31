@@ -8,6 +8,8 @@ import Scan from "../_ui/scanOrder.js";
 import { appConstants } from '../../_helpers/consts.js';
 import SingleFileUploader from "../_ui/uploadFile.js";
 import WebCam from "../_ui/webCam.js";
+import Input from "../_ui/input";
+
 
 const QASignOff = (props) => {
     const [scannedData, setScannedData] = useState(null);
@@ -20,6 +22,7 @@ const QASignOff = (props) => {
     const [clickedImage, setClickedImage] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [createdTransactionId, setCreatedTransactionId] = useState(null);
+    const [notes, setNotes] = useState('');
 
 
     const onChangeInputValue = (e) => {
@@ -29,15 +32,23 @@ const QASignOff = (props) => {
     }
 
     useEffect(() => {
+        if (props.scanString) {
+            setScannedData(props.scanString)
+        }
+    }, [props.scanString]);
+
+    const update_qa_sign_off = () => {
+        var scanned_string_to_array = utils.disectScanInputString(scannedData);
         if (scannedData) {
             setIsLoading(true);
             var array_qa_sign_off = {
-                'BASE_ID': scannedData.work_order,
-                'SUB_ID': scannedData.sub_id,
-                'SEQUENCE_NO': scannedData.operation_seq,
+                'BASE_ID': scanned_string_to_array.work_order,
+                'SUB_ID': scanned_string_to_array.sub_id,
+                'SEQUENCE_NO': scanned_string_to_array.operation_seq,
                 'QA_SIGN_OFF': 1,
                 'QA_ACCEPT': acceptRejectSelection === 0 ? 1 : '',
                 'QA_REJECT': acceptRejectSelection === 1 ? 1 : '',
+                "NOTES": notes,
             }
 
             var url = appConstants.BASE_URL.concat(appConstants.GET_UPDATE_OPERATION_DETAILS).concat('?base_id=').concat(scannedData.work_order,).concat('&sub_id=').concat(scannedData.sub_id,).concat('&operation_seq=').concat(scannedData.operation_seq,);
@@ -63,12 +74,14 @@ const QASignOff = (props) => {
                         setCreatedTransactionId(data.transaction_id);
                         upload_image_document('QA' + data.transaction_id);
                         setIsLoading(false);
+                        window.location.reload();
                     }
                 })
                 .catch((err) => { alert(err); setIsLoading(false); });
+        } else {
+            alert('Please scan the work order operation.');
         }
-
-    }, [scannedData]);
+    }
 
     const on_change_accept_reject = (i) => {
         setAcceptRejectSelection((prev) => (i === prev ? null : i));
@@ -151,7 +164,9 @@ const QASignOff = (props) => {
                                         {
                                             acceptRejectSelection !== null ?
                                                 <div>
-                                                    <Scan disabled={false} focus={scanInput === 'QUALITY' ? true : false} onChange={(e) => setScannedData(e)} />
+                                                    <Scan disabled={false} value={scannedData} focus={scanInput === 'QUALITY' ? true : false} onChange={(e) => setScannedData(e)} />
+                                                    <div className='mt-2'><Input type={'text'} value={notes} placeholder="Notes" text='Notes' onChange={(e) => setNotes(e)} /></div>
+                                                    <div className='d-flex justify-content-end'><button className='btn btn-primary mt-2' onClick={() => update_qa_sign_off()}>Update</button></div>
                                                     {render_file_camera_start()}
                                                 </div>
                                                 : null

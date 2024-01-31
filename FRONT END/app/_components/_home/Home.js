@@ -106,13 +106,24 @@ const Home = () => {
             })
             .then((data) => {
                 if (response_status === 200) {
-                    setNotificationDocumentsData(data);
-                    setIsNotificationLoading(false);
+                    // Loop over FAB_SIGN_OFF and QA_SIGN_OFF and update the values
+                    data.FAB_SIGN_OFF.forEach((item) => {
+                        item.FAB_SIGN_OFF = item.FAB_SIGN_OFF ? true : false;
+                    })
+                    data.QA_SIGN_OFF.forEach((item) => {
+                        item.QA_ACCEPT = item.QA_ACCEPT ? true : false;
+                        item.QA_REJECT = item.QA_REJECT ? true : false;
+                    })
+                    return data;
                 } else {
                     alert(data.message);
                     setIsNotificationLoading(false);
                     return null;
                 }
+            })
+            .then((data) => {
+                setNotificationDocumentsData(data);
+                setIsNotificationLoading(false);
             })
             .catch((err) => { console.error(err); setIsNotificationLoading(false) });
     }
@@ -280,6 +291,90 @@ const Home = () => {
             readOnly: true
         },
     ]
+    const fab_sign_off_columns = [
+        {
+            data: 'CREATE_DATE',
+            type: 'text',
+            readOnly: true,
+        },
+        {
+            data: 'WORKORDER_BASE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'OPERATION_SEQ_NO',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'RESOURCE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'FAB_SIGN_OFF',
+            type: 'checkbox',
+            readOnly: true,
+            className: 'htCenter',
+        },
+        {
+            data: 'NOTES',
+            type: 'text',
+            readOnly: true,
+        },
+        {
+            data: 'EMPLOYEE_ID',
+            type: 'text',
+            readOnly: true
+        },
+
+    ]
+    const qa_sign_off_columns = [
+        {
+            data: 'CREATE_DATE',
+            type: 'text',
+            readOnly: true,
+        },
+        {
+            data: 'WORKORDER_BASE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'OPERATION_SEQ_NO',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'RESOURCE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'QA_ACCEPT',
+            type: 'checkbox',
+            readOnly: true,
+            className: 'htCenter',
+        },
+        {
+            data: 'QA_REJECT',
+            type: 'checkbox',
+            readOnly: true,
+            className: 'htCenter',
+        },
+        {
+            data: 'NOTES',
+            type: 'text',
+            readOnly: true,
+        },
+        {
+            data: 'EMPLOYEE_ID',
+            type: 'text',
+            readOnly: true
+        },
+
+    ]
 
 
     const render = () => {
@@ -357,6 +452,32 @@ const Home = () => {
                                                                             data={notificationDocumentsData.NOTIFICATIONS ? notificationDocumentsData.NOTIFICATIONS : []}
                                                                             columnsTypes={columns_notification}
                                                                             columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'Recipients']}
+                                                                        />
+                                                                    </Card.Body>
+                                                                </Card>
+                                                            </div>
+
+                                                            <div className="d-flex justify-content-between mb-3">
+                                                                <Card bg='primary' text='white' className="w-100">
+                                                                    <Card.Header><h5>Quality Sign Offs</h5></Card.Header>
+                                                                    <Card.Body>
+                                                                        {/* Documents */}
+                                                                        <MTable
+                                                                            data={notificationDocumentsData.QA_SIGN_OFF ? notificationDocumentsData.QA_SIGN_OFF : []}
+                                                                            columnsTypes={qa_sign_off_columns}
+                                                                            columnsHeaders={['Date', 'Work Order', 'Operation', 'Resource ID', 'Accepted', 'Rejected', 'Notes', 'Employee']}
+                                                                        />
+                                                                    </Card.Body>
+                                                                </Card>
+
+                                                                {/* Notifications */}
+                                                                <Card bg='primary' text='white' className="w-100">
+                                                                    <Card.Header><h5>Fabrication Sign Offs</h5></Card.Header>
+                                                                    <Card.Body>
+                                                                        <MTable
+                                                                            data={notificationDocumentsData.FAB_SIGN_OFF ? notificationDocumentsData.FAB_SIGN_OFF : []}
+                                                                            columnsTypes={fab_sign_off_columns}
+                                                                            columnsHeaders={['Date', 'Work Order', 'Operation', 'Resource ID', 'Sign Off', 'Notes', 'Employee']}
                                                                         />
                                                                     </Card.Body>
                                                                 </Card>

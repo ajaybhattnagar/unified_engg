@@ -138,11 +138,19 @@ def documents_notifications(connection_string, username):
         sql.execute(details_query['GET_SENT_NOTIFICATIONS'].format(FROM_DATE = from_date, TO_DATE = to_date))
         notifications = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
 
+        sql.execute(details_query['GET_QA_SIGN_OFF_DASHBOARD'].format(FROM_DATE = from_date, TO_DATE = to_date))
+        qa_sign_off = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        sql.execute(details_query['GET_FAB_SIGN_OFF_DASHBOARD'].format(FROM_DATE = from_date, TO_DATE = to_date))
+        fab_sign_off = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
         sql.close()
 
         response_dict = {
             "DOCUMENTS": documents,
             "NOTIFICATIONS": notifications,
+            "QA_SIGN_OFF": qa_sign_off,
+            "FAB_SIGN_OFF": fab_sign_off
         }
         response = Response(
                     response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),

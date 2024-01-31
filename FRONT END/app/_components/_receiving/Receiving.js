@@ -356,7 +356,7 @@ const Receiving = () => {
                                     }
                                 </div>
 
-                                {/* {
+                                {
                                     allowRecieptEntry.current ?
                                         <Card bg='primary' text='white'>
                                             <Card.Header><h5>Receipt Entry</h5></Card.Header>
@@ -380,7 +380,7 @@ const Receiving = () => {
                                         </Card>
                                         :
                                         null
-                                } */}
+                                }
 
                             </div>
                         </div>

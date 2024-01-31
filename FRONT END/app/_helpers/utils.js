@@ -29,7 +29,8 @@ export const utils = {
 
   clock_in_out_users,
 
-  calcHoursWorked
+  calcHoursWorked,
+  disectScanInputString
 }
 
 
@@ -505,4 +506,26 @@ function tranactionIdUrlLink(transaction_id) {
   var url = appConstants.DEPLOYEMENT_URL.concat('ticket_details?transaction_type=labor_ticket&transaction_id=').concat(transaction_id);
   url = `<a href="${url}" target='_blank'>${transaction_id}</a>`;
   return url;
+}
+
+function disectScanInputString(string) {
+  try {
+    var input = string
+    input = input.replace('*', '')
+    input = input.replace('*', '')
+    input = input.slice(1, -1);
+    var result = input.split('$')
+    var wo = result[0]
+    var sub_id = result[1]
+    var operation_seq = result[2].replace('*', '')
+    var arr = {
+      work_order: wo,
+      sub_id: sub_id,
+      operation_seq: operation_seq
+    }
+    return arr
+  } catch (error) {
+    alert("Invalid Input")
+    console.log(error)
+  }
 }

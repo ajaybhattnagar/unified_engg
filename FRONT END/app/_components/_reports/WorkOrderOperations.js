@@ -199,6 +199,7 @@ const WorkOrderOperations = () => {
     ]
 
     const render_operation_details = () => {
+        var scanString = `*%${base_id}$${sub_id}$${operation_seq}%*`;
         return (
             <div>
                 <div className="mt-3" />
@@ -233,7 +234,7 @@ const WorkOrderOperations = () => {
 
                                 <div className="mt-3" >
                                     <div className="ml-3"><span className="badge badge-light align-middle">QA Sign Off</span></div>
-                                    <div className="w-100"><QASignOff /></div>
+                                    <div className="w-100"><QASignOff scanString={scanString}/></div>
                                 </div>
 
                             </div>

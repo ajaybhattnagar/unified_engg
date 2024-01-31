@@ -104,9 +104,9 @@ const ApproveLaborTickets = () => {
             readOnly: true
         },
         {
-            data: 'WORK_LOCATION',
-            type: 'dropdown',
-            source: ['On-site', 'Off-site', 'Remote']
+            data: 'APPROVED',
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
             data: 'REGULAR_TIME',
@@ -139,9 +139,9 @@ const ApproveLaborTickets = () => {
             className: 'htCenter',
         },
         {
-            data: 'APPROVED',
-            type: 'checkbox',
-            className: 'htCenter',
+            data: 'WORK_LOCATION',
+            type: 'dropdown',
+            source: ['On-site', 'Off-site', 'Remote']
         },
         {
             data: 'VISUAL_LAB_TRANS_ID',
@@ -180,9 +180,9 @@ const ApproveLaborTickets = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID',
-                                        'In', 'Out', 'Hours worked', 'Indirect', 'Location',
+                                        'In', 'Out', 'Hours worked', 'Indirect', 'Approved',
                                         'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Notes', 'QA Notes',
-                                        'Approved', 'Visual Labor ID']}
+                                        'Location', 'Visual Labor ID']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     height={window.innerHeight - 200}
                                 />
