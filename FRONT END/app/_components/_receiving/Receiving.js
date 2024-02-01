@@ -303,8 +303,8 @@ const Receiving = () => {
             },
             body: JSON.stringify({
                 "PO_NUMBER": selectedPo.value,
-                // "EMAIL": poDetails[0].EMAIL_ADDR,
-                "EMAIL": "ajay.bhattnagar21@gmail.com",
+                "EMAIL": poDetails[0].EMAIL_ADDR,
+                // "EMAIL": "ajay.bhattnagar21@gmail.com",
             })
         })
             .then((res) => {
