@@ -110,13 +110,14 @@ details_query = {
                                     WHERE QA.NOTIFY_EMPLOYEE = '' AND QA.QA_SIGN_OFF = 0 AND CAST(QA.CREATE_DATE AS DATE) BETWEEN '{FROM_DATE}' AND '{TO_DATE}'
                                     ORDER BY QA.CREATE_DATE DESC""",                   
             
-"GET_DATA_FOR_CREATING_LABOR_TICKET_IN_VISUAL": """SELECT TRANSACTION_ID AS [UNI_TRANSACTION_ID],
-                                                    CASE WHEN TYPE = 'R' THEN 'RUN'
-                                                    WHEN TYPE = 'I' THEN 'INDIRECT' ELSE '' END AS 'TRANSACTION_TYPE',
-                                                    WORKORDER_BASE_ID, WORKORDER_LOT_ID, WORKORDER_SPLIT_ID, WORKORDER_SUB_ID, OPERATION_SEQ_NO, CLOCK_IN, CLOCK_OUT, 
-                                                    HOURS_WORKED, REGULAR_TIME, DOUBLE_TIME, OVER_TIME, DESCRIPTION, EMPLOYEE_ID, INDIRECT_CODE AS [INDIRECT_ID]
-                                                    FROM UNI_LABOR_TICKET
-                                                    WHERE APPROVED = 1 AND VISUAL_LAB_TRANS_ID IS NULL
+"GET_DATA_FOR_CREATING_LABOR_TICKET_IN_VISUAL": """SELECT ULAB.TRANSACTION_ID AS [UNI_TRANSACTION_ID],
+                                                    CASE WHEN ULAB.TYPE = 'R' THEN 'RUN'
+                                                    WHEN ULAB.TYPE = 'I' THEN 'INDIRECT' ELSE '' END AS 'TRANSACTION_TYPE',
+                                                    ULAB.WORKORDER_BASE_ID, ULAB.WORKORDER_LOT_ID, ULAB.WORKORDER_SPLIT_ID, ULAB.WORKORDER_SUB_ID, ULAB.OPERATION_SEQ_NO, ULAB.CLOCK_IN, ULAB.CLOCK_OUT, 
+                                                    ULAB.HOURS_WORKED, ULAB.REGULAR_TIME, ULAB.DOUBLE_TIME, ULAB.OVER_TIME, ULAB.DESCRIPTION, EMP.ID AS [EMPLOYEE_ID], ULAB.INDIRECT_CODE AS [INDIRECT_ID]
+                                                    FROM UNI_LABOR_TICKET ULAB
+                                                    LEFT JOIN EMPLOYEE EMP ON EMP.USER_ID = ULAB.EMPLOYEE_ID
+                                                    WHERE APPROVED = 1 AND VISUAL_LAB_TRANS_ID IS NULL AND EMP.ID IS NOT NULL
                                                     """,
 
 "GET_WORKORDER_HEADER_DETAILS" : """SELECT ROWID, TYPE, BASE_ID, LOT_ID, SPLIT_ID, SUB_ID, PART_ID, DESIRED_QTY, RECEIVED_QTY, CREATE_DATE, DESIRED_WANT_DATE
