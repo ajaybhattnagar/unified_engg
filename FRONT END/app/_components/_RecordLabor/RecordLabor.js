@@ -45,6 +45,7 @@ const RecordsLabor = () => {
     const [desciption, setDescription] = useState('');
     const [qaNotes, setQaNotes] = useState('');
     const operationSeqNo = useRef(null);
+    const isIndirectLaborTicket = useRef(null);
 
     const [workorderList, setWorkorderList] = useState([]);
 
@@ -124,11 +125,13 @@ const RecordsLabor = () => {
                         setQaNotes(data.active_labor_ticket[0].QA_NOTES)
                         setDescription(data.active_labor_ticket[0].DESCRIPTION)
                         operationSeqNo.current = data.active_labor_ticket[0].OPERATION_SEQ_NO;
+                        data.active_labor_ticket[0].TYPE === 'I' ? isIndirectLaborTicket.current = true : isIndirectLaborTicket.current = false;
 
                         // Set clocked in time and work order in local-storage
                         localStorage.setItem("ACTIVE_WO_CLOCK_IN", utils.convertTimeStampToString(data.active_labor_ticket[0].CLOCK_IN));
                         localStorage.setItem("ACTIVE_WO", data.active_labor_ticket[0].WORKORDER_BASE_ID);
                         localStorage.setItem("ACTIVE_OP", data.active_labor_ticket[0].RESOURCE_DESC);
+                        localStorage.setItem("INDIRECT_ID", data.active_labor_ticket[0].INDIRECT_ID);
                     }
 
                     data.all_workorders_list && data.all_workorders_list.length > 0 ? setWorkorderList(data.all_workorders_list) : null;
@@ -474,6 +477,8 @@ const RecordsLabor = () => {
                 // Clear local storage
                 localStorage.removeItem("ACTIVE_WO_CLOCK_IN");
                 localStorage.removeItem("ACTIVE_WO");
+                localStorage.removeItem("ACTIVE_OP");
+                localStorage.removeItem("INDIRECT_ID");
 
                 window.location.reload();
             })
@@ -503,14 +508,19 @@ const RecordsLabor = () => {
                 <div className="d-flex justify-content-around">
 
                     {/* Table */}
-                    <div className="mt-3" >
-                        {/* Filtering to keep only required columns */}
-                        <TableList data={activeLaborTicket ? activeLaborTicket.map(({ CUSTOMER_NAME, JOB_COORDINATOR, WO_DESCRIPTION, CUSTOMER_CONTACT }) => ({ CUSTOMER_NAME, JOB_COORDINATOR, WO_DESCRIPTION, CUSTOMER_CONTACT })) : null} />
-                        <div className="mt-3" >
-                            <div className="ml-3"><span className="badge badge-light align-middle">Fabrication Sign Off</span></div>
-                            <div className=""><FabSignOff scanString={scanString} /></div>
-                        </div>
-                    </div>
+                    {
+                        !isIndirectLaborTicket.current ?
+                            <div className="mt-3" >
+                                {/* Filtering to keep only required columns */}
+                                <TableList data={activeLaborTicket ? activeLaborTicket.map(({ CUSTOMER_NAME, JOB_COORDINATOR, WO_DESCRIPTION, CUSTOMER_CONTACT }) => ({ CUSTOMER_NAME, JOB_COORDINATOR, WO_DESCRIPTION, CUSTOMER_CONTACT })) : null} />
+                                <div className="mt-3" >
+                                    <div className="ml-3"><span className="badge badge-light align-middle">Fabrication Sign Off</span></div>
+                                    <div className=""><FabSignOff fieldDisabled={true} scanString={scanString} /></div>
+                                </div>
+                            </div> :
+                            null
+                    }
+
 
                     {/* Scan details */}
                     <div className="container col-lg-7">

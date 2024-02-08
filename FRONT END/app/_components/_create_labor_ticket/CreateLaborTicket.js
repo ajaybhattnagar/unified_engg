@@ -194,6 +194,11 @@ const CreateLaborTicket = () => {
                 <div className="m-3">
                     <div className="mx-auto">
                         {
+                            <div className='d-flex mx-auto justify-content-end'>
+                                <button type="button" className="btn btn-primary mb-2" disabled={isLoading} onClick={() => { create_labor_ticket_visual() }}>Create Labor Tickets in Visual</button>
+                            </div>
+                        }
+                        {
                             isLoading ? <Loading />
                                 :
                                 <MTable
@@ -206,11 +211,6 @@ const CreateLaborTicket = () => {
                                     }}
                                     height={window.innerHeight - 200}
                                 />
-                        }
-                        {
-                            <div className='d-flex mx-auto justify-content-center fixed-bottom '>
-                                <button type="button" className="btn btn-outline-primary mb-2" disabled={isLoading} onClick={() => { create_labor_ticket_visual() }}>Create Labor Tickets in Visual</button>
-                            </div>
                         }
                     </div>
 

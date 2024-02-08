@@ -15,6 +15,7 @@ const FabSignOff = (props) => {
     const [scanInput, setScanInput] = useState(localStorage.getItem("SIGN_OFF_SCAN_LAST_SELECTED") || 'FABRICATED');
     const [isLoading, setIsLoading] = useState(false);
     const [notes, setNotes] = useState('');
+    const [isFieldDisabled, setIsFieldDisabled] = useState(false);
 
 
     const onChangeInputValue = (e) => {
@@ -26,6 +27,9 @@ const FabSignOff = (props) => {
     useEffect(() => {
         if (props.scanString) {
             setScannedData(props.scanString)
+        }
+        if (props.fieldDisabled) {
+            setIsFieldDisabled(props.fieldDisabled)
         }
     }, [props.scanString]);
 
@@ -81,7 +85,7 @@ const FabSignOff = (props) => {
 
                                 <div className="">
                                     <div className="mb-3">
-                                        <Scan disabled={false} value={scannedData} focus={scanInput === 'FABRICATED' ? true : false} onChange={(e) => setScannedData(e)} />
+                                        <Scan disabled={isFieldDisabled} value={scannedData} focus={scanInput === 'FABRICATED' ? true : false} onChange={(e) => setScannedData(e)} />
                                         <div className='mt-2'><Input type={'text'} value={notes} placeholder="Notes" text='Notes' onChange={(e) => setNotes(e)} /></div>
                                         <div className='d-flex justify-content-end'><button className='btn btn-primary mt-2' onClick={() => update_fab_sign_off()}>Update</button></div>
                                     </div>

@@ -209,7 +209,8 @@ const WorkOrderOperations = () => {
                             <div className="container">
 
                                 <div className="d-flex justify-content-between">
-                                    <span className="h5">{operationDetails[0].WORKORDER_BASE_ID} - {operationDetails[0].RESOURCE_ID}</span>
+                                    <span className="h5">{operationDetails[0].WORKORDER_BASE_ID}  {operationDetails[0].WORKORDER_LOT_ID} - {operationDetails[0].WORKORDER_SPLIT_ID} - {operationDetails[0].WORKORDER_SUB_ID}</span>
+                                    <span className="h5">{operationDetails[0].SEQUENCE_NO} - {operationDetails[0].RESOURCE_ID}</span>
                                 </div>
 
                                 <div className="mt-3" >

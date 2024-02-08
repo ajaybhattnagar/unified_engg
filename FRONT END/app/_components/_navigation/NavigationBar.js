@@ -70,7 +70,7 @@ class NavigationBar extends Component {
                         <Nav className="mr-auto">
 
                             <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
-                            <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labor</strong></Nav.Link>
+                            <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labour</strong></Nav.Link>
                             <Nav.Link disabled={approve_labor_tickets} className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
 
                             <NavDropdown title="Quality" id="basic-nav-dropdown">
@@ -108,10 +108,11 @@ class NavigationBar extends Component {
                 </Navbar>
 
                 {
-                    localStorage.getItem('ACTIVE_WO') ?
+                    localStorage.getItem('ACTIVE_WO') || localStorage.getItem('INDIRECT_ID') ?
                         <div className="m-3 fixed-bottom-labor-details">
                             <div className='d-flex align-items-center'>
                                 <span class="badge">
+                                    <div>{localStorage.getItem('INDIRECT_ID')} </div>
                                     <div>{localStorage.getItem('ACTIVE_WO')} </div>
                                     <div>{localStorage.getItem('ACTIVE_WO_CLOCK_IN')} </div>
                                     <div>{localStorage.getItem('ACTIVE_OP')} </div>

@@ -47,6 +47,9 @@ const EOD = () => {
                     var total_hours = 0;
                     response.forEach((item) => {
                         item.APPROVED = item.APPROVED === 'true' ? true : false;
+                        item.REGULAR_TIME = item.REGULAR_TIME === '1' ? true : false;
+                        item.OVER_TIME = item.OVER_TIME === '1' ? true : false;
+                        item.DOUBLE_TIME = item.DOUBLE_TIME === '1' ? true : false;
                         total_hours += parseFloat(item.HOURS_WORKED);
                     })
                     setTotalHours(total_hours);
@@ -62,10 +65,17 @@ const EOD = () => {
 
     const update_labor_tickets = (data) => {
         if (isAllowedEditLaborTicket.current) {
-            utils.updateLaborTickets(data)
+
+            // Remove records that are approved
+            var filterd_data = data.filter((item) => {
+                return item.APPROVED !== true;
+            });
+
+            utils.updateLaborTickets(filterd_data)
                 .then((response) => {
                     alert(response.message);
                     setSelectedToDate((prev) => utils.convertTimeStampToDateForInputBox(prev));
+                    window.location.reload();
                 })
                 .catch((error) => {
                     alert(error);
@@ -117,6 +127,11 @@ const EOD = () => {
             readOnly: true
         },
         {
+            data: 'RESOURCE_DESCRIPTION',
+            type: 'text',
+            readOnly: true
+        },
+        {
             data: 'CLOCK_IN',
             type: 'text',
             readOnly: true
@@ -125,6 +140,21 @@ const EOD = () => {
             data: 'CLOCK_OUT',
             type: 'text',
             readOnly: true
+        },
+        {
+            data: 'REGULAR_TIME',
+            type: 'checkbox',
+            className: 'htCenter',
+        },
+        {
+            data: 'OVER_TIME',
+            type: 'checkbox',
+            className: 'htCenter',
+        },
+        {
+            data: 'DOUBLE_TIME',
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
             data: 'HOURS_WORKED',
@@ -156,12 +186,12 @@ const EOD = () => {
             <div>
                 <NavigationBar />
                 <div className="m-3">
-                    <div className="d-flex justify-content-between mb-3">
+                    <div className="d-flex justify-content-left mb-3">
                         <div className="d-flex">
                             <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
                             <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
                         </div>
-                        <div className="">
+                        <div className="ml-3">
                             <button type="button" class="btn btn-outline-success">
                                 Total Hours <span class="ml-2 badge badge-light">{totalHours}</span>
                             </button>
@@ -174,8 +204,8 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'In', 'Out', 'Hours worked',
-                                        'Indirect', 'Notes', 'QA Notes', 'Approved']}
+                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'Operation',
+                                        'In', 'Out', 'Regular Time', 'Over Time', 'Double Time', 'Hours worked', 'Indirect', 'Notes', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
                                     height={window.innerHeight - 200}

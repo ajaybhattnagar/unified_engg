@@ -37,7 +37,7 @@ const SignOff = () => {
                                         <Card bg={scanInput === 'FABRICATED' ? 'success' : 'primary'} text='white'>
                                             <Card.Header><h5>Fabrication Sign Off</h5></Card.Header>
                                             <Card.Body>
-                                                <FabSignOff />
+                                                <FabSignOff fieldDisabled={false}/>
                                             </Card.Body>
                                         </Card>
                                     </div>

@@ -1,51 +1,71 @@
 .theme-color {
-    background-color: '#024b91';
-    color: '#024b91';
+  background-color: '#024b91';
+  color: '#024b91';
 
 }
 
-.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited, .btn-outline-primary:hover {
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited,
+.btn-outline-primary:hover {
   background-color: #024b91 !important;
 }
 
 .cusor-hand {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 h1,
 h2,
 h3 {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 :root {
-    font-size: 95%; /* (62.5/100) * 16px = 10px */
-    
-  }
+  font-size: 95%;
+  /* (62.5/100) * 16px = 10px */
+
+}
 
 
-  .demo-image-preview {
-    position: relative;
-    text-align: center;
-  }
-  
-  .demo-image-preview > img {
-    width: 768px;
-  }
-  
-  @media(max-width:768px){
-    .demo-image-preview > img {
-      width: 100%;
-    }
-  }
-  
-  /* fullscreen enable by props */
-  .demo-image-preview-fullscreen > img {
-    width: 100vw;
-    height:100vh;
-  }
+.demo-image-preview {
+  position: relative;
+  text-align: center;
+}
 
-  .scrollBar {
-    height: calc(100vh - 200px);
-    overflow-y: scroll;
+.demo-image-preview>img {
+  width: 768px;
+}
+
+@media(max-width:768px) {
+  .demo-image-preview>img {
+    width: 100%;
   }
+}
+
+/* fullscreen enable by props */
+.demo-image-preview-fullscreen>img {
+  width: 100vw;
+  height: 100vh;
+}
+
+.scrollBar {
+  height: calc(100vh - 200px);
+  overflow-y: scroll;
+}
+
+.update-button {
+  /* Fixed Top */
+  position: fixed;
+  top: 0;
+  right: 1%;
+  margin-top: 6rem;
+  z-index: 1000;
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

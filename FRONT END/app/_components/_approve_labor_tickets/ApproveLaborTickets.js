@@ -62,34 +62,14 @@ const ApproveLaborTickets = () => {
             renderer: safeHtmlRenderer
         },
         {
-            data: 'WORKORDER_BASE_ID',
-            type: 'text',
-            readOnly: true
+            data: 'APPROVED',
+            type: 'checkbox',
+            className: 'htCenter',
         },
         {
-            data: 'LOT_SPLIT_SUB',
+            data: 'EMPLOYEE_ID',
             type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'PART_DESC',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'CUSTOMER_ID',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'CLOCK_IN',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'CLOCK_OUT',
-            type: 'text',
-            readOnly: true
+            className: 'htCenter',
         },
         {
             data: 'HOURS_WORKED',
@@ -97,16 +77,6 @@ const ApproveLaborTickets = () => {
             numericFormat: {
                 pattern: '0,00',
             },
-        },
-        {
-            data: 'INDIRECT_ID',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'APPROVED',
-            type: 'checkbox',
-            className: 'htCenter',
         },
         {
             data: 'REGULAR_TIME',
@@ -124,9 +94,24 @@ const ApproveLaborTickets = () => {
             className: 'htCenter',
         },
         {
-            data: 'EMPLOYEE_ID',
+            data: 'INDIRECT_ID',
             type: 'text',
-            className: 'htCenter',
+            readOnly: true
+        },
+        {
+            data: 'WORKORDER_BASE_ID',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'LOT_SPLIT_SUB',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'RESOURCE_DESCRIPTION',
+            type: 'text',
+            readOnly: true
         },
         {
             data: 'LAB_DESC',
@@ -138,6 +123,26 @@ const ApproveLaborTickets = () => {
             type: 'text',
             className: 'htCenter',
         },
+        {
+            data: 'CLOCK_IN',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'CLOCK_OUT',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'PART_DESC',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'CUSTOMER_ID',
+            type: 'text',
+            readOnly: true
+        },  
         {
             data: 'WORK_LOCATION',
             type: 'dropdown',
@@ -179,19 +184,17 @@ const ApproveLaborTickets = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID',
-                                        'In', 'Out', 'Hours worked', 'Indirect', 'Approved',
-                                        'Regular Time', 'Over Time', 'Double Time', 'Employee', 'Notes', 'QA Notes',
-                                        'Location', 'Visual Labor ID']}
+                                    columnsHeaders={['ID', 'Approved', 'Employee', 'Hours worked', 'Regular Time', 'Over Time', 'Double Time',
+                                                    'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
+                                                    'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
+                                
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     height={window.innerHeight - 200}
+                                    hasApproval={true}
                                 />
                         }
                     </div>
-
                 </div>
-
-
             </div>
         );
     }

@@ -39,7 +39,7 @@ const PrintReport = (props) => {
     const render = () => {
         return (
             <div className="d-flex justify-content-left">
-                <Button className='mr-2 btn btn-dark' disabled={true}>Work Plan: </Button>
+                <Button className='mr-2 btn btn-dark' disabled={true}>Work Plan: {baseId}</Button>
                 <Button type="button" data-toggle="tooltip" title="View" className='mr-2 btn btn-light' onClick={() => loadView()}>
                     <FontAwesomeIcon className="" icon={faFileExport} />
                 </Button>
