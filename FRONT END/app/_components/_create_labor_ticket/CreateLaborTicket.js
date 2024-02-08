@@ -142,7 +142,18 @@ const CreateLaborTicket = () => {
 
         // Modify data to match visual api
         var _data = data.forEach((item) => {
-            item.MULTIPLIER = item.REGULAR_TIME === '1' ? 1 : item.DOUBLE_TIME === '1' ? 2 : item.OVER_TIME === '1' ? 1.5 : 1;
+            // If work time has "Regular Time" then multiplier is 1
+            // If work time has "Double Time" then multiplier is 2
+            // If work time has "Over Time" then multiplier is 1.5
+            if (item.WORK_TIME.includes("Regular")) {
+                item.MULTIPLIER = 1;
+            }
+            else if (item.WORK_TIME.includes("Double")) {
+                item.MULTIPLIER = 2;
+            }
+            else if (item.WORK_TIME.includes("Over")) {
+                item.MULTIPLIER = 1.5;
+            }
         })
 
         var post_data = {
