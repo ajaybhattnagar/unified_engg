@@ -8,7 +8,7 @@ labor_query = {
                         ,[DESCRIPTION]
                         ,[INDIRECT_CODE] ,[INDIRECT_ID]
                         ,[UDF1] ,[UDF2] ,[UDF3] ,[UDF4],
-                        [WORK_LOCATION], [REGULAR_TIME], [OVER_TIME], [DOUBLE_TIME], [QA_NOTES]
+                        [WORK_LOCATION], [WORK_TIME], [QA_NOTES]
                 )
                     VALUES
                         (GETDATE(), 
@@ -18,7 +18,7 @@ labor_query = {
                         '{DESCRIPTION}', 
                         '{INDIRECT_CODE}', '{INDIRECT_ID}',
                         '{UDF1}', '{UDF2}', '{UDF3}', '{UDF4}',
-                        '{WORK_LOCATION}', '{REGULAR_TIME}', '{OVER_TIME}', '{DOUBLE_TIME}', '{QA_NOTES}'
+                        '{WORK_LOCATION}', '{WORK_TIME}', '{QA_NOTES}'
                         );
 
                 SELECT SCOPE_IDENTITY() as id;
@@ -72,9 +72,7 @@ labor_query = {
                             [APPROVED_BY] = '{APPROVED_BY}',
                             [APPROVED_AT] = '{APPROVED_AT}',
                             [WORK_LOCATION] = '{WORK_LOCATION}',
-                            [REGULAR_TIME] = {REGULAR_TIME},
-                            [OVER_TIME] = {OVER_TIME},
-                            [DOUBLE_TIME] = {DOUBLE_TIME},
+                            [WORK_TIME] = '{WORK_TIME}',
                             [QA_NOTES] = '{QA_NOTES}'
                         WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""" ,
 

@@ -295,7 +295,7 @@ const RecordsLabor = () => {
                 "WORKORDER_ID": selectedWorkOrder,
                 "WORKORDER_LOT_ID": selectedLot,
                 "WORKORDER_SPLIT_ID": selectedSplit,
-                "WORKORDER_SUB_ID": selectedSplit,
+                "WORKORDER_SUB_ID": selectedSub,
                 "OPERATION_SEQ_NO": selectedOperation,
                 "RUN_TYPE": "R",
                 "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),

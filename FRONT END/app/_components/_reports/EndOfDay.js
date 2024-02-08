@@ -47,9 +47,6 @@ const EOD = () => {
                     var total_hours = 0;
                     response.forEach((item) => {
                         item.APPROVED = item.APPROVED === 'true' ? true : false;
-                        item.REGULAR_TIME = item.REGULAR_TIME === '1' ? true : false;
-                        item.OVER_TIME = item.OVER_TIME === '1' ? true : false;
-                        item.DOUBLE_TIME = item.DOUBLE_TIME === '1' ? true : false;
                         total_hours += parseFloat(item.HOURS_WORKED);
                     })
                     setTotalHours(total_hours);
@@ -142,19 +139,9 @@ const EOD = () => {
             readOnly: true
         },
         {
-            data: 'REGULAR_TIME',
-            type: 'checkbox',
-            className: 'htCenter',
-        },
-        {
-            data: 'OVER_TIME',
-            type: 'checkbox',
-            className: 'htCenter',
-        },
-        {
-            data: 'DOUBLE_TIME',
-            type: 'checkbox',
-            className: 'htCenter',
+            data: 'WORK_TIME',
+            type: 'dropdown',
+            source: ['Regular Time', 'Over Time', 'Double Time']
         },
         {
             data: 'HOURS_WORKED',
@@ -205,7 +192,7 @@ const EOD = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'Operation',
-                                        'In', 'Out', 'Regular Time', 'Over Time', 'Double Time', 'Hours worked', 'Indirect', 'Notes', 'QA Notes', 'Approved']}
+                                        'In', 'Out', 'Work Time', 'Hours worked', 'Indirect', 'Notes', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
                                     height={window.innerHeight - 200}

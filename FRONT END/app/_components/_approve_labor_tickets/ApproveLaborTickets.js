@@ -79,19 +79,9 @@ const ApproveLaborTickets = () => {
             },
         },
         {
-            data: 'REGULAR_TIME',
-            type: 'checkbox',
-            className: 'htCenter',
-        },
-        {
-            data: 'OVER_TIME',
-            type: 'checkbox',
-            className: 'htCenter',
-        },
-        {
-            data: 'DOUBLE_TIME',
-            type: 'checkbox',
-            className: 'htCenter',
+            data: 'WORK_TIME',
+            type: 'dropdown',
+            source: ['Regular Time', 'Over Time', 'Double Time']
         },
         {
             data: 'INDIRECT_ID',
@@ -184,7 +174,7 @@ const ApproveLaborTickets = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Approved', 'Employee', 'Hours worked', 'Regular Time', 'Over Time', 'Double Time',
+                                    columnsHeaders={['ID', 'Approved', 'Employee', 'Hours worked', 'Work Time',
                                                     'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
                                                     'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
                                 

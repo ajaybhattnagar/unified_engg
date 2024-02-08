@@ -159,9 +159,10 @@ def create_labor_tickets(connection_string, username):
                     UDF3 = content['UDF3'] if 'UDF3' in content else '',
                     UDF4 = content['UDF4'] if 'UDF4' in content else '',
                     WORK_LOCATION = content['WORK_LOCATION'] if 'WORK_LOCATION' in content else '',
-                    REGULAR_TIME = 1 if 'regular' in content['WORK_TIME'].lower() else 0,
-                    OVER_TIME = 1 if 'over' in content['WORK_TIME'].lower() else 0,
-                    DOUBLE_TIME = 1 if 'double' in content['WORK_TIME'].lower() else 0,
+                    WORK_TIME = content['WORK_TIME'] if 'WORK_TIME' in content else '',
+                    # REGULAR_TIME = 1 if 'regular' in content['WORK_TIME'].lower() else 0,
+                    # OVER_TIME = 1 if 'over' in content['WORK_TIME'].lower() else 0,
+                    # DOUBLE_TIME = 1 if 'double' in content['WORK_TIME'].lower() else 0,
                     QA_NOTES = content['QA_NOTES'] if 'QA_NOTES' in content else '',
                     )
             
@@ -391,13 +392,8 @@ def update_labor_tickets(connection_string, username):
             APPROVED_BY = approved_by,
             APPROVED_AT = approved_at,
             WORK_LOCATION = df['WORK_LOCATION'][index] if 'WORK_LOCATION' in df.columns else '',
-
-            REGULAR_TIME = 1 if df['REGULAR_TIME'][index] == True else 0,
-            OVER_TIME = 1 if df['OVER_TIME'][index] == True else 0,
-            DOUBLE_TIME = 1 if df['DOUBLE_TIME'][index] == True else 0,
+            WORK_TIME = df['WORK_TIME'][index] if 'WORK_TIME' in df.columns else '',
             QA_NOTES = df['QA_NOTES'][index] if 'QA_NOTES' in df.columns else '',
-
-
             TRANSACTION_ID = df['TRANSACTION_ID'][index],
         )
 
