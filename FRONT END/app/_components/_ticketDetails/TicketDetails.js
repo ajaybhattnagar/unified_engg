@@ -15,9 +15,14 @@ const TicketDetails = () => {
     const [ticketDetails, setTicketDetails] = useState([]);
     const [document, setDocument] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [access_rights, setAccessRights] = useState({});
 
     useEffect(() => {
-        // Get url params
+        if (localStorage.getItem("token")) {
+            var access_rights = utils.decodeJwt();
+            access_rights = access_rights.USER_DETAILS
+            setAccessRights(access_rights);
+        }
 
     }, []);
 
@@ -68,12 +73,36 @@ const TicketDetails = () => {
         utils.open_document(path);
     }
 
+    const duplicate_labor_ticket = (id) => {
+        if (confirm('Are you sure you want to duplicate this transaction?')) {
+            fetch(appConstants.BASE_URL.concat(appConstants.DUPLICATE_LABOR_TICKET).concat(id), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': localStorage.getItem("token")
+                }
+            }).then(res => res.json())
+                .then((response) => {
+                    alert(response.message);
+                    window.opener.location.reload(false);
+                    window.focus()
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+        else {
+            return;
+        }
+    }
+
 
     const render = () => {
 
         return (
             <div>
                 <NavigationBar />
+
                 <div className="d-flex justify-content-between">
 
                     <div>
@@ -94,7 +123,12 @@ const TicketDetails = () => {
                                                         return (
                                                             <tr key={index}>
                                                                 <td className="font-weight-bold">{key}</td>
-                                                                <td>{ticketDetails[key]}</td>
+                                                                <td>{ticketDetails[key]}
+                                                                    {access_rights.ALLOWED_DUPLICATE_RECORD === '1' && key === 'TRANSACTION_ID' ?
+                                                                        <span variant="primary" className="badge badge-success ml-3 cusor-hand" onClick={() => { duplicate_labor_ticket(ticketDetails[key]) }}>Duplicate</span>
+                                                                        : null
+                                                                    }
+                                                                </td>
                                                             </tr>
                                                         )
                                                     })

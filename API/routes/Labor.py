@@ -552,6 +552,22 @@ def update_labor_ticket_field(connection_string, username, field):
     except Exception as e:
         return jsonify({"message": str(e)}), 401
 
+@labor_blueprint.route("/api/v1/labor/duplicate_labor_ticket/<trans_id>", methods=['POST'])
+@token_required
+def duplicate_labor_ticket_field(connection_string, username, trans_id):
+    content = request.get_json(silent=True)
+
+    try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(labor_query['DUPLICATE_LABOUR_TICKET'].format(TRANSACTION_ID = trans_id))
+        cnxn.commit()
+        sql.close()
+        return jsonify({'message': 'Success!'}), 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+
     
 
 

@@ -61,6 +61,7 @@ const Users = () => {
                         item.ALLOWED_EDIT_LABOR_TICKET = item.ALLOWED_EDIT_LABOR_TICKET === '1' ? true : false;
                         item.ALLOWED_SET_QA_NOTIFICATION = item.ALLOWED_SET_QA_NOTIFICATION === '1' ? true : false;
                         item.ALLOWED_RECEIPT_ENTRY = item.ALLOWED_RECEIPT_ENTRY === '1' ? true : false;
+                        item.ALLOWED_DUPLICATE_RECORD = item.ALLOWED_DUPLICATE_RECORD === '1' ? true : false;
                     })
                     setData(data)
                     setIsLoading(false);
@@ -134,6 +135,12 @@ const Users = () => {
             type: 'checkbox',
             className: 'htCenter',
         },
+        {
+            data: 'ALLOWED_DUPLICATE_RECORD',
+            type: 'checkbox',
+            className: 'htCenter',
+        },
+
     ]
 
     const update_users = (data) => {
@@ -183,7 +190,7 @@ const Users = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ROWID', 'ID', 'First Name', 'Last Name', 'Admin', 'Super Admin', 'Allowed Working Location', 'Allowed Working Time',
-                                        'Allowed Approve Page', 'Allowed Edit Labor Tickets', 'Allowed Set QA Notification', 'Allowed Receipt Entry']}
+                                        'Allowed Approve Page', 'Allowed Edit Labor Tickets', 'Allowed Set QA Notification', 'Allowed Receipt Entry', 'Allowed Duplicate Record']}
                                     onChange={(e) => { update_users(e) }}
                                 />
                         }

@@ -20,6 +20,7 @@ user_query = {
                             ,[ALLOWED_EDIT_LABOR_TICKET] = {ALLOWED_EDIT_LABOR_TICKET}
                             ,[ALLOWED_SET_QA_NOTIFICATION] = {ALLOWED_SET_QA_NOTIFICATION}
                             ,[ALLOWED_RECEIPT_ENTRY] = {ALLOWED_RECEIPT_ENTRY}
+                            ,[ALLOWED_DUPLICATE_RECORD] = {ALLOWED_DUPLICATE_RECORD}
                         WHERE ROWID = {ROWID}
                         """
 
