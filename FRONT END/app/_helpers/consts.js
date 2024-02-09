@@ -26,6 +26,7 @@ export const appConstants = {
     UPDATE_LABOR_TICKETS: 'api/v1/labor/update_labor_tickets',
     UPDATE_LABOR_TICKET_FIELD: '/api/v1/labor/update_labor_ticket/',
     DUPLICATE_LABOR_TICKET: '/api/v1/labor/duplicate_labor_ticket/',
+    LABOUR_SUMMARY_REPORT: 'api/v1/details/labour_summary_report?',    //Parameters: from_date, to_date, filter_type: VISUAL, APPROVED, NOT_APPROVED, ALL
 
     UPLOAD_DOCUMENTS_LABOR: 'api/v1/labor/upload_document',   //Upload document only for Labor Ticket
     UPLOAD_IMAGES_LABOR: 'api/v1/labor/upload_image',        //Upload image only for Labor Ticket

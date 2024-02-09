@@ -100,5 +100,40 @@ labor_query = {
 
 "UPDATE_FIELD_LABOR_TICKET": """UPDATE UNI_LABOR_TICKET SET {FIELD} = '{FIELD_VALUE}' WHERE TRANSACTION_ID = {TRANSACTION_ID}""",
 
-"DUPLICATE_LABOUR_TICKET": """EXEC DUPLICATE_RECORD_UNI_LABOR_TICKET @TRANS_ID = {TRANSACTION_ID};"""
+"DUPLICATE_LABOUR_TICKET": """EXEC DUPLICATE_RECORD_UNI_LABOR_TICKET @TRANS_ID = {TRANSACTION_ID};""",
+
+
+"LABOUR_SUMMARY_VISUAL_TICKETS": """DECLARE @StartDate DATE = '{FROM_DATE}';
+                                    DECLARE @EndDate DATE = '{TO_DATE}';
+
+                                    WITH REG_HRS AS  (SELECT EMPLOYEE_ID, SUM(HOURS_WORKED) AS 'Regular Hours' FROM LABOR_TICKET WHERE MULTIPLIER_1 = 1 AND HOURS_WORKED IS NOT NULL AND TRANSACTION_DATE BETWEEN @StartDate AND @EndDate GROUP BY EMPLOYEE_ID),
+                                        OVER_HRS AS (SELECT EMPLOYEE_ID, SUM(HOURS_WORKED) AS 'Overtime (1.5)' FROM LABOR_TICKET WHERE MULTIPLIER_1 = 1.5 AND HOURS_WORKED IS NOT NULL AND TRANSACTION_DATE BETWEEN @StartDate AND @EndDate GROUP BY EMPLOYEE_ID),
+                                        DOUB_HRS AS (SELECT EMPLOYEE_ID, SUM(HOURS_WORKED) AS 'Double Time (2)' FROM LABOR_TICKET WHERE MULTIPLIER_1 = 2 AND HOURS_WORKED IS NOT NULL AND TRANSACTION_DATE BETWEEN @StartDate AND @EndDate GROUP BY EMPLOYEE_ID)
+
+                                    SELECT EMP.ID AS [Employee ID], EMP.FIRST_NAME AS [First Name], EMP.LAST_NAME AS [Last Name], 
+                                            ISNULL(REG_HRS.[Regular Hours], 0) AS [Regular Hours], ISNULL(OVER_HRS.[Overtime (1.5)], 0) AS [Overtime (1.5)] , ISNULL(DOUB_HRS.[Double Time (2)], 0) AS [Double Time (2)],
+                                            0 AS [Vacation Hours], 0 AS [Vacation ($)], 0 AS [Bonus ($)], 0 AS [Stat. Hours], 0 AS [Advance pay ($)], 0 AS [Adv. Hours], 0 AS [External ID], 0 AS [Salary Regular Hours], 0 AS [Salary Overtime Hours], 0AS [Salary Double Time Hours]
+                                    FROM EMPLOYEE EMP
+                                    LEFT JOIN REG_HRS ON REG_HRS.EMPLOYEE_ID = EMP.ID
+                                    LEFT JOIN OVER_HRS ON OVER_HRS.EMPLOYEE_ID = EMP.ID
+                                    LEFT JOIN DOUB_HRS ON DOUB_HRS.EMPLOYEE_ID = EMP.ID
+                                    WHERE EMP.ACTIVE = 'Y'
+                                    ORDER BY EMP.ID
+                                    """,
+"LABOUR_SUMMARY_SUDO_TABLE_FILTER": """DECLARE @StartDate DATE = '{FROM_DATE}';
+                                        DECLARE @EndDate DATE = '{TO_DATE}';
+
+                                        WITH REG_HRS AS  (SELECT EMPLOYEE_ID, SUM(HOURS_WORKED) AS 'Regular Hours' FROM UNI_LABOR_TICKET WHERE WORK_TIME = 'Regular Time' AND HOURS_WORKED IS NOT NULL AND TRANSACTION_DATE BETWEEN @StartDate AND @EndDate {APPROVED_STRING} GROUP BY EMPLOYEE_ID),
+                                            OVER_HRS AS (SELECT EMPLOYEE_ID, SUM(HOURS_WORKED) AS 'Overtime (1.5)' FROM UNI_LABOR_TICKET WHERE WORK_TIME = 'Over Time' AND HOURS_WORKED IS NOT NULL AND TRANSACTION_DATE BETWEEN @StartDate AND @EndDate {APPROVED_STRING} GROUP BY EMPLOYEE_ID),
+                                            DOUB_HRS AS (SELECT EMPLOYEE_ID, SUM(HOURS_WORKED) AS 'Double Time (2)' FROM UNI_LABOR_TICKET WHERE WORK_TIME = 'Double Time' AND HOURS_WORKED IS NOT NULL AND TRANSACTION_DATE BETWEEN @StartDate AND @EndDate {APPROVED_STRING} GROUP BY EMPLOYEE_ID)
+
+                                        SELECT EMP.ID AS [Employee ID], EMP.FIRST_NAME AS [First Name], EMP.LAST_NAME AS [Last Name], 
+                                                ISNULL(REG_HRS.[Regular Hours], 0) AS [Regular Hours], ISNULL(OVER_HRS.[Overtime (1.5)], 0) AS [Overtime (1.5)] , ISNULL(DOUB_HRS.[Double Time (2)], 0) AS [Double Time (2)],
+                                                0 AS [Vacation Hours], 0 AS [Vacation ($)], 0 AS [Bonus ($)], 0 AS [Stat. Hours], 0 AS [Advance pay ($)], 0 AS [Adv. Hours], 0 AS [External ID], 0 AS [Salary Regular Hours], 0 AS [Salary Overtime Hours], 0AS [Salary Double Time Hours]
+                                        FROM EMPLOYEE EMP
+                                        LEFT JOIN REG_HRS ON REG_HRS.EMPLOYEE_ID = EMP.USER_ID
+                                        LEFT JOIN OVER_HRS ON OVER_HRS.EMPLOYEE_ID = EMP.USER_ID
+                                        LEFT JOIN DOUB_HRS ON DOUB_HRS.EMPLOYEE_ID = EMP.USER_ID
+                                        WHERE EMP.ACTIVE = 'Y'"""
+
 }

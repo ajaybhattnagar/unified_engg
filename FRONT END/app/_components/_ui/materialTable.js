@@ -81,6 +81,7 @@ const MTable = (props) => {
                 stretchH="all"
                 width="100%"
                 height={props.height || "auto"}
+                colWidths={props.colWidths || "auto"}
 
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
             />

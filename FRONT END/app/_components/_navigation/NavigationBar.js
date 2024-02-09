@@ -82,8 +82,9 @@ class NavigationBar extends Component {
                             </NavDropdown>
 
                             <NavDropdown title="Reports" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
                                 <NavDropdown.Item href="/reports/work_orders">Work Orders</NavDropdown.Item>
+                                <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
+                                <NavDropdown.Item href="/reports/labor_summary">Labour Summary</NavDropdown.Item>
                             </NavDropdown>
 
                             <NavDropdown disabled={super_admin} title="Admin" id="basic-nav-dropdown">

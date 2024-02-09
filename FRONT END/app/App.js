@@ -18,6 +18,7 @@ import WorkOrderOperations from './_components/_reports/WorkOrderOperations.js';
 import Receiving from './_components/_receiving/Receiving.js';
 import SignOff from './_components/_quality/SignOff.js';
 import OpenFiles from './_components/_reports/OpenFiles.js';
+import LabourSummary from './_components/_reports/LabourSummary.js';
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
 				<Route path='/create_labor_ticket' element={<CreateLaborTicket />} />
 				<Route path='/reports/work_orders' element={<WorkOrders />} />
 				<Route path='/reports/work_order_operations' element={<WorkOrderOperations />} />
+				<Route path='/reports/labor_summary' element={<LabourSummary />} />
 				<Route path='/receiving' element={<Receiving />} />
 				<Route path='/quality/sign_off' element={<SignOff />} />
 				<Route path='/reports/open_files' element={<OpenFiles />} />

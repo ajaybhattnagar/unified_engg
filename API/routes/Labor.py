@@ -568,7 +568,59 @@ def duplicate_labor_ticket_field(connection_string, username, trans_id):
     except Exception as e:
         return jsonify({"message": str(e)}), 401
 
-    
+   
+@labor_blueprint.route("/api/v1/details/labour_summary_report", methods=['GET'])
+@token_required
+def labour_summary_report(connection_string, username):
+    from_date = request.args.get('from_date')
+    to_date = request.args.get('to_date')
+    filter_type = request.args.get('filter_type') # ALL, VISUAL LABOUR, APPROVED, NOT APPROVED
+    cnxn = pyodbc.connect(connection_string)
+
+    if filter_type == 'VISUAL':
+        query_string = labor_query['LABOUR_SUMMARY_VISUAL_TICKETS'].format(FROM_DATE = from_date, TO_DATE = to_date)
+    elif filter_type == 'APPROVED':
+        query_string = labor_query['LABOUR_SUMMARY_SUDO_TABLE_FILTER'].format(FROM_DATE = from_date, TO_DATE = to_date, APPROVED_STRING = 'AND APPROVED = 1')
+    elif filter_type == 'NOT_APPROVED':
+        query_string = labor_query['LABOUR_SUMMARY_SUDO_TABLE_FILTER'].format(FROM_DATE = from_date, TO_DATE = to_date, APPROVED_STRING = 'AND APPROVED = 0')
+    elif filter_type == 'ALL':
+        query_string = labor_query['LABOUR_SUMMARY_SUDO_TABLE_FILTER'].format(FROM_DATE = from_date, TO_DATE = to_date, APPROVED_STRING = '')
+    else:
+        return jsonify({"message": "Filter type is required"}), 401
+
+    try:
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        labour_summary_report = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        
+        # Conver to dataframe
+        df = pd.DataFrame(labour_summary_report)
+        df = df.replace(np.nan, 0, regex=True)
+
+        columns = df.columns.tolist()
+        columns.remove('Employee ID')
+        columns.remove('First Name')
+        columns.remove('Last Name')
+        # Convert all the columns to numeric
+        df[columns] = df[columns].apply(pd.to_numeric)
+        # Add total row
+        df.loc['Summary'] = df[columns].sum()
+        df.loc['Summary', 'Last Name'] = 'TOTAL'
+        # Replace Nan with ''
+        df = df.replace(np.nan, '', regex=True)
+
+        # Converting back to dictionary
+        labour_summary_report = df.to_dict(orient='records')
+
+        sql.close()
+        response = Response(
+                    response=simplejson.dumps(labour_summary_report, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401 
 
 
 
