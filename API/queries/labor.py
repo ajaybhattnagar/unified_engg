@@ -114,7 +114,9 @@ labor_query = {
 
                                     SELECT EMP.ID AS [Employee ID], EMP.FIRST_NAME AS [First Name], EMP.LAST_NAME AS [Last Name], 
                                             ISNULL(REG_HRS.[Regular Hours], 0) AS [Regular Hours], ISNULL(OVER_HRS.[Overtime (1.5)], 0) AS [Overtime (1.5)] , ISNULL(DOUB_HRS.[Double Time (2)], 0) AS [Double Time (2)],
-                                            ISNULL(VAC.[Vacation Hours], 0) AS [Vacation Hours], 0 AS [Vacation ($)], 0 AS [Bonus ($)], ISNULL(STAT_HOL.[Stat. Hours], 0) AS [Stat. Hours], 0 AS [Advance pay ($)], 0 AS [Adv. Hours], '' AS [External ID], 0 AS [Salary Regular Hours], 0 AS [Salary Overtime Hours], 0AS [Salary Double Time Hours]
+                                            ISNULL(VAC.[Vacation Hours], 0) AS [Vacation Hours], 0 AS [Vacation ($)], 0 AS [Bonus ($)], ISNULL(STAT_HOL.[Stat. Hours], 0) AS [Stat. Hours], 0 AS [Advance pay ($)], 0 AS [Adv. Hours], '' AS [External ID], 
+                                            CASE WHEN EMP.TYPE = 'S' THEN DATEDIFF(DAY, @StartDate, @EndDate) * 8 ELSE 0 END AS [Salary Regular Hours], 
+		                                    0 AS [Salary Overtime Hours], 0AS [Salary Double Time Hours]
                                     FROM EMPLOYEE EMP
                                     LEFT JOIN REG_HRS ON REG_HRS.EMPLOYEE_ID = EMP.ID
                                     LEFT JOIN OVER_HRS ON OVER_HRS.EMPLOYEE_ID = EMP.ID
@@ -134,7 +136,9 @@ labor_query = {
 
                                         SELECT EMP.ID AS [Employee ID], EMP.FIRST_NAME AS [First Name], EMP.LAST_NAME AS [Last Name], 
                                                 ISNULL(REG_HRS.[Regular Hours], 0) AS [Regular Hours], ISNULL(OVER_HRS.[Overtime (1.5)], 0) AS [Overtime (1.5)] , ISNULL(DOUB_HRS.[Double Time (2)], 0) AS [Double Time (2)],
-                                                ISNULL(VAC.[Vacation Hours], 0) AS [Vacation Hours], 0 AS [Vacation ($)], 0 AS [Bonus ($)], 0 AS [Stat. Hours], 0 AS [Advance pay ($)], 0 AS [Adv. Hours], '' AS [External ID], 0 AS [Salary Regular Hours], 0 AS [Salary Overtime Hours], 0AS [Salary Double Time Hours]
+                                                ISNULL(VAC.[Vacation Hours], 0) AS [Vacation Hours], 0 AS [Vacation ($)], 0 AS [Bonus ($)], 0 AS [Stat. Hours], 0 AS [Advance pay ($)], 0 AS [Adv. Hours], '' AS [External ID], 
+                                                 CASE WHEN EMP.TYPE = 'S' THEN DATEDIFF(DAY, @StartDate, @EndDate) * 8 ELSE 0 END AS [Salary Regular Hours], 
+		                                         0 AS [Salary Overtime Hours], 0AS [Salary Double Time Hours]
                                         FROM EMPLOYEE EMP
                                         LEFT JOIN REG_HRS ON REG_HRS.EMPLOYEE_ID = EMP.USER_ID
                                         LEFT JOIN OVER_HRS ON OVER_HRS.EMPLOYEE_ID = EMP.USER_ID
