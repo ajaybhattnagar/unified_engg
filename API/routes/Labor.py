@@ -593,19 +593,23 @@ def labour_summary_report(connection_string, username):
         
         # Conver to dataframe
         df = pd.DataFrame(labour_summary_report)
-        df = df.replace(np.nan, 0, regex=True)
 
         columns = df.columns.tolist()
         columns.remove('Employee ID')
         columns.remove('First Name')
         columns.remove('Last Name')
+        columns.remove('External ID')
         # Convert all the columns to numeric
         df[columns] = df[columns].apply(pd.to_numeric)
         # Add total row
         df.loc['Summary'] = df[columns].sum()
         df.loc['Summary', 'Last Name'] = 'TOTAL'
-        # Replace Nan with ''
-        df = df.replace(np.nan, '', regex=True)
+        
+        # External ID colums as blank
+        df['External ID'] = ''
+
+        # Add first row as start and end date
+        df.loc['Summary', 'Employee ID'] = 'Start Date: ' + from_date + ' End Date: ' + to_date
 
         # Converting back to dictionary
         labour_summary_report = df.to_dict(orient='records')

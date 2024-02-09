@@ -134,6 +134,12 @@ const LabourSummary = () => {
             className: 'htCenter',
         },
         {
+            data: 'External ID',
+            type: 'text',
+            readOnly: true,
+            className: 'htCenter',
+        },
+        {
             data: 'Salary Regular Hours',
             type: 'text',
             readOnly: true,
@@ -210,7 +216,7 @@ const LabourSummary = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['Employee ID', 'First <br> Name', 'Last <br> Name', 'Regular <br> Hours', 'Overtime <br> (1.5)', 'Double <br> Time (2)',
-                                        'Vacation <br> Hours', 'Vacation ($)', 'Bonus ($)', 'Stat. Hours', 'Advance <br> pay ($)', 'Adv. <br> Hours',
+                                        'Vacation <br> Hours', 'Vacation ($)', 'Bonus ($)', 'Stat. Hours', 'Advance <br> pay ($)', 'Adv. <br> Hours', 'External ID',
                                         'Salary <br> Regular Hours', 'Salary <br> Overtime Hours', 'Salary <br> Double Time Hours']}
                                     height={window.innerHeight - 200}
                                     colWidths={[10, 10, 10, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]}
