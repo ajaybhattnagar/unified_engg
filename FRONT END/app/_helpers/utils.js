@@ -519,6 +519,7 @@ function disectScanInputString(string) {
     var sub_id = result[1]
     var operation_seq = result[2].replace('*', '')
     var arr = {
+      original_string: string,
       work_order: wo,
       sub_id: sub_id,
       operation_seq: operation_seq

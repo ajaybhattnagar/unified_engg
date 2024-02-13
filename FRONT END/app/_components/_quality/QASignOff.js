@@ -164,7 +164,7 @@ const QASignOff = (props) => {
                                         {
                                             acceptRejectSelection !== null ?
                                                 <div>
-                                                    <Scan disabled={false} value={scannedData} focus={scanInput === 'QUALITY' ? true : false} onChange={(e) => setScannedData(e)} />
+                                                    <Scan type="normal" disabled={false} value={scannedData} focus={scanInput === 'QUALITY' ? true : false} onChange={(e) => setScannedData(e)} />
                                                     <div className='mt-2'><Input type={'text'} value={notes} placeholder="Notes" text='Notes' onChange={(e) => setNotes(e)} /></div>
                                                     <div className='d-flex justify-content-end'><button className='btn btn-primary mt-2' onClick={() => update_qa_sign_off()}>Update</button></div>
                                                     {render_file_camera_start()}
