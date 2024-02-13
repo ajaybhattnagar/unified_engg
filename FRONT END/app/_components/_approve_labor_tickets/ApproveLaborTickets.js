@@ -9,6 +9,8 @@ import './ApproveLaborTickets.css';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileExport, faPrint, faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -132,7 +134,7 @@ const ApproveLaborTickets = () => {
             data: 'CUSTOMER_ID',
             type: 'text',
             readOnly: true
-        },  
+        },
         {
             data: 'WORK_LOCATION',
             type: 'dropdown',
@@ -147,7 +149,13 @@ const ApproveLaborTickets = () => {
     ]
 
     const update_labor_tickets = (data) => {
-        utils.updateLaborTickets(data)
+        // Remove records that are approved
+        var filterd_data = data.filter((item) => {
+            return item.APPROVED !== true;
+        });
+
+
+        utils.updateLaborTickets(filterd_data)
             .then((response) => {
                 alert(response.message);
                 setSelectedToDate((prev) => utils.convertTimeStampToDateForInputBox(prev));
@@ -163,9 +171,20 @@ const ApproveLaborTickets = () => {
             <div>
                 <NavigationBar />
                 <div className="container-fluid mt-3">
-                    <div className="d-flex justify-content-left mb-3">
-                        <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
-                        <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
+                    <div className="d-flex justify-content-between mb-3">
+                        <div className="d-flex">
+                            <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
+                            <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
+                        </div>
+                        {
+                            data && data.length > 0 ?
+                                <div className="w-20 ml-3">
+                                    <Button data-toggle="tooltip" title="Download" className='mr-2' onClick={() => utils.exportExcel(data, "approve_labour_page")}>
+                                        <FontAwesomeIcon className="" icon={faDownload} /></Button>
+                                </div>
+                                : null
+                        }
+
                     </div>
                     <div className="mx-auto">
                         {
@@ -175,9 +194,9 @@ const ApproveLaborTickets = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Approved', 'Employee', 'Hours worked', 'Work Time',
-                                                    'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
-                                                    'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
-                                
+                                        'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
+                                        'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
+
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     height={window.innerHeight - 200}
                                     hasApproval={true}

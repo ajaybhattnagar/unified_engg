@@ -18,6 +18,7 @@ import { render } from "react-dom";
 import FabSignOff from "../_quality/FabSignOff.js";
 import TableList from "../_ui/tableList.js";
 
+
 const isBrowser = typeof window !== `undefined`
 
 const RecordsLabor = () => {
@@ -75,6 +76,7 @@ const RecordsLabor = () => {
 
     // Eg: *%22-CFS-J15$0$10%*
     // Eg: *WO022721$1$20*
+    // Eg: %22-CFS-J15$0$10%
 
     // Getting all initial details, active labor ticket, recent labor tickets, employee kpi, clock in details
     useEffect(() => {
@@ -174,9 +176,10 @@ const RecordsLabor = () => {
     // Set scanned data useEffect
     useEffect(() => {
         if (scannedData && scannedData !== null) {
-            setSelectedWorkOrder(scannedData.work_order)
-            setSelectedSub(scannedData.sub_id)
-            setSelectedOperation(scannedData.operation_seq)
+            var disectedData = utils.disectScanInputString(scannedData);
+            setSelectedWorkOrder(disectedData.work_order)
+            setSelectedSub(disectedData.sub_id)
+            setSelectedOperation(disectedData.operation_seq)
         }
     }, [scannedData]);
 
@@ -377,7 +380,7 @@ const RecordsLabor = () => {
                 <div className="mt-3" />
 
                 <div className="">
-                    <div className="mb-3"><Scan disabled={false} onChange={(e) => setScannedData(e)} focus={true} /></div>
+                    <div className="mb-3"><Scan disabled={false} onChange={(e) => setScannedData(e)} focus={true} value={scannedData} /></div>
                     <div className=''>
                         <DropDown list={workorderList} text='Work Order'
                             isMulti={false} prepareArray={false} placeholder={selectedWorkOrder === null ? "Select Work Order" : selectedWorkOrder}
