@@ -24,6 +24,12 @@ const Home = () => {
 
     useEffect(() => {
         setIsLoading(true);
+
+        if (!localStorage.getItem("token")) {
+            navigate("/");
+            // Break code here
+            return;
+        }
         if (localStorage.getItem("token")) {
             var response_status = 0;
             var url = appConstants.BASE_URL.concat(appConstants.DASHBOARD);
@@ -129,6 +135,11 @@ const Home = () => {
     }
 
     useEffect(() => {
+        if (!localStorage.getItem("token")) {
+            navigate("/");
+            // Break code here
+            return;
+        }
         get_documents_notification_kpi();
     }, [selectedFromDate, selectedToDate])
 

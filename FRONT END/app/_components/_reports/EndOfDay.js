@@ -27,11 +27,13 @@ const EOD = () => {
 
 
     useEffect(() => {
-        var access_rights = utils.decodeJwt();
-        access_rights = access_rights.USER_DETAILS
+        if (localStorage.getItem("token")) {
+            var access_rights = utils.decodeJwt();
+            access_rights = access_rights.USER_DETAILS
 
-        if (access_rights.ALLOWED_EDIT_LABOR_TICKET === '1') {
-            isAllowedEditLaborTicket.current = true;
+            if (access_rights.ALLOWED_EDIT_LABOR_TICKET === '1') {
+                isAllowedEditLaborTicket.current = true;
+            }
         }
 
 
@@ -41,6 +43,7 @@ const EOD = () => {
         setIsLoading(true);
         if (!localStorage.getItem("token")) {
             navigate("/");
+            return;
         }
         setIsLoading(true);
         utils.getLaborTickets(selectedFromDate, selectedToDate, localStorage.getItem("EMPLOYEE_ID"), 'ALL')
@@ -175,7 +178,7 @@ const EOD = () => {
             <div>
                 <NavigationBar />
                 <div className="m-3">
-                    <div className="d-flex justify-content-between mb-3">
+                    <div className="d-flex justify-content-left mb-3">
                         <div className="d-flex">
                             <div className="d-flex">
                                 <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>

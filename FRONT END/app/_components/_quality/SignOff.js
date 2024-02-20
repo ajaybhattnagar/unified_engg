@@ -22,7 +22,14 @@ const SignOff = () => {
 
     // Eg: *%22-HBS-J37$0$30%*
     // *%S12737$1$30%*
-    
+    useEffect(() => {
+        if (!localStorage.getItem("token")) {
+            navigate("/");
+            // Break code here
+            return;
+        }
+    }, []);
+
     const render = () => {
         return (
             <div>
@@ -33,16 +40,16 @@ const SignOff = () => {
                             <div>
 
                                 <div className="d-flex justify-content-center row">
-                                    <div className="col-12 col-md-8" onClick={() => {setScanInput('FABRICATED'); localStorage.setItem('SIGN_OFF_SCAN_LAST_SELECTED', 'FABRICATED')}}>
+                                    <div className="col-12 col-md-8" onClick={() => { setScanInput('FABRICATED'); localStorage.setItem('SIGN_OFF_SCAN_LAST_SELECTED', 'FABRICATED') }}>
                                         <Card bg={scanInput === 'FABRICATED' ? 'success' : 'primary'} text='white'>
                                             <Card.Header><h5>Fabrication Sign Off</h5></Card.Header>
                                             <Card.Body>
-                                                <FabSignOff fieldDisabled={false}/>
+                                                <FabSignOff fieldDisabled={false} />
                                             </Card.Body>
                                         </Card>
                                     </div>
 
-                                    <div className="col-12 col-md-8 mt-3" onClick={() => {setScanInput('QUALITY'); localStorage.setItem('SIGN_OFF_SCAN_LAST_SELECTED', 'QUALITY')}}>
+                                    <div className="col-12 col-md-8 mt-3" onClick={() => { setScanInput('QUALITY'); localStorage.setItem('SIGN_OFF_SCAN_LAST_SELECTED', 'QUALITY') }}>
                                         <Card bg={scanInput === 'QUALITY' ? 'success' : 'primary'} text='white'>
                                             <Card.Header><h5>Quality Sign Off</h5></Card.Header>
                                             <Card.Body>

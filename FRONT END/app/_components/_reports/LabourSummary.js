@@ -27,14 +27,17 @@ const LabourSummary = () => {
 
 
     useEffect(() => {
-        var access_rights = utils.decodeJwt();
-        access_rights = access_rights.USER_DETAILS
+        if (localStorage.getItem("token")) {
+            var access_rights = utils.decodeJwt();
+            access_rights = access_rights.USER_DETAILS
 
-        if (access_rights.ALLOWED_EDIT_LABOR_TICKET === '1') {
-            isAllowedEditLaborTicket.current = true;
+            if (access_rights.ALLOWED_EDIT_LABOR_TICKET === '1') {
+                isAllowedEditLaborTicket.current = true;
+            }
         }
-
-
+        else {
+            navigate("/");
+        }
     }, []);
 
     const get_labour_summary_report = () => {

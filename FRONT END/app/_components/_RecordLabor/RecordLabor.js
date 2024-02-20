@@ -83,6 +83,8 @@ const RecordsLabor = () => {
         setIsLoading(true);
         if (!localStorage.getItem("token")) {
             navigate("/");
+            // Break code here
+            return;
         }
         var response_status = 0;
         var url = appConstants.BASE_URL.concat(appConstants.GET_EMPLOYEE_SCAN_DETAILS);
@@ -208,6 +210,11 @@ const RecordsLabor = () => {
     }, [selectedRecentWorkOrder]);
 
     useEffect(() => {
+        if (!localStorage.getItem("token")) {
+            navigate("/");
+            // Break code here
+            return;
+        }
         if (selectedWorkOrder !== '' && selectedLot !== '' && selectedSplit !== '' && selectedSub !== '') {
             setOperationIsLoading(true);
             var response_status = 0;

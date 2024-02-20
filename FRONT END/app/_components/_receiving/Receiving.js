@@ -33,6 +33,8 @@ const Receiving = () => {
         setIsLoading(true);
         if (!localStorage.getItem("token")) {
             navigate("/");
+            // Break code here
+            return; 
         }
         if (!localStorage.getItem("SITE")) {
             navigate("/preferences");

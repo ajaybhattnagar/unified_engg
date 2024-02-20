@@ -26,6 +26,8 @@ const Users = () => {
         setIsLoading(true);
         if (!localStorage.getItem("token")) {
             navigate("/");
+            // Break code here
+            return; 
         }
         setIsLoading(true);
         var response_status = 0;

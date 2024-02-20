@@ -25,6 +25,7 @@ const CreateLaborTicket = () => {
         setIsLoading(true);
         if (!localStorage.getItem("token")) {
             navigate("/");
+            return;
         }
         setIsLoading(true);
         var url = appConstants.BASE_URL.concat(appConstants.GET_LABOR_TICKETS);
