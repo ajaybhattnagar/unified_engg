@@ -27,7 +27,7 @@ const Users = () => {
         if (!localStorage.getItem("token")) {
             navigate("/");
             // Break code here
-            return; 
+            return;
         }
         setIsLoading(true);
         var response_status = 0;
@@ -184,29 +184,31 @@ const Users = () => {
             <div>
                 <NavigationBar />
                 <div className="m-3">
-                    <div className="mx-auto">
-                        {
-                            isLoading ? <Loading />
-                                :
-                                <MTable
-                                    data={data}
-                                    columnsTypes={columns}
-                                    columnsHeaders={['ROWID', 'ID', 'First Name', 'Last Name', 'Admin', 'Super Admin', 'Allowed Working Location', 'Allowed Working Time',
-                                        'Allowed Approve Page', 'Allowed Edit Labor Tickets', 'Allowed Set QA Notification', 'Allowed Receipt Entry', 'Allowed Duplicate Record']}
-                                    onChange={(e) => { update_users(e) }}
-                                />
-                        }
-                    </div>
+                    <div className="mt-3" > </div>
+
+                <div className="w-75">
+                    {
+                        isLoading ? <Loading />
+                            :
+                            <MTable
+                                data={data}
+                                columnsTypes={columns}
+                                columnsHeaders={['ROWID', 'ID', 'First <br> Name', 'Last <br> Name', 'Admin', 'Super <br> Admin', 'Allowed <br> Working Location', 'Allowed <br> Working Time',
+                                    'Allowed <br> Approve Page', 'Allowed Edit <br> Labor Tickets', 'Allowed Set <br> QA Notification', 'Allowed <br> Receipt Entry', 'Allowed <br> Duplicate Record']}
+                                onChange={(e) => { update_users(e) }}
+                            />
+                    }
                 </div>
-
-
             </div>
+
+
+            </div >
         );
     }
 
-    return (
-        render()
-    );
+return (
+    render()
+);
 };
 
 export default Users;
