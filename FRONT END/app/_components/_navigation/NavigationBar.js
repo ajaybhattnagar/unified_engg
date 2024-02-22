@@ -69,27 +69,24 @@ class NavigationBar extends Component {
 
                         <Nav className="mr-auto">
 
-                            <Nav.Link className='hover-underline-animation' as={Link} to="/home"><strong>Home</strong></Nav.Link>
                             <Nav.Link className='hover-underline-animation' as={Link} to="/recordLabor"><strong>Labour</strong></Nav.Link>
+
+                            <Nav.Link disabled={reciept_entry} className='hover-underline-animation' as={Link} to="/receiving"><strong>Receiving</strong></Nav.Link>
+
+                            <Nav.Link className='hover-underline-animation' as={Link} to="/reports/eod"><strong>End Of Day</strong></Nav.Link>
+
                             <Nav.Link disabled={approve_labor_tickets} className='hover-underline-animation' as={Link} to="/approve_labor_tickets"><strong>Approve</strong></Nav.Link>
 
-                            <NavDropdown title="Quality" id="basic-nav-dropdown">
+                            <NavDropdown title="Projects" id="basic-nav-dropdown">
+                                <NavDropdown.Item href="/reports/work_orders">Work Orders</NavDropdown.Item>
                                 <NavDropdown.Item disabled={qa_notification} href="/quality/sign_off">Traveller Sign Off</NavDropdown.Item>
                             </NavDropdown>
 
-                            <NavDropdown title="Purchasing" id="basic-nav-dropdown">
-                                <NavDropdown.Item disabled={reciept_entry} href="/receiving">Receipt Entry</NavDropdown.Item>
-                            </NavDropdown>
-
-                            <NavDropdown title="Reports" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="/reports/work_orders">Work Orders</NavDropdown.Item>
-                                <NavDropdown.Item href="/reports/eod">End Of Day</NavDropdown.Item>
-                                <NavDropdown.Item href="/reports/labor_summary">Labour Summary</NavDropdown.Item>
-                            </NavDropdown>
-
                             <NavDropdown disabled={super_admin} title="Admin" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/home">Recent Activity</NavDropdown.Item>
                                 <NavDropdown.Item href="/create_labor_ticket">Create Ticket Visual</NavDropdown.Item>
-                                <NavDropdown.Item href="/users">Users</NavDropdown.Item>
+                                <NavDropdown.Item href="/reports/labor_summary">Labour Summary</NavDropdown.Item>
+                                <NavDropdown.Item href="/users">User Permissions</NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
 

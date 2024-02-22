@@ -13,7 +13,7 @@ const Login = () => {
     useEffect(() => {
         const checkUser = () => {
             if (localStorage.getItem("token")) {
-                navigate("/home");
+                navigate("/recordLabor");
             }
         };
         checkUser();
@@ -59,7 +59,7 @@ const Login = () => {
                     const decoded = jwt_decode(token);
                     localStorage.setItem("EMPLOYEE_ID", decoded.USERNAME);
                     localStorage.setItem("DATABASE", decoded.DATABASE);
-                    navigate("/home");
+                    navigate("/recordLabor");
                 } else {
                     alert(data.message);
                 }
