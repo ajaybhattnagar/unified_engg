@@ -71,7 +71,7 @@ const LabourSummary = () => {
             className: 'htCenter',
         },
         {
-            data: ' First Name',
+            data: 'First Name',
             type: 'text',
             readOnly: true,
             className: 'htCenter',
