@@ -70,6 +70,7 @@ const IndirectLaborTicket = (props) => {
                 "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
                 "INDIRECT_CODE": selectedCode.value,
                 "INDIRECT_ID": selectedCode.label,
+                "WORK_TIME": "Regular Time"
 
             })
         }

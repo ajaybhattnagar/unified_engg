@@ -731,7 +731,8 @@ const RecordsLabor = () => {
                                                         // Clock out
                                                         utils.clock_in_out_users("clock_out")
                                                             .then((response) => {
-                                                                window.location.reload();
+                                                                // Navigate to reports
+                                                                navigate("/reports/eod", { replace: true })
                                                             })
 
                                                     }}>Clock out</a>

@@ -4,7 +4,7 @@ details_query = {
 "GET_WAREHOUSES": """SELECT ID AS [value], DESCRIPTION AS [label] FROM WAREHOUSE""",
 
 "GET_INDIRECT_CODES": """SELECT ROWID, ID AS [value], ID AS [label] FROM INDIRECT
-                            WHERE ID NOT IN ('ESTIMATING', 'SICK PAID', 'SICK UNPAID', 'STAT HOLIDAYS' , 'WSIB')
+                            WHERE ID NOT IN ('ESTIMATING', 'SICK PAID', 'SICK UNPAID', 'WSIB')
                             ORDER BY ROWID""",
 
 "GET_LABOR_TICKETS": """SELECT 

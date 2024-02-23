@@ -149,12 +149,11 @@ const ApproveLaborTickets = () => {
         }
     ]
 
-    const update_labor_tickets = (data) => {
+    const update_labor_tickets = (filterd_data) => {
         // Remove records that are approved
-        var filterd_data = data.filter((item) => {
+        var filterd_data = updated_date.filter((item) => {
             return item.APPROVED !== true;
         });
-
 
         utils.updateLaborTickets(filterd_data)
             .then((response) => {
@@ -199,6 +198,7 @@ const ApproveLaborTickets = () => {
                                         'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
 
                                     onChange={(e) => { update_labor_tickets(e) }}
+                                    onInstantDataChange={(e) => { null}}
                                     height={window.innerHeight - 200}
                                     hasApproval={true}
                                 />

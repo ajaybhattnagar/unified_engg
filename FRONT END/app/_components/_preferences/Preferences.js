@@ -8,6 +8,7 @@ import './Preferences.css';
 import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
+import BarcodeFont from '../../_images/code39.ttf';
 
 const isBrowser = typeof window !== `undefined`
 
@@ -80,34 +81,73 @@ const Preferences = () => {
 
                 {
                     data.SITES && data.SITES.length > 0 ?
-                        <div className="container m-3">
-                            <div className="m-3">
-                                <div className="w-50">
-                                    <div className="w-75">
-                                        <DropDown text="Select Site" list={data.SITES}
-                                            value={selectedSite}
-                                            onSelect={(e) => { setSelectedSite(e); localStorage.setItem("SITE", e.value) }} />
+                        <div>
+
+                            {/* Preferences */}
+                            <div className="container m-3">
+                                <h3>Preferences</h3>
+                                <div className="m-3">
+                                    <div className="w-50">
+                                        <div className="w-75">
+                                            <DropDown text="Select Site" list={data.SITES}
+                                                value={selectedSite}
+                                                onSelect={(e) => { setSelectedSite(e); localStorage.setItem("SITE", e.value) }} />
+                                        </div>
+                                    </div>
+                                    <div className="w-50 mt-3">
+                                        <div className="w-75">
+                                            <DropDown text="Select Warehouse" list={data.WAREHOUSES}
+                                                value={selectedWarehouse}
+                                                onSelect={(e) => { setSelectedWarehouse(e); localStorage.setItem("WAREHOUSE", e.value) }} />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="w-50 mt-3">
-                                    <div className="w-75">
-                                        <DropDown text="Select Warehouse" list={data.WAREHOUSES}
-                                            value={selectedWarehouse}
-                                            onSelect={(e) => { setSelectedWarehouse(e); localStorage.setItem("WAREHOUSE", e.value) }} />
+
+                                {/* Check box for scanning option */}
+                                <div className="m-3">
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked={isDefaultScan}
+                                            onChange={(e) => { setIsDefaultScan(e.target.checked); localStorage.setItem("DEFAULT_SCAN", e.target.checked) }} />
+                                        <label className="form-check-label" for="flexCheckDefault">
+                                            Default mode to scan
+                                        </label>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Check box for scanning option */}
-                            <div className="m-3">
-                                <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked={isDefaultScan}
-                                        onChange={(e) => { setIsDefaultScan(e.target.checked); localStorage.setItem("DEFAULT_SCAN", e.target.checked) }} />
-                                    <label className="form-check-label" for="flexCheckDefault">
-                                        Default mode to scan
-                                    </label>
+                            {/* Resources */}
+                            <hr />
+
+                            <div className="container m-3">
+                                <h3>Resources</h3>
+                                <div className="">
+                                    <a href={BarcodeFont} download="font.ttf">
+                                        <button className="btn btn-outline-primary mt-1">
+                                            Download Barcode Fonts
+                                        </button>
+                                    </a>
+                                </div>
+
+                                <div className="">
+                                    <a href='www.googel.com' target="_blank">
+                                        <button className="btn btn-outline-primary mt-1">
+                                            API Status Check
+                                        </button>
+                                    </a>
+                                </div>
+
+                                <div className="">
+                                    <a href='www.googel.com' target="_blank">
+                                        <button className="btn btn-outline-primary mt-1">
+                                            SSRS Web Portal
+                                        </button>
+                                    </a>
                                 </div>
                             </div>
+
+
+
+
                         </div>
                         :
                         <Loading />
