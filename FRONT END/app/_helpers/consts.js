@@ -13,6 +13,10 @@ export const appConstants = {
     // VISUAL_API: 'http://localhost:44360/',
     VISUAL_API: 'https://uni-vm-visdev.unified.local:5005/',
 
+    // Resources URLS
+    SSRS_WEB_PORTAL: 'http://uni-vm-visdev.unified.local:5009/Reports/browse/',
+    API_STATUS_CHECK: 'http://uni-vm-visdev.unified.local:5002/',
+
     LOGIN: 'api/v1/login',
 
     SITE_WAREHOUSE: 'api/v1/details/site_warehouse',

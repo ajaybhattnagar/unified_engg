@@ -30,7 +30,8 @@ export const utils = {
   clock_in_out_users,
 
   calcHoursWorked,
-  disectScanInputString
+  disectScanInputString,
+
 }
 
 
@@ -530,3 +531,4 @@ function disectScanInputString(string) {
     console.log(error)
   }
 }
+

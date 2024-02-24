@@ -122,23 +122,23 @@ const Preferences = () => {
                                 <h3>Resources</h3>
                                 <div className="">
                                     <a href={BarcodeFont} download="font.ttf">
-                                        <button className="btn btn-outline-primary mt-1">
+                                        <button className="btn btn-primary mt-1">
                                             Download Barcode Fonts
                                         </button>
                                     </a>
                                 </div>
 
                                 <div className="">
-                                    <a href='www.googel.com' target="_blank">
-                                        <button className="btn btn-outline-primary mt-1">
+                                    <a href={appConstants.API_STATUS_CHECK} target="_blank">
+                                        <button className="btn btn-primary mt-1">
                                             API Status Check
                                         </button>
                                     </a>
                                 </div>
 
                                 <div className="">
-                                    <a href='www.googel.com' target="_blank">
-                                        <button className="btn btn-outline-primary mt-1">
+                                    <a href={appConstants.SSRS_WEB_PORTAL} target="_blank">
+                                        <button className="btn btn-primary mt-1">
                                             SSRS Web Portal
                                         </button>
                                     </a>

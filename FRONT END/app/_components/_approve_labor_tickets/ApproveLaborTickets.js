@@ -16,14 +16,10 @@ const isBrowser = typeof window !== `undefined`
 
 const ApproveLaborTickets = () => {
     const navigate = useNavigate();
-    const [data, setData] = useState([]);
-    const [createLabTicketData, setCreateLabTicketData] = useState([]);
+    const [laborTicketData, setLaborTicketData] = useState([]);
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 3 * 24 * 60 * 60 * 1000));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
-
-
-
 
     useEffect(() => {
         setIsLoading(true);
@@ -43,7 +39,7 @@ const ApproveLaborTickets = () => {
                         item
                     })
 
-                    setData(response);
+                    setLaborTicketData(response);
                 }
                 setIsLoading(false);
             })
@@ -149,13 +145,8 @@ const ApproveLaborTickets = () => {
         }
     ]
 
-    const update_labor_tickets = (filterd_data) => {
-        // Remove records that are approved
-        var filterd_data = updated_date.filter((item) => {
-            return item.APPROVED !== true;
-        });
-
-        utils.updateLaborTickets(filterd_data)
+    const update_labor_tickets = (edited_data) => {
+        utils.updateLaborTickets(edited_data)
             .then((response) => {
                 alert(response.message);
                 setSelectedToDate((prev) => utils.convertTimeStampToDateForInputBox(prev));
@@ -177,7 +168,7 @@ const ApproveLaborTickets = () => {
                             <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
                         </div>
                         {
-                            data && data.length > 0 ?
+                            laborTicketData && laborTicketData.length > 0 ?
                                 <div className="w-20 ml-3 mr-3">
                                     <Button data-toggle="tooltip" title="Download" className='mr-2' onClick={() => utils.exportExcel(data, "approve_labour_page")}>
                                         <FontAwesomeIcon className="" icon={faDownload} /></Button>
@@ -191,21 +182,21 @@ const ApproveLaborTickets = () => {
                             isLoading ? <Loading />
                                 :
                                 <MTable
-                                    data={data}
+                                    data={laborTicketData}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Approved', 'Employee', 'Hours worked', 'Work Time',
                                         'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
                                         'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
 
                                     onChange={(e) => { update_labor_tickets(e) }}
-                                    onInstantDataChange={(e) => { null}}
+                                    onInstantDataChange={(e) => { null }}
                                     height={window.innerHeight - 200}
                                     hasApproval={true}
                                 />
                         }
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 
