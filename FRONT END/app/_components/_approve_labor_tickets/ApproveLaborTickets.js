@@ -22,31 +22,7 @@ const ApproveLaborTickets = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setIsLoading(true);
-        if (!localStorage.getItem("token")) {
-            navigate("/");
-            return;
-        }
-        setIsLoading(true);
-        utils.getLaborTickets(selectedFromDate, selectedToDate, 'ALL', 'ALL')
-            .then((response) => {
-                if (response.length > 0) {
-                    response.forEach((item) => {
-                        item.APPROVED = item.APPROVED === 'true' ? true : false;
-                        item.REGULAR_TIME = item.REGULAR_TIME === '1' ? true : false;
-                        item.OVER_TIME = item.OVER_TIME === '1' ? true : false;
-                        item.DOUBLE_TIME = item.DOUBLE_TIME === '1' ? true : false;
-                        item
-                    })
-
-                    setLaborTicketData(response);
-                }
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.log(error);
-                setIsLoading(false);
-            });
+        load_labor_tickets();
     }, [selectedFromDate, selectedToDate]);
 
     const safeHtmlRenderer = (instance, td, row, col, prop, value, cellProperties) => {
@@ -145,11 +121,39 @@ const ApproveLaborTickets = () => {
         }
     ]
 
+    const load_labor_tickets = () => {
+        setIsLoading(true);
+        if (!localStorage.getItem("token")) {
+            navigate("/");
+            return;
+        }
+        setIsLoading(true);
+        utils.getLaborTickets(selectedFromDate, selectedToDate, 'ALL', 'ALL')
+            .then((response) => {
+                if (response.length > 0) {
+                    response.forEach((item) => {
+                        item.APPROVED = item.APPROVED === 'true' ? true : false;
+                        item.REGULAR_TIME = item.REGULAR_TIME === '1' ? true : false;
+                        item.OVER_TIME = item.OVER_TIME === '1' ? true : false;
+                        item.DOUBLE_TIME = item.DOUBLE_TIME === '1' ? true : false;
+                        item
+                    })
+
+                    setLaborTicketData(response);
+                }
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+                setIsLoading(false);
+            });
+    }
+
     const update_labor_tickets = (edited_data) => {
         utils.updateLaborTickets(edited_data)
             .then((response) => {
                 alert(response.message);
-                setSelectedToDate((prev) => utils.convertTimeStampToDateForInputBox(prev));
+                load_labor_tickets();
             })
             .catch((error) => {
                 alert(error);

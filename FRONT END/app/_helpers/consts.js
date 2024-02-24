@@ -1,12 +1,12 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
 
-    DEPLOYEMENT_URL: 'http://localhost:8080/',
-    // DEPLOYEMENT_URL: 'https://uni-vm-visdev.unified.local/',
+    // DEPLOYEMENT_URL: 'http://localhost:8080/',
+    DEPLOYEMENT_URL: 'https://uni-vm-visdev.unified.local/',
     // DEPLOYEMENT_URL: 'http://uni-vm-visdev.unified.local:5003/',
 
-    BASE_URL: 'http://localhost:5000/',
-    // BASE_URL: 'https://uni-vm-visdev.unified.local:5002/',
+    // BASE_URL: 'http://localhost:5000/',
+    BASE_URL: 'https://uni-vm-visdev.unified.local:5002/',
     // BASE_URL: 'http://uni-vm-visdev.unified.local:5001/',
     
 
@@ -15,7 +15,7 @@ export const appConstants = {
 
     // Resources URLS
     SSRS_WEB_PORTAL: 'http://uni-vm-visdev.unified.local:5009/Reports/browse/',
-    API_STATUS_CHECK: 'http://uni-vm-visdev.unified.local:5002/',
+    API_STATUS_CHECK: 'https://uni-vm-visdev.unified.local:5002/',
 
     LOGIN: 'api/v1/login',
 

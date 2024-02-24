@@ -83,16 +83,25 @@ class NavigationBar extends Component {
                             </NavDropdown>
 
                             <NavDropdown disabled={super_admin} title="Admin" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/home">Recent Activity</NavDropdown.Item>
+                                <NavDropdown.Item href="/home">Recent Activity</NavDropdown.Item>
                                 <NavDropdown.Item href="/create_labor_ticket">Create Ticket Visual</NavDropdown.Item>
                                 <NavDropdown.Item href="/reports/labor_summary">Labour Summary</NavDropdown.Item>
                                 <NavDropdown.Item href="/users">User Permissions</NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
 
+                        {
+                            localStorage.getItem('DATABASE') === "SANDBOX" ?
+                                <div className="ml-3">
+                                    <button className="btn btn-danger" disabled={true}>SANDBOX DATABASE</button>
+                                </div>
+                                : null
+                        }
+
                         <Nav>
                             <Nav.Link className='hover-underline-animation' as={Link} to="/preferences"><strong>Preferences</strong></Nav.Link>
                         </Nav>
+
                         {
                             localStorage.getItem('token') ?
                                 <form className="form-inline my-2 my-lg-0">
