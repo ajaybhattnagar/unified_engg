@@ -16,6 +16,7 @@ export const appConstants = {
     // Resources URLS
     SSRS_WEB_PORTAL: 'http://uni-vm-visdev.unified.local:5009/Reports/browse/',
     API_STATUS_CHECK: 'https://uni-vm-visdev.unified.local:5002/',
+    INFOR_API_STATUS_CHECK: 'https://uni-vm-visdev.unified.local:5005/',
 
     LOGIN: 'api/v1/login',
 

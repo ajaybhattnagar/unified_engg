@@ -155,6 +155,8 @@ const CreateLaborTicket = () => {
             else if (item.WORK_TIME.includes("Over")) {
                 item.MULTIPLIER = 1.5;
             }
+            // Add USER_ID as login user
+            item.USER_ID = localStorage.getItem('EMPLOYEE_ID');
         })
 
         var post_data = {

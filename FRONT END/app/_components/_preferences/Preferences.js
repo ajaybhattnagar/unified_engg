@@ -137,6 +137,14 @@ const Preferences = () => {
                                 </div>
 
                                 <div className="">
+                                    <a href={appConstants.INFOR_API_STATUS_CHECK} target="_blank">
+                                        <button className="btn btn-primary mt-1">
+                                            Infor API Status Check
+                                        </button>
+                                    </a>
+                                </div>
+
+                                <div className="">
                                     <a href={appConstants.SSRS_WEB_PORTAL} target="_blank">
                                         <button className="btn btn-primary mt-1">
                                             SSRS Web Portal

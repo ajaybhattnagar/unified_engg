@@ -55,7 +55,6 @@ const MTable = (props) => {
         }
     }
 
-
     return (
         <div className=''>
             {

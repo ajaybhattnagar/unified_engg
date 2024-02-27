@@ -10,7 +10,7 @@ import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport, faPrint, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faFileExport, faFilter, faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -20,6 +20,7 @@ const ApproveLaborTickets = () => {
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 3 * 24 * 60 * 60 * 1000));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
+
 
     useEffect(() => {
         load_labor_tickets();
@@ -174,8 +175,8 @@ const ApproveLaborTickets = () => {
                         {
                             laborTicketData && laborTicketData.length > 0 ?
                                 <div className="w-20 ml-3 mr-3">
-                                    <Button data-toggle="tooltip" title="Download" className='mr-2' onClick={() => utils.exportExcel(data, "approve_labour_page")}>
-                                        <FontAwesomeIcon className="" icon={faDownload} /></Button>
+                                    <button data-toggle="tooltip" title="Download" className='ml-2 btn btn-primary' onClick={() => utils.exportExcel(data, "approve_labour_page")}>
+                                        <FontAwesomeIcon className="" icon={faDownload} /></button>
                                 </div>
                                 : null
                         }
