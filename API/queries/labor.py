@@ -123,6 +123,7 @@ labor_query = {
                                     LEFT JOIN DOUB_HRS ON DOUB_HRS.EMPLOYEE_ID = EMP.ID
                                     LEFT JOIN VAC ON VAC.EMPLOYEE_ID = EMP.USER_ID
                                     LEFT JOIN STAT_HOL ON STAT_HOL.EMPLOYEE_ID = EMP.ID
+                                    WHERE EMP.ACTIVE = 'Y' OR REG_HRS.[Regular Hours] > 0 OR OVER_HRS.[Overtime (1.5)] > 0 OR VAC.[Vacation Hours] > 0 OR STAT_HOL.[Stat. Hours] > 0
                                     ORDER BY EMP.ID""",
 
 "LABOUR_SUMMARY_SUDO_TABLE_FILTER": """DECLARE @StartDate DATE = '{FROM_DATE}';
@@ -145,7 +146,7 @@ labor_query = {
                                         LEFT JOIN DOUB_HRS ON DOUB_HRS.EMPLOYEE_ID = EMP.USER_ID
                                         LEFT JOIN VAC ON VAC.EMPLOYEE_ID = EMP.USER_ID
                                         LEFT JOIN STAT_HOL ON STAT_HOL.EMPLOYEE_ID = EMP.USER_ID
-                                        WHERE EMP.ACTIVE = 'Y'
+                                        WHERE EMP.ACTIVE = 'Y' OR REG_HRS.[Regular Hours] > 0 OR OVER_HRS.[Overtime (1.5)] > 0 OR VAC.[Vacation Hours] > 0 OR STAT_HOL.[Stat. Hours] > 0 
                                         ORDER BY EMP.ID"""
 
 }
