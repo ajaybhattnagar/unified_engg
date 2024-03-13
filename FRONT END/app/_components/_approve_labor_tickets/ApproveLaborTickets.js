@@ -175,7 +175,7 @@ const ApproveLaborTickets = () => {
                         {
                             laborTicketData && laborTicketData.length > 0 ?
                                 <div className="w-20 ml-3 mr-3">
-                                    <button data-toggle="tooltip" title="Download" className='ml-2 btn btn-primary' onClick={() => utils.exportExcel(data, "approve_labour_page")}>
+                                    <button data-toggle="tooltip" title="Download" className='ml-2 btn btn-primary' onClick={() => utils.exportExcel(laborTicketData, "approve_labour_page")}>
                                         <FontAwesomeIcon className="" icon={faDownload} /></button>
                                 </div>
                                 : null
