@@ -115,6 +115,15 @@ const Login = () => {
                     <button type="button" className="btn btn-outline-primary" onClick={() => postLoginDetails()}>Sign In</button>
                 </div>
             </form>
+
+            <div className="fixed-bottom d-flex justify-content-end m-3">
+                <a href={appConstants.API_STATUS_CHECK} target="_blank">
+                    <button className="btn btn-outline-primary mt-1">
+                        API Status Check
+                    </button>
+                </a>
+            </div>
+
         </div>
     );
 };

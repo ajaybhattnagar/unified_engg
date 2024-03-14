@@ -80,12 +80,13 @@ labor_query = {
                                     SET [DOCUMENT_PATH] = '{DOCUMENT_PATH}'
                                     WHERE TRANSACTION_ID = '{TRANSACTION_ID}'""",
 
-"GET_ALL_WORKORDER_LIST": """SELECT DISTINCT (ISNULL(CAST(BASE_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(CO.CUSTOMER_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(WO.USER_1 AS VARCHAR), '') ) AS 'label', 
-                            BASE_ID AS 'value'
-                            FROM WORK_ORDER WO
-                            LEFT JOIN DEMAND_SUPPLY_LINK DSL ON DSL.SUPPLY_BASE_ID = WO.BASE_ID AND DSL.SUPPLY_LOT_ID = WO.LOT_ID AND DSL.SUPPLY_SPLIT_ID = WO.SPLIT_ID AND DSL.SUPPLY_SUB_ID = WO.SUB_ID
-                            LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
-                            WHERE WO.TYPE = 'W' AND WO.STATUS IN ('R', 'F', 'U') AND WO.SUB_ID = 0
+"GET_ALL_WORKORDER_LIST": """SELECT DISTINCT (ISNULL(CAST(WO.BASE_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(CO.CUSTOMER_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(WO.USER_1 AS VARCHAR), '') ) AS 'label',
+                                WO.BASE_ID AS 'value'
+                                FROM WORK_ORDER WO
+                                LEFT JOIN DEMAND_SUPPLY_LINK DSL ON DSL.DEMAND_TYPE = 'CO' AND DSL.SUPPLY_TYPE = 'WO' AND DSL.SUPPLY_BASE_ID = WO.BASE_ID
+                                LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
+                                WHERE WO.TYPE = 'W' AND WO.STATUS IN ('R', 'F', 'U') AND WO.LOT_ID = '1' AND WO.SPLIT_ID = '0' AND WO.SUB_ID = '0'
+                                ORDER BY WO.BASE_ID DESC
 """,
 
 "INSERT_INTO_DOCUMENTS": """

@@ -51,7 +51,7 @@ const IndirectLaborTicket = (props) => {
     }, [])
 
     useEffect(() => {
-        if (selectedCode){
+        if (selectedCode) {
             create_indirect_labor_ticket();
         }
     }, [selectedCode])
@@ -70,8 +70,8 @@ const IndirectLaborTicket = (props) => {
                 "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
                 "INDIRECT_CODE": selectedCode.value,
                 "INDIRECT_ID": selectedCode.label,
-                "WORK_TIME": "Regular Time"
-
+                "WORK_LOCATION": 'On-site',
+                "WORK_TIME": "Regular Time",
             })
         }
         if (confirm('Are you sure you want to start this ticket?')) {

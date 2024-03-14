@@ -316,6 +316,10 @@ const Receiving = () => {
                     response_status = 200;
                     upload_image_document();
                     setSendEmailButtonClicked(false);
+
+                    //Alert here
+                    alert("Email Sent Successfully!");
+
                     window.location.reload();
                     return res.json();
                 }

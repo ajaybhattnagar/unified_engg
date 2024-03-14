@@ -128,13 +128,13 @@ const Preferences = () => {
                                     </a>
                                 </div>
 
-                                <div className="">
+                                {/* <div className="">
                                     <a href={appConstants.API_STATUS_CHECK} target="_blank">
                                         <button className="btn btn-primary mt-1">
                                             API Status Check
                                         </button>
                                     </a>
-                                </div>
+                                </div> */}
 
                                 <div className="">
                                     <a href={appConstants.INFOR_API_STATUS_CHECK} target="_blank">
