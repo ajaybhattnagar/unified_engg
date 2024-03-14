@@ -14,6 +14,7 @@ const Input = (props) => {
     const disabled = props.disabled || false
     const onUpdateButtonClick = props.onUpdateButtonClick || false
     const onUpdateButtonText = props.onUpdateButtonText || "Update"
+    const isUpdateButtonDisabled = props.isUpdateButtonDisabled || false;
 
     switch (type) {
         case "text":
@@ -58,7 +59,7 @@ const Input = (props) => {
                 }
                 {
                     onUpdateButtonClick ?
-                        <button className="ml-1 btn btn-outline-primary border" type="button" onClick={(e) => props.onUpdateButtonClick(value)}>
+                        <button className="ml-1 btn btn-outline-primary border" disabled={isUpdateButtonDisabled} type="button" onClick={(e) => props.onUpdateButtonClick(value)}>
                             <i className="fa fa-times">{onUpdateButtonText}</i>
                         </button>
                         : null

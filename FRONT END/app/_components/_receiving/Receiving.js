@@ -28,13 +28,14 @@ const Receiving = () => {
     const [selectedUploadType, setSelectedUploadType] = useState(0);
     const [clickedImage, setClickedImage] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [sendEmailButtonClicked, setSendEmailButtonClicked] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
         if (!localStorage.getItem("token")) {
             navigate("/");
             // Break code here
-            return; 
+            return;
         }
         if (!localStorage.getItem("SITE")) {
             navigate("/preferences");
@@ -295,6 +296,7 @@ const Receiving = () => {
     }
 
     const send_order_notification_email = () => {
+        setSendEmailButtonClicked(true);
         var url = appConstants.BASE_URL.concat(appConstants.NOTIFY_BUYER);
         var response_status = 0;
         fetch(url, {
@@ -313,14 +315,17 @@ const Receiving = () => {
                 if (res.status === 200) {
                     response_status = 200;
                     upload_image_document();
+                    setSendEmailButtonClicked(false);
+                    window.location.reload();
                     return res.json();
                 }
                 else {
+                    setSendEmailButtonClicked(false);
                     response_status = 400;
                     return res.json();
                 }
             })
-            .catch((err) => { console.error(err), setIsLoading(false); });
+            .catch((err) => { console.error(err), setSendEmailButtonClicked(false); });
     }
 
     const render = () => {
@@ -350,7 +355,9 @@ const Receiving = () => {
                                                 <Input type={'text'} text='Notify' disabled={true}
                                                     value={poDetails[0].BUYER_NAME + " - " + poDetails[0].EMAIL_ADDR}
                                                     onUpdateButtonClick={() => send_order_notification_email()}
-                                                    onUpdateButtonText='Send' />
+                                                    onUpdateButtonText='Send'
+                                                    isUpdateButtonDisabled={sendEmailButtonClicked}
+                                                />
                                                 {render_file_camera_start()}
                                             </div>
                                             :
