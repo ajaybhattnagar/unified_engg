@@ -67,6 +67,9 @@ const MTable = (props) => {
             alert('QA Notes should be less than 255 characters');
             return true;
         }
+        if (arr[1] === 'HOURS_WORKED') {
+            return false;
+        }
         if (arr[3].includes('"') || arr[3].includes("'") || arr[3].includes("1=1")) {
             alert('Quotes are not allowed');
             return true;

@@ -18,7 +18,7 @@ const ApproveLaborTickets = () => {
     const navigate = useNavigate();
     const [originalData, setOriginalData] = useState([]);
     const [laborTicketData, setLaborTicketData] = useState([]);
-    const [groupedData, setGroupedData] = useState([]);
+    const [summaryData, setSummaryData] = useState([]);
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 3 * 24 * 60 * 60 * 1000));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
@@ -28,6 +28,7 @@ const ApproveLaborTickets = () => {
 
     useEffect(() => {
         load_labor_tickets();
+        get_labor_summary();
     }, [selectedFromDate, selectedToDate]);
 
     useEffect(() => {
@@ -140,21 +141,23 @@ const ApproveLaborTickets = () => {
             format: '0.00',
         }
     ]
-    const grouped_data_columns = [
+    const summary_data_columns = [
         {
             data: 'EMPLOYEE_ID',
             type: 'text',
             readOnly: true,
         },
         {
-            data: 'APPROVED_HRS',
+            data: 'APPR',
             type: 'numeric',
             className: 'htCenter',
+            readOnly: true,
         },
         {
-            data: 'NON_APPROVED_HRS',
+            data: 'NOT_APPR',
             type: 'numeric',
             className: 'htCenter',
+            readOnly: true,
         }
     ]
 
@@ -203,9 +206,35 @@ const ApproveLaborTickets = () => {
             .then((response) => {
                 alert(response.message);
                 load_labor_tickets();
+                get_labor_summary();
             })
             .catch((error) => {
                 alert(error);
+                console.log(error);
+            });
+    }
+
+    const get_labor_summary = () => {
+        if (!localStorage.getItem("token")) {
+            navigate("/");
+        }
+        setIsLoading(true);
+        var url = appConstants.BASE_URL.concat(appConstants.LABOUR_SUMMARY_REPORT_BY_EMPLOYEE_APPROVE_PAGE);
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                FROM_DATE: selectedFromDate,
+                TO_DATE: selectedToDate
+            })
+        }).then(res => res.json())
+            .then((response) => {
+                setSummaryData(response);
+            })
+            .catch((error) => {
                 console.log(error);
             });
     }
@@ -237,36 +266,53 @@ const ApproveLaborTickets = () => {
 
                     </div>
 
-                    {/* <div className="mx-auto">
-                        {
-                            isLoading ? <Loading />
-                                :
-                                <MTable
-                                    data={groupedData}
-                                    columnsTypes={grouped_data_columns}
-                                    columnsHeaders={['Employee ID', 'Approved', 'Employee']}
-                                />
-                        }
-                    </div> */}
+                    <div>
 
-                    <div className="mx-auto">
+                        {/* Summary data table */}
+                        <span className="font-weight-bold">Summary</span>
                         {
-                            isLoading ? <Loading />
+                            summaryData && summaryData.length > 0 ?
+                                <div className="mx-auto mb-3">
+                                    {
+                                        isLoading ? <Loading />
+                                            :
+                                            <MTable
+                                                data={summaryData}
+                                                columnsTypes={summary_data_columns}
+                                                columnsHeaders={['Employee ID', 'Approved Hrs', 'Employee Hrs']}
+                                                height={50}
+                                            />
+                                    }
+                                </div>
                                 :
-                                <MTable
-                                    data={laborTicketData}
-                                    columnsTypes={labor_ticket_columns}
-                                    columnsHeaders={['ID', 'Approved', 'Employee', 'Hrs worked', 'Work Time',
-                                        'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
-                                        'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
-
-                                    onChange={(e) => { update_labor_tickets(e) }}
-                                    onInstantDataChange={(e) => { null }}
-                                    height={window.innerHeight - 200}
-                                    hasApproval={true}
-                                />
+                                null
                         }
+
+                        <hr />
+
+                        <span className="font-weight-bold">Details</span>
+                        <div className="mx-auto">
+                            {
+                                isLoading ? <Loading />
+                                    :
+                                    <MTable
+                                        data={laborTicketData}
+                                        columnsTypes={labor_ticket_columns}
+                                        columnsHeaders={['ID', 'Approved', 'Employee', 'Hrs worked', 'Work Time',
+                                            'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
+                                            'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
+
+                                        onChange={(e) => { update_labor_tickets(e) }}
+                                        onInstantDataChange={(e) => { null }}
+                                        height={window.innerHeight - 350}
+                                        hasApproval={true}
+                                    />
+                            }
+                        </div>
+
                     </div>
+
+
                 </div>
             </div >
         );

@@ -35,6 +35,7 @@ export const appConstants = {
     DUPLICATE_LABOR_TICKET: '/api/v1/labor/duplicate_labor_ticket/',
     DELETE_LABOR_TICKET: '/api/v1/labor/delete_labor_ticket/',
     LABOUR_SUMMARY_REPORT: 'api/v1/details/labour_summary_report?',    //Parameters: from_date, to_date, filter_type: VISUAL, APPROVED, NOT_APPROVED, ALL
+    LABOUR_SUMMARY_REPORT_BY_EMPLOYEE_APPROVE_PAGE: 'api/v1/labor/get_labor_tickets_summary_approved',    //Only for Approve page
 
     UPLOAD_DOCUMENTS_LABOR: 'api/v1/labor/upload_document',   //Upload document only for Labor Ticket
     UPLOAD_IMAGES_LABOR: 'api/v1/labor/upload_image',        //Upload image only for Labor Ticket

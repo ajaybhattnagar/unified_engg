@@ -60,7 +60,7 @@ const Input = (props) => {
                 {
                     charLimit > 0 ?
                         <div className="input-group-append">
-                            <span className="input-group-text" id="basic-addon1">{charLimit - inputValue.current.length}</span>
+                            <span className="input-group-text" id="basic-addon1">{charLimit - value.length}</span>
                         </div>
                         : null
                 }

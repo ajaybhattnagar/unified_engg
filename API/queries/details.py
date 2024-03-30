@@ -53,13 +53,14 @@ details_query = {
                                 ORDER BY TRANSACTION_DATE DESC """,
 
 "GET_LABOR_TICKET_SUMMARY_BY_APPROVED_NOT_APPROVED": """SELECT * FROM(
-                                                        SELECT 
-                                                            ULAB.EMPLOYEE_ID, 
-                                                            CASE WHEN ULAB.APPROVED = 0 THEN 'NOT_APPR' WHEN ULAB.APPROVED = 1 THEN 'APPR' ELSE 'NOT_APPROVED' END AS [APPROVED] ,
-                                                            SUM(ULAB.HOURS_WORKED) AS [HRS_WORKED]
-                                                        FROM UNI_LABOR_TICKET ULAB
-                                                        WHERE HOURS_WORKED IS NOT NULL AND CONVERT(DATE, TRANSACTION_DATE) BETWEEN '{FROM_DATE}' AND '{TO_DATE}' 
-                                                        GROUP BY EMPLOYEE_ID, APPROVED
+                                                        	SELECT 
+                                                                EMP.FIRST_NAME + ' ' + EMP.LAST_NAME AS [EMPLOYEE_ID], 
+                                                                CASE WHEN ULAB.APPROVED = 0 THEN 'NOT_APPR' WHEN ULAB.APPROVED = 1 THEN 'APPR' ELSE 'NOT_APPROVED' END AS [APPROVED] ,
+                                                                SUM(ULAB.HOURS_WORKED) AS [HRS_WORKED]
+                                                            FROM UNI_LABOR_TICKET ULAB
+                                                            LEFT JOIN EMPLOYEE EMP ON EMP.USER_ID = ULAB.EMPLOYEE_ID
+                                                            WHERE HOURS_WORKED IS NOT NULL AND CONVERT(DATE, TRANSACTION_DATE) BETWEEN '{FROM_DATE}' AND '{TO_DATE}'
+                                                            GROUP BY FIRST_NAME, LAST_NAME, APPROVED
                                                     ) SRC
                                                     PIVOT
                                                     ( SUM(HRS_WORKED) FOR APPROVED IN ([NOT_APPR], [APPR]) ) AS PIV; """,

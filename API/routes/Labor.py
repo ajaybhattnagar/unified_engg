@@ -150,17 +150,6 @@ def get_labor_tickets_summary_by_approved_not_approved(connection_string, userna
         sql = cnxn.cursor()
         sql.execute(query_string)
         results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
-
-        # Convert results to dataframe
-        df = pd.DataFrame(results)
-        df = df.replace(np.nan, '', regex=True)
-        
-        # Transpose the dataframe
-        df = df.T
-        
-       
-        print (df)
-
         sql.close()
 
         response = Response(
