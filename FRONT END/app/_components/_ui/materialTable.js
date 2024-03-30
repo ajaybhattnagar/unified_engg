@@ -56,6 +56,8 @@ const MTable = (props) => {
     }
 
     const validation_custom_columns = (arr) => {
+        var allowed_columns = ['ADMIN', 'SUPER_ADMIN'];
+
         if (arr[1] === 'APPROVED') {
             return false;
         }
@@ -67,7 +69,7 @@ const MTable = (props) => {
             alert('QA Notes should be less than 255 characters');
             return true;
         }
-        if (arr[1] === 'HOURS_WORKED') {
+        if (arr[1] === 'HOURS_WORKED' || allowed_columns.includes(arr[1]) || arr[1].includes('ALLOWED') )  {
             return false;
         }
         if (arr[3].includes('"') || arr[3].includes("'") || arr[3].includes("1=1")) {

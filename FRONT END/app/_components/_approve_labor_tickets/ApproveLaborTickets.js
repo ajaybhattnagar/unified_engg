@@ -279,8 +279,8 @@ const ApproveLaborTickets = () => {
                                             <MTable
                                                 data={summaryData}
                                                 columnsTypes={summary_data_columns}
-                                                columnsHeaders={['Employee ID', 'Approved Hrs', 'Employee Hrs']}
-                                                height={50}
+                                                columnsHeaders={['Employee ID', 'Approved Hrs', 'Not Approved Hrs']}
+                                                height={150}
                                             />
                                     }
                                 </div>
@@ -304,7 +304,7 @@ const ApproveLaborTickets = () => {
 
                                         onChange={(e) => { update_labor_tickets(e) }}
                                         onInstantDataChange={(e) => { null }}
-                                        height={window.innerHeight - 350}
+                                        height={window.innerHeight - 450}
                                         hasApproval={true}
                                     />
                             }
