@@ -49,6 +49,7 @@ def get_labor_tickets(connection_string, username):
     content = request.get_json(silent=True)
     try:
 
+        # If data for visual ticket is required
         if 'DATA_FOR_VISUAL_TICKET' in content:
             query_string = details_query['GET_DATA_FOR_CREATING_LABOR_TICKET_IN_VISUAL']
             cnxn = pyodbc.connect(connection_string)
@@ -63,7 +64,7 @@ def get_labor_tickets(connection_string, username):
             response.headers['content-type'] = 'application/json'
             return response, 200
 
-
+        # All other Tickets
         if 'FROM_DATE' not in content:
             return jsonify({"message": "From Date is required"}), 401
         else:
@@ -85,7 +86,7 @@ def get_labor_tickets(connection_string, username):
             else:
                 employee_id = content['EMPLOYEE_ID'],
                 employee_id =  ''.join(employee_id)
-                employee_id = "AND EMPLOYEE_ID = '{}'".format(employee_id)
+                employee_id = "AND ULAB.EMPLOYEE_ID = '{}'".format(employee_id)
 
         if 'APPROVED' not in content:
             approved = ''
@@ -126,7 +127,52 @@ def get_labor_tickets(connection_string, username):
     except Exception as e:
         return jsonify({"message": str(e)}), 401
     
+@labor_blueprint.route("/api/v1/labor/get_labor_tickets_summary_approved", methods=['POST'])
+@token_required
+def get_labor_tickets_summary_by_approved_not_approved(connection_string, username):
 
+    content = request.get_json(silent=True)
+    if 'FROM_DATE' not in content:
+        return jsonify({"message": "From Date is required"}), 401
+    else:
+        from_date = content['FROM_DATE'],
+        from_date = ''.join(from_date)
+        
+    if 'TO_DATE' not in content:
+        return jsonify({"message": "To DATE is required"}), 401
+    else:
+        to_date = content['TO_DATE'],
+        to_date = ''.join(to_date)
+
+    try:
+        query_string = details_query['GET_LABOR_TICKET_SUMMARY_BY_APPROVED_NOT_APPROVED'].format(FROM_DATE=from_date, TO_DATE = to_date)
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        # Convert results to dataframe
+        df = pd.DataFrame(results)
+        df = df.replace(np.nan, '', regex=True)
+        
+        # Transpose the dataframe
+        df = df.T
+        
+       
+        print (df)
+
+        sql.close()
+
+        response = Response(
+                    response=simplejson.dumps(results, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+        response.headers['content-type'] = 'application/json'
+        return response, 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+    
 
 @labor_blueprint.route("/api/v1/labor/create_labor_tickets", methods=['POST'])
 @token_required
@@ -566,6 +612,21 @@ def duplicate_labor_ticket_field(connection_string, username, trans_id):
     except Exception as e:
         return jsonify({"message": str(e)}), 401
 
+@labor_blueprint.route("/api/v1/labor/delete_labor_ticket/<trans_id>", methods=['POST'])
+@token_required
+def delete_labor_ticket_field(connection_string, username, trans_id):
+    content = request.get_json(silent=True)
+
+    try:
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(labor_query['DELETE_LABOUR_TICKET'].format(TRANSACTION_ID = trans_id))
+        cnxn.commit()
+        sql.close()
+        return jsonify({'message': 'Successfully deleted labour ticket!'}), 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
    
 @labor_blueprint.route("/api/v1/details/labour_summary_report", methods=['GET'])
 @token_required

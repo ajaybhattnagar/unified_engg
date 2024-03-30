@@ -16,22 +16,40 @@ const isBrowser = typeof window !== `undefined`
 
 const ApproveLaborTickets = () => {
     const navigate = useNavigate();
+    const [originalData, setOriginalData] = useState([]);
     const [laborTicketData, setLaborTicketData] = useState([]);
+    const [groupedData, setGroupedData] = useState([]);
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 3 * 24 * 60 * 60 * 1000));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
-   
+    const [selectedApproved, setSelectedApproved] = useState(false);
+
 
 
     useEffect(() => {
         load_labor_tickets();
     }, [selectedFromDate, selectedToDate]);
 
+    useEffect(() => {
+        if (selectedApproved) {
+            let newData = originalData.filter((item) => {
+                return item.APPROVED === true;
+            });
+            setLaborTicketData(newData);
+        }
+        else {
+            let newData = originalData.filter((item) => {
+                return item.APPROVED === false;
+            });
+            setLaborTicketData(newData);
+        }
+    }, [selectedApproved]);
+
     const safeHtmlRenderer = (instance, td, row, col, prop, value, cellProperties) => {
         td.innerHTML = utils.tranactionIdUrlLink(value)
     }
 
-    const columns = [
+    const labor_ticket_columns = [
         {
             data: 'TRANSACTION_ID',
             type: 'numeric',
@@ -122,6 +140,24 @@ const ApproveLaborTickets = () => {
             format: '0.00',
         }
     ]
+    const grouped_data_columns = [
+        {
+            data: 'EMPLOYEE_ID',
+            type: 'text',
+            readOnly: true,
+        },
+        {
+            data: 'APPROVED_HRS',
+            type: 'numeric',
+            className: 'htCenter',
+        },
+        {
+            data: 'NON_APPROVED_HRS',
+            type: 'numeric',
+            className: 'htCenter',
+        }
+    ]
+
 
     const load_labor_tickets = () => {
         setIsLoading(true);
@@ -141,7 +177,18 @@ const ApproveLaborTickets = () => {
                         item
                     })
 
-                    setLaborTicketData(response);
+                    // Filter to remove records where hours worked is 0
+                    response = response.filter((item) => {
+                        return item.HOURS_WORKED > 0;
+                    });
+
+                    // Filter to set only non-approved records
+                    var newData = response.filter((item) => {
+                        return item.APPROVED === false;
+                    });
+
+                    setOriginalData(response);
+                    setLaborTicketData(newData);
                 }
                 setIsLoading(false);
             })
@@ -173,6 +220,7 @@ const ApproveLaborTickets = () => {
                             <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
                             <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
                         </div>
+
                         {
                             laborTicketData && laborTicketData.length > 0 ?
                                 <div className="w-20 ml-3 mr-3">
@@ -182,15 +230,33 @@ const ApproveLaborTickets = () => {
                                 : null
                         }
 
+                        <div className="d-flex justify-content-center mb-2">
+                            <button className={selectedApproved ? 'ml-2 btn btn-primary' : 'ml-2 btn btn-outline-primary'} onClick={() => setSelectedApproved(true)}>Approved</button>
+                            <button className={!selectedApproved ? 'ml-2 btn btn-primary' : 'ml-2 btn btn-outline-primary'} onClick={() => setSelectedApproved(false)}>Not Approved</button>
+                        </div>
+
                     </div>
+
+                    {/* <div className="mx-auto">
+                        {
+                            isLoading ? <Loading />
+                                :
+                                <MTable
+                                    data={groupedData}
+                                    columnsTypes={grouped_data_columns}
+                                    columnsHeaders={['Employee ID', 'Approved', 'Employee']}
+                                />
+                        }
+                    </div> */}
+
                     <div className="mx-auto">
                         {
                             isLoading ? <Loading />
                                 :
                                 <MTable
                                     data={laborTicketData}
-                                    columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Approved', 'Employee', 'Hours worked', 'Work Time',
+                                    columnsTypes={labor_ticket_columns}
+                                    columnsHeaders={['ID', 'Approved', 'Employee', 'Hrs worked', 'Work Time',
                                         'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
                                         'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
 

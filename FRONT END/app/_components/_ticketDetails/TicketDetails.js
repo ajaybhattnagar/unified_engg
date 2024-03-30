@@ -96,6 +96,38 @@ const TicketDetails = () => {
         }
     }
 
+    const delete_labour_ticket = (id) => {
+        if (ticketDetails.APPROVED === 'true' || ticketDetails.APPROVED === true) {
+            alert('Approved transactions cannot be deleted');
+            return;
+        }
+        if (ticketDetails.VISUAL_LAB_TRANS_ID !== null) {
+            alert('Visual transactions cannot be deleted');
+            return;
+        }
+
+        if (confirm('Are you sure you want to delete this transaction?')) {
+            fetch(appConstants.BASE_URL.concat(appConstants.DELETE_LABOR_TICKET).concat(id), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': localStorage.getItem("token")
+                }
+            }).then(res => res.json())
+                .then((response) => {
+                    alert(response.message);
+                    window.location.reload();
+                    window.opener.location.reload(false);
+                    window.focus()
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+        else {
+            return;
+        }
+    }
 
     const render = () => {
 
@@ -125,8 +157,19 @@ const TicketDetails = () => {
                                                                 <td className="font-weight-bold">{key}</td>
                                                                 <td>{ticketDetails[key]}
                                                                     {access_rights.ALLOWED_DUPLICATE_RECORD === '1' && key === 'TRANSACTION_ID' ?
-                                                                        <span variant="primary" className="badge badge-success ml-3 cusor-hand" onClick={() => { duplicate_labor_ticket(ticketDetails[key]) }}>Duplicate</span>
+                                                                        <span variant="primary" className="badge badge-success ml-3 cusor-hand"
+                                                                            onClick={() => { duplicate_labor_ticket(ticketDetails[key]) }}>
+                                                                            Duplicate
+                                                                        </span>
                                                                         : null
+                                                                    }
+                                                                    {
+                                                                        key === 'TRANSACTION_ID' ?
+                                                                            <span variant="primary" className="badge badge-danger ml-3 cusor-hand"
+                                                                                onClick={() => { delete_labour_ticket(ticketDetails[key]) }}>
+                                                                                Delete
+                                                                            </span>
+                                                                            : null
                                                                     }
                                                                 </td>
                                                             </tr>

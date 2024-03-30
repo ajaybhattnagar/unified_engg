@@ -55,14 +55,26 @@ const MTable = (props) => {
         }
     }
 
+    const validation_custom_columns = (arr) => {
+        if (arr[1] === 'APPROVED') {
+            return false;
+        }
+        if (arr[1] === 'LAB_DESC' && arr[3].length > 80) {
+            alert('Notes should be less than 80 characters');
+            return true;
+        }
+        if (arr[1] === 'QA_NOTES' && arr[3].length > 255) {
+            alert('QA Notes should be less than 255 characters');
+            return true;
+        }
+        if (arr[3].includes('"') || arr[3].includes("'") || arr[3].includes("1=1")) {
+            alert('Quotes are not allowed');
+            return true;
+        }
+    }
+
     return (
         <div className=''>
-            {
-                props.hasApproval ? <div className="controls">
-                    <label><input type="checkbox" onClick={approve_all} /> Approve all</label>
-                </div> :
-                    null
-            }
             <HotTable
                 data={data}
                 rowHeaders={true}
@@ -71,7 +83,17 @@ const MTable = (props) => {
                 columnSorting={true}
                 dropdownMenu={['filter_by_condition', 'filter_by_value', 'filter_action_bar']}
                 columns={columnsTypes}
-                afterChange={(changes, source) => { if (source === 'edit') { setDataChanged(true); props.onInstantDataChange(data) } }}
+                afterChange={(changes, source) => {
+                    // Validation for notes and qa notes fields
+                    if (source === 'edit') {
+                        if (validation_custom_columns(changes[0])) {
+                            return;
+                        }
+                    }
+
+                    if (source === 'edit') { setDataChanged(true); props.onInstantDataChange(data) }
+                }
+                }
                 afterSelection={(r, c) => { on_cell_selected(data[r]) }}
                 autoWrapRow={true}
                 autoWrapCol={true}
@@ -81,9 +103,16 @@ const MTable = (props) => {
                 width="100%"
                 height={props.height || "auto"}
                 colWidths={props.colWidths || "auto"}
+                className="customFilterButton"
 
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
             />
+            {
+                props.hasApproval ? <div className="mb-3">
+                    <label><input type="checkbox" onClick={approve_all} /> Approve all</label>
+                </div> :
+                    null
+            }
             {
                 dataChanged ?
                     <div className='d-flex mx-auto justify-content-center update-button mr-3'>
@@ -91,6 +120,7 @@ const MTable = (props) => {
                     </div >
                     : null
             }
+
 
         </div >
     );

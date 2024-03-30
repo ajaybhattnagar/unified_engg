@@ -1,6 +1,9 @@
 purchasing_query = {
 
-"GET_PURCHASE_ORDER_R_F": """SELECT ID AS [value], ID AS [label] FROM PURCHASE_ORDER WHERE STATUS IN ('R', 'F')""",
+"GET_PURCHASE_ORDER_R_F": """SELECT PO.ID AS [value], PO.ID + ' - ' + EMP.FIRST_NAME + ' ' + EMP.LAST_NAME AS [label] 
+                                FROM PURCHASE_ORDER PO
+                                LEFT JOIN EMPLOYEE EMP ON EMP.USER_ID = PO.BUYER
+                                WHERE STATUS IN ('R', 'F')""",
 
 "GET_PURCHASE_ORDER_BY_ID": """SELECT PO.ID, POL.LINE_NO, PO.STATUS, PO.VENDOR_ID, PO.ORDER_DATE, PO.BUYER, PART.DESCRIPTION,
                                 POL.PART_ID, POL.MFG_PART_ID, POL.USER_ORDER_QTY, POL.TOTAL_USR_RECD_QTY, (POL.USER_ORDER_QTY - POL.TOTAL_USR_RECD_QTY) AS [BALANCE],

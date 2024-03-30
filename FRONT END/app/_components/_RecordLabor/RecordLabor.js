@@ -358,14 +358,21 @@ const RecordsLabor = () => {
 
     const recent_labor_tickets_render = () => {
         return (
-            <div className="d-flex flex-wrap">
-                {recentLaborTickets.map((ticket, index) => (
-                    <div className="m-2" key={index}>
-                        <p className="badge badge-light cusor-hand w-100 align-middle"
-                            style={{ fontSize: '1.25em', fontWeight: 'bold' }} onClick={(e) => setSelectedRecentWorkOrder(ticket)} >{ticket.WORKORDER_BASE_ID}</p>
-                        {/* add other ticket properties as needed */}
-                    </div>
-                ))}
+            <div>
+                <div className="badge badge-primary d-flex justify-content-center mt-3">
+                    Quick Select: Recent Work Orders
+                </div>
+                <div className="d-flex flex-wrap">
+                    {recentLaborTickets.map((ticket, index) => (
+                        <div className="m-1" key={index}>
+                            <p className="badge badge-light cusor-hand w-100 align-middle"
+                                style={{ fontSize: '0.9em', fontWeight: 'bold' }}
+                                onClick={(e) => setSelectedRecentWorkOrder(ticket)} >
+                                {ticket.WORKORDER_BASE_ID}<br /> {ticket.WO_DESC}
+                            </p>
+                        </div>
+                    ))}
+                </div>
             </div>
         )
     }
@@ -422,11 +429,11 @@ const RecordsLabor = () => {
                     </div>
 
                     <div className="d-flex justify-content-between mt-3">
-                        <div className="w-75"><Input type={'text'} placeholder="QA Notes" text='QA Notes' disabled={false} value={qaNotes} onChange={(e) => setQaNotes(e)} /></div>
+                        <div className="w-75"><Input type={'text'} placeholder="QA Notes" text='QA Notes' disabled={false} value={qaNotes} onChange={(e) => setQaNotes(e)} charLimit={244}/></div>
                     </div>
 
                     <div className="d-flex justify-content-between mt-3">
-                        <div className="w-75"><Input type={'text'} placeholder="Additional Notes" onChange={(e) => setDescription(e)} text='Notes' value={desciption} /></div>
+                        <div className="w-75"><Input type={'text'} placeholder="Additional Notes" onChange={(e) => setDescription(e)} text='Notes' value={desciption} charLimit={79} /></div>
                     </div>
 
                     <div className="w-100 d-flex justify-content-between">
@@ -556,12 +563,12 @@ const RecordsLabor = () => {
                         <div className="w-100 mt-3">
                             <Input type={'text'} placeholder="QA Notes" text='QA Notes'
                                 onChange={(e) => setQaNotes(e)}
-                                onUpdateButtonClick={(e) => update_labor_ticket_field("QA_NOTES", qaNotes)} value={qaNotes} />
+                                onUpdateButtonClick={(e) => update_labor_ticket_field("QA_NOTES", qaNotes)} value={qaNotes} charLimit={244}/>
                         </div>
                         <div className="w-100 mt-3">
-                            <Input type={'text'} placeholder="Description" text='Description'
+                            <Input type={'text'} placeholder="Notes" text='Notes'
                                 onChange={(e) => setDescription(e)}
-                                onUpdateButtonClick={(e) => update_labor_ticket_field("DESCRIPTION", desciption)} value={desciption} />
+                                onUpdateButtonClick={(e) => update_labor_ticket_field("DESCRIPTION", desciption)} value={desciption} charLimit={79} />
                         </div>
                         <div className="w-100 d-flex justify-content-end">
                             <button className="btn btn-outline-danger mt-3" onClick={(e) => stop_labor_tickets()}>Stop</button>
@@ -580,9 +587,9 @@ const RecordsLabor = () => {
             <div className="">
                 {
                     employeeKpi && employeeKpi.length > 0 ?
-                        <div className="d-flex flex-wrap justify-content-around">
-                            <KpiCard header={'Today'} value={employeeKpi[0].TOTAL_TODAY_HRS.toFixed(2) + ' Hours'} />
-                            <KpiCard header={'This Week'} value={employeeKpi[0].TOTAL_WEEK_HRS.toFixed(2) + ' Hours'} />
+                        <div className="d-flex mt-3 flex-wrap justify-content-center">
+                            <div className="mr-1"><KpiCard header={'Today'} value={employeeKpi[0].TOTAL_TODAY_HRS.toFixed(2) + ' Hours'} /></div>
+                            <div><KpiCard header={'This Week'} value={employeeKpi[0].TOTAL_WEEK_HRS.toFixed(2) + ' Hours'} /></div>
                         </div>
                         :
                         null
@@ -704,6 +711,10 @@ const RecordsLabor = () => {
                                     create_labor_tickets_render_stop()
                                     :
                                     <div>
+
+                                        {/* KPI Rendering here */}
+                                        {render_kpi()}
+
                                         <div className="d-flex justify-content-around mt-2">
                                             <ul className="nav nav-pills">
                                                 {/* Button to Labor run */}
@@ -747,7 +758,6 @@ const RecordsLabor = () => {
                                                         <div className="container">
                                                             {create_labor_tickets_render_start()}
                                                             {recent_labor_tickets_render()}
-                                                            {render_kpi()}
                                                             {render_file_camera_start()}
                                                         </div>
                                                     }

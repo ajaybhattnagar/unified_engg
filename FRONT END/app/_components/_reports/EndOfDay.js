@@ -208,7 +208,7 @@ const EOD = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'Operation',
-                                        'In', 'Out', 'Work Time', 'Hours worked', 'Indirect', 'Notes', 'QA Notes', 'Approved']}
+                                        'In', 'Out', 'Work Time', 'Hrs worked', 'Indirect', 'Notes', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
                                     height={window.innerHeight - 200}

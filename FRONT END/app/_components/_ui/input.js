@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useState, useEffect } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { utils } from '../../_helpers/utils';
@@ -15,6 +15,8 @@ const Input = (props) => {
     const onUpdateButtonClick = props.onUpdateButtonClick || false
     const onUpdateButtonText = props.onUpdateButtonText || "Update"
     const isUpdateButtonDisabled = props.isUpdateButtonDisabled || false;
+    const charLimit = props.charLimit || 0
+    const inputValue = useRef('')
 
     switch (type) {
         case "text":
@@ -33,6 +35,11 @@ const Input = (props) => {
     const onChangeInputValue = (e) => {
         var sanitizedValue = e.replace(/'/g, '');
         sanitizedValue = sanitizedValue.replace(/"/g, '');
+        // Trim the value if charLimit is set
+        if (charLimit > 0) {
+            sanitizedValue = sanitizedValue.substring(0, charLimit);
+        }
+        inputValue.current = sanitizedValue
         return props.onChange(sanitizedValue)
     }
 
@@ -50,6 +57,14 @@ const Input = (props) => {
                     disabled={disabled}
                 // pattern={type == 'number' ? "\d*" : '[A-Za-z]{3}'}
                 />
+                {
+                    charLimit > 0 ?
+                        <div className="input-group-append">
+                            <span className="input-group-text" id="basic-addon1">{charLimit - inputValue.current.length}</span>
+                        </div>
+                        : null
+                }
+
                 {
                     clearbutton ?
                         <button className="ml-1 btn btn-outline-secondary border" type="button" onClick={() => props.onClear()}>
