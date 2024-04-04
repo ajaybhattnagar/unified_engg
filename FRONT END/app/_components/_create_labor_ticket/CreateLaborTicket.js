@@ -100,17 +100,17 @@ const CreateLaborTicket = () => {
             readOnly: true
         },
         {
-            data: 'INDIRECT_CODE',
+            data: 'INDIRECT_ID',
             type: 'text',
             readOnly: true
         },
         {
-            data: 'CLOCK_IN',
+            data: 'DISP_CLOCKIN',
             type: 'text',
             readOnly: true
         },
         {
-            data: 'CLOCK_OUT',
+            data: 'DISP_CLOCKOUT',
             type: 'text',
             readOnly: true
         },
@@ -126,7 +126,7 @@ const CreateLaborTicket = () => {
             readOnly: true
         },
         {
-            data: 'EMPLOYEE_ID',
+            data: 'EMP_NAME',
             type: 'text',
             readOnly: true
         },

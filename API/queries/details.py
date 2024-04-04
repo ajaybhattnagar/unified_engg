@@ -136,7 +136,8 @@ details_query = {
                                                     CASE WHEN ULAB.TYPE = 'R' THEN 'RUN'
                                                     WHEN ULAB.TYPE = 'I' THEN 'INDIRECT' ELSE '' END AS 'TRANSACTION_TYPE',
                                                     ULAB.WORKORDER_BASE_ID, ULAB.WORKORDER_LOT_ID, ULAB.WORKORDER_SPLIT_ID, ULAB.WORKORDER_SUB_ID, ULAB.OPERATION_SEQ_NO, ULAB.CLOCK_IN, ULAB.CLOCK_OUT, ISNULL(ULAB.WORK_TIME, 'Regular Time') AS [WORK_TIME],
-                                                    ULAB.HOURS_WORKED, ULAB.DESCRIPTION, EMP.ID AS [EMPLOYEE_ID], ULAB.INDIRECT_CODE AS [INDIRECT_ID]
+                                                    ULAB.HOURS_WORKED, ULAB.DESCRIPTION, EMP.ID AS [EMPLOYEE_ID], ULAB.INDIRECT_CODE AS [INDIRECT_ID],
+                                                    EMP.FIRST_NAME + ' ' + EMP.LAST_NAME AS [EMP_NAME], CONVERT(VARCHAR, ULAB.CLOCK_IN, 100) AS [DISP_CLOCKIN], CONVERT(VARCHAR, ULAB.CLOCK_OUT, 100) AS [DISP_CLOCKOUT]
                                                     FROM UNI_LABOR_TICKET ULAB
                                                     LEFT JOIN EMPLOYEE EMP ON EMP.USER_ID = ULAB.EMPLOYEE_ID
                                                     WHERE APPROVED = 1 AND VISUAL_LAB_TRANS_ID IS NULL -- AND EMP.ID IS NOT NULL

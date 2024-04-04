@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useState } from "react";
 import 'handsontable/dist/handsontable.full.min.css';
-import Handsontable from 'handsontable/base';
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 
@@ -69,7 +68,7 @@ const MTable = (props) => {
             alert('QA Notes should be less than 255 characters');
             return true;
         }
-        if (arr[1] === 'HOURS_WORKED' || allowed_columns.includes(arr[1]) || arr[1].includes('ALLOWED') )  {
+        if (arr[1] === 'HOURS_WORKED' || allowed_columns.includes(arr[1]) || arr[1].includes('ALLOWED')) {
             return false;
         }
         if (arr[3].includes('"') || arr[3].includes("'") || arr[3].includes("1=1")) {
@@ -100,8 +99,8 @@ const MTable = (props) => {
                 }
                 }
                 afterSelection={(r, c) => { on_cell_selected(data[r]) }}
-                autoWrapRow={true}
-                autoWrapCol={true}
+                // autoWrapRow={false}
+                // autoWrapCol={false}
                 manualColumnResize={true}
                 fixedColumnsStart={1}
                 stretchH="all"
@@ -109,6 +108,11 @@ const MTable = (props) => {
                 height={props.height || "auto"}
                 colWidths={props.colWidths || "auto"}
                 className="customFilterButton"
+                selectionMode="single"
+
+                onSelectCell={(r, c, prop, value, cellProperties) => {
+                    console.log(r, c, prop, value, cellProperties);
+                }}
 
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
             />

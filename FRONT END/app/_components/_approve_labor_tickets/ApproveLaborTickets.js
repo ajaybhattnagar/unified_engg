@@ -97,7 +97,8 @@ const ApproveLaborTickets = () => {
         {
             data: 'RESOURCE_DESCRIPTION',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            wordWrap: false,
         },
         {
             data: 'LAB_DESC',
