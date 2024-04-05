@@ -429,7 +429,7 @@ const RecordsLabor = () => {
                     </div>
 
                     <div className="d-flex justify-content-between mt-3">
-                        <div className="w-75"><Input type={'text'} placeholder="QA Notes" text='QA Notes' disabled={false} value={qaNotes} onChange={(e) => setQaNotes(e)} charLimit={244}/></div>
+                        <div className="w-75"><Input type={'text'} placeholder="QA Notes" text='QA Notes' disabled={false} value={qaNotes} onChange={(e) => setQaNotes(e)} charLimit={244} /></div>
                     </div>
 
                     <div className="d-flex justify-content-between mt-3">
@@ -515,11 +515,40 @@ const RecordsLabor = () => {
             });
     }
 
+    const render_clock_out_button = () => {
+        return (
+            <div className="d-flex justify-content-end mr-3" >
+                <button className="btn btn-outline-primary" onClick={(e) => {
+                    // Stop labor ticket if any
+                    if (transactionId != 0 && transactionId != null) {
+                        utils.stopLaborTickets(transactionId)
+                            .then((response) => {
+                                // alert(response.message);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }
+                    // Clock out
+                    utils.clock_in_out_users("clock_out")
+                        .then((response) => {
+                            // Navigate to reports
+                            navigate("/reports/eod", { replace: true })
+                        })
+
+                }}>Clock out </button>
+            </div>
+        )
+    }
+
     const create_labor_tickets_render_stop = () => {
         var scanString = `*%${selectedWorkOrder}$${selectedSub}$${operationSeqNo.current}%*`;
         return (
             <div>
                 <div className="mt-3" />
+
+                {/* Clock out button - stops labor ticket as well */}
+                {render_clock_out_button()}
 
                 <div className="d-flex justify-content-around">
 
@@ -563,7 +592,7 @@ const RecordsLabor = () => {
                         <div className="w-100 mt-3">
                             <Input type={'text'} placeholder="QA Notes" text='QA Notes'
                                 onChange={(e) => setQaNotes(e)}
-                                onUpdateButtonClick={(e) => update_labor_ticket_field("QA_NOTES", qaNotes)} value={qaNotes} charLimit={244}/>
+                                onUpdateButtonClick={(e) => update_labor_ticket_field("QA_NOTES", qaNotes)} value={qaNotes} charLimit={244} />
                         </div>
                         <div className="w-100 mt-3">
                             <Input type={'text'} placeholder="Notes" text='Notes'
@@ -686,7 +715,7 @@ const RecordsLabor = () => {
     const render_clock_in = () => {
         return (
             <div className="d-flex justify-content-center w-100 mt-3">
-                <button className="btn btn-outline-danger mt-1" onClick={(e) => {
+                <button className="btn btn-outline-primary mt-1" onClick={(e) => {
                     utils.clock_in_out_users("clock_in")
                         .then((response) => {
                             window.location.reload();
@@ -726,27 +755,9 @@ const RecordsLabor = () => {
                                                     <a className={!isLaborTicketRun ? "cusor-hand nav-link active" : "cusor-hand nav-link"} onClick={() => { setIsLaborTicketRun(false) }}>Indirect</a>
                                                 </li>
                                                 {/* Button to logout */}
-                                                <li className="nav-item btn btn-outline-dark ml-1">
-                                                    <a className="" onClick={(e) => {
-
-                                                        // Stop labor ticket if any
-                                                        if (transactionId != 0 && transactionId != null) {
-                                                            utils.stopLaborTickets(transactionId)
-                                                                .then((response) => {
-                                                                    // alert(response.message);
-                                                                })
-                                                                .catch((error) => {
-                                                                    console.log(error);
-                                                                });
-                                                        }
-                                                        // Clock out
-                                                        utils.clock_in_out_users("clock_out")
-                                                            .then((response) => {
-                                                                // Navigate to reports
-                                                                navigate("/reports/eod", { replace: true })
-                                                            })
-
-                                                    }}>Clock out</a>
+                                                <li className="">
+                                                    {/* Clock out button - stops labor ticket as well */}
+                                                    {render_clock_out_button()}
                                                 </li>
                                             </ul>
 

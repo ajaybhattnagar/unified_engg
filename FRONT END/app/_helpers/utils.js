@@ -245,6 +245,11 @@ function stopLaborTickets(transactionId, clockInTime) {
     })
     .then((data) => {
       if (response_status === 200) {
+        // Clear local storage
+        localStorage.removeItem("ACTIVE_WO_CLOCK_IN");
+        localStorage.removeItem("ACTIVE_WO");
+        localStorage.removeItem("ACTIVE_OP");
+        localStorage.removeItem("INDIRECT_ID");
         return data
       } else {
         alert(data.message);
