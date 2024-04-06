@@ -517,7 +517,7 @@ const RecordsLabor = () => {
 
     const render_clock_out_button = () => {
         return (
-            <div className="d-flex justify-content-end mr-3" >
+            <div className="d-flex justify-content-end ml-3 mr-3" >
                 <button className="btn btn-outline-primary" onClick={(e) => {
                     // Stop labor ticket if any
                     if (transactionId != 0 && transactionId != null) {

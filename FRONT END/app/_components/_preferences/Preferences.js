@@ -41,8 +41,7 @@ const Preferences = () => {
 
                     if (response.SITES.filter(item => item.value == selectedSite).length === 0) {
                         alert('Invalid Site!');
-                        setSelectedOperation(null)
-                        setSelectedResourceString(null)
+
                         return;
                     } else {
                         setSelectedSite({
@@ -53,8 +52,6 @@ const Preferences = () => {
 
                     if (response.WAREHOUSES.filter(item => item.value == selectedWarehouse).length === 0) {
                         alert('Invalid Warehouse!');
-                        setSelectedOperation(null)
-                        setSelectedResourceString(null)
                         return;
                     } else {
                         setSelectedWarehouse({
@@ -89,14 +86,14 @@ const Preferences = () => {
                                 <div className="m-3">
                                     <div className="w-50">
                                         <div className="w-75">
-                                            <DropDown text="Select Site" list={data.SITES}
+                                            <DropDown text="Select Site" list={data.SITES} disabled={true}
                                                 value={selectedSite}
                                                 onSelect={(e) => { setSelectedSite(e); localStorage.setItem("SITE", e.value) }} />
                                         </div>
                                     </div>
                                     <div className="w-50 mt-3">
                                         <div className="w-75">
-                                            <DropDown text="Select Warehouse" list={data.WAREHOUSES}
+                                            <DropDown text="Select Warehouse" list={data.WAREHOUSES} disabled={true}
                                                 value={selectedWarehouse}
                                                 onSelect={(e) => { setSelectedWarehouse(e); localStorage.setItem("WAREHOUSE", e.value) }} />
                                         </div>

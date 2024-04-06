@@ -23,6 +23,14 @@ class NavigationBar extends Component {
     };
 
     componentDidMount() {
+
+        // Hardcoded site and warehouse for UNIFIED
+        if (!localStorage.getItem("SITE") || !localStorage.getItem("WAREHOUSE")) {
+            localStorage.setItem("SITE", "UNI");
+            localStorage.setItem("WAREHOUSE", "Unified");
+            console.log("Setting default site and warehouse");
+        }
+
         if (localStorage.getItem("token")) {
             var access_rights = utils.decodeJwt();
             access_rights = access_rights.USER_DETAILS
@@ -118,7 +126,7 @@ class NavigationBar extends Component {
                     localStorage.getItem('ACTIVE_WO') || localStorage.getItem('INDIRECT_ID') ?
                         <div className="m-3 fixed-bottom-labor-details">
                             <div className='d-flex align-items-center'>
-                                <span class="badge">
+                                <span className="badge">
                                     <div>{localStorage.getItem('INDIRECT_ID')} </div>
                                     <div>{localStorage.getItem('ACTIVE_WO')} </div>
                                     <div>{localStorage.getItem('ACTIVE_WO_CLOCK_IN')} </div>

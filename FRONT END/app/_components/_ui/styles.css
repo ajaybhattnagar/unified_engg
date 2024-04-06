@@ -990,3 +990,13 @@ body.currentapp_bad .hr-teams .item__children.dragged-over {
   content: '▼ ';
   zoom: 0.9;
 }
+
+/* hide the column menu button by default */
+.customFilterButton .changeType {
+  visibility: hidden;
+}
+
+/* show the column menu button on hover */
+.customFilterButton th .relative:hover .changeType {
+  visibility: visible;
+}
