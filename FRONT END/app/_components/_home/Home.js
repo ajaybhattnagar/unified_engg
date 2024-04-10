@@ -8,6 +8,8 @@ import './Home.css';
 import Loading from "../_ui/loading";
 import MTable from "../_ui/materialTable";
 import { Card } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock, faList, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -86,6 +88,11 @@ const Home = () => {
             navigate("/");
         }
 
+        // Check if selected tab is present in localstorage
+        if (localStorage.getItem('selectedTab')) {
+            setSelectedTab(parseInt(localStorage.getItem('selectedTab')));
+        }
+
 
     }, []);
 
@@ -143,6 +150,11 @@ const Home = () => {
         }
         get_documents_notification_kpi();
     }, [selectedFromDate, selectedToDate])
+
+    useEffect(() => {
+        // Set localstorage with selected tab
+        localStorage.setItem('selectedTab', selectedTab);
+    }, [selectedTab])
 
 
     // http://localhost:8080/ticket_details?transaction_id=31
@@ -388,6 +400,131 @@ const Home = () => {
 
     ]
 
+    const render_clocked_in_employees = () => {
+        return (
+            <div className="m-3">
+                {/* Third row */}
+                <Card bg='primary' text='white'>
+                    <Card.Header><h5>Clocked In Employees</h5></Card.Header>
+                    <Card.Body>
+                        <MTable
+                            data={data.CLOCK_IN_VS_LABOR_KPI ? data.CLOCK_IN_VS_LABOR_KPI : []}
+                            columnsTypes={columns_clocked_in_employees}
+                            columnsHeaders={['Name', 'Clocked in?', 'Labor Ticket Started?']}
+                        // onChange={(e) => { update_labor_tickets(e) }}
+                        />
+                    </Card.Body>
+                </Card>
+            </div>
+        );
+    }
+
+    const render_labour_summary = () => {
+        return (
+            <div className="row">
+                <div className="col-12 col-md-8">
+                    <Card bg='primary' text='white'>
+                        <Card.Header><h5>Active Labor Tickets</h5></Card.Header>
+                        <Card.Body>
+                            <MTable
+                                data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
+                                columnsTypes={columns_active_labor_tickets}
+                                columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Indirect', 'Part Description',
+                                    'Customer ID', 'In', 'Work Location', 'Employee', 'Notes', 'QA Notes']}
+                            // onChange={(e) => { update_labor_tickets(e) }}
+                            />
+                        </Card.Body>
+                    </Card>
+                </div>
+                <div className="col-12 col-md-4">
+                    <Card bg='primary' text='white'>
+                        <Card.Header><h5>Hours</h5></Card.Header>
+                        <Card.Body>
+                            <MTable
+                                data={data.EMPLOYEE_KPI ? data.EMPLOYEE_KPI : []}
+                                columnsTypes={columns_employee_kpi}
+                                columnsHeaders={['Name', 'Hours today', 'Hours current week']}
+                            // onChange={(e) => { update_labor_tickets(e) }}
+                            />
+                        </Card.Body>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
+
+    const render_notification_documents = () => {
+        return (
+            isNotificationLoading ? <Loading />
+                :
+                <div className="row mt-3">
+                    <div className="col-12">
+                        <Card bg='primary' text='white'>
+                            <Card.Body>
+                                <div className="d-flex justify-content-left mb-3">
+                                    <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
+                                    <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
+                                </div>
+
+                                <div className="d-flex justify-content-between mb-3">
+                                    <Card bg='primary' text='white' className="w-100">
+                                        <Card.Header><h5>Recently Uploaded Documents</h5></Card.Header>
+                                        <Card.Body>
+                                            {/* Documents */}
+                                            <MTable
+                                                data={notificationDocumentsData.DOCUMENTS ? notificationDocumentsData.DOCUMENTS : []}
+                                                columnsTypes={columns_documents}
+                                                columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'File']}
+                                            />
+                                        </Card.Body>
+                                    </Card>
+
+                                    {/* Notifications */}
+                                    <Card bg='primary' text='white' className="w-100">
+                                        <Card.Header><h5>Recent notifications</h5></Card.Header>
+                                        <Card.Body>
+                                            <MTable
+                                                data={notificationDocumentsData.NOTIFICATIONS ? notificationDocumentsData.NOTIFICATIONS : []}
+                                                columnsTypes={columns_notification}
+                                                columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'Recipients']}
+                                            />
+                                        </Card.Body>
+                                    </Card>
+                                </div>
+
+                                <div className="d-flex justify-content-between mb-3">
+                                    <Card bg='primary' text='white' className="w-100">
+                                        <Card.Header><h5>Quality Sign Offs</h5></Card.Header>
+                                        <Card.Body>
+                                            {/* Documents */}
+                                            <MTable
+                                                data={notificationDocumentsData.QA_SIGN_OFF ? notificationDocumentsData.QA_SIGN_OFF : []}
+                                                columnsTypes={qa_sign_off_columns}
+                                                columnsHeaders={['Date', 'Work Order', 'Operation', 'Resource ID', 'Accepted', 'Rejected', 'Notes', 'Employee']}
+                                            />
+                                        </Card.Body>
+                                    </Card>
+
+                                    {/* Notifications */}
+                                    <Card bg='primary' text='white' className="w-100">
+                                        <Card.Header><h5>Fabrication Sign Offs</h5></Card.Header>
+                                        <Card.Body>
+                                            <MTable
+                                                data={notificationDocumentsData.FAB_SIGN_OFF ? notificationDocumentsData.FAB_SIGN_OFF : []}
+                                                columnsTypes={fab_sign_off_columns}
+                                                columnsHeaders={['Date', 'Work Order', 'Operation', 'Resource ID', 'Sign Off', 'Notes', 'Employee']}
+                                            />
+                                        </Card.Body>
+                                    </Card>
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                </div>
+
+        );
+    }
+
     const render = () => {
         return (
             <div>
@@ -395,158 +532,40 @@ const Home = () => {
                 <div className="m-3">
                     <ul className="nav nav-tabs">
                         <li className="nav-item">
-                            <a className={selectedTab == 0 ? "nav-link active cusor-hand" : "nav-link cusor-hand "} aria-current="page" onClick={() => setSelectedTab(0)} >Clocked In Employees</a>
+                            <a className={selectedTab == 0 ? "nav-link active cusor-hand" : "nav-link cusor-hand "} aria-current="page" onClick={() => setSelectedTab(0)}>
+                                <FontAwesomeIcon icon={faClock} />&nbsp; Clocked In Employees
+                            </a>
                         </li>
                         <li className="nav-item">
-                            <a className={selectedTab == 1 ? "nav-link active cusor-hand " : "nav-link cusor-hand"} onClick={() => setSelectedTab(1)}  >Labour Summary</a>
+                            <a className={selectedTab == 1 ? "nav-link active cusor-hand " : "nav-link cusor-hand"} onClick={() => setSelectedTab(1)}>
+                                <FontAwesomeIcon icon={faList} />&nbsp; Labour Summary
+                            </a>
                         </li>
                         <li className="nav-item">
-                            <a className={selectedTab == 2 ? "nav-link active cusor-hand " : "nav-link cusor-hand"} tabindex="-1" onClick={() => setSelectedTab(2)}  >QA Summary</a>
+                            <a className={selectedTab == 2 ? "nav-link active cusor-hand " : "nav-link cusor-hand"} tabindex="-1" onClick={() => setSelectedTab(2)}>
+                                <FontAwesomeIcon icon={faCheck} />&nbsp; QA Summary
+                            </a>
                         </li>
                     </ul>
                 </div>
+
+                <div className="m-3">
+                    {
+                        selectedTab == 0 ? render_clocked_in_employees() : null
+                    }
+                    {
+                        selectedTab == 1 ? render_labour_summary() : null
+                    }
+                    {
+                        selectedTab == 2 ? render_notification_documents() : null
+                    }
+                </div>
+
             </div>
+
+
         );
     }
-
-
-    // const render = () => {
-    //     return (
-    //         <div>
-    //             <NavigationBar />
-    //             <div className="m-3">
-    //                 <div className="mx-auto">
-    //                     {
-    //                         isLoading ? <Loading />
-    //                             :
-    //                             <div>
-    //                                 {/* First row */}
-    //                                 <div className="row">
-    //                                     <div className="col-12 col-md-8">
-    //                                         <Card bg='primary' text='white'>
-    //                                             <Card.Header><h5>Active Labor Tickets</h5></Card.Header>
-    //                                             <Card.Body>
-    //                                                 <MTable
-    //                                                     data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
-    //                                                     columnsTypes={columns_active_labor_tickets}
-    //                                                     columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Indirect', 'Part Description',
-    //                                                         'Customer ID', 'In', 'Work Location', 'Employee', 'Notes', 'QA Notes']}
-    //                                                 // onChange={(e) => { update_labor_tickets(e) }}
-    //                                                 />
-    //                                             </Card.Body>
-    //                                         </Card>
-    //                                     </div>
-    //                                     <div className="col-12 col-md-4">
-    //                                         <Card bg='primary' text='white'>
-    //                                             <Card.Header><h5>Hours</h5></Card.Header>
-    //                                             <Card.Body>
-    //                                                 <MTable
-    //                                                     data={data.EMPLOYEE_KPI ? data.EMPLOYEE_KPI : []}
-    //                                                     columnsTypes={columns_employee_kpi}
-    //                                                     columnsHeaders={['Name', 'Hours today', 'Hours current week']}
-    //                                                 // onChange={(e) => { update_labor_tickets(e) }}
-    //                                                 />
-    //                                             </Card.Body>
-    //                                         </Card>
-    //                                     </div>
-    //                                 </div>
-
-    //                                 {/* Second Row */}
-    //                                 {
-    //                                     isNotificationLoading ? <Loading />
-    //                                         :
-    //                                         <div className="row mt-3">
-    //                                             <div className="col-12">
-    //                                                 <Card bg='primary' text='white'>
-    //                                                     <Card.Body>
-    //                                                         <div className="d-flex justify-content-left mb-3">
-    //                                                             <div className="w-15 mr-3"><Input text="From" type={'date'} value={selectedFromDate} onChange={(e) => setSelectedFromDate(e)} /></div>
-    //                                                             <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
-    //                                                         </div>
-
-    //                                                         <div className="d-flex justify-content-between mb-3">
-    //                                                             <Card bg='primary' text='white' className="w-100">
-    //                                                                 <Card.Header><h5>Recently Uploaded Documents</h5></Card.Header>
-    //                                                                 <Card.Body>
-    //                                                                     {/* Documents */}
-    //                                                                     <MTable
-    //                                                                         data={notificationDocumentsData.DOCUMENTS ? notificationDocumentsData.DOCUMENTS : []}
-    //                                                                         columnsTypes={columns_documents}
-    //                                                                         columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'File']}
-    //                                                                     />
-    //                                                                 </Card.Body>
-    //                                                             </Card>
-
-    //                                                             {/* Notifications */}
-    //                                                             <Card bg='primary' text='white' className="w-100">
-    //                                                                 <Card.Header><h5>Recent notifications</h5></Card.Header>
-    //                                                                 <Card.Body>
-    //                                                                     <MTable
-    //                                                                         data={notificationDocumentsData.NOTIFICATIONS ? notificationDocumentsData.NOTIFICATIONS : []}
-    //                                                                         columnsTypes={columns_notification}
-    //                                                                         columnsHeaders={['Date', 'Type', 'ID', 'Resource ID', 'Recipients']}
-    //                                                                     />
-    //                                                                 </Card.Body>
-    //                                                             </Card>
-    //                                                         </div>
-
-    //                                                         <div className="d-flex justify-content-between mb-3">
-    //                                                             <Card bg='primary' text='white' className="w-100">
-    //                                                                 <Card.Header><h5>Quality Sign Offs</h5></Card.Header>
-    //                                                                 <Card.Body>
-    //                                                                     {/* Documents */}
-    //                                                                     <MTable
-    //                                                                         data={notificationDocumentsData.QA_SIGN_OFF ? notificationDocumentsData.QA_SIGN_OFF : []}
-    //                                                                         columnsTypes={qa_sign_off_columns}
-    //                                                                         columnsHeaders={['Date', 'Work Order', 'Operation', 'Resource ID', 'Accepted', 'Rejected', 'Notes', 'Employee']}
-    //                                                                     />
-    //                                                                 </Card.Body>
-    //                                                             </Card>
-
-    //                                                             {/* Notifications */}
-    //                                                             <Card bg='primary' text='white' className="w-100">
-    //                                                                 <Card.Header><h5>Fabrication Sign Offs</h5></Card.Header>
-    //                                                                 <Card.Body>
-    //                                                                     <MTable
-    //                                                                         data={notificationDocumentsData.FAB_SIGN_OFF ? notificationDocumentsData.FAB_SIGN_OFF : []}
-    //                                                                         columnsTypes={fab_sign_off_columns}
-    //                                                                         columnsHeaders={['Date', 'Work Order', 'Operation', 'Resource ID', 'Sign Off', 'Notes', 'Employee']}
-    //                                                                     />
-    //                                                                 </Card.Body>
-    //                                                             </Card>
-    //                                                         </div>
-    //                                                     </Card.Body>
-    //                                                 </Card>
-    //                                             </div>
-    //                                         </div>
-    //                                 }
-
-    //                                 {/* Third row */}
-    //                                 <div className="row mt-3">
-    //                                     <div className="col-12 col-md-4">
-    //                                         <Card bg='primary' text='white'>
-    //                                             <Card.Header><h5>Clocked In Employees</h5></Card.Header>
-    //                                             <Card.Body>
-    //                                                 <MTable
-    //                                                     data={data.CLOCK_IN_VS_LABOR_KPI ? data.CLOCK_IN_VS_LABOR_KPI : []}
-    //                                                     columnsTypes={columns_clocked_in_employees}
-    //                                                     columnsHeaders={['Name', 'Clocked in?', 'Labor Ticket Started?']}
-    //                                                 // onChange={(e) => { update_labor_tickets(e) }}
-    //                                                 />
-    //                                             </Card.Body>
-    //                                         </Card>
-    //                                     </div>
-    //                                 </div>
-
-    //                             </div>
-    //                     }
-    //                 </div>
-    //             </div>
-
-
-    //         </div >
-    //     );
-    // }
 
     return (
         render()

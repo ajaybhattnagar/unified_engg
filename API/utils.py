@@ -89,7 +89,7 @@ purchase_order_notification_template = """<html lang="en">
         </body>
         </html>"""
 
-def send_email(type, email, subject, connection_string, unique_id):
+def send_email(type, email, subject, connection_string, unique_id, notes):
     try:
         msg = MIMEMultipart()
         msg['From'] = configData['smtp_user']
@@ -118,7 +118,13 @@ def send_email(type, email, subject, connection_string, unique_id):
         # Insert into uni notifications table
         cnxn = pyodbc.connect(connection_string)
         sql = cnxn.cursor()
-        sql.execute(details_query['INSERT_INTO_UNI_NOTIFICATION'].format(UNIQUE_ID = unique_id, RECIPIENTS = email, TYPE = type, TEMPLATE = type))
+        sql.execute(details_query['INSERT_INTO_UNI_NOTIFICATION'].format(
+            UNIQUE_ID = unique_id, 
+            RECIPIENTS = email, 
+            TYPE = type, 
+            TEMPLATE = type,
+            NOTES = notes
+            ))
         cnxn.commit()
         sql.close()
         return True

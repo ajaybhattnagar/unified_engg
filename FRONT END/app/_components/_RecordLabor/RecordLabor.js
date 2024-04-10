@@ -204,7 +204,7 @@ const RecordsLabor = () => {
             setSelectedLot(selectedRecentWorkOrder.WORKORDER_LOT_ID || 0)
             setSelectedSplit(selectedRecentWorkOrder.WORKORDER_SPLIT_ID || 0)
             setSelectedSub(selectedRecentWorkOrder.WORKORDER_SUB_ID || 0)
-            setSelectedOperation('')
+            setSelectedOperation(selectedRecentWorkOrder.OPERATION_SEQ_NO || 0)
             setSelectedResourceString('')
         }
     }, [selectedRecentWorkOrder]);

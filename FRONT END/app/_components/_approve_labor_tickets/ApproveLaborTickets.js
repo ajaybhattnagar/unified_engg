@@ -10,7 +10,7 @@ import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport, faFilter, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faFileExport, faPrint, faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const isBrowser = typeof window !== `undefined`
 

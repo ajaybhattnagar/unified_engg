@@ -188,7 +188,7 @@ details_query = {
                          """,
 
 "INSERT_INTO_UNI_NOTIFICATION": """INSERT INTO [dbo].[UNI_NOTIFICATION]
-           ([UNIQUE_ID], [TYPE], [TEMPLATE], [RECIPIENTS])
-     VALUES ('{UNIQUE_ID}', '{TYPE}', '{TEMPLATE}', '{RECIPIENTS}')""",
+           ([UNIQUE_ID], [TYPE], [TEMPLATE], [RECIPIENTS], [NOTES])
+     VALUES ('{UNIQUE_ID}', '{TYPE}', '{TEMPLATE}', '{RECIPIENTS}', '{NOTES}')""",
 
 }

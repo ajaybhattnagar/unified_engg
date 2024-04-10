@@ -16,6 +16,8 @@ purchasing_query = {
                                 WHERE POL.LINE_NO IS NOT NULL AND PO.ID = '{ID}'""",
 
 
+
+
 "GET_WAREHOUSES": """SELECT ID AS [value], DESCRIPTION AS [label] FROM WAREHOUSE""",
 
 }

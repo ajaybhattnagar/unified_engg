@@ -29,6 +29,7 @@ const Receiving = () => {
     const [clickedImage, setClickedImage] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [sendEmailButtonClicked, setSendEmailButtonClicked] = useState(false);
+    const [notes, setNotes] = useState('');
 
     useEffect(() => {
         setIsLoading(true);
@@ -308,6 +309,7 @@ const Receiving = () => {
             body: JSON.stringify({
                 "PO_NUMBER": selectedPo.value,
                 "EMAIL": poDetails[0].EMAIL_ADDR,
+                "NOTES": notes,
                 // "EMAIL": "ajay.bhattnagar21@gmail.com",
             })
         })
@@ -358,16 +360,24 @@ const Receiving = () => {
                                             <div>
                                                 <Input type={'text'} text='Notify' disabled={true}
                                                     value={poDetails[0].BUYER_NAME + " - " + poDetails[0].EMAIL_ADDR}
-                                                    onUpdateButtonClick={() => send_order_notification_email()}
-                                                    onUpdateButtonText='Send'
-                                                    isUpdateButtonDisabled={sendEmailButtonClicked}
                                                 />
+                                                {/* Add Notes here */}
+                                                <div className="mt-2">
+                                                    <Input type={'text'} placeholder="Additional Notes"
+                                                        onChange={(e) => setNotes(e)} text='Notes' value={notes} charLimit={255}
+                                                        onUpdateButtonClick={() => send_order_notification_email()}
+                                                        onUpdateButtonText='Send'
+                                                        isUpdateButtonDisabled={sendEmailButtonClicked}
+                                                    />
+                                                </div>
                                                 {render_file_camera_start()}
                                             </div>
                                             :
                                             null
                                     }
                                 </div>
+
+
 
                                 {/* {
                                     allowRecieptEntry.current ?
