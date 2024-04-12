@@ -10,7 +10,7 @@ import simplejson
 import datetime
 import time 
 from utils import list_files, send_email, allowedFile, generate_email_template
-
+import codecs
 
 from queries.users import user_query
 
@@ -161,9 +161,11 @@ def users(connection_string, username):
 @login_blueprint.route("/api/v1/test_smtp", methods=['GET'])
 @token_required
 def test_smtp(connection_string, username):
-    # html = generate_email_template('labor_ticket_start', 251, connection_string)
-    html = send_email('purchase_order_notification', 'ajay.bhattnagar21@gmail.com', connection_string , 'P00137', '')
+    f=codecs.open("email_templates\\labour_ticket_qa_note.html", 'r')
+    print (f.read())
     return 'html', 200
+
+
 
     
         

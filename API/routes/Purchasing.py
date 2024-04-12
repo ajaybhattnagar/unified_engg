@@ -110,7 +110,8 @@ def send_email_update_notes(connection_string, username):
         template = 'purchase_order_notification'
        
         try:
-            send_email(template, email, subject, connection_string, po_number, notes)
+            send_email('purchase_order_notification', email, connection_string , po_number, '')
+            # send_email(template, email, subject, connection_string, po_number, notes)
 
             return jsonify({"message": "Email Sent Successfully!"}), 200
         except Exception as e:

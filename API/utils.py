@@ -9,95 +9,20 @@ import base64, binascii
 import os
 import pyodbc
 from queries.details import details_query
+import codecs
 
 
 with open ('config.json') as f:
     configData = json.load(f)
 
-labor_ticket_start_template = """<html lang="en">
+labor_ticket_start_template = codecs.open("email_templates\\labour_ticket_qa_note.html", 'r')
+labor_ticket_start_template = labor_ticket_start_template.read()
 
-                                    <head>
-                                        <meta charset="UTF-8">
-                                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                        <title>Notification</title>
-                                    </head>
+qa_email_added_template = codecs.open("email_templates\\work_order_sign_in_notification.html", 'r')
+qa_email_added_template = qa_email_added_template.read()
 
-                                    <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
-
-                                        <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-
-                                            <p style="color: #666; ">Attention QA Personnel,</p>
-
-                                            <p style="color: #666; ">The following comment has been made by {EMPLOYEE_NAME} ({EMPLOYEE_ID}) while clocked into {BASE_ID} on {DATE_TIME}</p>
-                                            <p style="color: #666; ">QA Notes: {NOTES}.  </p>
-                                            <p style="color: #666; ">Related photos and documents can be found at {FOLDER_PATH}.  </p>
-                                            <p style="color: #666; ">Please follow up as needed. </p>
-                                            <p style="color: #666; ">For more information, go to <a href="{url}">Ticket</a>. </p>
-
-                                            <p style="color: #666; ">Have a good day.</p>
-
-                                        </div>
-
-                                    </body>
-
-                                    </html>"""
-
-qa_email_added_template = """<html lang="en">
-
-                                <head>
-                                    <meta charset="UTF-8">
-                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                    <title>Notification</title>
-                                </head>
-
-                                <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
-
-                                    <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-
-                                        <p style="color: #666; ">Hello {EMPLOYEE_NAME},</p>
-
-                                        <p style="color: #666; ">On {START_TIME}, {EMPLOYEE_NAME} ({EMPLOYEE_ID}) began work on: </p>
-                                        <p style="color: #666; ">{BASE_ID} {LOT_ID} {SPLIT_ID} {SUB_ID} {OPERATION_NO} {OPERATION_DESC}</p>
-                                        <p style="color: #666; ">Related photos and documents can be found at {FOLDER_PATH}.  </p>
-                                        <p style="color: #666; ">Please follow up as needed. </p>
-                                        <p style="color: #666; ">For more information, go to <a href="{url}">Ticket</a>. </p>
-
-                                        <p style="color: #666; ">Have a good day.</p>
-
-                                    </div>
-
-                                </body>
-
-                                </html>"""
-
-purchase_order_notification_template = """<html lang="en">
-
-                                        <head>
-                                            <meta charset="UTF-8">
-                                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                            <title>Notification</title>
-                                        </head>
-
-                                        <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
-
-                                            <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-
-                                                <p style="color: #666; ">Hello {EMPLOYEE_NAME},</p>
-
-                                                <p style="color: #666; ">Your Purchase Order, {PO_NUMBER} from {VENDOR}, was received by {REC_NAME} ({REC_EMP_ID}) on {START_TIME}. </p>
-                                                <p style="color: #666; ">These materials are intended for jobs:</p> 
-                                                {ITEMS}                                      
-                                                <p style="color: #666; ">Related photos and documents can be found at {FOLDER_PATH}.  </p>
-                                                <p style="color: #666; ">Please follow up on this Purchase Order as soon as possible. </p>
-                                                <p style="color: #666; ">For more information, go to <a href="{url}">Ticket</a>. </p>
-
-                                                <p style="color: #666; ">Have a good day.</p>
-
-                                            </div>
-
-                                        </body>
-
-                                        </html>"""
+purchase_order_notification_template = codecs.open("email_templates\\received_po_notification.html", 'r')
+purchase_order_notification_template = purchase_order_notification_template.read()
 
 def generate_email_template(template, unique_id, connection_string):
     url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=labor_ticket&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
@@ -106,7 +31,8 @@ def generate_email_template(template, unique_id, connection_string):
     if template == 'labor_ticket_start':
         cnxn = pyodbc.connect(connection_string)
         sql = cnxn.cursor()
-        sql.execute("""SELECT CONVERT(VARCHAR, LAB.CREATE_DATE, 100) AS [CLOCK_IN], LAB.WORKORDER_BASE_ID , LAB.EMPLOYEE_ID, LAB.QA_NOTES, EMP.FIRST_NAME
+        sql.execute("""SELECT CONVERT(VARCHAR, LAB.CREATE_DATE, 100) AS [CLOCK_IN], LAB.WORKORDER_BASE_ID , LAB.EMPLOYEE_ID, LAB.QA_NOTES, EMP.FIRST_NAME,
+                        RIGHT(LAB.WORKORDER_BASE_ID, LEN(LAB.WORKORDER_BASE_ID) - 1) AS [STRIPPED_BASE_ID]
                         FROM UNI_LABOR_TICKET LAB
                         LEFT JOIN EMPLOYEE EMP ON EMP.USER_ID = LAB.EMPLOYEE_ID
                         WHERE TRANSACTION_ID = '{}'""".format(unique_id))
@@ -118,7 +44,7 @@ def generate_email_template(template, unique_id, connection_string):
             BASE_ID = data[0]['WORKORDER_BASE_ID'],
             DATE_TIME = data[0]['CLOCK_IN'],
             NOTES = data[0]['QA_NOTES'],
-            FOLDER_PATH = "SADASD",
+            FOLDER_PATH = configData['u_drive_path'] + "\\Q" + data[0]['STRIPPED_BASE_ID'] + "\\" + "Upload",
             url = url_ticket
         )
         subject = """{BASE_ID}, {EMPLOYEE_NAME} - Labour Ticket QA Notes""".format(BASE_ID = data[0]['WORKORDER_BASE_ID'], EMPLOYEE_NAME = data[0]['FIRST_NAME'])
@@ -154,7 +80,7 @@ def generate_email_template(template, unique_id, connection_string):
             OPERATION_NO = data[0]['OPERATION_SEQ_NO'],
             OPERATION_DESC = data[0]['DESCRIPTION'],
             START_TIME = data[0]['CLOCK_IN'],
-            FOLDER_PATH = "SADASD",
+            FOLDER_PATH =  configData['u_drive_path'] +  "\\Documents" + '\\',
             url = url_ticket
         )
         subject = """{BASE_ID}, {EMPLOYEE_NAME} - Work Order Sign-In Notification""".format(BASE_ID = data[0]['WORKORDER_BASE_ID'], EMPLOYEE_NAME = data[0]['FIRST_NAME'])
@@ -200,7 +126,7 @@ def generate_email_template(template, unique_id, connection_string):
             START_TIME = data[0]['START_TIME'],
             ITEMS = data[0]['ITEM'],
 
-            FOLDER_PATH = "SADASD",
+            FOLDER_PATH = configData['u_drive_path'] +  "\\Documents" + '\\',
             url = url_ticket
         )
         subject = """{PO_NUMBER}, {EMPLOYEE_NAME} - Received PO Notification""".format(PO_NUMBER = data[0]['ID'], EMPLOYEE_NAME = data[0]['BUYER_NAME'])

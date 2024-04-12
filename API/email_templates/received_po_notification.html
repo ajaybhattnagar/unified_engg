@@ -1,0 +1,30 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
+
+    <div
+        style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+
+        <p style="color: #666; ">Hello {EMPLOYEE_NAME},</p>
+
+        <p style="color: #666; ">Your Purchase Order, {PO_NUMBER} from {VENDOR}, was received by {REC_NAME}
+            ({REC_EMP_ID}) on {START_TIME}. </p>
+        <p style="color: #666; ">These materials are intended for jobs:</p>
+        {ITEMS}
+        <p style="color: #666; ">Related photos and documents can be found at {FOLDER_PATH} </p>
+        <p style="color: #666; ">Please follow up on this Purchase Order as soon as possible. </p>
+        <p style="color: #666; ">For more information, go to <a href="{url}">Ticket</a>. </p>
+
+        <p style="color: #666; ">Have a good day.</p>
+
+    </div>
+
+</body>
+
+</html>
