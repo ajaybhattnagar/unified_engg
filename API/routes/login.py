@@ -9,6 +9,7 @@ import pyodbc
 import simplejson
 import datetime
 import time 
+from utils import list_files, send_email, allowedFile, generate_email_template
 
 
 from queries.users import user_query
@@ -157,7 +158,14 @@ def users(connection_string, username):
             
         return jsonify({"message": "Users updated successfully."}), 200
 
+@login_blueprint.route("/api/v1/test_smtp", methods=['GET'])
+@token_required
+def test_smtp(connection_string, username):
+    # html = generate_email_template('labor_ticket_start', 251, connection_string)
+    html = send_email('purchase_order_notification', 'ajay.bhattnagar21@gmail.com', connection_string , 'P00137', '')
+    return 'html', 200
 
+    
         
 
 

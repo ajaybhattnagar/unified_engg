@@ -238,8 +238,7 @@ def create_labor_tickets(connection_string, username):
             try:
                 if 'QA_NOTES' in content and content['QA_NOTES'] != '' and content['QA_NOTES'] != None and content['QA_NOTES'] != 'null':
                     email = configData['QA_email']
-                    subject = 'Notification - Check for new Labor Ticket'
-                    send_email('labor_ticket_start', email, subject, connection_string ,transaction_id, '')
+                    send_email('labor_ticket_start', 'ajay.bhattnagar21@gmail.com', connection_string , transaction_id, '')
             except Exception as e:
                 print(e)
                 pass
@@ -257,8 +256,7 @@ def create_labor_tickets(connection_string, username):
                 
                 for row in results:
                     email = row['NOTIFY_EMPLOYEE']
-                    subject = 'Notification - Check for new Labor Ticket'
-                    send_email('qa_email_added', email, subject, connection_string, transaction_id, '')
+                    send_email('qa_email_added', email, connection_string , transaction_id, '')
                 sql.close()
 
             except Exception as e:

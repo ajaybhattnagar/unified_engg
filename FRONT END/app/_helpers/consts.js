@@ -1,14 +1,14 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
 
-    // DEPLOYEMENT_URL: 'http://localhost:8080/',
-    DEPLOYEMENT_URL: 'https://app.unified.local/',
+    DEPLOYEMENT_URL: 'http://localhost:8080/',
+    // DEPLOYEMENT_URL: 'https://app.unified.local/',
 
-    // BASE_URL: 'http://localhost:5000/',
-    BASE_URL: 'https://api.unified.local/',
+    BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'https://api.unified.local/',
 
-    // VISUAL_API: 'http://localhost:44360/',
-    VISUAL_API: 'https://infor.unified.local/',
+    VISUAL_API: 'http://localhost:44360/',
+    // VISUAL_API: 'https://infor.unified.local/',
 
     // Resources URLS
     SSRS_WEB_PORTAL: 'http://uni-vm-visdev.unified.local:5009/Reports/browse/',

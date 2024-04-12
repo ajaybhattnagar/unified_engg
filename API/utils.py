@@ -15,99 +15,214 @@ with open ('config.json') as f:
     configData = json.load(f)
 
 labor_ticket_start_template = """<html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Notification</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
 
-            <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                                    <head>
+                                        <meta charset="UTF-8">
+                                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                        <title>Notification</title>
+                                    </head>
 
-                <p style="color: #666; text-align: center;">Hello,</p>
+                                    <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
 
-                <p style="color: #666; text-align: center;">Please review the ticket below</p>
+                                        <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
 
-                <p style="text-align: center;">
-                    <a href="{url}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">Ticket</a>
-                </p>
+                                            <p style="color: #666; ">Attention QA Personnel,</p>
 
-                <p style="color: #666; text-align: center;">Thank you</p>
+                                            <p style="color: #666; ">The following comment has been made by {EMPLOYEE_NAME} ({EMPLOYEE_ID}) while clocked into {BASE_ID} on {DATE_TIME}</p>
+                                            <p style="color: #666; ">QA Notes: {NOTES}.  </p>
+                                            <p style="color: #666; ">Related photos and documents can be found at {FOLDER_PATH}.  </p>
+                                            <p style="color: #666; ">Please follow up as needed. </p>
+                                            <p style="color: #666; ">For more information, go to <a href="{url}">Ticket</a>. </p>
 
-            </div>
+                                            <p style="color: #666; ">Have a good day.</p>
 
-        </body>
-        </html>"""
+                                        </div>
+
+                                    </body>
+
+                                    </html>"""
 
 qa_email_added_template = """<html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Notification</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
 
-            <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                    <title>Notification</title>
+                                </head>
 
-                <p style="color: #666; text-align: center;">Hello,</p>
+                                <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
 
-                <p style="color: #666; text-align: center;">Please review the ticket below</p>
+                                    <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
 
-                <p style="text-align: center;">
-                    <a href="{url}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">Ticket</a>
-                </p>
+                                        <p style="color: #666; ">Hello {EMPLOYEE_NAME},</p>
 
-                <p style="color: #666; text-align: center;">Thank you</p>
+                                        <p style="color: #666; ">On {START_TIME}, {EMPLOYEE_NAME} ({EMPLOYEE_ID}) began work on: </p>
+                                        <p style="color: #666; ">{BASE_ID} {LOT_ID} {SPLIT_ID} {SUB_ID} {OPERATION_NO} {OPERATION_DESC}</p>
+                                        <p style="color: #666; ">Related photos and documents can be found at {FOLDER_PATH}.  </p>
+                                        <p style="color: #666; ">Please follow up as needed. </p>
+                                        <p style="color: #666; ">For more information, go to <a href="{url}">Ticket</a>. </p>
 
-            </div>
+                                        <p style="color: #666; ">Have a good day.</p>
 
-        </body>
-        </html>"""
+                                    </div>
+
+                                </body>
+
+                                </html>"""
 
 purchase_order_notification_template = """<html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Notification</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
 
-            <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                                        <head>
+                                            <meta charset="UTF-8">
+                                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                            <title>Notification</title>
+                                        </head>
 
-                <p style="color: #666; text-align: center;">Hello,</p>
+                                        <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
 
-                <p style="color: #666; text-align: center;">Order in receiving</p>
+                                            <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
 
-                <p style="text-align: center;">
-                    <a href="{url}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">{PO_NUMBER}</a>
-                </p>
+                                                <p style="color: #666; ">Hello {EMPLOYEE_NAME},</p>
 
-                <p style="color: #666; text-align: center;">Thank you</p>
+                                                <p style="color: #666; ">Your Purchase Order, {PO_NUMBER} from {VENDOR}, was received by {REC_NAME} ({REC_EMP_ID}) on {START_TIME}. </p>
+                                                <p style="color: #666; ">These materials are intended for jobs:</p> 
+                                                {ITEMS}                                      
+                                                <p style="color: #666; ">Related photos and documents can be found at {FOLDER_PATH}.  </p>
+                                                <p style="color: #666; ">Please follow up on this Purchase Order as soon as possible. </p>
+                                                <p style="color: #666; ">For more information, go to <a href="{url}">Ticket</a>. </p>
 
-            </div>
+                                                <p style="color: #666; ">Have a good day.</p>
 
-        </body>
-        </html>"""
+                                            </div>
 
-def send_email(type, email, subject, connection_string, unique_id, notes):
+                                        </body>
+
+                                        </html>"""
+
+def generate_email_template(template, unique_id, connection_string):
+    url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=labor_ticket&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
+
+    # ************************************************************************************
+    if template == 'labor_ticket_start':
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute("""SELECT CONVERT(VARCHAR, LAB.CREATE_DATE, 100) AS [CLOCK_IN], LAB.WORKORDER_BASE_ID , LAB.EMPLOYEE_ID, LAB.QA_NOTES, EMP.FIRST_NAME
+                        FROM UNI_LABOR_TICKET LAB
+                        LEFT JOIN EMPLOYEE EMP ON EMP.USER_ID = LAB.EMPLOYEE_ID
+                        WHERE TRANSACTION_ID = '{}'""".format(unique_id))
+        data = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        cnxn.close()
+        html = labor_ticket_start_template.format(
+            EMPLOYEE_NAME = data[0]['FIRST_NAME'],
+            EMPLOYEE_ID = data[0]['EMPLOYEE_ID'],
+            BASE_ID = data[0]['WORKORDER_BASE_ID'],
+            DATE_TIME = data[0]['CLOCK_IN'],
+            NOTES = data[0]['QA_NOTES'],
+            FOLDER_PATH = "SADASD",
+            url = url_ticket
+        )
+        subject = """{BASE_ID}, {EMPLOYEE_NAME} - Labour Ticket QA Notes""".format(BASE_ID = data[0]['WORKORDER_BASE_ID'], EMPLOYEE_NAME = data[0]['FIRST_NAME'])
+        return html, subject
+    
+    # ************************************************************************************
+    if template == 'qa_email_added':
+        url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=labor_ticket&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute("""SELECT TOP 1 CONVERT(VARCHAR, LAB.CLOCK_IN, 100) AS [CLOCK_IN], LAB.WORKORDER_BASE_ID, LAB.WORKORDER_LOT_ID, LAB.WORKORDER_SPLIT_ID, LAB.WORKORDER_SUB_ID,
+                        LAB.EMPLOYEE_ID, LAB.QA_NOTES, EMP.FIRST_NAME, LAB.TRANSACTION_ID,
+                                UQ.NOTIFY_EMPLOYEE, UQ.EMPLOYEE_ID, EMP.FIRST_NAME, SP.DESCRIPTION, LAB.OPERATION_SEQ_NO
+                        FROM UNI_LABOR_TICKET LAB
+                        LEFT JOIN UNI_QUALITY_UPDATES UQ ON UQ.WORKORDER_TYPE = 'W' AND  LAB.WORKORDER_BASE_ID = UQ.WORKORDER_BASE_ID AND LAB.WORKORDER_LOT_ID = UQ.WORKORDER_LOT_ID AND LAB.WORKORDER_SPLIT_ID = UQ.WORKORDER_SPLIT_ID AND
+                            LAB.WORKORDER_SUB_ID = UQ.WORKORDER_SUB_ID AND LAB.OPERATION_SEQ_NO = UQ.OPERATION_SEQ_NO
+                        LEFT JOIN OPERATION OP ON UQ.WORKORDER_TYPE = 'W' AND  OP.WORKORDER_BASE_ID = UQ.WORKORDER_BASE_ID AND OP.WORKORDER_LOT_ID = UQ.WORKORDER_LOT_ID AND OP.WORKORDER_SPLIT_ID = UQ.WORKORDER_SPLIT_ID AND
+                            OP.WORKORDER_SUB_ID = UQ.WORKORDER_SUB_ID AND OP.SEQUENCE_NO = UQ.OPERATION_SEQ_NO
+                        LEFT JOIN EMPLOYEE EMP ON EMP.USER_ID = LAB.EMPLOYEE_ID
+                        LEFT JOIN SHOP_RESOURCE SP ON SP.ID = OP.RESOURCE_ID
+                        WHERE TRANSACTION_ID = '{}'""".format(unique_id))
+        # Convert data to dictionary
+        data = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        cnxn.close()
+
+        html = qa_email_added_template.format(
+            EMPLOYEE_NAME = data[0]['FIRST_NAME'],
+            EMPLOYEE_ID = data[0]['EMPLOYEE_ID'],
+            BASE_ID = data[0]['WORKORDER_BASE_ID'],
+            LOT_ID = data[0]['WORKORDER_LOT_ID'],
+            SPLIT_ID = data[0]['WORKORDER_SPLIT_ID'],
+            SUB_ID = data[0]['WORKORDER_SUB_ID'],
+            OPERATION_NO = data[0]['OPERATION_SEQ_NO'],
+            OPERATION_DESC = data[0]['DESCRIPTION'],
+            START_TIME = data[0]['CLOCK_IN'],
+            FOLDER_PATH = "SADASD",
+            url = url_ticket
+        )
+        subject = """{BASE_ID}, {EMPLOYEE_NAME} - Work Order Sign-In Notification""".format(BASE_ID = data[0]['WORKORDER_BASE_ID'], EMPLOYEE_NAME = data[0]['FIRST_NAME'])
+        return html, subject
+
+    # ************************************************************************************
+    if template == 'purchase_order_notification':
+        url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=labor_ticket&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute("""SELECT PO.ID, POL.LINE_NO, POL.PART_ID, DSL.DEMAND_BASE_ID, DSL.DEMAND_LOT_ID, DSL.DEMAND_SPLIT_ID, DSL.DEMAND_SUB_ID, DSL.DEMAND_SEQ_NO, DSL.DEMAND_NO,
+                        ISNULL((CONVERT(NVARCHAR(MAX),CONVERT(VARBINARY(8000), RB.BITS ))),'') AS [SPECS], EMP.FIRST_NAME AS [BUYER_NAME], EMP.EMAIL_ADDR, 
+                        CONVERT(VARCHAR, GETDATE(), 100) AS [START_TIME], VENDOR.NAME,
+                        SYSTEM_USER AS [REC_USER_ID], (SELECT TOP 1 FIRST_NAME FROM EMPLOYEE WHERE USER_ID = SYSTEM_USER) AS [REC_USER_NAME]
+                        FROM PURCHASE_ORDER PO
+                        LEFT JOIN PURC_ORDER_LINE POL ON POL.PURC_ORDER_ID = PO.ID
+                        LEFT JOIN DEMAND_SUPPLY_LINK DSL ON DSL.SUPPLY_TYPE = 'PO' AND SUPPLY_BASE_ID = PO.ID AND SUPPLY_SEQ_NO = POL.LINE_NO
+                        LEFT JOIN REQUIREMENT_BINARY RB ON RB.WORKORDER_TYPE = 'W' AND RB.WORKORDER_BASE_ID = DSL.DEMAND_BASE_ID AND RB.WORKORDER_LOT_ID = DSL.DEMAND_LOT_ID
+                            AND RB.WORKORDER_SPLIT_ID = DSL.DEMAND_SPLIT_ID AND RB.WORKORDER_SUB_ID = DSL.DEMAND_SUB_ID AND RB.OPERATION_SEQ_NO = DSL.DEMAND_SEQ_NO AND RB.PIECE_NO = DSL.DEMAND_NO
+                        LEFT JOIN EMPLOYEE EMP ON EMP.USER_ID = PO.BUYER
+                        LEFT JOIN VENDOR ON VENDOR.ID = PO.VENDOR_ID
+                        WHERE PO.ID = '{}'""".format(unique_id))
+        # Convert data to dictionary
+        data = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        cnxn.close()
+
+        # Join some columns to create a new column
+        for i in range(len(data)):
+            data[i]['ITEM'] = data[i]['DEMAND_BASE_ID'] + ' - ' + str(data[i]['DEMAND_LOT_ID']) + ' - ' + str(data[i]['DEMAND_SPLIT_ID']) + ' - ' + str(data[i]['DEMAND_SUB_ID']) +  ' - ' + str(data[i]['DEMAND_NO']) + ' : ' + data[i]['SPECS']
+
+        # If data length is greater than 1, then we have multiple items
+        if len(data) > 1:
+            items = ''
+            for i in range(len(data)):
+                items += data[i]['ITEM'] + '<br>'
+            data[0]['ITEM'] = items
+        html = purchase_order_notification_template.format(
+            EMPLOYEE_NAME = data[0]['BUYER_NAME'],
+            PO_NUMBER = data[0]['ID'],
+            VENDOR = data[0]['NAME'],
+            REC_NAME = data[0]['REC_USER_ID'],
+            REC_EMP_ID = data[0]['REC_USER_NAME'],
+            START_TIME = data[0]['START_TIME'],
+            ITEMS = data[0]['ITEM'],
+
+            FOLDER_PATH = "SADASD",
+            url = url_ticket
+        )
+        subject = """{PO_NUMBER}, {EMPLOYEE_NAME} - Received PO Notification""".format(PO_NUMBER = data[0]['ID'], EMPLOYEE_NAME = data[0]['BUYER_NAME'])
+        
+        return html, subject
+
+
+def send_email(type, email, connection_string, unique_id, notes):
     try:
+        if type == 'labor_ticket_start':
+            html_subject = generate_email_template('labor_ticket_start', unique_id, connection_string)
+        if type == 'qa_email_added':
+            html_subject = generate_email_template('qa_email_added', unique_id, connection_string)
+        if type == 'purchase_order_notification':
+            html_subject = generate_email_template('purchase_order_notification', unique_id, connection_string)
+
         msg = MIMEMultipart()
         msg['From'] = configData['smtp_user']
         msg['To'] = email
-        msg['Subject'] = subject
+        msg['Subject'] = html_subject[1]
+        msg.attach(MIMEText(html_subject[0], 'html'))
 
-
-        if type == 'labor_ticket_start':
-            url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=labor_ticket&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
-            html_content = labor_ticket_start_template.format(url=url_ticket)
-        if type == 'qa_email_added':
-            url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=labor_ticket&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
-            html_content = qa_email_added_template.format(url=url_ticket)
-        if type == 'purchase_order_notification':
-            url_ticket = '{BASE_DEPLOYMENT_URL}/ticket_details?transaction_type=purchase_order&transaction_id={unique_id}'.format(BASE_DEPLOYMENT_URL = configData['deployment_url_front_end'], unique_id=unique_id)
-            html_content = purchase_order_notification_template.format(url = url_ticket, PO_NUMBER=unique_id)
-
-        msg.attach(MIMEText(html_content, 'html'))
         server = smtplib.SMTP(configData['smtp_host'], configData['smtp_port'])
         server.starttls()
         server.login(configData['smtp_user'], configData['smtp_password'])
