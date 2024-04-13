@@ -153,7 +153,6 @@ const CreateLaborTicket = () => {
             "SITE_ID": localStorage.getItem('SITE'),
             "LABOR_TICKET_DETAILS": data
         }
-        console.log(post_data);
         fetch(url, {
             method: "POST",
             headers: {
