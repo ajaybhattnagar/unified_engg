@@ -143,19 +143,6 @@ const CreateLaborTicket = () => {
 
         // Modify data to match visual api
         var _data = data.forEach((item) => {
-            // If work time has "Regular Time" then multiplier is 1
-            // If work time has "Double Time" then multiplier is 2
-            // If work time has "Over Time" then multiplier is 1.5
-            if (item.WORK_TIME.includes("Regular")) {
-                item.MULTIPLIER = 1;
-            }
-            else if (item.WORK_TIME.includes("Double")) {
-                item.MULTIPLIER = 2;
-            }
-            else if (item.WORK_TIME.includes("Over")) {
-                item.MULTIPLIER = 1.5;
-            }
-            // Add USER_ID as login user
             item.USER_ID = localStorage.getItem('EMPLOYEE_ID');
         })
 
@@ -166,6 +153,7 @@ const CreateLaborTicket = () => {
             "SITE_ID": localStorage.getItem('SITE'),
             "LABOR_TICKET_DETAILS": data
         }
+        console.log(post_data);
         fetch(url, {
             method: "POST",
             headers: {

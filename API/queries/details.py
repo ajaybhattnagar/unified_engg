@@ -135,7 +135,11 @@ details_query = {
 "GET_DATA_FOR_CREATING_LABOR_TICKET_IN_VISUAL": """SELECT ULAB.TRANSACTION_ID AS [UNI_TRANSACTION_ID],
                                                     CASE WHEN ULAB.TYPE = 'R' THEN 'RUN'
                                                     WHEN ULAB.TYPE = 'I' THEN 'INDIRECT' ELSE '' END AS 'TRANSACTION_TYPE',
-                                                    ULAB.WORKORDER_BASE_ID, ULAB.WORKORDER_LOT_ID, ULAB.WORKORDER_SPLIT_ID, ULAB.WORKORDER_SUB_ID, ULAB.OPERATION_SEQ_NO, ULAB.CLOCK_IN, ULAB.CLOCK_OUT, ISNULL(ULAB.WORK_TIME, 'Regular Time') AS [WORK_TIME],
+                                                    ULAB.WORKORDER_BASE_ID, ULAB.WORKORDER_LOT_ID, ULAB.WORKORDER_SPLIT_ID, ULAB.WORKORDER_SUB_ID, ULAB.OPERATION_SEQ_NO, ULAB.CLOCK_IN, ULAB.CLOCK_OUT, 
+                                                    CASE WHEN CHARINDEX('Regular', ULAB.WORK_TIME) > 0 THEN 1 
+                                                        WHEN CHARINDEX('Double', ULAB.WORK_TIME) > 0 THEN 2
+                                                        WHEN CHARINDEX('Over', ULAB.WORK_TIME) > 0 THEN 1.5 ELSE 1 END AS [MULTIPLIER],
+                                                    ISNULL(ULAB.WORK_TIME, 'Regular Time') AS [WORK_TIME],
                                                     ULAB.HOURS_WORKED, ULAB.DESCRIPTION, EMP.ID AS [EMPLOYEE_ID], ULAB.INDIRECT_CODE AS [INDIRECT_ID],
                                                     EMP.FIRST_NAME + ' ' + EMP.LAST_NAME AS [EMP_NAME], CONVERT(VARCHAR, ULAB.CLOCK_IN, 100) AS [DISP_CLOCKIN], CONVERT(VARCHAR, ULAB.CLOCK_OUT, 100) AS [DISP_CLOCKOUT]
                                                     FROM UNI_LABOR_TICKET ULAB
