@@ -16,6 +16,7 @@ const TicketDetails = () => {
     const [document, setDocument] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [access_rights, setAccessRights] = useState({});
+    const [clockIn, setClockIn] = useState(null);
 
     useEffect(() => {
         if (localStorage.getItem("token")) {
@@ -57,6 +58,13 @@ const TicketDetails = () => {
             }
         }).then(res => res.json())
             .then((response) => {
+                // Setting clock in date
+                if (response.TICKET_DETAILS.length > 0) {
+                    // 04/10/24 12:00:00 AM to format 2024-04-10
+                    var formattedClockInDate = response.TICKET_DETAILS[0].CLOCK_IN.split(' ')[0].split('/').reverse().join('-');
+                    setClockIn(formattedClockInDate);
+                }
+
                 setTicketDetails(response.TICKET_DETAILS[0]);
                 setDocument(response.DOCUMENTS);
                 setIsLoading(false);
@@ -129,7 +137,61 @@ const TicketDetails = () => {
         }
     }
 
+    const backdate_transaction = () => {
+        const diffDays = utils.dateDiffDays(clockIn, ticketDetails['CREATE_DATE']) - 1;
+        var dateOffset = (24 * 60 * 60 * 1000) * diffDays
+        if (diffDays < 0) {
+            alert('Cannot backdate to future date!');
+            return;
+        }
+        if (diffDays > 3) {
+            alert('Cannot backdate more than 3 days!');
+            return;
+        }
+        else {
+            if (confirm('Are you sure you want to backdate this transaction?')) {
+                // Add time from CLOCK IN to ClockIN
+                var _clockIn = clockIn + ' ' + ticketDetails['CLOCK_IN'].split(' ')[1]
+                var _clockOut = new Date(ticketDetails['CLOCK_OUT']);
+                _clockOut.setTime(_clockOut.getTime() - dateOffset);
+
+                // Convert _clockOut to string
+                _clockOut = _clockOut.toISOString().split('T')[0] + ' ' + _clockOut.toTimeString().split(' ')[0];
+
+                // Update clock in
+                utils.updateLaborTicketsField(ticketDetails['TRANSACTION_ID'], "CLOCK_IN", _clockIn)
+                    .then((response) => {
+                        console.log(response);
+
+                        // Update clock out
+                        utils.updateLaborTicketsField(ticketDetails['TRANSACTION_ID'], "CLOCK_OUT", _clockOut)
+                            .then((response) => {
+                                console.log(response);
+                                window.location.reload();
+                            })
+                            .catch((error) => {
+                                alert(error.message);
+                                console.log(error);
+                            });
+
+                    })
+                    .catch((error) => {
+                        alert(error.message);
+                        console.log(error);
+                    });
+
+            }
+        }
+    }
+
     const render = () => {
+        var diffDays = 0;
+        try {
+            diffDays = utils.dateDiffDays(clockIn, ticketDetails['CREATE_DATE']) - 1;
+        }
+        catch (e) {
+            diffDays = 1;
+        }
 
         return (
             <div>
@@ -156,21 +218,6 @@ const TicketDetails = () => {
                                                             <tr key={index}>
                                                                 <td className="font-weight-bold">{key}</td>
                                                                 <td>{ticketDetails[key]}
-                                                                    {access_rights.ALLOWED_DUPLICATE_RECORD === '1' && key === 'TRANSACTION_ID' ?
-                                                                        <span variant="primary" className="badge badge-success ml-3 cusor-hand"
-                                                                            onClick={() => { duplicate_labor_ticket(ticketDetails[key]) }}>
-                                                                            Duplicate
-                                                                        </span>
-                                                                        : null
-                                                                    }
-                                                                    {
-                                                                        key === 'TRANSACTION_ID' ?
-                                                                            <span variant="primary" className="badge badge-danger ml-3 cusor-hand"
-                                                                                onClick={() => { delete_labour_ticket(ticketDetails[key]) }}>
-                                                                                Delete
-                                                                            </span>
-                                                                            : null
-                                                                    }
                                                                 </td>
                                                             </tr>
                                                         )
@@ -188,6 +235,35 @@ const TicketDetails = () => {
                                 <Loading />
                         }
                     </div>
+                    {
+                        !isLoading ? ticketDetails ?
+
+                            <div className="d-flex flex-column ">
+                                {access_rights.ALLOWED_DUPLICATE_RECORD === '1' ?
+                                    <button className="btn btn-outline-success mt-1"
+                                        onClick={() => { duplicate_labor_ticket(ticketDetails['TRANSACTION_ID']) }}>
+                                        Duplicate
+                                    </button>
+                                    : null
+                                }
+                                {
+                                    <button className="btn btn-outline-danger mt-1"
+                                        onClick={() => { delete_labour_ticket(ticketDetails['TRANSACTION_ID']) }}>
+                                        Delete
+                                    </button>
+                                }
+                                {
+                                    <div className="mt-1">
+                                        <Input disabled={diffDays > 3 ? true : false} text="Back-date Trans." type={'date'}
+                                            value={clockIn} onChange={(e) => setClockIn(e)}
+                                            isUpdateButtonDisabled={false}
+                                            onUpdateButtonClick={() => { backdate_transaction() }}
+                                        />
+                                    </div>
+                                }
+                            </div>
+                            : null : null
+                    }
 
                     <div>
                         {
