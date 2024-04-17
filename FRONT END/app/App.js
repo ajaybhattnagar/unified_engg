@@ -19,6 +19,7 @@ import Receiving from './_components/_receiving/Receiving.js';
 import SignOff from './_components/_quality/SignOff.js';
 import OpenFiles from './_components/_reports/OpenFiles.js';
 import LabourSummary from './_components/_reports/LabourSummary.js';
+import CreateQuote from './_components/_create_quote/CreateQuote.js';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
 				<Route path='/receiving' element={<Receiving />} />
 				<Route path='/quality/sign_off' element={<SignOff />} />
 				<Route path='/reports/open_files' element={<OpenFiles />} />
+				<Route path='/reports/create_quote' element={<CreateQuote />} />
 				
 			</Routes>
 		</Router>

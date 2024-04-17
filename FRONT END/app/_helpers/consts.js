@@ -1,14 +1,14 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
 
-    // DEPLOYEMENT_URL: 'http://localhost:8080/',
-    DEPLOYEMENT_URL: 'https://app.unified.local/',
+    DEPLOYEMENT_URL: 'http://localhost:8080/',
+    // DEPLOYEMENT_URL: 'https://app.unified.local/',
 
-    // BASE_URL: 'http://localhost:5000/',
-    BASE_URL: 'https://api.unified.local/',
+    BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'https://api.unified.local/',
 
-    // VISUAL_API: 'http://localhost:44360/',
-    VISUAL_API: 'https://infor.unified.local/',
+    VISUAL_API: 'http://localhost:44360/',
+    // VISUAL_API: 'https://infor.unified.local/',
 
     // Resources URLS
     SSRS_WEB_PORTAL: 'http://uni-vm-visdev.unified.local:5009/Reports/browse/',
@@ -61,4 +61,6 @@ export const appConstants = {
     GET_PURCHASE_ORDERS: 'api/v1/purchasing/get_purchase_order', // ADD PO ID AS PARAMS TO GET LINES 
     CREATE_RECEIVER_VISUAL: 'api/Purchasing/ReceiveOrder',
     NOTIFY_BUYER: 'api/v1/purchasing/notify_buyer',
+
+    GET_CREATE_QUOTE_INITIAL_LOAD_DETAILS: '/api/v1/quotes/new_quote_details',
 };

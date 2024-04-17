@@ -11,6 +11,7 @@ from routes.login import login_blueprint
 from routes.Labor import labor_blueprint
 from routes.Details import details_blueprint
 from routes.Purchasing import purchasing_blueprint
+from routes.Quotes import quotes_blueprint
 
 
 app = Flask(__name__)
@@ -18,6 +19,7 @@ app.register_blueprint(login_blueprint)
 app.register_blueprint(labor_blueprint)
 app.register_blueprint(details_blueprint)
 app.register_blueprint(purchasing_blueprint)
+app.register_blueprint(quotes_blueprint)
 
 
 CORS(app)

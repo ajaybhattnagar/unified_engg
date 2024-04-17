@@ -1,0 +1,61 @@
+{
+    "Database": "STERNDEV",
+    "UserName": "SYSADM",
+    "Password": "STERNGoLive",
+    "SiteId": "STERN-01",
+    "CustomerId": "ABTE0001-02",
+    "QuoteDate": "04/04/2024",
+    "ExpirationDate": "04/04/2024",
+    "FollowUpDate": "04/04/2024",
+    "SalesRep": "SALESREP001",
+    "Fob": "DHL",
+    "ShipVia": "FEDEX",
+    "UserId": "SYSADM",
+    "QuoteLines": [
+        {
+            "LineNo": 1,
+            "Description": "ASDASD",
+            "QuotePrice": [
+                {
+                    "LineNo": 1,
+                    "QuoteQty": 1,
+                    "UnitPrice": 15,
+                    "SellingUm": "EA",
+                    "PurMatl": 20,
+                    "FabMatl": 20,
+                    "LaborPer": 20,
+                    "BurdenPer": 20,
+                    "ServicePer": 20
+                },
+                 {
+                    "LineNo": 1,
+                    "QuoteQty": 5,
+                    "UnitPrice": 10,
+                    "SellingUm": "EA",
+                    "PurMatl": 20,
+                    "FabMatl": 20,
+                    "LaborPer": 20,
+                    "BurdenPer": 20,
+                    "ServicePer": 20
+                }
+            ]
+        },
+        {
+            "LineNo": 2,
+            "Description": "ASDSASDASD",
+            "QuotePrice": [
+                {
+                    "LineNo": 2,
+                    "QuoteQty": 1,
+                    "UnitPrice": 15,
+                    "SellingUm": "EA",
+                    "PurMatl": 20,
+                    "FabMatl": 20,
+                    "LaborPer": 20,
+                    "BurdenPer": 20,
+                    "ServicePer": 20
+                }
+            ]
+        }
+    ]
+}
