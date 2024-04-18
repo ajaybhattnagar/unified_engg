@@ -4,6 +4,5 @@ quote_query = {
 "GET_SALES_REP": """SELECT ID AS [value], NAME AS [label] FROM SALES_REP WHERE NAME IS NOT NULL""",
 "GET_TERRITORY": """SELECT CODE AS [value], CODE AS [label] FROM TERRITORY""",
 "GET_FOB_POINT": """SELECT CODE AS [value], CODE AS [label] FROM FOB_POINT""",
-"GET_SHIP_VIA": """SELECT CODE AS [value], CODE AS [label] FROM SHIP_VIA""",
-
+"GET_SHIP_VIA": """SELECT CODE AS [value], CODE AS [label] FROM SHIP_VIA"""
 }

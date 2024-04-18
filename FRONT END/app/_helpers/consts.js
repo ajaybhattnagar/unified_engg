@@ -63,4 +63,5 @@ export const appConstants = {
     NOTIFY_BUYER: 'api/v1/purchasing/notify_buyer',
 
     GET_CREATE_QUOTE_INITIAL_LOAD_DETAILS: '/api/v1/quotes/new_quote_details',
+    CREATE_QUOTE_IN_VISUAL: '/api/Quote/CreateQuoteWithLines',
 };

@@ -63,7 +63,7 @@ def indirect_codes(connection_string, username):
 
         sql.execute(quote_query['GET_SHIP_VIA'])
         ship_via = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
-
+        
 
         sql.close()
 
@@ -72,7 +72,7 @@ def indirect_codes(connection_string, username):
             "SALES_REP": sales_rep,
             "TERRITORY": territory,
             "FOB_POINT": fob,
-            "SHIP_VIA": ship_via
+            "SHIP_VIA": ship_via,
         }
         response = Response(
                     response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
@@ -83,30 +83,30 @@ def indirect_codes(connection_string, username):
     except Exception as e:
         return jsonify({"message": str(e)}), 401
     
-@quotes_blueprint.route("/api/v1/details/site_warehouse", methods=['GET'])
-@token_required
-def site_warehouse(connection_string, username):
-    cnxn = pyodbc.connect(connection_string)
-    # Add notes to a parcel   
-    try:
-        sql = cnxn.cursor()
-        sql.execute(details_query['GET_SITES'])
-        sites = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+# @quotes_blueprint.route("/api/v1/details/site_warehouse", methods=['GET'])
+# @token_required
+# def site_warehouse(connection_string, username):
+#     cnxn = pyodbc.connect(connection_string)
+#     # Add notes to a parcel   
+#     try:
+#         sql = cnxn.cursor()
+#         sql.execute(details_query['GET_SITES'])
+#         sites = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
 
-        sql.execute(details_query['GET_WAREHOUSES'])
-        warehouses = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+#         sql.execute(details_query['GET_WAREHOUSES'])
+#         warehouses = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
 
-        sql.close()
+#         sql.close()
 
-        response_dict = {
-            "SITES": sites,
-            "WAREHOUSES": warehouses
-        }
-        response = Response(
-                    response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
-                    mimetype='application/json'
-                )
-        response.headers['content-type'] = 'application/json'
-        return response, 200
-    except Exception as e:
-        return jsonify({"message": str(e)}), 401
+#         response_dict = {
+#             "SITES": sites,
+#             "WAREHOUSES": warehouses
+#         }
+#         response = Response(
+#                     response=simplejson.dumps(response_dict, ignore_nan=True,default=datetime.datetime.isoformat),
+#                     mimetype='application/json'
+#                 )
+#         response.headers['content-type'] = 'application/json'
+#         return response, 200
+#     except Exception as e:
+#         return jsonify({"message": str(e)}), 401
