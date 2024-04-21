@@ -106,17 +106,21 @@ const EOD = () => {
             data: 'TRANSACTION_ID',
             type: 'numeric',
             readOnly: true,
-            renderer: safeHtmlRenderer
+            renderer: safeHtmlRenderer,
+            width: 15
         },
         {
             data: 'WORKORDER_BASE_ID',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            width: 25
         },
         {
             data: 'LOT_SPLIT_SUB',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            width: 25
+
         },
         {
             data: 'PART_DESC',
@@ -207,8 +211,8 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Part Desc', 'Customer ID', 'Operation',
-                                        'In', 'Out', 'Work Time', 'Hrs worked', 'Indirect', 'Notes', 'QA Notes', 'Approved']}
+                                    columnsHeaders={['ID', 'Work <br> order', 'Lot <br> Split Sub', 'Part <br> Desc', 'Customer ID', 'Operation',
+                                        'In', 'Out', 'Work Time', 'Hrs <br> worked', 'Indirect', 'Notes', 'QA Notes', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
                                     height={window.innerHeight - 200}

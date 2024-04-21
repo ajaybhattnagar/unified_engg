@@ -99,8 +99,8 @@ const MTable = (props) => {
                 }
                 }
                 afterSelection={(r, c) => { on_cell_selected(data[r]) }}
-                // autoWrapRow={false}
-                // autoWrapCol={false}
+                autoWrapRow={true}
+                autoWrapCol={true}
                 manualColumnResize={true}
                 fixedColumnsStart={1}
                 stretchH="all"
