@@ -1,3 +1,4 @@
+
 {
     "sqlserver": "192.168.2.2",
     "sqldriver": "SQL Server",
@@ -26,6 +27,9 @@
 
     "deployment_url_front_end": "https://app.unified.local",
 
-    "u_drive_path": "C:\\DOCS\\"
+    "u_drive_path": "C:\\DOCS\\",
+    "quotes_folder_path": "C:\\DOCS\\", 
+    "UEQuote_file_path": "C:\\DOCS\\requirements.txt",
+    "_comments": "//Database and projects will be added after this path automatically //Production path = \\charlie\\Corporate Data\\"
 
 }

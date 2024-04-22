@@ -177,14 +177,38 @@ const CreateQuote = () => {
                 var message_string = response.Message;
                 // Split the message string to get the quote number
                 var quote_number = message_string.split(" ")[0];
-                console.log(quote_number);
+                create_folder_structure(quote_number);
                 setIsCreatingQuote(false);
                 alert(response.Message);
+                window.location.reload();
             })
             .catch((error) => {
                 setIsCreatingQuote(false);
                 console.log(error);
             });
+    }
+
+    const create_folder_structure = (quote_id) => {
+        var url = appConstants.BASE_URL.concat(appConstants.CREATE_QUOTE_FOLDER_STRUCTURE).concat(quote_id);
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'x-access-token': localStorage.getItem('token')
+            },
+        })
+            .then((res) => {
+                if (res.status === 200) {
+                    return res.json();
+                }
+                else {
+                    return res.json();
+                }
+            })
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((err) => { console.error(err); alert("Error creating folder structure"); });
     }
 
 

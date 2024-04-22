@@ -64,4 +64,5 @@ export const appConstants = {
 
     GET_CREATE_QUOTE_INITIAL_LOAD_DETAILS: '/api/v1/quotes/new_quote_details',
     CREATE_QUOTE_IN_VISUAL: '/api/Quote/CreateQuoteWithLines',
+    CREATE_QUOTE_FOLDER_STRUCTURE: '/api/v1/quotes/create_folder_structure/', //ADD QUOTE ID AFTER SLASH
 };
