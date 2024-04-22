@@ -55,12 +55,14 @@ const ApproveLaborTickets = () => {
             data: 'TRANSACTION_ID',
             type: 'numeric',
             readOnly: true,
-            renderer: safeHtmlRenderer
+            renderer: safeHtmlRenderer,
+            width: 20
         },
         {
             data: 'APPROVED',
             type: 'checkbox',
             className: 'htCenter',
+            width: 20
         },
         {
             data: 'EMPLOYEE_ID',
@@ -73,6 +75,7 @@ const ApproveLaborTickets = () => {
             numericFormat: {
                 pattern: '0,00',
             },
+            width: 20
         },
         {
             data: 'WORK_TIME',
@@ -82,17 +85,20 @@ const ApproveLaborTickets = () => {
         {
             data: 'INDIRECT_ID',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            width: 20
         },
         {
             data: 'WORKORDER_BASE_ID',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            width: 25
         },
         {
             data: 'LOT_SPLIT_SUB',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            width: 25
         },
         {
             data: 'RESOURCE_DESCRIPTION',
@@ -133,13 +139,15 @@ const ApproveLaborTickets = () => {
         {
             data: 'WORK_LOCATION',
             type: 'dropdown',
-            source: ['On-site', 'Off-site', 'Remote']
+            source: ['On-site', 'Off-site', 'Remote'],
+            width: 25
         },
         {
             data: 'VISUAL_LAB_TRANS_ID',
             type: 'numeric',
             readOnly: true,
             format: '0.00',
+            width: 10
         }
     ]
     const summary_data_columns = [
@@ -299,9 +307,9 @@ const ApproveLaborTickets = () => {
                                     <MTable
                                         data={laborTicketData}
                                         columnsTypes={labor_ticket_columns}
-                                        columnsHeaders={['ID', 'Approved', 'Employee', 'Hrs worked', 'Work Time',
-                                            'Indirect', 'Work order', 'Lot Split Sub', 'Operation', 'Notes', 'QA Notes',
-                                            'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual Labor ID']}
+                                        columnsHeaders={['ID', 'Approved', 'Employee', 'Hrs <br> worked', 'Work <br> Time',
+                                            'Indirect', 'Work <br> order', 'Lot <br> Split Sub', 'Operation', 'Notes', 'QA Notes',
+                                            'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual <br> Labor ID']}
 
                                         onChange={(e) => { update_labor_tickets(e) }}
                                         onInstantDataChange={(e) => { null }}

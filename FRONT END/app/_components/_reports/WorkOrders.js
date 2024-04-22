@@ -196,6 +196,11 @@ const WorkOrders = () => {
             readOnly: true
         },
         {
+            data: 'TOTAL_WRK_HRS',
+            type: 'numeric',
+            readOnly: true
+        },
+        {
             data: 'CO_SHIP_DATE',
             type: 'text',
             readOnly: true
@@ -220,7 +225,7 @@ const WorkOrders = () => {
                                             data={data}
                                             columnsTypes={columns}
                                             columnsHeaders={['Base ID', 'Status', 'Part ID', 'Customer', 'Desired Qty',
-                                                'Description', 'Job Coordinator', 'Customer Contact', 'Ship Date']}
+                                                'Description', 'Job Coordinator', 'Customer Contact', 'Total <br> Hrs Worked' , 'Ship Date']}
                                             onSelectCell={(e) => { setSelectedRow(e) }}
                                             height={isBrowser ? window.innerHeight - 200 : null}
                                         />

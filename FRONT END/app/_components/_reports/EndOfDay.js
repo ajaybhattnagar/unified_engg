@@ -140,7 +140,8 @@ const EOD = () => {
         {
             data: 'INDIRECT_ID',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            width: 20
         },
         {
             data: 'HOURS_WORKED',
@@ -149,7 +150,7 @@ const EOD = () => {
         {
             data: 'WORK_TIME',
             type: 'dropdown',
-            source: ['Regular Time', 'Over Time', 'Double Time']
+            source: ['Regular Time', 'Over Time', 'Double Time'],
         },
         {
             data: 'LAB_DESC',
@@ -173,7 +174,8 @@ const EOD = () => {
             data: 'APPROVED',
             type: 'checkbox',
             className: 'htCenter',
-            readOnly: true
+            readOnly: true,
+            width: 15
         }
     ]
 
@@ -212,7 +214,7 @@ const EOD = () => {
                                     data={data}
                                     columnsTypes={columns}
                                     columnsHeaders={['ID', 'Work <br> order', 'Lot <br> Split Sub', 'Part <br> Desc', 'Customer ID', 'Operation', 
-                                        'Indirect', 'Hrs <br> worked', 'Work Time', 'Notes', 'QA Notes', 
+                                        'Indirect', 'Hrs <br> worked', 'Work <br> Time', 'Notes', 'QA Notes', 
                                         'In', 'Out', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
