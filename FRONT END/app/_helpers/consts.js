@@ -1,14 +1,14 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
 
-    DEPLOYEMENT_URL: 'http://localhost:8080/',
-    // DEPLOYEMENT_URL: 'https://app.unified.local/',
+    // DEPLOYEMENT_URL: 'http://localhost:8080/',
+    DEPLOYEMENT_URL: 'https://app.unified.local/',
 
-    BASE_URL: 'http://localhost:5000/',
-    // BASE_URL: 'https://api.unified.local/',
+    // BASE_URL: 'http://localhost:5000/',
+    BASE_URL: 'https://api.unified.local/',
 
-    VISUAL_API: 'http://localhost:44360/',
-    // VISUAL_API: 'https://infor.unified.local/',
+    // VISUAL_API: 'http://localhost:44360/',
+    VISUAL_API: 'https://infor.unified.local/',
 
     // Resources URLS
     SSRS_WEB_PORTAL: 'http://uni-vm-visdev.unified.local:5009/Reports/browse/',
@@ -51,6 +51,8 @@ export const appConstants = {
     GET_PURCHASE_ORDER_NOTIFICATION_BY_ID: '/api/v1/details/purchase_order/',
     GET_DOCUMENTS_WITH_PATH: 'api/v1/details/get_files',
     CREATE_LABOR_TICKET_VISUAL: 'api/ShopFloor/CreateLaborTicketBulk',
+
+    GET_FORMATTED_CSV_FROM_EOD: "api/v1/labor/get_labor_tickets/", // ADD FROM DATE, TO DATE, EMPLOYEE ID, FILTER TYPE AS PARAMS TO GET CSV
 
     CLOCK_IN_OUT_USER: 'api/v1/labor/clock_in_out/',
 

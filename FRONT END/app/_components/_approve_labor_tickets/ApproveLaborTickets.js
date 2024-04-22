@@ -11,6 +11,7 @@ import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileExport, faPrint, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { LabNotes, QaNotes } from '../_ui/NotesValidation';
 
 const isBrowser = typeof window !== `undefined`
 
@@ -110,11 +111,13 @@ const ApproveLaborTickets = () => {
             data: 'LAB_DESC',
             type: 'text',
             className: 'htCenter',
+            editor: LabNotes
         },
         {
             data: 'QA_NOTES',
             type: 'text',
             className: 'htCenter',
+            editor: QaNotes
         },
         {
             data: 'CLOCK_IN',

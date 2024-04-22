@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, json, Blueprint, Response, session
+from flask import Flask, request, jsonify, json, Blueprint, Response, send_file
 from flask_cors import CORS, cross_origin
 from functools import wraps
 import pandas as pd
@@ -14,6 +14,7 @@ from queries.labor import labor_query
 from utils import send_email, save_base64_to_image, allowedFile
 import os
 import math
+import csv
 
 labor_blueprint = Blueprint('labor_blueprint', __name__)
 
@@ -126,7 +127,134 @@ def get_labor_tickets(connection_string, username):
 
     except Exception as e:
         return jsonify({"message": str(e)}), 401
+
+@labor_blueprint.route("/api/v1/labor/get_labor_tickets/<export_type>", methods=['POST'])
+@token_required
+def export_labor_tickets(connection_string, username, export_type):
+    export_type = export_type
+    content = request.get_json(silent=True)
+    try:
+
+        # If data for visual ticket is required
+        if 'DATA_FOR_VISUAL_TICKET' in content:
+            query_string = details_query['GET_DATA_FOR_CREATING_LABOR_TICKET_IN_VISUAL']
+            cnxn = pyodbc.connect(connection_string)
+            sql = cnxn.cursor()
+            sql.execute(query_string)
+            results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+            sql.close()
+            response = Response(
+                    response=simplejson.dumps(results, ignore_nan=True,default=datetime.datetime.isoformat),
+                    mimetype='application/json'
+                )
+            response.headers['content-type'] = 'application/json'
+            return response, 200
+
+        # All other Tickets
+        if 'FROM_DATE' not in content:
+            return jsonify({"message": "From Date is required"}), 401
+        else:
+            from_date = content['FROM_DATE'],
+            from_date = ''.join(from_date)
+        
+        if 'TO_DATE' not in content:
+            return jsonify({"message": "To DATE is required"}), 401
+        else:
+            to_date = content['TO_DATE'],
+            to_date = ''.join(to_date)
+
+        if 'EMPLOYEE_ID' not in content:
+            employee_id = ''
+            pass
+        else:
+            if content['EMPLOYEE_ID'] == 'ALL':
+                employee_id = ''
+            else:
+                employee_id = content['EMPLOYEE_ID'],
+                employee_id =  ''.join(employee_id)
+                employee_id = "AND ULAB.EMPLOYEE_ID = '{}'".format(employee_id)
+
+        if 'APPROVED' not in content:
+            approved = ''
+            pass
+        else:
+            if content['APPROVED'] == 'ALL':
+                approved = ''
+            else:
+                approved = content['APPROVED'],
+                approved = ''.join(approved)
+                approved = "AND APPROVED = '{}'".format(approved)
+
+        query_string = details_query['GET_LABOR_TICKETS'].format(FROM_DATE=from_date, 
+                                                                 TO_DATE = to_date, EMP_ID_QUERY_STRING=employee_id, 
+                                                                 APPROVED_QUERY_STRING=approved)
+
+        cnxn = pyodbc.connect(connection_string)
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        sql.close()
+
+        # Gettin min and max clock in and clock out 
+        min_date = min([x['CLOCK_IN'] for x in results])
+        max_date = max([x['CLOCK_OUT'] for x in results])
+
+        # Keep Required Columns
+        columns_req = ["TRANSACTION_ID", "WORKORDER_BASE_ID", "LOT_SPLIT_SUB", "SEQUENCE_NO", "INDIRECT_ID" , "HOURS_WORKED", "WORK_TIME",
+                       "QA_NOTES", "LAB_DESC", "CUSTOMER_ID"]
+        results = [{k: v for k, v in d.items() if k in columns_req} for d in results]
+        for row in results:
+            row["WORKORDER"] = str(row["WORKORDER_BASE_ID"]) + " - " +  row["LOT_SPLIT_SUB"] + " - " + str(row["SEQUENCE_NO"])
+        # Rename Columns
+        columns_rename = {
+            "TRANSACTION_ID": "TRANSACTION_ID",
+            "WORKORDER": "WORKORDER",
+            "CUSTOMER_ID": "CUSTOMER",
+            "INDIRECT_ID": "INDIRECT_ID",
+            "HOURS_WORKED": "HOURS_WORKED",
+            "WORK_TIME": "WORK_TIME",
+            "QA_NOTES": "QA_NOTES",
+            "LAB_DESC": "NOTES",
+        }
+        results = [{columns_rename.get(k, k): v for k, v in d.items()} for d in results]
+
+        # Drop Columns
+        columns_drop = ["WORKORDER_BASE_ID", "LOT_SPLIT_SUB", "SEQUENCE_NO"]
+        results = [{k: v for k, v in d.items() if k not in columns_drop} for d in results]
+
+        # Convert to dataframe
+        df = pd.DataFrame(results)
+         # Reorder Columns
+        columns_order = ["TRANSACTION_ID", "WORKORDER", "CUSTOMER", "INDIRECT_ID", "HOURS_WORKED", "WORK_TIME", "QA_NOTES", "NOTES"]
+        df = df[columns_order]
+       
+        if export_type == 'csv':
+            # Export to excel
+            file_path = "static/" + username + "_labor_tickets.csv"
+            df.to_csv(file_path, index=False)
+
+            # Reopen file and add username, clock in and clock out
+            with open(file_path, 'r') as readFile:
+                rd = csv.reader(readFile)
+                lines = list(rd)
+                lines.insert(0, ['EMPLOYEE', username])
+                lines.insert(1, ['CLOCK_IN', min_date])
+                lines.insert(2, ['CLOCK_OUT', max_date])
+
+            with open(file_path, 'w',newline='') as writeFile:
+                wt = csv.writer(writeFile)
+                wt.writerows(lines)
+
+            readFile.close()
+            writeFile.close()
+            
+            # Send file to download
+            return send_file(file_path, as_attachment=True)
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
     
+
 @labor_blueprint.route("/api/v1/labor/get_labor_tickets_summary_approved", methods=['POST'])
 @token_required
 def get_labor_tickets_summary_by_approved_not_approved(connection_string, username):

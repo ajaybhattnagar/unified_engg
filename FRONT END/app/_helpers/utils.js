@@ -33,7 +33,6 @@ export const utils = {
   disectScanInputString,
 
   dateDiffDays,
-
 }
 
 

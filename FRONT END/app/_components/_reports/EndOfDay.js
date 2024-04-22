@@ -12,6 +12,7 @@ import Loading from "../_ui/loading";
 import KpiCard from "../_ui/kpiCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileExport, faPrint, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { LabNotes, QaNotes } from '../_ui/NotesValidation';
 
 const isBrowser = typeof window !== `undefined`
 
@@ -101,6 +102,40 @@ const EOD = () => {
         td.innerHTML = utils.tranactionIdUrlLink(value)
     }
 
+    const download_csv = () => {
+        var url = appConstants.BASE_URL.concat(appConstants.GET_FORMATTED_CSV_FROM_EOD).concat("csv");
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                "TO_DATE": selectedFromDate,
+                "FROM_DATE": selectedToDate,
+                "EMPLOYEE_ID": localStorage.getItem("EMPLOYEE_ID"),
+                "APPROVED": 'ALL'
+            })
+
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                // Create a URL for the blob
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = localStorage.getItem("EMPLOYEE_ID") + "_EOD" + ".csv"  // Specify the filename for the downloaded file
+                document.body.appendChild(a);
+                a.click();
+                // Clean up
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            })
+            .catch(error => {
+                console.error('Error downloading CSV file:', error);
+            });
+    }
+
     const columns = [
         {
             data: 'TRANSACTION_ID',
@@ -146,6 +181,7 @@ const EOD = () => {
         {
             data: 'HOURS_WORKED',
             type: 'numeric',
+            width: 15
         },
         {
             data: 'WORK_TIME',
@@ -155,10 +191,12 @@ const EOD = () => {
         {
             data: 'LAB_DESC',
             type: 'text',
+            editor: LabNotes
         },
         {
             data: 'QA_NOTES',
             type: 'text',
+            editor: QaNotes
         },
         {
             data: 'CLOCK_IN',
@@ -191,8 +229,8 @@ const EOD = () => {
                                 <div className="w-15"><Input text="To" type={'date'} value={selectedToDate} onChange={(e) => setSelectedToDate(e)} /></div>
                             </div>
                             <div className="ml-3">
-                                <button type="button" class="btn btn-outline-success">
-                                    Total Hours <span class="ml-2 badge badge-light">{totalHours}</span>
+                                <button type="button" className="btn btn-outline-success">
+                                    Total Hours <span className="ml-2 badge badge-light">{totalHours}</span>
                                 </button>
                             </div>
                         </div>
@@ -200,7 +238,7 @@ const EOD = () => {
                         {
                             data && data.length > 0 ?
                                 <div className="w-20 ml-3">
-                                    <Button data-toggle="tooltip" title="Download" className='mr-2' onClick={() => utils.exportExcel(data, "end_of_day_report")}>
+                                    <Button data-toggle="tooltip" title="Download" className='mr-2' onClick={() => download_csv()}>
                                         <FontAwesomeIcon className="" icon={faDownload} /></Button>
                                 </div>
                                 : null
@@ -213,8 +251,8 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work <br> order', 'Lot <br> Split Sub', 'Part <br> Desc', 'Customer ID', 'Operation', 
-                                        'Indirect', 'Hrs <br> worked', 'Work <br> Time', 'Notes', 'QA Notes', 
+                                    columnsHeaders={['ID', 'Work <br> order', 'Lot <br> Split Sub', 'Part <br> Desc', 'Customer ID', 'Operation',
+                                        'Indirect', 'Hrs <br> worked', 'Work <br> Time', 'Notes', 'QA Notes',
                                         'In', 'Out', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
