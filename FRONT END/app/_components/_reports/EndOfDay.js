@@ -111,8 +111,8 @@ const EOD = () => {
                 'x-access-token': localStorage.getItem("token")
             },
             body: JSON.stringify({
-                "TO_DATE": selectedFromDate,
-                "FROM_DATE": selectedToDate,
+                "FROM_DATE": selectedFromDate,
+                "TO_DATE": selectedToDate,
                 "EMPLOYEE_ID": localStorage.getItem("EMPLOYEE_ID"),
                 "APPROVED": 'ALL'
             })
