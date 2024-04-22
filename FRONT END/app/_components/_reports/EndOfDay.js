@@ -138,28 +138,18 @@ const EOD = () => {
             readOnly: true
         },
         {
-            data: 'CLOCK_IN',
+            data: 'INDIRECT_ID',
             type: 'text',
             readOnly: true
-        },
-        {
-            data: 'CLOCK_OUT',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'WORK_TIME',
-            type: 'dropdown',
-            source: ['Regular Time', 'Over Time', 'Double Time']
         },
         {
             data: 'HOURS_WORKED',
             type: 'numeric',
         },
         {
-            data: 'INDIRECT_ID',
-            type: 'text',
-            readOnly: true
+            data: 'WORK_TIME',
+            type: 'dropdown',
+            source: ['Regular Time', 'Over Time', 'Double Time']
         },
         {
             data: 'LAB_DESC',
@@ -168,6 +158,16 @@ const EOD = () => {
         {
             data: 'QA_NOTES',
             type: 'text',
+        },
+        {
+            data: 'CLOCK_IN',
+            type: 'text',
+            readOnly: true
+        },
+        {
+            data: 'CLOCK_OUT',
+            type: 'text',
+            readOnly: true
         },
         {
             data: 'APPROVED',
@@ -211,8 +211,9 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work <br> order', 'Lot <br> Split Sub', 'Part <br> Desc', 'Customer ID', 'Operation',
-                                        'In', 'Out', 'Work Time', 'Hrs <br> worked', 'Indirect', 'Notes', 'QA Notes', 'Approved']}
+                                    columnsHeaders={['ID', 'Work <br> order', 'Lot <br> Split Sub', 'Part <br> Desc', 'Customer ID', 'Operation', 
+                                        'Indirect', 'Hrs <br> worked', 'Work Time', 'Notes', 'QA Notes', 
+                                        'In', 'Out', 'Approved']}
                                     onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
                                     height={window.innerHeight - 200}
