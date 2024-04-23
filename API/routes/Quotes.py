@@ -9,6 +9,8 @@ from datetime import date
 import bcrypt
 import jwt
 import pyodbc 
+import time
+import shutil
 import subprocess
 from queries.quotes import quote_query
 
@@ -105,7 +107,10 @@ def create_folder_structure(connection_string, username, database, quote_id):
         # Copy template from template path to quotation folder
         template_path = configData['UEQuote_file_path']
         to_copy_path = folder_path + '\\' + 'Quotations\\'
-        # Copy template_path to to_copy_path
+
+        time.sleep(2)
+        # shutil.copyfile(template_path, to_copy_path)
+
         subprocess.call(['xcopy', template_path, to_copy_path])
 
         return jsonify({"message": "Folder structure created successfully!"}), 200
