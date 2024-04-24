@@ -21,7 +21,6 @@ const CreateQuote = () => {
     const [selectedFOB, setSelectedFOB] = useState(null);
     const [selectedSalesRep, setSelectedSalesRep] = useState(null);
     const [selectedShipVia, setSelectedShipVia] = useState(null);
-    const [selectedTerritory, setSelectedTerritory] = useState(null);
     const [lineDetails, setLineDetails] = useState([{
         'LineNo': 1,
         'Description': "",
@@ -37,11 +36,12 @@ const CreateQuote = () => {
     const [selectedQuoteDate, setSelectedQuoteDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [selectedFollowUpDate, setSelectedFollowUpDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [selectedExpirationDate, setSelectedExpirationDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
+    const [selectedExpectedWinDate, setSelectedExpectedWinDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
     const [isLoading, setIsLoading] = useState(false);
     const [isCreatingQuote, setIsCreatingQuote] = useState(false);
 
-
     useEffect(() => {
+        var decoded_token = utils.decodeJwt(localStorage.getItem("token"));
         setIsLoading(true);
         if (!localStorage.getItem("token")) {
             navigate("/");
@@ -70,8 +70,15 @@ const CreateQuote = () => {
             .then((data) => {
                 if (response_status === 200) {
                     setIsLoading(false);
-                    // console.log(data);
                     setDropDownData(data);
+
+
+                    // Set the default values for the dropdowns
+                    if (data.SALES_REP.length > 0) {
+                        // Find the index of the sales rep with the same name as the user
+                        var index = data.SALES_REP.findIndex((e) => e.label === decoded_token.USERNAME);
+                        setSelectedSalesRep(data.SALES_REP[index]);
+                    }
                 } else {
                     setIsLoading(false);
                     alert(data.message);
@@ -87,6 +94,7 @@ const CreateQuote = () => {
         expiration_date.setDate(today.getDate() + 30);
         setSelectedExpirationDate(utils.convertTimeStampToDateForInputBox(expiration_date));
         setSelectedFollowUpDate(utils.convertTimeStampToDateForInputBox(expiration_date));
+        setSelectedExpectedWinDate(utils.convertTimeStampToDateForInputBox(expiration_date));
     }, []);
 
 
@@ -142,13 +150,13 @@ const CreateQuote = () => {
     }
 
     const create_quote_in_visual = () => {
+        var decoded_token = utils.decodeJwt(localStorage.getItem("token"));
 
-        if (!selectedCustomer || !selectedQuoteDate || !selectedExpirationDate || !selectedFollowUpDate || !selectedSalesRep || !selectedFOB || !selectedShipVia || !selectedTerritory) {
+        if (!selectedCustomer || !selectedQuoteDate || !selectedExpirationDate || !selectedFollowUpDate || !selectedSalesRep || !selectedFOB || !selectedShipVia || !selectedExpectedWinDate) {
             alert("Please fill all the fields");
             return;
         }
         setIsCreatingQuote(true);
-        var decoded_token = utils.decodeJwt(localStorage.getItem("token"));
         var obj_to_send = {
             "Database": decoded_token.DATABASE,
             "UserName": decoded_token.USERNAME,
@@ -157,6 +165,7 @@ const CreateQuote = () => {
             "CustomerId": selectedCustomer.value,
             "QuoteDate": selectedQuoteDate,
             "ExpirationDate": selectedExpirationDate,
+            "ExpectedWinDate": selectedExpectedWinDate,
             "FollowUpDate": selectedFollowUpDate,
             "SalesRep": selectedSalesRep.value,
             "Fob": selectedFOB.value,
@@ -237,6 +246,7 @@ const CreateQuote = () => {
                                                     <div className="w-50 mb-1"><Input text="Quote Date" type={'date'} value={selectedQuoteDate} onChange={(e) => setSelectedQuoteDate(e)} /></div>
                                                     <div className="w-50 mb-1"><Input text="Follow Up" type={'date'} value={selectedFollowUpDate} onChange={(e) => setSelectedFollowUpDate(e)} /></div>
                                                     <div className="w-50 mb-1"><Input text="Expiration" type={'date'} value={selectedExpirationDate} onChange={(e) => setSelectedExpirationDate(e)} /></div>
+                                                    <div className="w-50 mb-1"><Input text="Expiration" type={'date'} value={selectedExpectedWinDate} onChange={(e) => setSelectedExpectedWinDate(e)} /></div>
                                                 </div>
                                                 : null
                                         }
@@ -267,14 +277,6 @@ const CreateQuote = () => {
                                                         prepareArray={false} placeholder={"Select Ship Via"}
                                                         onSelect={(e) => { setSelectedShipVia(e) }}
                                                         value={selectedShipVia}
-                                                    />
-                                                </div>
-                                                <div className="mb-1">
-                                                    <DropDown list={dropDownData.TERRITORY} isMulti={false}
-                                                        text='Territory'
-                                                        prepareArray={false} placeholder={"Select Territory"}
-                                                        onSelect={(e) => { setSelectedTerritory(e) }}
-                                                        value={selectedTerritory}
                                                     />
                                                 </div>
                                             </div>

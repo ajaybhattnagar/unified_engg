@@ -64,6 +64,7 @@ const Users = () => {
                         item.ALLOWED_SET_QA_NOTIFICATION = item.ALLOWED_SET_QA_NOTIFICATION === '1' ? true : false;
                         item.ALLOWED_RECEIPT_ENTRY = item.ALLOWED_RECEIPT_ENTRY === '1' ? true : false;
                         item.ALLOWED_DUPLICATE_RECORD = item.ALLOWED_DUPLICATE_RECORD === '1' ? true : false;
+                        item.ALLOWED_CREATE_QUOTE = item.ALLOWED_CREATE_QUOTE === '1' ? true : false;
                     })
                     setData(data)
                     setIsLoading(false);
@@ -142,6 +143,11 @@ const Users = () => {
             type: 'checkbox',
             className: 'htCenter',
         },
+        {
+            data: 'ALLOWED_CREATE_QUOTE',
+            type: 'checkbox',
+            className: 'htCenter',
+        },
 
     ]
 
@@ -194,7 +200,8 @@ const Users = () => {
                                 data={data}
                                 columnsTypes={columns}
                                 columnsHeaders={['ROWID', 'ID', 'First <br> Name', 'Last <br> Name', 'Admin', 'Super <br> Admin', 'Allowed <br> Working Location', 'Allowed <br> Working Time',
-                                    'Allowed <br> Approve Page', 'Allowed Edit <br> Labor Tickets', 'Allowed Set <br> QA Notification', 'Allowed <br> Receipt Entry', 'Allowed <br> Duplicate Record']}
+                                    'Allowed <br> Approve Page', 'Allowed Edit <br> Labor Tickets', 'Allowed Set <br> QA Notification', 
+                                    'Allowed <br> Receipt Entry', 'Allowed <br> Duplicate Record', 'Allowed <br> Create Quote']}
                                 onChange={(e) => { update_users(e) }}
                             />
                     }

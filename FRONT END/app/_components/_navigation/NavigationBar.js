@@ -59,6 +59,7 @@ class NavigationBar extends Component {
         var super_admin = access_rights.SUPER_ADMIN === '1' ? false : true;
         var reciept_entry = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_RECEIPT_ENTRY === '1' ? false : true;
         var qa_notification = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_SET_QA_NOTIFICATION === '1' ? false : true;
+        var create_quote = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_CREATE_QUOTE === '1' ? false : true;
 
         return (
             <div>
@@ -88,7 +89,7 @@ class NavigationBar extends Component {
                             <NavDropdown title="Projects" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/reports/work_orders">Work Orders</NavDropdown.Item>
                                 <NavDropdown.Item disabled={qa_notification} href="/quality/sign_off">Traveller Sign Off</NavDropdown.Item>
-                                <NavDropdown.Item disabled={true} href="/reports/create_quote">Create Quote</NavDropdown.Item>
+                                <NavDropdown.Item disabled={create_quote} href="/reports/create_quote">Create Quote</NavDropdown.Item>
                             </NavDropdown>
 
                             <NavDropdown disabled={super_admin} title="Admin" id="basic-nav-dropdown">
