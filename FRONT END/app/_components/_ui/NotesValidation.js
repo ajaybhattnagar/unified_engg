@@ -11,7 +11,7 @@ export class LabNotes extends TextEditor {
         this.TEXTAREA_PARENT.innerText = '';
         this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
         // Limit text area to 25 characters
-        this.TEXTAREA.maxLength = 25;
+        this.TEXTAREA.maxLength = 79;
 
         // Do not allow quote and double quote
         this.TEXTAREA.addEventListener('keypress', (e) => {
