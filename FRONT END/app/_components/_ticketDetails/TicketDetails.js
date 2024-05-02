@@ -138,6 +138,12 @@ const TicketDetails = () => {
     }
 
     const backdate_transaction = () => {
+        if (access_rights.ALLOWED_BACKDATE_LABOR_TICKET === '0' && access_rights.SUPER_ADMIN === '0') {
+            alert('You do not have permission to backdate this transaction!');
+            return;
+        }
+
+
         const diffDays = utils.dateDiffDays(clockIn, ticketDetails['CREATE_DATE']) - 1;
         var dateOffset = (24 * 60 * 60 * 1000) * diffDays
         if (diffDays < 0) {

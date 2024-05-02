@@ -146,6 +146,7 @@ def users(connection_string, username):
                     ALLOWED_RECEIPT_ENTRY = 1 if df['ALLOWED_RECEIPT_ENTRY'][i] == True else 0,
                     ALLOWED_DUPLICATE_RECORD = 1 if df['ALLOWED_DUPLICATE_RECORD'][i] == True else 0,
                     ALLOWED_CREATE_QUOTE = 1 if df['ALLOWED_CREATE_QUOTE'][i] == True else 0, 
+                    ALLOWED_BACKDATE_LABOR_TICKET = 1 if df['ALLOWED_BACKDATE_LABOR_TICKET'][i] == True else 0,
                     ROWID = df['ROWID'][i]
                 )
                 sql.execute(user_query_string)
