@@ -47,7 +47,8 @@ const EOD = () => {
             return;
         }
         setIsLoading(true);
-        utils.getLaborTickets(selectedFromDate, selectedToDate, localStorage.getItem("EMPLOYEE_ID"), 'ALL')
+        var emp_id = localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID")
+        utils.getLaborTickets(selectedFromDate, selectedToDate, emp_id, 'ALL')
             .then((response) => {
                 if (response.length > 0) {
                     var total_hours = 0;
@@ -68,6 +69,19 @@ const EOD = () => {
 
     const update_labor_tickets = (data) => {
         if (isAllowedEditLaborTicket.current) {
+
+            // Update OT, DT, RT to overtime, double time, regular time
+            data.forEach((item) => {
+                if (item.WORK_TIME === 'OT') {
+                    item.WORK_TIME = "Over Time";
+                }
+                else if (item.WORK_TIME === 'DT') {
+                    item.WORK_TIME = "Double Time";
+                }
+                else if (item.WORK_TIME === 'RT') {
+                    item.WORK_TIME = "Regular Time";
+                }
+            });
 
             // Remove records that are approved
             var filterd_data = data.filter((item) => {
@@ -121,11 +135,21 @@ const EOD = () => {
             .then(response => response.blob())
             .then(blob => {
                 // Create a URL for the blob
+                // const filename =  blob.headers.get('Content-Disposition').split('filename=')[1];
                 const url = window.URL.createObjectURL(new Blob([blob]));
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = localStorage.getItem("EMPLOYEE_ID") + "_EOD" + ".csv"  // Specify the filename for the downloaded file
-                document.body.appendChild(a);
+
+                // Convert todays date to string YYYY-MM-DD
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = today.getFullYear();
+                today = yyyy + '-' + mm + '-' + dd;
+                               
+                
+                // Convert todays date to string YYYY-MM-DD
+                a.download = today + "_" + localStorage.getItem("EMPLOYEE_ID") + "_EOD" + ".csv"  // Specify the filename for the downloaded file                document.body.appendChild(a);
                 a.click();
                 // Clean up
                 window.URL.revokeObjectURL(url);
@@ -186,7 +210,8 @@ const EOD = () => {
         {
             data: 'WORK_TIME',
             type: 'dropdown',
-            source: ['Regular Time', 'Over Time', 'Double Time'],
+            source: ['RT', 'OT', 'DT'],
+            width: 15
         },
         {
             data: 'LAB_DESC',

@@ -67,7 +67,7 @@ const IndirectLaborTicket = (props) => {
             },
             body: JSON.stringify({
                 "RUN_TYPE": "I",
-                "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
+                "EMP_ID": localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID"),
                 "INDIRECT_CODE": selectedCode.value,
                 "INDIRECT_ID": selectedCode.label,
                 "WORK_LOCATION": 'On-site',

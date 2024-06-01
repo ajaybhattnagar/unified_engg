@@ -5,6 +5,7 @@ import Brand from '../../_images/brand_png.png'
 import './NavigationBar.css'
 import { Link, withRouter } from 'react-router-dom';
 import { utils } from '../../_helpers/utils';
+import EmployeeSelect from "../_ui/employeeSelect.js";
 
 class NavigationBar extends Component {
 
@@ -98,12 +99,19 @@ class NavigationBar extends Component {
                                 <NavDropdown.Item href="/reports/labor_summary">Labour Summary</NavDropdown.Item>
                                 <NavDropdown.Item href="/users">User Permissions</NavDropdown.Item>
                             </NavDropdown>
+
+
                         </Nav>
+
+                        {!super_admin ?
+                            <div className='w-25'><EmployeeSelect /></div>
+                            : null
+                        }
 
                         {
                             localStorage.getItem('DATABASE') === "SANDBOX" ?
                                 <div className="ml-3">
-                                    <button className="btn btn-danger" disabled={true}>SANDBOX DATABASE</button>
+                                    <button className="btn btn-danger" disabled={true}>SANDBOX</button>
                                 </div>
                                 : null
                         }
@@ -136,6 +144,8 @@ class NavigationBar extends Component {
                                 </span>
                             </div> </div> : null
                 }
+
+
             </div>
 
         );

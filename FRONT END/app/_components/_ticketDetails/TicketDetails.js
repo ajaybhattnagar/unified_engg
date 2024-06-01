@@ -150,7 +150,7 @@ const TicketDetails = () => {
             alert('Cannot backdate to future date!');
             return;
         }
-        if (diffDays > 3) {
+        if (diffDays > 14) {
             alert('Cannot backdate more than 3 days!');
             return;
         }

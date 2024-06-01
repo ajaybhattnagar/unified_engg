@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, json, Blueprint, Response, send_file
+from flask import Flask, request, jsonify, json, Blueprint, Response, send_file, make_response
 from flask_cors import CORS, cross_origin
 from functools import wraps
 import pandas as pd
@@ -103,12 +103,10 @@ def get_labor_tickets(connection_string, username):
         query_string = details_query['GET_LABOR_TICKETS'].format(FROM_DATE=from_date, 
                                                                  TO_DATE = to_date, EMP_ID_QUERY_STRING=employee_id, 
                                                                  APPROVED_QUERY_STRING=approved)
-
         cnxn = pyodbc.connect(connection_string)
         sql = cnxn.cursor()
         sql.execute(query_string)
         results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
-
         sql.close()
 
         # Convert clock and clock out to string
@@ -126,6 +124,7 @@ def get_labor_tickets(connection_string, username):
         return response, 200
 
     except Exception as e:
+        print (e)
         return jsonify({"message": str(e)}), 401
 
 @labor_blueprint.route("/api/v1/labor/get_labor_tickets/<export_type>", methods=['POST'])
@@ -227,10 +226,15 @@ def export_labor_tickets(connection_string, username, export_type):
          # Reorder Columns
         columns_order = ["TRANSACTION_ID", "WORKORDER", "CUSTOMER", "INDIRECT_ID", "HOURS_WORKED", "WORK_TIME", "QA_NOTES", "NOTES"]
         df = df[columns_order]
+
+        # Convert min_date to YYYY-MM-DD_NAME_EOD 
+        min_date_file_name = datetime.datetime.strptime(min_date, '%m/%d/%y %I:%M:%S %p')
+        min_date_file_name = min_date_file_name.strftime('%Y-%m-%d')
+        file_name = min_date_file_name + "_" + username + "_EOD"
        
         if export_type == 'csv':
             # Export to excel
-            file_path = "static/" + username + "_labor_tickets.csv"
+            file_path = "static/" + file_name + ".csv"
             df.to_csv(file_path, index=False)
 
             # Reopen file and add username, clock in and clock out
@@ -249,9 +253,10 @@ def export_labor_tickets(connection_string, username, export_type):
             writeFile.close()
             
             # Send file to download
-            return send_file(file_path, as_attachment=True)
+            return send_file(file_path, as_attachment=True, download_name=file_name + ".csv")
 
     except Exception as e:
+        print (e)
         return jsonify({"message": str(e)}), 401
     
 

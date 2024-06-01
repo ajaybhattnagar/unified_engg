@@ -1,11 +1,11 @@
 export const appConstants = {
     SEARCH_DELAY_MS: 500,
 
-    // DEPLOYEMENT_URL: 'http://localhost:8080/',
-    DEPLOYEMENT_URL: 'https://app.unified.local/',
+    DEPLOYEMENT_URL: 'http://localhost:8080/',
+    // DEPLOYEMENT_URL: 'https://app.unified.local/',
 
-    // BASE_URL: 'http://localhost:5000/',
-    BASE_URL: 'https://api.unified.local/',
+    BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'https://api.unified.local/',
 
     // VISUAL_API: 'http://localhost:44360/',
     VISUAL_API: 'https://infor.unified.local/',
@@ -67,4 +67,6 @@ export const appConstants = {
     GET_CREATE_QUOTE_INITIAL_LOAD_DETAILS: '/api/v1/quotes/new_quote_details',
     CREATE_QUOTE_IN_VISUAL: '/api/Quote/CreateQuoteWithLines',
     CREATE_QUOTE_FOLDER_STRUCTURE: '/api/v1/quotes/create_folder_structure/', //ADD QUOTE ID AFTER SLASH
+
+    GET_ALL_ACTIVE_EMPLOYEES: '/api/v1/details/employees',
 };

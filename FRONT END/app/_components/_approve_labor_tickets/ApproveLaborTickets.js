@@ -20,8 +20,8 @@ const ApproveLaborTickets = () => {
     const [originalData, setOriginalData] = useState([]);
     const [laborTicketData, setLaborTicketData] = useState([]);
     const [summaryData, setSummaryData] = useState([]);
-    const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 3 * 24 * 60 * 60 * 1000));
-    const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date()));
+    const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 1 * 24 * 60 * 60 * 1000));
+    const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 1 * 24 * 60 * 60 * 1000));
     const [isLoading, setIsLoading] = useState(false);
     const [selectedApproved, setSelectedApproved] = useState(false);
 
@@ -71,6 +71,12 @@ const ApproveLaborTickets = () => {
             className: 'htCenter',
         },
         {
+            data: 'DEPARTMENT_ID',
+            type: 'text',
+            readOnly: true,
+            width: 25
+        },
+        {
             data: 'HOURS_WORKED',
             type: 'numeric',
             numericFormat: {
@@ -81,7 +87,8 @@ const ApproveLaborTickets = () => {
         {
             data: 'WORK_TIME',
             type: 'dropdown',
-            source: ['Regular Time', 'Over Time', 'Double Time']
+            source: ['RT', 'OT', 'DT'],
+            width: 15
         },
         {
             data: 'INDIRECT_ID',
@@ -214,6 +221,18 @@ const ApproveLaborTickets = () => {
     }
 
     const update_labor_tickets = (edited_data) => {
+        // Update OT, DT, RT to overtime, double time, regular time
+        edited_data.forEach((item) => {
+            if (item.WORK_TIME === 'OT') {
+                item.WORK_TIME = "Over Time";
+            }
+            else if (item.WORK_TIME === 'DT') {
+                item.WORK_TIME = "Double Time";
+            }
+            else if (item.WORK_TIME === 'RT') {
+                item.WORK_TIME = "Regular Time";
+            }
+        });
         utils.updateLaborTickets(edited_data)
             .then((response) => {
                 alert(response.message);
@@ -310,9 +329,9 @@ const ApproveLaborTickets = () => {
                                     <MTable
                                         data={laborTicketData}
                                         columnsTypes={labor_ticket_columns}
-                                        columnsHeaders={['ID', 'Approved', 'Employee', 'Hrs <br> worked', 'Work <br> Time',
-                                            'Indirect', 'Work <br> order', 'Lot <br> Split Sub', 'Operation', 'Notes', 'QA Notes',
-                                            'In', 'Out', 'Part Desc', 'Customer', 'Location', 'Visual <br> Labor ID']}
+                                        columnsHeaders={['ID', 'Appr.', 'Emp. <br> Name', 'Dept. ID', 'Hrs. <br> Worked', 'Work <br> Time',
+                                        'Indirect', 'WO ID', 'Lot <br> Split Sub', 'Operation', 'Job Desc.', 'Notes', 'QA Notes',
+                                        'In', 'Out', 'Cust. <br> Name', 'Location', 'Visual <br> Labor ID']}
 
                                         onChange={(e) => { update_labor_tickets(e) }}
                                         onInstantDataChange={(e) => { null }}

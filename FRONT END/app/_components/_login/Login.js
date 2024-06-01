@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { appConstants } from '../../_helpers/consts.js';
 import Brand from '../../_images/brand_png.png'
 import jwt_decode from "jwt-decode";
+import DropDown from "../_ui/dropDown";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [database, setDatabase] = useState("");
+    const [database, setDatabase] = useState({ value: "UNIFED", label: "UNIFED" });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,7 +21,6 @@ const Login = () => {
     }, []);
 
     const postLoginDetails = () => {
-
         if (!email || !password || !database) {
             alert("Please enter username, password and database");
             return;
@@ -32,7 +32,7 @@ const Login = () => {
             body: JSON.stringify({
                 USERNAME: email,
                 PASSWORD: password,
-                DATABASE: database,
+                DATABASE: database.value,
             }),
             referrerPolicy: "unsafe-url",
             headers: {
@@ -77,7 +77,12 @@ const Login = () => {
     };
 
     const gotoSignUpPage = () => navigate("/signup");
-
+    const database_list = [{ value: "UNIFED", label: "UNIFED" }, { value: "SANDBOX", label: "SANDBOX" }]
+    const hostname = window.location.hostname;
+    if (hostname === "localhost") {
+        database_list.push({ value: "UNI", label: "UNI" });
+    }
+    
     return (
         <div className='container mx-auto mt-3 mw-50'>
 
@@ -90,11 +95,11 @@ const Login = () => {
             {/* <h4 className="m-2">Login </h4> */}
             <form className='login__form' onSubmit={handleSubmit}>
 
-                <div className="input-group mb-3">
+                <div id="login" className="input-group mb-3">
                     <div className="input-group-prepend">
                         <span className="input-group-text" id="basic-addon1">Username</span>
                     </div>
-                    <input type="text" className="form-control" placeholder="Enter Username" id='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type="text" className="form-control" placeholder="Enter Username" id='login' name='login' value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
 
                 <div className="input-group mb-3">
@@ -105,10 +110,14 @@ const Login = () => {
                 </div>
 
                 <div className="input-group mb-3">
-                    <div className="input-group-prepend">
-                        <span className="input-group-text" id="basic-addon1">Database</span>
+                    <div className="w-50">
+                        <DropDown list={database_list} isMulti={false}
+                            text='Database'
+                            prepareArray={false} placeholder={"Select Operation"}
+                            onSelect={(e) => { setDatabase(e) }}
+                            value={database}
+                        />
                     </div>
-                    <input type="text" className="form-control" placeholder="Enter Database" id='database' name='database' value={database} onChange={(e) => setDatabase(e.target.value)} />
                 </div>
 
                 <div className="d-flex justify-content-end">

@@ -74,6 +74,9 @@ const RecordsLabor = () => {
     const sub_id = urlParams.get('sub_id');
     const operation_seq = urlParams.get('operation_seq');
 
+    const [employeeId, setEmployeeId] = useState(localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID"));
+    const [allActiveEmployee, setAllActiveEmployee] = useState([]);
+
     // Eg: *%22-CFS-J15$0$10%*
     // Eg: *WO022721$1$20*
     // Eg: %22-CFS-J15$0$10%
@@ -95,7 +98,7 @@ const RecordsLabor = () => {
                 'x-access-token': localStorage.getItem('token')
             },
             body: JSON.stringify({
-                "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
+                "EMP_ID": localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID"),
             })
         }
         fetch(url, request_object)
@@ -147,6 +150,40 @@ const RecordsLabor = () => {
                     return null;
                 }
             })
+            .catch((err) => console.error(err));
+    }, []);
+
+    // Get all active employees useEffect
+    useEffect(() => {
+        var response_status = 0;
+        var url = appConstants.BASE_URL.concat(appConstants.GET_ALL_EMPLOYEES);
+        const request_object = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                'x-access-token': localStorage.getItem('token')
+            }
+        }
+        fetch(url, request_object)
+            .then((res) => {
+                if (res.status === 200) {
+                    response_status = 200;
+                    return res.json();
+                }
+                else {
+                    response_status = 400;
+                    alert(res.json());
+                }
+            })
+            .then((data) => {
+                if (response_status === 200) {
+                    setAllActiveEmployee(data);
+                } else {
+                    alert(data.message);
+                    return null;
+                }
+            }
+            )
             .catch((err) => console.error(err));
     }, []);
 
@@ -307,7 +344,7 @@ const RecordsLabor = () => {
                 "WORKORDER_SUB_ID": selectedSub,
                 "OPERATION_SEQ_NO": selectedOperation,
                 "RUN_TYPE": "R",
-                "EMP_ID": localStorage.getItem("EMPLOYEE_ID"),
+                "EMP_ID": localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID"),
                 "RESOURCE_ID": selectedResourceString,
                 "DESCRIPTION": desciption || "",
                 "WORK_LOCATION": workLocationsOptions[selectedWorkLocation] || 'On-site',
@@ -779,8 +816,10 @@ const RecordsLabor = () => {
                                                     <IndirectLaborTicket />
                                                 </div>
                                         }
+
                                     </div>
                                 // Ticket creationa and stopping it
+
 
                                 :
                                 <div className="">

@@ -198,7 +198,7 @@ const Users = () => {
                 <div className="m-3">
                     <div className="mt-3" > </div>
 
-                <div className="w-75">
+                <div className="w-100">
                     {
                         isLoading ? <Loading />
                             :
