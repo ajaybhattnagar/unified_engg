@@ -172,8 +172,16 @@ const TicketDetails = () => {
                         // Update clock out
                         utils.updateLaborTicketsField(ticketDetails['TRANSACTION_ID'], "CLOCK_OUT", _clockOut)
                             .then((response) => {
-                                console.log(response);
-                                window.location.reload();
+
+                                utils.updateLaborTicketsField(ticketDetails['TRANSACTION_ID'], "TRANSACTION_DATE", _clockIn)
+                                    .then((response) => {
+                                        console.log(response);
+                                        window.location.reload();
+                                    })
+                                    .catch((error) => {
+                                        alert(error.message);
+                                        console.log(error);
+                                    });
                             })
                             .catch((error) => {
                                 alert(error.message);

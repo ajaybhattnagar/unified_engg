@@ -116,8 +116,8 @@ const EOD = () => {
         td.innerHTML = utils.tranactionIdUrlLink(value)
     }
 
-    const download_csv = () => {
-        var url = appConstants.BASE_URL.concat(appConstants.GET_FORMATTED_CSV_FROM_EOD).concat("csv");
+    const download_csv = (type) => {
+        var url = appConstants.BASE_URL.concat(appConstants.GET_FORMATTED_CSV_FROM_EOD).concat(type);
         fetch(url, {
             method: 'POST',
             headers: {
@@ -146,10 +146,10 @@ const EOD = () => {
                 var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
                 var yyyy = today.getFullYear();
                 today = yyyy + '-' + mm + '-' + dd;
-                               
-                
+
+
                 // Convert todays date to string YYYY-MM-DD
-                a.download = today + "_" + localStorage.getItem("EMPLOYEE_ID") + "_EOD" + ".csv"  // Specify the filename for the downloaded file                document.body.appendChild(a);
+                a.download = today + "_" + localStorage.getItem("EMPLOYEE_ID") + "_EOD." + type  // Specify the filename for the downloaded file                document.body.appendChild(a);
                 a.click();
                 // Clean up
                 window.URL.revokeObjectURL(url);
@@ -263,8 +263,17 @@ const EOD = () => {
                         {
                             data && data.length > 0 ?
                                 <div className="w-20 ml-3">
-                                    <Button data-toggle="tooltip" title="Download" className='mr-2' onClick={() => download_csv()}>
-                                        <FontAwesomeIcon className="" icon={faDownload} /></Button>
+                                    <Button data-toggle="tooltip" title="Download" className='mr-2' onClick={() => download_csv("csv")}>
+                                        <FontAwesomeIcon className="" icon={faDownload} /> CSV </Button>
+                                </div>
+                                : null
+                        }
+
+                        {
+                            data && data.length > 0 ?
+                                <div className="w-20 ml-1">
+                                    <Button data-toggle="tooltip" title="Download" className='mr-2' onClick={() => download_csv("pdf")}>
+                                        <FontAwesomeIcon className="" icon={faDownload} /> PDF </Button>
                                 </div>
                                 : null
                         }

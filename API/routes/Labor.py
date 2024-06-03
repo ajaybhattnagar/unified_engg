@@ -15,6 +15,7 @@ from utils import send_email, save_base64_to_image, allowedFile
 import os
 import math
 import csv
+from csv2pdf import convert
 
 labor_blueprint = Blueprint('labor_blueprint', __name__)
 
@@ -108,13 +109,6 @@ def get_labor_tickets(connection_string, username):
         sql.execute(query_string)
         results = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
         sql.close()
-
-        # Convert clock and clock out to string
-        # for row in results:
-        #     if row['CLOCK_IN'] != None:
-        #         row['CLOCK_IN'] = row['CLOCK_IN'].strftime('%Y-%m-%d %I:%M:%S %p')
-        #     if row['CLOCK_OUT'] != None:
-        #         row['CLOCK_OUT'] = row['CLOCK_OUT'].strftime('%Y-%m-%d %I:%M:%S %p')
 
         response = Response(
                     response=simplejson.dumps(results, ignore_nan=True,default=datetime.datetime.isoformat),
@@ -251,9 +245,16 @@ def export_labor_tickets(connection_string, username, export_type):
 
             readFile.close()
             writeFile.close()
-            
-            # Send file to download
+
+        if export_type == 'csv':
             return send_file(file_path, as_attachment=True, download_name=file_name + ".csv")
+
+        if export_type == 'pdf':
+            convert("static\\" + file_name + ".csv", "static\\" + file_name + ".pdf" , orientation="L", size=4)
+            return send_file("static\\" + file_name + ".pdf", as_attachment=True, download_name=file_name + ".pdf")
+
+            # Send file to download
+            # return send_file(file_path, as_attachment=True, download_name=file_name + ".csv")
 
     except Exception as e:
         print (e)
