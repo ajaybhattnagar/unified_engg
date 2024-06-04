@@ -30,6 +30,9 @@
     "u_drive_path": "C:\\DOCS\\",
     "quotes_folder_path": "C:\\DOCS\\", 
     "UEQuote_file_path": "C:\\DOCS\\requirements.txt",
-    "_comments": "//Database and projects will be added after this path automatically //Production path = \\charlie\\Corporate Data\\"
+    "EOD_file_path": "C:\\DOCS\\",
+    "_comments": "//Database and projects will be added after this path automatically //Production path = \\charlie\\Corporate Data\\",
+    "_comment2": "\\charlie\\SharedData\\Timesheets\\webtooleod"
+
 
 }

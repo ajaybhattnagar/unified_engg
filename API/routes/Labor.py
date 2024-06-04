@@ -245,6 +245,24 @@ def export_labor_tickets(connection_string, username, export_type):
 
             readFile.close()
             writeFile.close()
+        
+        # Save Excel file in EOD folder
+        eod_file_path = configData['EOD_file_path']
+        eod_file_path = eod_file_path + file_name + ".csv"
+        df.to_csv(eod_file_path, index=False)
+        with open(eod_file_path, 'r') as readFile:
+                rd = csv.reader(readFile)
+                lines = list(rd)
+                lines.insert(0, ['EMPLOYEE', username])
+                lines.insert(1, ['CLOCK_IN', min_date])
+                lines.insert(2, ['CLOCK_OUT', max_date])
+
+        with open(eod_file_path, 'w',newline='') as writeFile:
+            wt = csv.writer(writeFile)
+            wt.writerows(lines)
+
+        readFile.close()
+        writeFile.close()
 
         if export_type == 'csv':
             return send_file(file_path, as_attachment=True, download_name=file_name + ".csv")
@@ -252,9 +270,6 @@ def export_labor_tickets(connection_string, username, export_type):
         if export_type == 'pdf':
             convert("static\\" + file_name + ".csv", "static\\" + file_name + ".pdf" , orientation="L", size=4)
             return send_file("static\\" + file_name + ".pdf", as_attachment=True, download_name=file_name + ".pdf")
-
-            # Send file to download
-            # return send_file(file_path, as_attachment=True, download_name=file_name + ".csv")
 
     except Exception as e:
         print (e)
