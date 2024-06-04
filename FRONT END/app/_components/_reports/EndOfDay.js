@@ -127,7 +127,7 @@ const EOD = () => {
             body: JSON.stringify({
                 "FROM_DATE": selectedFromDate,
                 "TO_DATE": selectedToDate,
-                "EMPLOYEE_ID": localStorage.getItem("EMPLOYEE_ID"),
+                "EMPLOYEE_ID": localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID"),
                 "APPROVED": 'ALL'
             })
 
