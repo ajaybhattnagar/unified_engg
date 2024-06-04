@@ -8,7 +8,7 @@ import DropDown from "../_ui/dropDown";
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [database, setDatabase] = useState({ value: "UNIFED", label: "UNIFED" });
+    const [database, setDatabase] = useState({ value: "UNIFIED", label: "UNIFED" });
     const navigate = useNavigate();
 
     useEffect(() => {
