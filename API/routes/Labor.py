@@ -189,8 +189,8 @@ def export_labor_tickets(connection_string, username, export_type):
         sql.close()
 
         # Gettin min and max clock in and clock out 
-        min_date = min([x['CLOCK_IN'] for x in results])
-        max_date = max([x['CLOCK_OUT'] for x in results])
+        min_date = from_date
+        max_date = to_date
 
         # Keep Required Columns
         columns_req = ["TRANSACTION_ID", "WORKORDER_BASE_ID", "LOT_SPLIT_SUB", "SEQUENCE_NO", "INDIRECT_ID" , "HOURS_WORKED", "WORK_TIME",
@@ -222,9 +222,10 @@ def export_labor_tickets(connection_string, username, export_type):
         df = df[columns_order]
 
         # Convert min_date to YYYY-MM-DD_NAME_EOD 
-        min_date_file_name = datetime.datetime.strptime(min_date, '%m/%d/%y %I:%M:%S %p')
+        min_date_file_name = datetime.datetime.strptime(min_date, '%Y-%m-%d')
         min_date_file_name = min_date_file_name.strftime('%Y-%m-%d')
         file_name = min_date_file_name + "_" + username + "_EOD"
+        print (file_name)
        
         if export_type == 'csv':
             # Export to excel
