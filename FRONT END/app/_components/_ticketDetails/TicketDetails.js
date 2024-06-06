@@ -143,6 +143,11 @@ const TicketDetails = () => {
             return;
         }
 
+        // Check if approved
+        if (ticketDetails.APPROVED === 'true' || ticketDetails.APPROVED === true) {
+            alert('Approved transactions cannot be backdated');
+            return;
+        }
 
         const diffDays = utils.dateDiffDays(clockIn, ticketDetails['CREATE_DATE']) - 1;
         var dateOffset = (24 * 60 * 60 * 1000) * diffDays
