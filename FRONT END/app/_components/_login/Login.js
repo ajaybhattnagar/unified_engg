@@ -77,7 +77,7 @@ const Login = () => {
     };
 
     const gotoSignUpPage = () => navigate("/signup");
-    const database_list = [{ value: "UNIFED", label: "UNIFED" }, { value: "SANDBOX", label: "SANDBOX" }]
+    const database_list = [{ value: "UNIFIED", label: "UNIFIED" }, { value: "SANDBOX", label: "SANDBOX" }]
     const hostname = window.location.hostname;
     if (hostname === "localhost") {
         database_list.push({ value: "UNI", label: "UNI" });
