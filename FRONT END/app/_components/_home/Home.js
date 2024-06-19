@@ -429,7 +429,7 @@ const Home = () => {
                             <MTable
                                 data={data.ACTIVE_LABOR_TICKETS ? data.ACTIVE_LABOR_TICKETS : []}
                                 columnsTypes={columns_active_labor_tickets}
-                                columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Indirect', 'Part Description',
+                                columnsHeaders={['ID', 'Work order', 'Lot Split Sub', 'Indirect', 'Job Description',
                                     'Customer ID', 'In', 'Work Location', 'Employee', 'Notes', 'QA Notes']}
                             // onChange={(e) => { update_labor_tickets(e) }}
                             />

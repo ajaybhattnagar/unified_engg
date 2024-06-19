@@ -181,6 +181,7 @@ def export_labor_tickets(connection_string, username, export_type):
         query_string = details_query['GET_LABOR_TICKETS'].format(FROM_DATE=from_date, 
                                                                  TO_DATE = to_date, EMP_ID_QUERY_STRING=employee_id, 
                                                                  APPROVED_QUERY_STRING=approved)
+        
 
         cnxn = pyodbc.connect(connection_string)
         sql = cnxn.cursor()
@@ -194,7 +195,7 @@ def export_labor_tickets(connection_string, username, export_type):
 
         # Keep Required Columns
         columns_req = ["TRANSACTION_ID", "WORKORDER_BASE_ID", "LOT_SPLIT_SUB", "SEQUENCE_NO", "INDIRECT_ID" , "HOURS_WORKED", "WORK_TIME",
-                       "QA_NOTES", "LAB_DESC", "CUSTOMER_ID"]
+                       "QA_NOTES", "LAB_DESC", "CUSTOMER_ID", "CLOCK_IN", "CLOCK_OUT"]
         results = [{k: v for k, v in d.items() if k in columns_req} for d in results]
         for row in results:
             row["WORKORDER"] = str(row["WORKORDER_BASE_ID"]) + " - " +  row["LOT_SPLIT_SUB"] + " - " + str(row["SEQUENCE_NO"])
@@ -217,6 +218,18 @@ def export_labor_tickets(connection_string, username, export_type):
 
         # Convert to dataframe
         df = pd.DataFrame(results)
+
+        # Find min of clock in and max of clock out
+        _min_date = df['CLOCK_IN'].min()
+        _max_date = df['CLOCK_OUT'].max()
+
+        # Min date to string 
+        _min_date = datetime.datetime.strptime(_min_date, '%m/%d/%y  %I:%M:%S %p')
+        _max_date = datetime.datetime.strptime(_max_date, '%m/%d/%y  %I:%M:%S %p')
+        print (_min_date)
+        # Find sum of total hours
+        total_hours = df['HOURS_WORKED'].sum()
+
          # Reorder Columns
         columns_order = ["TRANSACTION_ID", "WORKORDER", "CUSTOMER", "INDIRECT_ID", "HOURS_WORKED", "WORK_TIME", "QA_NOTES", "NOTES"]
         df = df[columns_order]
@@ -225,7 +238,6 @@ def export_labor_tickets(connection_string, username, export_type):
         min_date_file_name = datetime.datetime.strptime(min_date, '%Y-%m-%d')
         min_date_file_name = min_date_file_name.strftime('%Y-%m-%d')
         file_name = min_date_file_name + "_" + username + "_EOD"
-        print (file_name)
        
         if export_type == 'csv':
             # Export to excel
@@ -237,8 +249,8 @@ def export_labor_tickets(connection_string, username, export_type):
                 rd = csv.reader(readFile)
                 lines = list(rd)
                 lines.insert(0, ['EMPLOYEE', username])
-                lines.insert(1, ['CLOCK_IN', min_date])
-                lines.insert(2, ['CLOCK_OUT', max_date])
+                lines.insert(1, ['CLOCK_IN', _min_date, '' ,'TOTAL_HOURS', total_hours])
+                lines.insert(2, ['CLOCK_OUT', _max_date])
 
             with open(file_path, 'w',newline='') as writeFile:
                 wt = csv.writer(writeFile)
@@ -266,11 +278,19 @@ def export_labor_tickets(connection_string, username, export_type):
         writeFile.close()
 
         if export_type == 'csv':
-            return send_file(file_path, as_attachment=True, download_name=file_name + ".csv")
+            response = make_response(send_file(file_path, as_attachment=True, download_name=file_name + ".csv"))
+            response.headers['Content-Disposition'] = f'attachment; filename="{file_name + ".csv"}"'
+            return response
+
+            # return send_file(file_path, as_attachment=True, download_name=file_name + ".csv")
 
         if export_type == 'pdf':
             convert("static\\" + file_name + ".csv", "static\\" + file_name + ".pdf" , orientation="L", size=4)
-            return send_file("static\\" + file_name + ".pdf", as_attachment=True, download_name=file_name + ".pdf")
+            response = make_response(send_file("static\\" + file_name + ".pdf", as_attachment=True, download_name=file_name + ".pdf"))
+            response.headers['Content-Disposition'] = f'attachment; filename="{file_name + ".pdf"}"'
+            return response
+
+            # return send_file("static\\" + file_name + ".pdf", as_attachment=True, download_name=file_name + ".pdf")
 
     except Exception as e:
         print (e)

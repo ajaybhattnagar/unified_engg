@@ -116,9 +116,10 @@ const EOD = () => {
         td.innerHTML = utils.tranactionIdUrlLink(value)
     }
 
-    const download_csv = (type) => {
+    const download_csv = async (type) => {
         var url = appConstants.BASE_URL.concat(appConstants.GET_FORMATTED_CSV_FROM_EOD).concat(type);
-        fetch(url, {
+        var emp_id = localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID")
+        var response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -130,34 +131,29 @@ const EOD = () => {
                 "EMPLOYEE_ID": localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID"),
                 "APPROVED": 'ALL'
             })
+        });
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'unknown';
 
-        })
-            .then(response => response.blob())
-            .then(blob => {
-                // Create a URL for the blob
-                // const filename =  blob.headers.get('Content-Disposition').split('filename=')[1];
-                const url = window.URL.createObjectURL(new Blob([blob]));
-                const a = document.createElement('a');
-                a.href = url;
+        if (contentDisposition) {
+            const match = contentDisposition.match(/filename="(.+)"/);
+            if (match && match[1]) {
+                fileName = match[1];
+            }
+        } else {
+            console.warn('Content-Disposition header is missing');
+        }
 
-                // Convert todays date to string YYYY-MM-DD
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                var yyyy = today.getFullYear();
-                today = yyyy + '-' + mm + '-' + dd;
+        const blob = await response.blob();
+        url = window.URL.createObjectURL(new Blob([blob]));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
 
 
-                // Convert todays date to string YYYY-MM-DD
-                a.download = today + "_" + localStorage.getItem("EMPLOYEE_ID") + "_EOD." + type  // Specify the filename for the downloaded file                document.body.appendChild(a);
-                a.click();
-                // Clean up
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            })
-            .catch(error => {
-                console.error('Error downloading CSV file:', error);
-            });
     }
 
     const columns = [

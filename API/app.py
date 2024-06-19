@@ -23,6 +23,7 @@ app.register_blueprint(quotes_blueprint)
 
 
 CORS(app)
+CORS(app, expose_headers='Content-Disposition')
 
 
 
