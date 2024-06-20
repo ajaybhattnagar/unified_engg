@@ -166,6 +166,15 @@ const Home = () => {
         var url = appConstants.DEPLOYEMENT_URL.concat('reports/open_files?path=').concat(value);
         td.innerHTML = `<a href=${url} target="_blank">View</a>`
     }
+    const safeColorRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+        if (value === 'Yes') {
+            td.style.background = '#90EE90';
+        }
+        else {
+            td.style.background = '#f8d0d6';
+        }
+        td.innerHTML = value;
+    }
 
     const columns_active_labor_tickets = [
         {
@@ -252,12 +261,14 @@ const Home = () => {
         {
             data: 'IS_CLOCKED_IN',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            renderer: safeColorRenderer
         },
         {
             data: 'IS_LABOR_START',
             type: 'text',
-            readOnly: true
+            readOnly: true,
+            renderer: safeColorRenderer
         }
     ]
     const columns_documents = [

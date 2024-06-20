@@ -149,69 +149,32 @@ const TicketDetails = () => {
             return;
         }
 
-        const diffDays = utils.dateDiffDays(clockIn, ticketDetails['CREATE_DATE']) - 1;
-        var dateOffset = (24 * 60 * 60 * 1000) * diffDays
-        if (diffDays < 0) {
-            alert('Cannot backdate to future date!');
-            return;
-        }
-        if (diffDays > 14) {
-            alert('Cannot backdate more than 3 days!');
-            return;
-        }
-        else {
-            if (confirm('Are you sure you want to backdate this transaction?')) {
-                // Add time from CLOCK IN to ClockIN
-                var _clockIn = clockIn + ' ' + ticketDetails['CLOCK_IN'].split(' ')[1]
-                var _clockOut = new Date(ticketDetails['CLOCK_OUT']);
-                _clockOut.setTime(_clockOut.getTime() - dateOffset);
+        if (confirm('Are you sure you want to backdate this transaction?')) {
+            fetch(appConstants.BASE_URL.concat(appConstants.BACKDATE_LABOR_TRANSACTION), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': localStorage.getItem("token")
+                },
+                body: JSON.stringify({
+                    "date": clockIn,
+                    "transaction_id": ticketDetails['TRANSACTION_ID']
+                })
+            }).then(res => res.json())
+                .then((response) => {
+                    alert(response.message);
+                    // window.location.reload();
+                    // window.opener.location.reload(false);
+                    // window.focus()
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
 
-                // Convert _clockOut to string
-                _clockOut = _clockOut.toISOString().split('T')[0] + ' ' + _clockOut.toTimeString().split(' ')[0];
-
-                // Update clock in
-                utils.updateLaborTicketsField(ticketDetails['TRANSACTION_ID'], "CLOCK_IN", _clockIn)
-                    .then((response) => {
-                        console.log(response);
-
-                        // Update clock out
-                        utils.updateLaborTicketsField(ticketDetails['TRANSACTION_ID'], "CLOCK_OUT", _clockOut)
-                            .then((response) => {
-
-                                utils.updateLaborTicketsField(ticketDetails['TRANSACTION_ID'], "TRANSACTION_DATE", _clockIn)
-                                    .then((response) => {
-                                        console.log(response);
-                                        window.location.reload();
-                                    })
-                                    .catch((error) => {
-                                        alert(error.message);
-                                        console.log(error);
-                                    });
-                            })
-                            .catch((error) => {
-                                alert(error.message);
-                                console.log(error);
-                            });
-
-                    })
-                    .catch((error) => {
-                        alert(error.message);
-                        console.log(error);
-                    });
-
-            }
         }
     }
 
     const render = () => {
-        var diffDays = 0;
-        try {
-            diffDays = utils.dateDiffDays(clockIn, ticketDetails['CREATE_DATE']) - 1;
-        }
-        catch (e) {
-            diffDays = 1;
-        }
-
         return (
             <div>
                 <NavigationBar />
@@ -273,7 +236,7 @@ const TicketDetails = () => {
                                 }
                                 {
                                     <div className="mt-1">
-                                        <Input disabled={diffDays > 3 ? true : false} text="Back-date Trans." type={'date'}
+                                        <Input text="Back-date Trans." type={'date'}
                                             value={clockIn} onChange={(e) => setClockIn(e)}
                                             isUpdateButtonDisabled={false}
                                             onUpdateButtonClick={() => { backdate_transaction() }}

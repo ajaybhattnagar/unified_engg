@@ -155,6 +155,17 @@ labor_query = {
                                         LEFT JOIN VAC ON VAC.EMPLOYEE_ID = EMP.USER_ID
                                         LEFT JOIN STAT_HOL ON STAT_HOL.EMPLOYEE_ID = EMP.USER_ID
                                         WHERE EMP.ACTIVE = 'Y' OR REG_HRS.[Regular Hours] > 0 OR OVER_HRS.[Overtime (1.5)] > 0 OR VAC.[Vacation Hours] > 0 OR STAT_HOL.[Stat. Hours] > 0 
-                                        ORDER BY EMP.ID"""
+                                        ORDER BY EMP.ID""",
+
+"ACCOUNT_PERIOD_STATUS": """SELECT *, (SELECT DATEDIFF(DAY, TRANSACTION_DATE, '{DATE}') FROM UNI_LABOR_TICKET WHERE TRANSACTION_ID = {TRANSACTION_ID}) AS [LAB_TRANS_DAYS]
+                            FROM ACCOUNT_PERIOD 
+                            WHERE SITE_ID = 'UNI' AND CALENDAR_ID = 'UNI' AND CAST(BEGIN_DATE AS DATE) <= CAST('{DATE}' AS DATE) AND 
+                            CAST(END_DATE AS DATE) >= CAST('{DATE}' AS DATE)""",
+"BACK_DATE_TRANSACTION": """UPDATE UNI_LABOR_TICKET 
+                            SET TRANSACTION_DATE = DATEADD(DAY, {DAYS}, TRANSACTION_DATE), 
+                                CLOCK_IN = DATEADD(DAY, {DAYS}, CLOCK_IN),
+                                CLOCK_OUT = DATEADD(DAY, {DAYS}, CLOCK_OUT)
+                            WHERE TRANSACTION_ID = {TRANSACTION_ID} """
+                
 
 }

@@ -842,6 +842,38 @@ def labour_summary_report(connection_string, username):
     except Exception as e:
         return jsonify({"message": str(e)}), 401 
 
+@labor_blueprint.route("/api/v1/labor/back_date_transaction", methods=['POST'])
+@token_required
+def back_date_transaction(connection_string, username):
+    content = request.json
+    date = content['date']
+    transaction_id = content['transaction_id']
+    cnxn = pyodbc.connect(connection_string)
+
+    # Check month close
+    query_string = labor_query['ACCOUNT_PERIOD_STATUS'].format(DATE = date, TRANSACTION_ID = transaction_id)
+    try:
+        sql = cnxn.cursor()
+        sql.execute(query_string)
+        account_period = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+        days_to_back_date = account_period[0]['LAB_TRANS_DAYS']
+        if account_period[0]['STATUS'] == 'C':
+            return jsonify({"message": "Accounting Period is closed"}), 401
+        if not days_to_back_date:
+            return jsonify({"message": "Something went wrong!"}), 401
+
+
+        # Update transaction date
+        update_transaction_date_query = labor_query['BACK_DATE_TRANSACTION'].format(DAYS = days_to_back_date, TRANSACTION_ID = transaction_id)
+        sql.execute(update_transaction_date_query)
+        cnxn.commit()
+        sql.close()
+        return jsonify({"message": "Transaction date updated successfully"}), 200
+    
+    except Exception as e:
+        return jsonify({"message": str(e)}), 401
+
+
 
 
 

@@ -69,4 +69,6 @@ export const appConstants = {
     CREATE_QUOTE_FOLDER_STRUCTURE: '/api/v1/quotes/create_folder_structure/', //ADD QUOTE ID AFTER SLASH
 
     GET_ALL_ACTIVE_EMPLOYEES: '/api/v1/details/employees',
+
+    BACKDATE_LABOR_TRANSACTION: '/api/v1/labor/back_date_transaction',
 };
