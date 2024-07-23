@@ -109,6 +109,7 @@ const MTable = (props) => {
                 colWidths={props.colWidths || "auto"}
                 className="customFilterButton"
                 selectionMode="single"
+                autoColumnSize={true}
 
                 onSelectCell={(r, c, prop, value, cellProperties) => {
                     console.log(r, c, prop, value, cellProperties);
