@@ -151,6 +151,24 @@ const RecordsLabor = () => {
                 }
             })
             .catch((err) => console.error(err));
+
+        // setWorkorderList([
+        //     {
+        //         "label": "00024X -  - Push Cart Load Capacity Analys",
+        //         "value": "00024X",
+        //         "STATUS": "F",
+        //         "ORDER": 1, 
+        //         "color": '#00B8D9'
+        //     },
+        //     {
+        //         "label": "00032X -  - Assem. Guide Tube SS316 .84\"Di",
+        //         "value": "00032X",
+        //         "STATUS": "F",
+        //         "ORDER": 1,
+        //         "color": '#0052CC'
+        //     }
+        // ])
+
     }, []);
 
     // Get all active employees useEffect

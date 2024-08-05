@@ -330,7 +330,7 @@ const ApproveLaborTickets = () => {
                                         data={laborTicketData}
                                         columnsTypes={labor_ticket_columns}
                                         columnsHeaders={['ID', 'Appr.', 'Emp. <br> Name', 'Dept. ID', 'Hrs. <br> Worked', 'Work <br> Time',
-                                        'Indirect', 'WO ID', 'Lot <br> Split Sub', 'Operation', 'Job Desc.', 'Notes', 'QA Notes',
+                                        'Indirect', 'WO ID', 'Lot <br> Split Sub', 'Operation', 'Notes', 'QA Notes',
                                         'In', 'Out', 'Cust. <br> Name', 'Location', 'Visual <br> Labor ID']}
 
                                         onChange={(e) => { update_labor_tickets(e) }}
