@@ -2,7 +2,7 @@
 {
     "sqlserver": "192.168.2.2",
     "sqldriver": "SQL Server",
-    "sqldatabase": "VISUIFY",
+    "sqldatabase": "UNI",
     "sqluser": "sa",
     "sqlpassword": "1q2w#E$R%T",
 
