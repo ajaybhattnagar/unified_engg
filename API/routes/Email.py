@@ -50,7 +50,7 @@ def send_email(quote_id):
             SALES_REP_EMAIL = data[0]['EMAIL_ADDR'],
             DESCRIPTION = data[0]['DESCRIPTION'],  
         )
-        email = "ajay.bhattnagar21@gmail.com"
+        email = configData["new_quote_email"]
         msg = MIMEMultipart()
         msg['From'] = configData['smtp_user']
         msg['To'] = email
