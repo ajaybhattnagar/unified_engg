@@ -93,6 +93,10 @@ def send_email_purchase_order(po_id):
         sql = cnxn.cursor()
         sql.execute(email_query["GET_PO_DETAILS"].format(PO_ID = po_id))
         data = [dict(zip([column[0] for column in sql.description], row)) for row in sql.fetchall()]
+
+        if len(data) == 0:
+            return jsonify({"message": "No data found"}), 404
+
         html = po_created_template.format(
             PO_ID = data[0]['ID'],
             USER_ID = data[0]['BUYER'],
@@ -115,6 +119,8 @@ def send_email_purchase_order(po_id):
         # Concatenate the email addresses for all the elements in the list
         email = ""
         for i in range(len(data)):
+            if data[i]['JOB_CO_EMAIL'] is None or data[i]['JOB_CO_EMAIL'] == "":
+                return jsonify({"message": "Email id not present for either lines"}), 500
             email = email + ", " + data[i]['JOB_CO_EMAIL']
         # Remove the first comma
         email = email[2:]
