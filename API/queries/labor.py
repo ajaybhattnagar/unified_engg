@@ -84,22 +84,22 @@ labor_query = {
 
 "GET_ALL_WORKORDER_LIST": """SELECT * FROM (
                             SELECT DISTINCT (ISNULL(CAST(WO.BASE_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(CO.CUSTOMER_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(WO.USER_1 AS VARCHAR), '') ) AS 'label',
-                            WO.BASE_ID AS 'value', WO.STATUS, 1 AS [ORDER]
+                            WO.BASE_ID AS 'value', WO.STATUS, 1 AS [ORDER], WO.CREATE_DATE
                             FROM WORK_ORDER WO
                             LEFT JOIN DEMAND_SUPPLY_LINK DSL ON DSL.DEMAND_TYPE = 'CO' AND DSL.SUPPLY_TYPE = 'WO' AND DSL.SUPPLY_BASE_ID = WO.BASE_ID
                             LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
                             WHERE WO.TYPE = 'W' AND WO.STATUS IN ('R', 'F', 'U') AND WO.LOT_ID = '1' AND WO.SPLIT_ID = '0' AND WO.SUB_ID = '0'
-
+ 
                             UNION
-
+ 
                             SELECT DISTINCT (ISNULL(CAST(WO.BASE_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(CO.CUSTOMER_ID AS VARCHAR),'') + ' - ' + ISNULL(CAST(WO.USER_1 AS VARCHAR), '') ) AS 'label',
-                            WO.BASE_ID AS 'value', WO.STATUS,  99 AS [ORDER]
+                            WO.BASE_ID AS 'value', WO.STATUS,  99 AS [ORDER], WO.CREATE_DATE
                             FROM WORK_ORDER WO
                             LEFT JOIN DEMAND_SUPPLY_LINK DSL ON DSL.DEMAND_TYPE = 'CO' AND DSL.SUPPLY_TYPE = 'WO' AND DSL.SUPPLY_BASE_ID = WO.BASE_ID
                             LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
                             WHERE WO.TYPE = 'W' AND WO.STATUS IN ('C') AND WO.LOT_ID = '1' AND WO.SPLIT_ID = '0' AND WO.SUB_ID = '0' AND WO.STATUS_EFF_DATE >= DATEADD(WEEK,-1,GETDATE())
                             ) Z
-                            ORDER BY [ORDER], VALUE
+							ORDER BY [ORDER], CREATE_DATE DESC, VALUE
 
 """,
 
