@@ -10,7 +10,7 @@ import { Button } from "react-bootstrap";
 import DropDown from "../_ui/dropDown";
 import Loading from "../_ui/loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport, faPrint, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faPrint, faDownload, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { LabNotes, QaNotes } from '../_ui/NotesValidation';
 import ColumnHideDropDown from "../_ui/columnHideDropDown.js";
 
@@ -28,6 +28,7 @@ const ApproveLaborTickets = () => {
     const [hiddenColumnsArray, setHiddenColumnsArray] = useState([]);
     const [hiddenColumnsIndexList, setHiddenColumnsIndexList] = useState([]);
     const [laborTicketColumns, setLaborTicketColumns] = useState([]);
+    const [uniqueEmployeeList, setUniqueEmployeeList] = useState([]);
 
 
     useEffect(() => {
@@ -304,6 +305,13 @@ const ApproveLaborTickets = () => {
         }).then(res => res.json())
             .then((response) => {
                 setSummaryData(response);
+
+                // Get unique employee list
+                var unique_employee_list = [];
+                response.forEach((item) => {
+                    unique_employee_list.push(item.EMPLOYEE_ID);
+                });
+                setUniqueEmployeeList(unique_employee_list);
             })
             .catch((error) => {
                 console.log(error);
@@ -320,6 +328,36 @@ const ApproveLaborTickets = () => {
         });
         setHiddenColumnsIndexList(columnsToHide);
         localStorage.setItem('APPROVE_HIDDEN_COL_LIST', JSON.stringify(columnsToHide));
+    }
+
+    const cycleThroughEmployees = (direction) => {
+        if (direction == 'All'){
+            setLaborTicketData(originalData);
+            return;
+        }
+        let currentEmployeeIndex = uniqueEmployeeList.indexOf(laborTicketData[0].EMPLOYEE_ID);
+        if (direction === 'left') {
+            if (currentEmployeeIndex === 0) {
+                alert('No more employees to the left');
+                return;
+            }
+            let newEmployee = uniqueEmployeeList[currentEmployeeIndex - 1];
+            let newData = originalData.filter((item) => {
+                return item.EMPLOYEE_ID === newEmployee;
+            });
+            setLaborTicketData(newData);
+        }
+        else {
+            if (currentEmployeeIndex === uniqueEmployeeList.length - 1) {
+                alert('No more employees to the right');
+                return;
+            }
+            let newEmployee = uniqueEmployeeList[currentEmployeeIndex + 1];
+            let newData = originalData.filter((item) => {
+                return item.EMPLOYEE_ID === newEmployee;
+            });
+            setLaborTicketData(newData);
+        }
     }
 
     const render = () => {
@@ -375,7 +413,11 @@ const ApproveLaborTickets = () => {
 
                         {/* Labor ticket data table */}
                         <div className="d-flex justify-content-between mb-1">
-                            <span className="font-weight-bold">Details</span>
+                            <div>
+                                <button className="ml-2 btn btn-primary" onClick={() => { cycleThroughEmployees("left") }}><FontAwesomeIcon className="" icon={faArrowLeft} /></button>
+                                <button className="ml-2 btn btn-secondary" onClick={() => { cycleThroughEmployees("All") }}>Employees Details</button>
+                                <button className="ml-2 btn btn-primary" onClick={() => { cycleThroughEmployees("right") }}><FontAwesomeIcon className="" icon={faArrowRight} /></button>
+                            </div>
                             <div className="w-25">
                                 <ColumnHideDropDown list={laborTicketColumns} isMulti={true}
                                     text='Columns'

@@ -1,6 +1,6 @@
 
 {
-    "sqlserver": "192.168.2.2",
+    "sqlserver": "192.168.2.14",
     "sqldriver": "SQL Server",
     "sqldatabase": "UNI",
     "sqluser": "sa",
