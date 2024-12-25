@@ -9,8 +9,8 @@ export const appConstants = {
     // BASE_URL: 'https://api.unifiedwrx.com/',
     // BASE_URL: 'https://api.unified.local/',
 
-    VISUAL_API: 'http://localhost:44360/',
-    // VISUAL_API: 'https://infor.unified.local/',
+    // VISUAL_API: 'http://localhost:44360/',
+    VISUAL_API: 'https://infor.unified.local/',
 
     // Resources URLS
     SSRS_WEB_PORTAL: 'http://uni-vm-visdev.unified.local:5009/Reports/browse/',

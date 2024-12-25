@@ -144,6 +144,8 @@ const EOD = () => {
         var hidden_columns_index_list = localStorage.getItem('EOD_HIDDEN_COL_LIST');
         if (hidden_columns_index_list) {
             setHiddenColumnsIndexList(JSON.parse(hidden_columns_index_list));
+        } else {
+            hidden_columns_index_list = [];
         }
 
         // Set hidden columns array for all the index values

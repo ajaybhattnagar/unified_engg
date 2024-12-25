@@ -165,6 +165,9 @@ const ApproveLaborTickets = () => {
         var hidden_columns_index_list = localStorage.getItem('APPROVE_HIDDEN_COL_LIST');
         if (hidden_columns_index_list) {
             setHiddenColumnsIndexList(JSON.parse(hidden_columns_index_list));
+        } else {
+            hidden_columns_index_list = [];
+            setHiddenColumnsIndexList([]);
         }
 
         // Set hidden columns array for all the index values
