@@ -226,7 +226,6 @@ def export_labor_tickets(connection_string, username, export_type):
         # Min date to string 
         _min_date = datetime.datetime.strptime(_min_date, '%m/%d/%y  %I:%M:%S %p')
         _max_date = datetime.datetime.strptime(_max_date, '%m/%d/%y  %I:%M:%S %p')
-        print (_min_date)
         # Find sum of total hours
         total_hours = df['HOURS_WORKED'].sum()
 

@@ -12,6 +12,7 @@ import Loading from "../_ui/loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileExport, faPrint, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { LabNotes, QaNotes } from '../_ui/NotesValidation';
+import ColumnHideDropDown from "../_ui/columnHideDropDown.js";
 
 const isBrowser = typeof window !== `undefined`
 
@@ -24,13 +25,161 @@ const ApproveLaborTickets = () => {
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 1 * 24 * 60 * 60 * 1000));
     const [isLoading, setIsLoading] = useState(false);
     const [selectedApproved, setSelectedApproved] = useState(false);
+    const [hiddenColumnsArray, setHiddenColumnsArray] = useState([]);
+    const [hiddenColumnsIndexList, setHiddenColumnsIndexList] = useState([]);
+    const [laborTicketColumns, setLaborTicketColumns] = useState([]);
 
 
+    useEffect(() => {
+        const labor_ticket_columns = [
+            {
+                data: 'TRANSACTION_ID',
+                type: 'numeric',
+                readOnly: true,
+                renderer: safeHtmlRenderer,
+                width: 20,
+                label: 'ID'
+            },
+            {
+                data: 'APPROVED',
+                type: 'checkbox',
+                className: 'htCenter',
+                width: 20,
+                label: 'Appr.'
+            },
+            {
+                data: 'EMPLOYEE_ID',
+                type: 'text',
+                className: 'htCenter',
+                label: 'Emp. Name'
+            },
+            {
+                data: 'DEPARTMENT_ID',
+                type: 'text',
+                readOnly: true,
+                width: 25,
+                label: 'Dept. ID'
+            },
+            {
+                data: 'HOURS_WORKED',
+                type: 'numeric',
+                numericFormat: {
+                    pattern: '0,00',
+                },
+                width: 20,
+                label: 'Hrs. Worked'
+            },
+            {
+                data: 'WORK_TIME',
+                type: 'dropdown',
+                source: ['RT', 'OT', 'DT'],
+                width: 15,
+                label: 'Work Time'
+            },
+            {
+                data: 'INDIRECT_ID',
+                type: 'text',
+                readOnly: true,
+                width: 20,
+                label: 'Indirect'
+            },
+            {
+                data: 'WORKORDER_BASE_ID',
+                type: 'text',
+                readOnly: true,
+                width: 25,
+                label: 'WO ID'
+            },
+            {
+                data: 'LOT_SPLIT_SUB',
+                type: 'text',
+                readOnly: true,
+                width: 25,
+                label: 'Lot Split Sub'
+            },
+            {
+                data: 'RESOURCE_DESCRIPTION',
+                type: 'text',
+                readOnly: true,
+                wordWrap: false,
+                label: 'Operation'
+            },
+            {
+                data: 'LAB_DESC',
+                type: 'text',
+                className: 'htCenter',
+                editor: LabNotes,
+                label: 'Notes'
+            },
+            {
+                data: 'QA_NOTES',
+                type: 'text',
+                className: 'htCenter',
+                editor: QaNotes,
+                label: 'QA Notes'
+            },
+            {
+                data: 'CLOCK_IN',
+                type: 'text',
+                readOnly: true,
+                label: 'In'
+            },
+            {
+                data: 'CLOCK_OUT',
+                type: 'text',
+                readOnly: true,
+                label: 'Out'
+            },
+            {
+                data: 'PART_DESC',
+                type: 'text',
+                readOnly: true,
+                label: 'Part Desc.'
+            },
+            {
+                data: 'CUSTOMER_ID',
+                type: 'text',
+                readOnly: true,
+                label: 'Customer ID'
+            },
+            {
+                data: 'WORK_LOCATION',
+                type: 'dropdown',
+                source: ['On-site', 'Off-site', 'Remote'],
+                width: 25,
+                label: 'Location'
+            },
+            {
+                data: 'VISUAL_LAB_TRANS_ID',
+                type: 'numeric',
+                readOnly: true,
+                format: '0.00',
+                width: 10,
+                label: 'Visual Labor ID'
+            }
+        ]
+        setLaborTicketColumns(labor_ticket_columns);
+
+        // Get hidden columns from local storage
+        var hidden_columns_index_list = localStorage.getItem('APPROVE_HIDDEN_COL_LIST');
+        if (hidden_columns_index_list) {
+            setHiddenColumnsIndexList(JSON.parse(hidden_columns_index_list));
+        }
+
+        // Set hidden columns array for all the index values
+        var hidden_columns_array = [];
+        labor_ticket_columns.forEach((item, index) => {
+            if (hidden_columns_index_list.includes(index)) {
+                hidden_columns_array.push({ value: index, label: item.label });
+            }
+        });
+        setHiddenColumnsArray(hidden_columns_array);
+    }, []);
 
     useEffect(() => {
         load_labor_tickets();
         get_labor_summary();
-    }, [selectedFromDate, selectedToDate]);
+    }, [selectedFromDate, selectedToDate, hiddenColumnsArray]);
 
     useEffect(() => {
         if (selectedApproved) {
@@ -51,115 +200,6 @@ const ApproveLaborTickets = () => {
         td.innerHTML = utils.tranactionIdUrlLink(value)
     }
 
-    const labor_ticket_columns = [
-        {
-            data: 'TRANSACTION_ID',
-            type: 'numeric',
-            readOnly: true,
-            renderer: safeHtmlRenderer,
-            width: 20
-        },
-        {
-            data: 'APPROVED',
-            type: 'checkbox',
-            className: 'htCenter',
-            width: 20
-        },
-        {
-            data: 'EMPLOYEE_ID',
-            type: 'text',
-            className: 'htCenter',
-        },
-        {
-            data: 'DEPARTMENT_ID',
-            type: 'text',
-            readOnly: true,
-            width: 25
-        },
-        {
-            data: 'HOURS_WORKED',
-            type: 'numeric',
-            numericFormat: {
-                pattern: '0,00',
-            },
-            width: 20
-        },
-        {
-            data: 'WORK_TIME',
-            type: 'dropdown',
-            source: ['RT', 'OT', 'DT'],
-            width: 15
-        },
-        {
-            data: 'INDIRECT_ID',
-            type: 'text',
-            readOnly: true,
-            width: 20
-        },
-        {
-            data: 'WORKORDER_BASE_ID',
-            type: 'text',
-            readOnly: true,
-            width: 25
-        },
-        {
-            data: 'LOT_SPLIT_SUB',
-            type: 'text',
-            readOnly: true,
-            width: 25
-        },
-        {
-            data: 'RESOURCE_DESCRIPTION',
-            type: 'text',
-            readOnly: true,
-            wordWrap: false,
-        },
-        {
-            data: 'LAB_DESC',
-            type: 'text',
-            className: 'htCenter',
-            editor: LabNotes
-        },
-        {
-            data: 'QA_NOTES',
-            type: 'text',
-            className: 'htCenter',
-            editor: QaNotes
-        },
-        {
-            data: 'CLOCK_IN',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'CLOCK_OUT',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'PART_DESC',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'CUSTOMER_ID',
-            type: 'text',
-            readOnly: true
-        },
-        {
-            data: 'WORK_LOCATION',
-            type: 'dropdown',
-            source: ['On-site', 'Off-site', 'Remote'],
-            width: 25
-        },
-        {
-            data: 'VISUAL_LAB_TRANS_ID',
-            type: 'numeric',
-            readOnly: true,
-            format: '0.00',
-            width: 10
-        }
-    ]
     const summary_data_columns = [
         {
             data: 'EMPLOYEE_ID',
@@ -270,6 +310,18 @@ const ApproveLaborTickets = () => {
             });
     }
 
+    const hideColumnsAfterSelection = (arr) => {
+        setHiddenColumnsArray(arr);
+
+        // Create a list of columns to hide with the index value
+        var columnsToHide = [];
+        arr.forEach((item) => {
+            columnsToHide.push(item.value);
+        });
+        setHiddenColumnsIndexList(columnsToHide);
+        localStorage.setItem('APPROVE_HIDDEN_COL_LIST', JSON.stringify(columnsToHide));
+    }
+
     const render = () => {
         return (
             <div>
@@ -321,22 +373,34 @@ const ApproveLaborTickets = () => {
 
                         <hr />
 
-                        <span className="font-weight-bold">Details</span>
+                        {/* Labor ticket data table */}
+                        <div className="d-flex justify-content-between mb-1">
+                            <span className="font-weight-bold">Details</span>
+                            <div className="w-25">
+                                <ColumnHideDropDown list={laborTicketColumns} isMulti={true}
+                                    text='Columns'
+                                    prepareArray={true} placeholder={"Select columns"}
+                                    onSelect={(e) => { hideColumnsAfterSelection(e) }}
+                                    value={hiddenColumnsArray}
+                                />
+                            </div>
+                        </div>
                         <div className="mx-auto">
                             {
                                 isLoading ? <Loading />
                                     :
                                     <MTable
                                         data={laborTicketData}
-                                        columnsTypes={labor_ticket_columns}
+                                        columnsTypes={laborTicketColumns}
                                         columnsHeaders={['ID', 'Appr.', 'Emp. <br> Name', 'Dept. ID', 'Hrs. <br> Worked', 'Work <br> Time',
-                                        'Indirect', 'WO ID', 'Lot <br> Split Sub', 'Operation', 'Notes', 'QA Notes',
-                                        'In', 'Out', 'Cust. <br> Name', 'Location', 'Visual <br> Labor ID']}
+                                            'Indirect', 'WO ID', 'Lot <br> Split Sub', 'Operation', 'Notes', 'QA Notes',
+                                            'In', 'Out', 'Part Desc.', 'Cust. <br> Name', 'Location', 'Visual <br> Labor ID']}
 
                                         onChange={(e) => { update_labor_tickets(e) }}
                                         onInstantDataChange={(e) => { null }}
                                         height={window.innerHeight - 450}
                                         hasApproval={true}
+                                        hideColumns={hiddenColumnsIndexList}
                                     />
                             }
                         </div>

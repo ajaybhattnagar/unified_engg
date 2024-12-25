@@ -4,7 +4,7 @@
     "sqldriver": "SQL Server",
     "sqldatabase": "UNI",
     "sqluser": "sa",
-    "sqlpassword": "1q2w#E$R%T",
+    "sqlpassword": "1q2wE$R%T",
 
     "jwt_secret": "secret",
     "bcrypt_salt": "salt",

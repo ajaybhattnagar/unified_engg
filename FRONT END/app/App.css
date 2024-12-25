@@ -23,8 +23,17 @@ h3 {
 }
 
 :root {
-  font-size: 95%;
+  /* font-size: 95%; */
   /* (62.5/100) * 16px = 10px */
+
+  /* if phone then small else 95% */
+  @media only screen and (max-width: 768px) {
+    font-size: 90%;
+  } 
+  @media only screen and (max-width: 320px) {
+    font-size: 70%;
+  } 
+
 
 }
 

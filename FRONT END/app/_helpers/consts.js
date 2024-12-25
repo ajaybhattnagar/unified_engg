@@ -4,8 +4,9 @@ export const appConstants = {
     DEPLOYEMENT_URL: 'http://localhost:8080/',
     // DEPLOYEMENT_URL: 'https://app.unified.local/',
 
-    // BASE_URL: 'http://localhost:5000/',
-    BASE_URL: 'https://api.unifiedwrx.com/',
+    BASE_URL: 'http://localhost:5000/',
+    // BASE_URL: 'http://192.168.2.58:5000/',
+    // BASE_URL: 'https://api.unifiedwrx.com/',
     // BASE_URL: 'https://api.unified.local/',
 
     VISUAL_API: 'http://localhost:44360/',

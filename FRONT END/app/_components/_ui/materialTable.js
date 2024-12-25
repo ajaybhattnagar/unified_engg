@@ -15,6 +15,8 @@ const MTable = (props) => {
     const [dataChanged, setDataChanged] = useState(false);
     const [cellSelected, setCellSelected] = useState(false);
     const [selectAll, setSelectAll] = useState(false);
+
+    const [hiddenColumns, setHiddenColumns] = useState(props.hideColumns || null);
     // const { title, columns, pageSize, showTitle, detailsPanel, filtering, loading, rowEdit, cellEdit, columnsButton, onRowSelect } = props;
     // const [selectedRow, setSelectedRow] = React.useState(null);
     // const [muiTableKey, setMuiTableKey] = React.useState(0);
@@ -115,6 +117,10 @@ const MTable = (props) => {
                     console.log(r, c, prop, value, cellProperties);
                 }}
 
+                hiddenColumns={{
+                    columns: hiddenColumns,
+                    indicators: true
+                }}
                 licenseKey="non-commercial-and-evaluation" // for non-commercial use only
             />
             {

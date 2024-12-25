@@ -79,9 +79,9 @@ const Login = () => {
     const gotoSignUpPage = () => navigate("/signup");
     const database_list = [{ value: "UNIFIED", label: "UNIFIED" }, { value: "SANDBOX", label: "SANDBOX" }]
     const hostname = window.location.hostname;
-    if (hostname === "localhost") {
+    // if (hostname === "localhost" || hostname === "192.168.2.58") {
         database_list.push({ value: "UNI", label: "UNI" });
-    }
+    // }
     
     return (
         <div className='container mx-auto mt-3 mw-50'>
