@@ -175,6 +175,11 @@ const RecordsLabor = () => {
     useEffect(() => {
         var response_status = 0;
         var url = appConstants.BASE_URL.concat(appConstants.GET_ALL_EMPLOYEES);
+        if (!localStorage.getItem("token")) {
+            navigate("/");
+            // Break code here
+            return;
+        }
         const request_object = {
             method: "GET",
             headers: {
@@ -188,7 +193,7 @@ const RecordsLabor = () => {
                     response_status = 200;
                     return res.json();
                 }
-                else {
+                if (res.status === 400) {
                     response_status = 400;
                     alert(res.json());
                 }
@@ -584,28 +589,27 @@ const RecordsLabor = () => {
                                 console.log(error);
                             });
                     }
-                    
-                    // Save CSV to T drive
-                    var url = appConstants.BASE_URL.concat(appConstants.GET_FORMATTED_CSV_FROM_EOD).concat("csv");
-                    var response = fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-access-token': localStorage.getItem("token")
-                        },
-                        body: JSON.stringify({
-                            "FROM_DATE": new Date().toISOString().split('T')[0],
-                            "TO_DATE": new Date().toISOString().split('T')[0],
-                            "EMPLOYEE_ID": localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID"),
-                            "APPROVED": 'ALL'
-                        })
-                    });
-
-                    const contentDisposition = response.headers.get('Content-Disposition');
+                    // const contentDisposition = response.headers.get('Content-Disposition');
                     // Clock out
                     utils.clock_in_out_users("clock_out")
                         .then((response) => {
-                            // Navigate to reports
+                            // Save CSV to T drive
+                            var url = appConstants.BASE_URL.concat(appConstants.GET_FORMATTED_CSV_FROM_EOD).concat("csv");
+                            var response = fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'x-access-token': localStorage.getItem("token")
+                                },
+                                body: JSON.stringify({
+                                    "FROM_DATE": new Date().toISOString().split('T')[0],
+                                    "TO_DATE": new Date().toISOString().split('T')[0],
+                                    "EMPLOYEE_ID": localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID"),
+                                    "APPROVED": 'ALL'
+                                })
+                            });
+
+                            // Navigate to EOD
                             navigate("/reports/eod", { replace: true })
                         })
 

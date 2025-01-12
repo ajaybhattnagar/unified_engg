@@ -423,7 +423,7 @@ const ApproveLaborTickets = () => {
                             </div>
                             <div className="w-25">
                                 <ColumnHideDropDown list={laborTicketColumns} isMulti={true}
-                                    text='Columns'
+                                    text='Hide Col.'
                                     prepareArray={true} placeholder={"Select columns"}
                                     onSelect={(e) => { hideColumnsAfterSelection(e) }}
                                     value={hiddenColumnsArray}

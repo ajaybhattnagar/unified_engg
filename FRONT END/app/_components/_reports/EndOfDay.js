@@ -328,7 +328,7 @@ const EOD = () => {
 
                         <div className="w-25">
                             <ColumnHideDropDown list={columns} isMulti={true}
-                                text='Columns'
+                                text='Hide Col.'
                                 prepareArray={true} placeholder={"Select columns"}
                                 onSelect={(e) => { hideColumnsAfterSelection(e) }}
                                 value={hiddenColumnsArray}
