@@ -20,6 +20,7 @@ class NavigationBar extends Component {
     handleSignOut() {
         console.log("sign out");
         localStorage.removeItem("token");
+        localStorage.removeItem("MIMIC_EMPLOYEE_ID");
         // this.props.history.push("/");
     };
 
@@ -62,9 +63,13 @@ class NavigationBar extends Component {
         var qa_notification = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_SET_QA_NOTIFICATION === '1' ? false : true;
         var create_quote = access_rights.SUPER_ADMIN === '1' || access_rights.ALLOWED_CREATE_QUOTE === '1' ? false : true;
 
+        var original_employee = localStorage.getItem("EMPLOYEE_ID");
+        var mimic_employee = localStorage.getItem("MIMIC_EMPLOYEE_ID") || localStorage.getItem("EMPLOYEE_ID");
+        var bg_color_nav_bar = original_employee === mimic_employee ? 'light' : 'warning';
+
         return (
             <div>
-                <Navbar collapseOnSelect bg="light" expand="lg" data-bs-theme="dark">
+                <Navbar collapseOnSelect bg={bg_color_nav_bar} expand="lg">
                     <Navbar.Brand href="/">
                         <img
                             alt='logo'
