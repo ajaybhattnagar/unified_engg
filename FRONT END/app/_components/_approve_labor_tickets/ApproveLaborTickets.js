@@ -416,11 +416,11 @@ const ApproveLaborTickets = () => {
 
                         {/* Labor ticket data table */}
                         <div className="d-flex justify-content-between mb-1">
-                            <div>
-                                <button className="ml-2 btn btn-primary" onClick={() => { cycleThroughEmployees("left") }}><FontAwesomeIcon className="" icon={faArrowLeft} /></button>
-                                <button className="ml-2 btn btn-secondary" onClick={() => { cycleThroughEmployees("All") }}>Employees Details</button>
-                                <button className="ml-2 btn btn-primary" onClick={() => { cycleThroughEmployees("right") }}><FontAwesomeIcon className="" icon={faArrowRight} /></button>
-                            </div>
+                            {/* <div>
+                                <button className="ml-2 btn btn-primary" disabled={true} onClick={() => { cycleThroughEmployees("left") }}><FontAwesomeIcon className="" icon={faArrowLeft} /></button>
+                                <button className="ml-2 btn btn-secondary" disabled={true} onClick={() => { cycleThroughEmployees("All") }}>Employees Details</button>
+                                <button className="ml-2 btn btn-primary" disabled={true} onClick={() => { cycleThroughEmployees("right") }}><FontAwesomeIcon className="" icon={faArrowRight} /></button>
+                            </div> */}
                             <div className="w-25">
                                 <ColumnHideDropDown list={laborTicketColumns} isMulti={true}
                                     text='Hide Col.'
