@@ -24,7 +24,7 @@ const ApproveLaborTickets = () => {
     const [selectedFromDate, setSelectedFromDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 1 * 24 * 60 * 60 * 1000));
     const [selectedToDate, setSelectedToDate] = useState(utils.convertTimeStampToDateForInputBox(new Date() - 1 * 24 * 60 * 60 * 1000));
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedApproved, setSelectedApproved] = useState(false);
+    const [selectedApproved, setSelectedApproved] = useState("Unknown");
     const [hiddenColumnsArray, setHiddenColumnsArray] = useState([]);
     const [hiddenColumnsIndexList, setHiddenColumnsIndexList] = useState([]);
     const [laborTicketColumns, setLaborTicketColumns] = useState([]);
@@ -186,18 +186,21 @@ const ApproveLaborTickets = () => {
     }, [selectedFromDate, selectedToDate, hiddenColumnsArray]);
 
     useEffect(() => {
-        if (selectedApproved) {
+        if (selectedApproved === "Approved") {
             let newData = originalData.filter((item) => {
                 return item.APPROVED === true;
             });
             setLaborTicketData(newData);
         }
-        else {
+        if (selectedApproved === "Not Approved") {
             let newData = originalData.filter((item) => {
                 return item.APPROVED === false;
             });
             setLaborTicketData(newData);
         }
+        // if (selectedApproved === "Unknown") {
+        //     setLaborTicketData(originalData);
+        // }
     }, [selectedApproved]);
 
     const safeHtmlRenderer = (instance, td, row, col, prop, value, cellProperties) => {
@@ -334,6 +337,10 @@ const ApproveLaborTickets = () => {
     }
 
     const cycleThroughEmployees = (direction) => {
+
+        //Set approved to unknown
+        setSelectedApproved("Unknown");
+
         if (direction == 'All'){
             setLaborTicketData(originalData);
             return;
@@ -384,8 +391,8 @@ const ApproveLaborTickets = () => {
                         }
 
                         <div className="d-flex justify-content-center mb-2">
-                            <button className={selectedApproved ? 'ml-2 btn btn-primary' : 'ml-2 btn btn-outline-primary'} onClick={() => setSelectedApproved(true)}>Approved</button>
-                            <button className={!selectedApproved ? 'ml-2 btn btn-primary' : 'ml-2 btn btn-outline-primary'} onClick={() => setSelectedApproved(false)}>Not Approved</button>
+                            <button className={selectedApproved === "Approved" ? 'ml-2 btn btn-primary' : 'ml-2 btn btn-outline-primary'} onClick={() => setSelectedApproved("Approved")}>Approved</button>
+                            <button className={selectedApproved === "Not Approved" ? 'ml-2 btn btn-primary' : 'ml-2 btn btn-outline-primary'} onClick={() => setSelectedApproved("Not Approved")}>Not Approved</button>
                         </div>
 
                     </div>
@@ -416,11 +423,11 @@ const ApproveLaborTickets = () => {
 
                         {/* Labor ticket data table */}
                         <div className="d-flex justify-content-between mb-1">
-                            {/* <div>
-                                <button className="ml-2 btn btn-primary" disabled={true} onClick={() => { cycleThroughEmployees("left") }}><FontAwesomeIcon className="" icon={faArrowLeft} /></button>
-                                <button className="ml-2 btn btn-secondary" disabled={true} onClick={() => { cycleThroughEmployees("All") }}>Employees Details</button>
-                                <button className="ml-2 btn btn-primary" disabled={true} onClick={() => { cycleThroughEmployees("right") }}><FontAwesomeIcon className="" icon={faArrowRight} /></button>
-                            </div> */}
+                            <div>
+                                <button className="ml-2 btn btn-primary" onClick={() => { cycleThroughEmployees("left") }}><FontAwesomeIcon className="" icon={faArrowLeft} /></button>
+                                <button className="ml-2 btn btn-secondary" onClick={() => { cycleThroughEmployees("All") }}>Employees Details</button>
+                                <button className="ml-2 btn btn-primary" onClick={() => { cycleThroughEmployees("right") }}><FontAwesomeIcon className="" icon={faArrowRight} /></button>
+                            </div>
                             <div className="w-25">
                                 <ColumnHideDropDown list={laborTicketColumns} isMulti={true}
                                     text='Hide Col.'

@@ -99,7 +99,7 @@ labor_query = {
                                 LEFT JOIN CUSTOMER_ORDER CO ON CO.ID = DSL.DEMAND_BASE_ID
                                 WHERE WO.TYPE = 'W' AND WO.STATUS IN ('C') AND WO.LOT_ID = '1' AND WO.SPLIT_ID = '0' AND WO.SUB_ID = '0' AND WO.STATUS_EFF_DATE >= DATEADD(WEEK,-1,GETDATE())
                                 ) Z
-                                ORDER BY value, CREATE_DATE DESC
+                                ORDER BY value DESC
 
 """,
 

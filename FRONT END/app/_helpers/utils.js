@@ -510,6 +510,9 @@ function calcHoursWorked(clock_in, clock_out) {
 }
 
 function tranactionIdUrlLink(transaction_id) {
+  if (transaction_id == "" || transaction_id == null) {
+    return '';
+  }
   var url = appConstants.DEPLOYEMENT_URL.concat('ticket_details?transaction_type=labor_ticket&transaction_id=').concat(transaction_id);
   url = `<a href="${url}" target='_blank2'>${transaction_id}</a>`;
   return url;
