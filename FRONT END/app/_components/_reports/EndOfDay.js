@@ -45,42 +45,42 @@ const EOD = () => {
                 data: 'WORKORDER_BASE_ID',
                 type: 'text',
                 readOnly: true,
-                width: 25,
+                width: 40,
                 label: 'Work order'
             },
-            {
-                data: 'LOT_SPLIT_SUB',
-                type: 'text',
-                readOnly: true,
-                width: 25,
-                label: 'Lot Split Sub'
+            // {
+            //     data: 'LOT_SPLIT_SUB',
+            //     type: 'text',
+            //     readOnly: true,
+            //     width: 25,
+            //     label: 'Lot Split Sub'
 
-            },
+            // },
             {
                 data: 'PART_DESC',
                 type: 'text',
                 readOnly: true,
                 label: 'Part Desc'
             },
-            {
-                data: 'CUSTOMER_ID',
-                type: 'text',
-                readOnly: true,
-                label: 'Customer ID'
-            },
-            {
-                data: 'RESOURCE_DESCRIPTION',
-                type: 'text',
-                readOnly: true,
-                label: 'Operation'
-            },
-            {
-                data: 'INDIRECT_ID',
-                type: 'text',
-                readOnly: true,
-                width: 20,
-                label: 'Indirect'
-            },
+            // {
+            //     data: 'CUSTOMER_ID',
+            //     type: 'text',
+            //     readOnly: true,
+            //     label: 'Customer ID'
+            // },
+            // {
+            //     data: 'RESOURCE_DESCRIPTION',
+            //     type: 'text',
+            //     readOnly: true,
+            //     label: 'Operation'
+            // },
+            // {
+            //     data: 'INDIRECT_ID',
+            //     type: 'text',
+            //     readOnly: true,
+            //     width: 20,
+            //     label: 'Indirect'
+            // },
             {
                 data: 'HOURS_WORKED',
                 type: 'numeric',
@@ -100,12 +100,12 @@ const EOD = () => {
                 editor: LabNotes,
                 label: 'Notes'
             },
-            {
-                data: 'QA_NOTES',
-                type: 'text',
-                editor: QaNotes,
-                label: 'QA Notes'
-            },
+            // {
+            //     data: 'QA_NOTES',
+            //     type: 'text',
+            //     editor: QaNotes,
+            //     label: 'QA Notes'
+            // },
             {
                 data: 'CLOCK_IN',
                 type: 'text',
@@ -113,13 +113,13 @@ const EOD = () => {
                 width: 15,
                 label: 'In'
             },
-            {
-                data: 'CLOCK_OUT',
-                type: 'text',
-                readOnly: true,
-                width: 15,
-                label: 'Out'
-            },
+            // {
+            //     data: 'CLOCK_OUT',
+            //     type: 'text',
+            //     readOnly: true,
+            //     width: 15,
+            //     label: 'Out'
+            // },
             {
                 data: 'APPROVED',
                 type: 'checkbox',
@@ -173,6 +173,14 @@ const EOD = () => {
                     response.forEach((item) => {
                         item.APPROVED = item.APPROVED === 'true' ? true : false;
                         total_hours += parseFloat(item.HOURS_WORKED);
+
+                        //If workorder is empty then replace with indirect id
+                        //And merge workorder and lot split sub
+                        if (item.WORKORDER_BASE_ID === '') {
+                            item.WORKORDER_BASE_ID = item.INDIRECT_CODE;
+                        } else {
+                            item.WORKORDER_BASE_ID = item.WORKORDER_BASE_ID.concat(' / ', item.LOT_SPLIT_SUB).concat(' / ', item.RESOURCE_ID);
+                        }
                     })
                     setTotalHours(total_hours);
                     setData(response);
@@ -287,6 +295,11 @@ const EOD = () => {
     }
 
     const render = () => {
+        // var columnsHeaders = ['ID', 'Work <br> order', 'Lot <br> Split Sub', 'Part <br> Desc', 'Customer ID', 'Operation',
+        //     'Indirect', 'Hrs <br> worked', 'Work <br> Time', 'Notes', 'QA Notes',
+        //     'In', 'Out', 'Approved']
+        var columnsHeaders = ['ID', 'Work order <br> Indirect', 'Part <br> Desc', 
+             'Hrs <br> worked', 'Work <br> Time', 'Notes', 'In', 'Approved']
         return (
             <div>
                 <NavigationBar />
@@ -344,10 +357,7 @@ const EOD = () => {
                                 <MTable
                                     data={data}
                                     columnsTypes={columns}
-                                    columnsHeaders={['ID', 'Work <br> order', 'Lot <br> Split Sub', 'Part <br> Desc', 'Customer ID', 'Operation',
-                                        'Indirect', 'Hrs <br> worked', 'Work <br> Time', 'Notes', 'QA Notes',
-                                        'In', 'Out', 'Approved']}
-                                    onChange={(e) => { update_labor_tickets(e) }}
+                                    columnsHeaders={columnsHeaders} onChange={(e) => { update_labor_tickets(e) }}
                                     onInstantDataChange={(e) => { update_total_hours(e) }}
                                     height={window.innerHeight - 200}
                                     hideColumns={hiddenColumnsIndexList}
